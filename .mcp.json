@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "cognee": {
+      "type": "http",
+      "url": "http://localhost:7777/mcp"
+    },
+    "cognee-curated": {
+      "type": "http",
+      "url": "http://localhost:7730/mcp"
+    }
+  }
+}

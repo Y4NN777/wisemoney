@@ -1,0 +1,41 @@
+/**
+ * Application entry point.
+ *
+ * Registers the Vite PWA service worker (offline-first, INV-PERS-01).
+ * Renders the React root with TanStack QueryClientProvider.
+ *
+ * TODO (T-S0-04+):
+ * - Add TanStack Router <RouterProvider>.
+ * - Add KeyUnlock gate: prompt for passphrase/WebAuthn before mounting App.
+ *   No financial data is accessible until the IndexedDB store is unlocked
+ *   (INV-PERS-02, ARCHITECTURE §7).
+ * - Add error boundary at the root (AI failures must not crash State — NFR-MOD-01).
+ */
+
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import App from "./App.tsx";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Stale time: 0 — financial data is always read from the local IndexedDB source.
+      // Network queries (managed AI) handle their own stale times per query key.
+      staleTime: 0,
+    },
+  },
+});
+
+const rootElement = document.getElementById("root");
+if (rootElement === null) {
+  throw new Error("Root element #root not found in index.html");
+}
+
+createRoot(rootElement).render(
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </StrictMode>
+);

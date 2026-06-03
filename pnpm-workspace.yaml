@@ -1,0 +1,4 @@
+packages:
+  - "apps/*"
+# Note: the Go edge (services/edge) is NOT a pnpm workspace member — it is a
+# separate Go module built via its own Dockerfile.

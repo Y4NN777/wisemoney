@@ -1,0 +1,3 @@
+# Populated by: cd services/edge && go mod tidy
+# Run this before docker compose build edge.
+# go.sum is intentionally empty at scaffold time — Y4NN runs go mod tidy.

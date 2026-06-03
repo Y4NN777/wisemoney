@@ -1,0 +1,35 @@
+# WiseMoney — managed-edge infrastructure (edge + Postgres).
+# The web PWA runs via `pnpm dev` locally; only the managed-mode backend is here.
+# Pinned image versions — no :latest (MISHKAN standard). Verify pins with /dep-audit.
+services:
+  postgres:
+    image: postgres:16.8
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - wisemoney_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  edge:
+    build:
+      context: ./services/edge
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${EDGE_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  wisemoney_pgdata:

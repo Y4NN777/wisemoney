@@ -1,0 +1,3 @@
+# Icon placeholders — replace with real PNG assets before first build.
+# Required: icon-192.png, icon-512.png, icon-maskable-512.png
+# See public/manifest.webmanifest for sizes.
