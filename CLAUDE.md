@@ -57,7 +57,8 @@
   (Go, 22 files) + root contract (compose, env, README, SECURITY). Pinned, idiomatic,
   typed stubs citing FR/INV; **no installs/builds run** — run sequence in `README.md`.
   *Follow-ups:* `/dep-audit` before `pnpm install` (frontend added `@tanstack/react-query`
-  + `react-router` beyond the zustand brief — confirm/keep).
+  + `@tanstack/react-router` beyond the zustand brief). **Routing lib DECIDED 2026-06-03:**
+  TanStack Router confirmed/kept (Y4NN) — aligns with Panim rule; no `react-router` present.
 - **Consent-assertion wire shape — PINNED** (ARCHITECTURE §10a): HMAC-SHA256, dedicated
   `CONSENT_SIGNING_KEY` (must differ from JWT key), `user_id`/`feature`/`level`/`exp`(~5m),
   `X-Consent-Assertion` header, fail-closed→redacted. Wired in config/consent/router +
