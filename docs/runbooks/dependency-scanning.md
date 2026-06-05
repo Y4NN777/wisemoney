@@ -2,11 +2,11 @@
 
 | Field    | Value                                                                          |
 | -------- | ------------------------------------------------------------------------------ |
-| Status   | Active (Sprint S0, 2026-06-03)                                                 |
+| Status   | Active (Sprint S0, 2026-06-05)                                                 |
 | Diátaxis | How-to                                                                         |
-| Date     | 2026-06-03                                                                     |
+| Date     | 2026-06-05                                                                     |
 | Scope    | Installing osv-scanner; scanning Go and pnpm surfaces; binary scan (authoritative Go gate); reading results; known pitfalls |
-| Source   | ADR-0010; `/dep-audit` run 2026-06-03; osv-scanner v2.3.8                      |
+| Source   | ADR-0010; `/dep-audit` run 2026-06-05; osv-scanner v2.3.8                      |
 
 > Stateful operations in this runbook are written out for the engineer to run.
 > No agent executes them. Copy-paste each command exactly.
@@ -216,7 +216,7 @@ Add a code review checklist item: any PR touching `go.mod` must confirm the
 
 ---
 
-## 8. Baseline — versions current as of 2026-06-03
+## 8. Baseline — versions current as of 2026-06-05
 
 These are the versions the dep-audit cleared. Any scan run against these or higher
 must report clean on both surfaces.

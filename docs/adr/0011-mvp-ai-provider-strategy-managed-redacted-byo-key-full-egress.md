@@ -3,7 +3,7 @@
 | Field    | Value                                                                                    |
 | -------- | ---------------------------------------------------------------------------------------- |
 | Status   | Accepted                                                                                 |
-| Date     | 2026-06-03                                                                               |
+| Date     | 2026-06-05                                                                               |
 | Diátaxis | Explanation                                                                              |
 | Source   | T-S0-02; ARCHITECTURE §9a/§9b; THREAT_MODEL §2.1 (I-EGR-01), §7 residual; CONTRACT §8 MVP-scoping note |
 | Binds    | `services/edge` AI router; consent-assertion wire (ARCHITECTURE §10a); INV-EGR-03 (as amended by ADR-0008); ADR-0001, ADR-0002 |

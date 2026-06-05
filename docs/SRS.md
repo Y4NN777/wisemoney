@@ -5,7 +5,7 @@
 | **Title** | WiseMoney — Software Requirements Specification |
 | **Date** | 2026-06-02 |
 | **Version** | SRS v0.1 (derived from PRD v0.1) |
-| **Revision** | Rev 2026-06-02 — Gate-2: FR-AUTH added; multi-tenant proxy; multi-provider MVP; CSV/XLSX/JSON export; consent in localStorage. Rev 2026-06-03 — OQ-06 resolved (client auth token storage; see §15). |
+| **Revision** | Rev 2026-06-02 — Gate-2: FR-AUTH added; multi-tenant proxy; multi-provider MVP; CSV/XLSX/JSON export; consent in localStorage. Rev 2026-06-05 — OQ-06 resolved (client auth token storage; see §15). |
 | **Status** | Draft |
 | **Owner** | Nathan (software architecture) |
 | **Source** | `docs/PRD.md` v0.1; `docs/intake/intent-v0.1.md` v0.1 |
@@ -766,7 +766,7 @@ and FR-AIORCH-05.
 
 ### Genuinely new open question introduced by the multi-tenant change
 
-**OQ-06 — RESOLVED (Y4NN decision, 2026-06-03).** Client auth token storage and
+**OQ-06 — RESOLVED (Y4NN decision, 2026-06-05).** Client auth token storage and
 session lifecycle for managed mode are now specified. The access token (15-minute
 JWT) is held exclusively in non-persistent JavaScript module memory — never in
 localStorage, sessionStorage, document.cookie, or any unencrypted persistent
@@ -786,6 +786,6 @@ storage).
 
 ---
 
-*End of SRS v0.1 Rev 2026-06-03. This document owns WHAT/qualitative-HOW-MUCH.
+*End of SRS v0.1 Rev 2026-06-05. This document owns WHAT/qualitative-HOW-MUCH.
 Schemas, invariants, and API guarantees belong to CONTRACT (Zadok). All open
 questions in §15 are resolved.*

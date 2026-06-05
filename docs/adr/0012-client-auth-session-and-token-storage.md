@@ -3,7 +3,7 @@
 | Field    | Value                                                                                    |
 | -------- | ---------------------------------------------------------------------------------------- |
 | Status   | Accepted                                                                                 |
-| Date     | 2026-06-03                                                                               |
+| Date     | 2026-06-05                                                                               |
 | Diátaxis | Explanation                                                                              |
 | Source   | SRS OQ-06; CONTRACT INV-AUTH-06/07 (added in parallel by Zadok); THREAT_MODEL §2.4 (T-CONSENT-02), §6 (M-EGR-04, M-AUTH-05); ADR-0002, ADR-0008 |
 | Binds    | `apps/web` auth store; `services/edge` refresh-rotation handler; CSP/SRI build config (M-EGR-04); edge rate-limit and auth middleware |
@@ -201,7 +201,7 @@ that point.
 
 - SRS OQ-06 (proxy auth mechanism — partially closed by Gate-3 decision 13;
   this ADR closes the client-side half)
-- CONTRACT INV-AUTH-06, INV-AUTH-07 (added in parallel by Zadok, 2026-06-03)
+- CONTRACT INV-AUTH-06, INV-AUTH-07 (added in parallel by Zadok, 2026-06-05)
 - THREAT_MODEL §2.4 (T-CONSENT-02), §2.2 (T-AUTH-01, M-AUTH-05), §6 (M-EGR-04)
 - ADR-0002 — dual AI key modes and AES-GCM IndexedDB crypto layer
 - ADR-0004 — managed proxy email/password JWT auth and Bearer token contract

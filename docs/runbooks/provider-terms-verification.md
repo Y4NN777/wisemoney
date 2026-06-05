@@ -2,8 +2,8 @@
 
 | Field   | Value                                                                              |
 | ------- | ---------------------------------------------------------------------------------- |
-| Status  | Verified 2026-06-03 — pending legal sign-off + consent-UI provider naming          |
-| Date    | 2026-06-03 (original stub: 2026-06-02)                                             |
+| Status  | Verified 2026-06-05 — pending legal sign-off + consent-UI provider naming          |
+| Date    | 2026-06-05 (original stub: 2026-06-02)                                             |
 | Scope   | Per-provider retention / training / opt-out verification before launch             |
 | Source  | Intake Gate-5 decision 28; THREAT_MODEL §2.1 (I-EGR-01), §7 residual, §8 item 3; ADR-0011 |
 | Blocker | **LAUNCH-BLOCKER** — must be completed before ship                                 |
@@ -40,7 +40,7 @@ ship (Gate-5 decision 28).
 | ZDR / enhanced data controls | Available — but approval-gated. Eligibility for **financial / non-HIPAA use: UNVERIFIED.**   |
 | Certifications               | SOC 2 Type 2; HIPAA BAA available. PCI / GLBA applicability: **UNVERIFIED.**                 |
 | Source URL                   | https://developers.openai.com/api/docs/guides/your-data                                       |
-| Date verified                | 2026-06-03                                                                                    |
+| Date verified                | 2026-06-05                                                                                    |
 | Notes                        | `openai.com/enterprise-privacy` returned HTTP 403 at verification time — content **UNVERIFIED.** |
 
 **Summary for ADR-0011 / managed mode:** OpenAI API does not train on API traffic by
@@ -59,7 +59,7 @@ eligibility for financial use must be confirmed before activation.
 | ZDR                 | Available via per-project application (see ZDR doc).                                                              |
 | Vertex AI           | Stronger guarantee: "won't use your data to train generative AI models without your prior permission."            |
 | Source URLs         | https://ai.google.dev/gemini-api/terms · https://ai.google.dev/gemini-api/docs/usage-policies · https://ai.google.dev/gemini-api/docs/zdr · https://docs.cloud.google.com/vertex-ai/generative-ai/docs/data-governance |
-| Date verified       | 2026-06-03                                                                                                        |
+| Date verified       | 2026-06-05                                                                                                        |
 
 **Summary for ADR-0011 / managed mode:** Gemini paid tier is compatible with a
 future paid managed full-egress configuration. ZDR application is the activation
@@ -76,7 +76,7 @@ step. Vertex AI offers the strongest contractual data-governance guarantee.
 | Training opt-out    | **None available** on free tier.                                                                                                     |
 | Managed-mode status | **BANNED for financial data.** Cannot carry raw financial detail regardless of consent.                                              |
 | Source URL          | https://ai.google.dev/gemini-api/terms                                                                                               |
-| Date verified       | 2026-06-03                                                                                                                           |
+| Date verified       | 2026-06-05                                                                                                                           |
 | Notes               | Free-tier retention duration (beyond the training use): **UNVERIFIED** — the terms state training use but do not specify a separate deletion period for API input. |
 
 **Summary for ADR-0011:** Gemini free tier trains on submitted content with no
@@ -97,7 +97,7 @@ must never receive raw financial data in any routing path.
 | Managed-mode status     | **INCOMPATIBLE — contract breach.** WiseMoney financial data is prohibited by §4.3 and would feed model training under §3.3(iv). Removed from roster. |
 | Trial vs. production    | These terms apply to the Trial tier. Production subscription terms are **UNVERIFIED** (a separate agreement). No production terms reviewed.       |
 | Source URL              | NVIDIA API Trial ToS v2025-09-19 — https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf      |
-| Date verified           | 2026-06-03                                                                                                                                       |
+| Date verified           | 2026-06-05                                                                                                                                       |
 
 **Summary for ADR-0011:** NVIDIA hosted API is permanently removed from the
 WiseMoney provider roster. §4.3 prohibition on financial data and §3.3(iv) training
@@ -116,7 +116,7 @@ architecture resolves a contractual prohibition on the data type.
 | Training on content | No training-on-inference language in the self-hosted model documentation reviewed.                                                                          |
 | Managed-mode status | Architecturally compatible with any egress level (including full-egress). Deferred to a post-MVP infrastructure phase — not in scope for MVP launch.         |
 | Source URL          | https://docs.nvidia.com/nim/large-language-models/1.15.0/introduction.html                                                                                  |
-| Date verified       | 2026-06-03                                                                                                                                                   |
+| Date verified       | 2026-06-05                                                                                                                                                   |
 
 **Summary for ADR-0011:** Self-hosted NIM is noted as a viable future path for
 full-egress managed mode. No action required at MVP; no router entry needed at
@@ -135,7 +135,7 @@ launch.
 | Managed-mode status (MVP)                | Free `:free` models used as managed-mode primary aggregator. Egress is structurally capped to aggregate/redacted by INV-EGR-03a. Training on redacted payload is the accepted residual.      |
 | UNVERIFIED items                         | (1) Exact free-model training-toggle label in the OpenRouter UI. (2) Which specific `:free` endpoints are ZDR-eligible (if any). Chase via: authenticated account + `GET https://openrouter.ai/api/v1/endpoints/zdr`. |
 | Source URLs                              | https://openrouter.ai/docs/guides/privacy/provider-logging · https://openrouter.ai/docs/guides/features/zdr · https://openrouter.ai/docs/guides/privacy/data-collection · https://openrouter.ai/privacy |
-| Date verified                            | 2026-06-03                                                                                                                                                                                    |
+| Date verified                            | 2026-06-05                                                                                                                                                                                    |
 
 **Summary for ADR-0011:** OpenRouter free is the managed-mode primary aggregator at
 MVP. It may only be used under the structural payload cap (INV-EGR-03a) which
@@ -148,7 +148,7 @@ raw detail structurally unavailable to the provider.
 
 ## The decision (ADR-0011)
 
-Resolved on 2026-06-03. Full record in `docs/adr/0011-mvp-ai-provider-strategy-managed-redacted-byo-key-full-egress.md`.
+Resolved on 2026-06-05. Full record in `docs/adr/0011-mvp-ai-provider-strategy-managed-redacted-byo-key-full-egress.md`.
 
 **Managed mode (MVP):** Redacted egress only, routed to OpenRouter free (primary)
 and Gemini free (eligible), under the structural payload cap (INV-EGR-03a). No paid

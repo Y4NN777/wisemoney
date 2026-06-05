@@ -3,14 +3,14 @@
 | Field      | Value                                                                       |
 | ---------- | --------------------------------------------------------------------------- |
 | Status     | Accepted                                                                    |
-| Date       | 2026-06-03                                                                  |
+| Date       | 2026-06-05                                                                  |
 | Diátaxis   | Explanation                                                                 |
-| Source     | Sprint S0 `/dep-audit` (2026-06-03); THREAT_MODEL §2; ADR-0005             |
+| Source     | Sprint S0 `/dep-audit` (2026-06-05); THREAT_MODEL §2; ADR-0005             |
 | Binds      | `services/edge/go.mod`; `apps/web/package.json`; `Dockerfile` (edge builder); CI `security:scan` gate |
 
 ## Context
 
-A dependency audit run on 2026-06-03, using osv-scanner v2.3.8, surfaced
+A dependency audit run on 2026-06-05, using osv-scanner v2.3.8, surfaced
 critical vulnerabilities across both surfaces of the project at the point of
 initial scaffold (Sprint S0, before any install or build had been executed).
 

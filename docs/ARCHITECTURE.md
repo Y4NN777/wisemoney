@@ -3,8 +3,8 @@
 | Field   | Value                                                        |
 | ------- | ------------------------------------------------------------ |
 | Title   | WiseMoney — Architecture                                 |
-| Date    | 2026-06-02; amended 2026-06-03 (provider strategy, §9)       |
-| Version | ARCHITECTURE v0.1 rev 2026-06-03                             |
+| Date    | 2026-06-02; amended 2026-06-05 (provider strategy, §9)       |
+| Version | ARCHITECTURE v0.1 rev 2026-06-05                             |
 | Status  | Draft                                                        |
 | Owners  | Bezalel (CTO) · Nathan (software architecture)               |
 | Source  | PRD v0.1; SRS v0.1 Rev 2026-06-02; CONTRACT v0.1             |
@@ -305,7 +305,7 @@ Refresh: short-lived access JWT + refresh token rotation (detail → THREAT_MODE
 
 ## 9. AI orchestration
 
-### 9a. MVP provider strategy (2026-06-03, Y4NN decision)
+### 9a. MVP provider strategy (2026-06-05, Y4NN decision)
 
 The provider roster and egress-level split are constrained at MVP by operator
 budget and provider terms. These constraints are architectural inputs, not
@@ -352,7 +352,7 @@ future provider (e.g. paid OpenAI or OpenRouter+ZDR for managed full-egress) is
 still an adapter + routing config change with no cross-cutting impact (FR-AIORCH-01,
 INV-PROXY-03, §2.2).
 
-### 9b. Consent gate and managed-redacted-only structural guarantee (2026-06-03)
+### 9b. Consent gate and managed-redacted-only structural guarantee (2026-06-05)
 
 The consent-assertion gate (§10a) is designed around a full-egress / redacted-egress
 split. With no full-egress provider configured in managed mode at MVP, the
@@ -465,7 +465,7 @@ client.
 | **TTL** | `CONSENT_ASSERTION_TTL` ≈ **5 min** — short, so a stale/leaked slip cannot be replayed for long. |
 | **Issued by** | `POST /v1/consent/assert` (authenticated) on per-feature full-egress grant → returned to the client, cached **opaquely** per feature. |
 | **Carried on** | request header **`X-Consent-Assertion`** (kept separate from `Authorization`). |
-| **Feature transport** | request header **`X-Feature`** — the client attaches this alongside `X-Consent-Assertion` and `X-Egress-Level` to declare which feature the request pertains to. The request body carries `task_type` + `payload` only; consent/egress metadata stays in headers. (X-Feature transport pinned 2026-06-03) |
+| **Feature transport** | request header **`X-Feature`** — the client attaches this alongside `X-Consent-Assertion` and `X-Egress-Level` to declare which feature the request pertains to. The request body carries `task_type` + `payload` only; consent/egress metadata stays in headers. (X-Feature transport pinned 2026-06-05) |
 | **Edge verification** | on `/v1/ai/proxy`: valid HMAC **and** not expired **and** `user_id`==caller **and** `assertion.feature`==`X-Feature` (header mismatch ⇒ force redacted) **and** `level=="full"` → permit full payload; **any failure ⇒ force redacted** (structural payload cap rejects full-only fields). Fail-closed. |
 | **Revocation** | short TTL + client dropping the cached slip on revoke. A `nonce`/`jti` one-time-use denylist is **deferred** (overkill at this TTL and scale) — recorded as a hardening TODO. |
 
