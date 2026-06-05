@@ -47,6 +47,7 @@ the decisions and specs actually state.
 | [ADR-0007](./0007-multi-currency-from-mvp.md) | Multi-currency from MVP (integer minor units + ISO-4217; cached user-editable FX) | Accepted | Gate-3 14 |
 | [ADR-0008](./0008-egress-enforcement-mode-split.md) | Egress-enforcement mode-split and the INV-EGR-03 amendment | Accepted | Gate-5 23, 24, 25 |
 | [ADR-0009](./0009-optional-encrypted-export.md) | Optional encrypted export in MVP; balanced passphrase policy | Accepted | Gate-5 26, 27 |
+| [ADR-0010](./0010-dependency-security-baseline-and-scanning-policy.md) | Dependency security baseline and scanning policy | Accepted | `/dep-audit` 2026-06-03 |
 
 ---
 

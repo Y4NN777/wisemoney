@@ -23,6 +23,7 @@
 | [incident-response.md](./incident-response.md) | Detecting, triaging, and responding to security/operational incidents. | Stub |
 | [key-and-secrets.md](./key-and-secrets.md) | Managing the JWT signing key, provider keys, and DB credentials (SOPS/age). | Stub |
 | [provider-terms-verification.md](./provider-terms-verification.md) | Launch-blocker verification of AI provider data-handling terms (S0). | Stub |
+| [dependency-scanning.md](./dependency-scanning.md) | Installing osv-scanner; manifest and binary scanning; reading results; toolchain pitfalls. | Active |
 
 ---
 

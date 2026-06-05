@@ -1,0 +1,138 @@
+# WiseMoney — GitLab CI
+#
+# SCOPE: security:scan stage only.
+# Build, test, and deploy stages are a later Eliashib (Migdal Team Lead) decision;
+# adding them here before the pipeline architecture is designed would be scope
+# expansion (MISHKAN standard §4). This file will be extended in a dedicated
+# pipeline-design task.
+#
+# Merge gate: the security:scan job must pass before any MR can merge (configure
+# in GitLab → Settings → Merge requests → "Pipelines must succeed"). Ira owns this
+# gate per Migdal rules.
+
+# ---------------------------------------------------------------------------
+# Global defaults
+# ---------------------------------------------------------------------------
+default:
+  # Pinned Alpine for the scan job shell — no :latest (MISHKAN harness primitive).
+  # Update digest alongside any osv-scanner version bump (run /dep-audit).
+  image: alpine:3.21.3
+  tags:
+    - docker
+
+# ---------------------------------------------------------------------------
+# Stage declaration
+# ---------------------------------------------------------------------------
+stages:
+  - security:scan
+
+# ---------------------------------------------------------------------------
+# Variables
+# ---------------------------------------------------------------------------
+variables:
+  # osv-scanner release to install — pinned, no :latest.
+  # Bump this together with the go.mod / pnpm-lock.yaml verified version.
+  # Current: v2.3.8, verified clean against both surfaces on 2026-06-03.
+  OSV_VERSION: "2.3.8"
+
+  # Expected SHA256 for the linux/amd64 binary at this release.
+  # Source: https://github.com/google/osv-scanner/releases/tag/v2.3.8
+  # Regenerate with: sha256sum osv-scanner_linux_amd64
+  # This value MUST be updated whenever OSV_VERSION changes.
+  OSV_SHA256: "bc98e15319ed0d515e3f9235287ba53cdc5535d576d24fd573978ecfe9ab92dc"
+
+  # Path where the edge binary will land once the build stage exists.
+  # Assumption: the build stage will publish the binary as a job artifact at
+  # this path. Y4NN must confirm this path when the build stage is wired in.
+  EDGE_BINARY_PATH: "dist/edge"
+
+# ---------------------------------------------------------------------------
+# Manifest scan
+# Scans go.mod (edge) + pnpm-lock.yaml (web) for known vulnerabilities.
+# This is the fast, dependency-level gate that runs on every MR.
+# ---------------------------------------------------------------------------
+osv-scan-manifests:
+  stage: security:scan
+  environment:
+    name: ci
+  before_script:
+    - apk add --no-cache curl ca-certificates
+    # Download the pinned osv-scanner binary and verify its SHA256 before use.
+    # Mirrors the local install pattern verified on 2026-06-03 (dep-audit).
+    - |
+      curl -fsSL \
+        "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_linux_amd64" \
+        -o /usr/local/bin/osv-scanner
+      curl -fsSL \
+        "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_SHA256SUMS" \
+        -o /tmp/osv-scanner_SHA256SUMS
+      # Verify: extract only the line for the amd64 binary, then check it.
+      grep "osv-scanner_linux_amd64$" /tmp/osv-scanner_SHA256SUMS \
+        | sed 's|osv-scanner_linux_amd64|/usr/local/bin/osv-scanner|' \
+        | sha256sum -c -
+      chmod +x /usr/local/bin/osv-scanner
+  script:
+    # Scan Go dependency manifest (edge service — Postgres auth + rate-limit path).
+    # pgx/v5 and golang.org/x/crypto are on this path; any regression here is
+    # immediately user-data-impacting (CVE-2026-33816 CVSS 9.8 was the precedent).
+    - |
+      echo "=== Manifest scan: services/edge/go.mod ==="
+      osv-scanner scan --lockfile "services/edge/go.mod"
+
+    # Scan JS lockfile (frontend — vite chain; GHSA-5xrq-8626-4rwp was CVSS 9.8).
+    - |
+      echo "=== Manifest scan: pnpm-lock.yaml ==="
+      osv-scanner scan --lockfile "pnpm-lock.yaml"
+  # osv-scanner exits non-zero on any vulnerability finding; GitLab treats a
+  # non-zero exit as job failure, which blocks the MR. No extra fail logic needed.
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+# ---------------------------------------------------------------------------
+# Binary scan (AUTHORITATIVE gate)
+#
+# Reads the real embedded Go stdlib version from the compiled binary via
+# debug/buildinfo. This is immune to the go.mod directive-vs-toolchain gap:
+# a go.mod can declare `go 1.25.0` while the builder toolchain is older —
+# the binary tells the truth. The manifest scan above cannot catch this.
+#
+# This job is gated behind `rules: exists` — it activates only when the edge
+# binary artifact exists at EDGE_BINARY_PATH. Once Eliashib wires the build
+# stage and publishes the artifact, this job becomes active automatically.
+# No code change required here at that point.
+# ---------------------------------------------------------------------------
+osv-scan-binary:
+  stage: security:scan
+  environment:
+    name: ci
+  needs:
+    # When the build stage lands, add the build job name here so this job
+    # receives the artifact. Example: needs: ["build-edge"]
+    # Left empty for now — the job is inert until the binary exists.
+    []
+  before_script:
+    - apk add --no-cache curl ca-certificates
+    - |
+      curl -fsSL \
+        "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_linux_amd64" \
+        -o /usr/local/bin/osv-scanner
+      curl -fsSL \
+        "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_SHA256SUMS" \
+        -o /tmp/osv-scanner_SHA256SUMS
+      grep "osv-scanner_linux_amd64$" /tmp/osv-scanner_SHA256SUMS \
+        | sed 's|osv-scanner_linux_amd64|/usr/local/bin/osv-scanner|' \
+        | sha256sum -c -
+      chmod +x /usr/local/bin/osv-scanner
+  script:
+    - |
+      echo "=== Binary scan: ${EDGE_BINARY_PATH} (authoritative stdlib gate) ==="
+      osv-scanner scan binary "${EDGE_BINARY_PATH}"
+  rules:
+    # Only run when the binary artifact is present. Inert until build stage lands.
+    - exists:
+        - "$EDGE_BINARY_PATH"
+      if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - exists:
+        - "$EDGE_BINARY_PATH"
+      if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'

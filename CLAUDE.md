@@ -59,6 +59,16 @@
   *Follow-ups:* `/dep-audit` before `pnpm install` (frontend added `@tanstack/react-query`
   + `@tanstack/react-router` beyond the zustand brief). **Routing lib DECIDED 2026-06-03:**
   TanStack Router confirmed/kept (Y4NN) — aligns with Panim rule; no `react-router` present.
+- **T-S0-04** — `/dep-audit` (*done 2026-06-03*): cleared 2 CVSS-9.8 finds + more.
+  Edge: pgx 5.7.4→5.9.2 (CVE-2026-33816), x/crypto 0.38.0→0.52.0 (argon2 path),
+  chi 5.2.1→5.2.4, Go 1.23→1.25.11 (`toolchain` directive + Dockerfile, clears 51 stdlib).
+  Frontend: vite→^7.3.5 / vitest→^4.1.8 (9.8) / plugin-react→^5.2.0 / vite-plugin-pwa→^1.3.0;
+  Vite-7 target for portfolio alignment. osv-scanner v2.3.8 → both surfaces clean.
+  Added `GOTOOLCHAIN=local`, `.gitlab-ci.yml` `security:scan` stage, ADR-0010, scanning
+  runbook, CHANGELOG. *Carry-forward (Migdal):* wire the edge **build stage** so the CI
+  **binary-scan** gate (`osv-scanner scan binary`, authoritative) activates — currently
+  guarded by `exists: dist/edge`; confirm `EDGE_BINARY_PATH` when build lands. **Y4NN runs
+  `go mod tidy` (done) + commits; no installs/deploys by AI.**
 - **Consent-assertion wire shape — PINNED** (ARCHITECTURE §10a): HMAC-SHA256, dedicated
   `CONSENT_SIGNING_KEY` (must differ from JWT key), `user_id`/`feature`/`level`/`exp`(~5m),
   `X-Consent-Assertion` header, fail-closed→redacted. Wired in config/consent/router +
