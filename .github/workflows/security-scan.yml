@@ -1,0 +1,151 @@
+# WiseMoney — GitHub Actions Security Scan
+#
+# SCOPE: security gate only (manifest scan + binary scan).
+# This is the foundational security gate produced by the dep-audit (T-S0-04).
+# Build, test, and deploy stages are a later Eliashib (Migdal Team Lead) decision;
+# adding them before the pipeline architecture is designed is scope expansion
+# (MISHKAN standard §4). This file will be extended in a dedicated pipeline-design
+# task.
+#
+# Merge gate: the osv-scan job must pass before any PR can merge. Configure under
+# Repository → Settings → Branches → Branch protection rules →
+# "Require status checks to pass before merging" → add "osv-scan". Ira owns this
+# gate per Migdal rules.
+#
+# Ported from .gitlab-ci.yml on 2026-06-05. The repo is GitHub-only (Y4NN777/
+# wisemoney); the GitLab file has been removed. Logic, comments, and intent are
+# preserved faithfully.
+
+name: security-scan
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+# Least-privilege permissions (Migdal rule). The scan jobs need read-only access
+# to repo contents; nothing else. Declared at workflow level so every job
+# inherits the restriction by default.
+permissions:
+  contents: read
+
+# ---------------------------------------------------------------------------
+# Variables (mirrors .gitlab-ci.yml variables block)
+# ---------------------------------------------------------------------------
+env:
+  # osv-scanner release to install — pinned, no :latest.
+  # Bump this together with go.mod / pnpm-lock.yaml verified versions.
+  # Current: v2.3.8, verified clean against both surfaces on 2026-06-03.
+  OSV_VERSION: "2.3.8"
+
+  # Expected SHA256 for the linux/amd64 binary at this release.
+  # Source: https://github.com/google/osv-scanner/releases/tag/v2.3.8
+  # Regenerate with: sha256sum osv-scanner_linux_amd64
+  # This value MUST be updated whenever OSV_VERSION changes.
+  OSV_SHA256: "bc98e15319ed0d515e3f9235287ba53cdc5535d576d24fd573978ecfe9ab92dc"
+
+  # Path where the edge binary will land once the build stage exists.
+  # Assumption: the build stage will publish the binary as an artifact at this
+  # path. Y4NN must confirm this path when Eliashib wires in the build job.
+  # The binary-scan step below is inert until this file exists in the workspace.
+  EDGE_BINARY_PATH: "dist/edge"
+
+# ---------------------------------------------------------------------------
+# Jobs
+# ---------------------------------------------------------------------------
+jobs:
+  osv-scan:
+    name: osv-scan
+    # Pinned to a specific ubuntu version — no ubuntu-latest (:latest rule,
+    # Migdal). Update alongside any major runner deprecation notice.
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        # actions/checkout pinned to commit SHA — no floating tags (supply-chain
+        # rule; ADR-0010). SHA corresponds to v4.2.2 (2024-10-23).
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      # -----------------------------------------------------------------------
+      # Install osv-scanner — pinned binary with SHA256 verification
+      #
+      # Mirrors the install pattern from .gitlab-ci.yml (and the local runbook
+      # verified on 2026-06-03). We download the official SHA256SUMS file from
+      # the same release rather than embedding a hardcoded expected hash inline,
+      # so the verification chain follows the upstream release signing path.
+      # The OSV_SHA256 env var above is kept as a second-factor cross-check
+      # (fail-closed: if the two values diverge, something changed upstream).
+      # -----------------------------------------------------------------------
+      - name: Install osv-scanner v${{ env.OSV_VERSION }} (pinned + verified)
+        run: |
+          curl -fsSL \
+            "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_linux_amd64" \
+            -o /tmp/osv-scanner
+          curl -fsSL \
+            "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_SHA256SUMS" \
+            -o /tmp/osv-scanner_SHA256SUMS
+
+          # Primary verification: check against the upstream SHA256SUMS file.
+          grep "osv-scanner_linux_amd64$" /tmp/osv-scanner_SHA256SUMS \
+            | sed 's|osv-scanner_linux_amd64|/tmp/osv-scanner|' \
+            | sha256sum -c -
+
+          # Second-factor cross-check: the pinned expected hash in OSV_SHA256
+          # must match what we just downloaded. If upstream SHA256SUMS was
+          # tampered and the pinned value diverges, this catches it.
+          echo "${OSV_SHA256}  /tmp/osv-scanner" | sha256sum -c -
+
+          chmod +x /tmp/osv-scanner
+          sudo mv /tmp/osv-scanner /usr/local/bin/osv-scanner
+
+      # -----------------------------------------------------------------------
+      # Manifest scan
+      #
+      # Scans go.mod (edge service) + pnpm-lock.yaml (web frontend) for known
+      # vulnerabilities. This is the fast, dependency-level gate that runs on
+      # every PR. osv-scanner exits non-zero on any finding; GitHub Actions
+      # treats a non-zero exit as step failure, which fails the job and blocks
+      # the merge gate. No extra fail logic needed.
+      # -----------------------------------------------------------------------
+      - name: "Manifest scan: services/edge/go.mod"
+        # pgx/v5 and golang.org/x/crypto are on this path; any regression is
+        # immediately user-data-impacting (CVE-2026-33816 CVSS 9.8 was the
+        # precedent that seeded this gate).
+        run: |
+          echo "=== Manifest scan: services/edge/go.mod ==="
+          osv-scanner scan --lockfile "services/edge/go.mod"
+
+      - name: "Manifest scan: pnpm-lock.yaml"
+        # JS lockfile (frontend — vite chain; GHSA-5xrq-8626-4rwp was CVSS 9.8).
+        run: |
+          echo "=== Manifest scan: pnpm-lock.yaml ==="
+          osv-scanner scan --lockfile "pnpm-lock.yaml"
+
+      # -----------------------------------------------------------------------
+      # Binary scan (AUTHORITATIVE gate)
+      #
+      # Reads the real embedded Go stdlib version from the compiled binary via
+      # debug/buildinfo. This is immune to the go.mod directive-vs-toolchain
+      # reporting gap: a go.mod can declare `go 1.25.0` while the builder
+      # toolchain is older — the binary tells the truth. The manifest scan above
+      # cannot catch this. See ADR-0010 for the full rationale.
+      #
+      # INERT UNTIL BUILD STAGE LANDS: this step checks for the binary at
+      # EDGE_BINARY_PATH before running. When no binary is present it prints a
+      # clear notice and exits 0 — the step is a no-op. Once Eliashib wires the
+      # build job and publishes the artifact at dist/edge, this step activates
+      # automatically. No code change required here at that point.
+      # Y4NN must confirm EDGE_BINARY_PATH matches the artifact path chosen in
+      # the build job.
+      # -----------------------------------------------------------------------
+      - name: "Binary scan: dist/edge (authoritative stdlib gate)"
+        run: |
+          if [ ! -f "${EDGE_BINARY_PATH}" ]; then
+            echo "NOTICE: edge binary not found at ${EDGE_BINARY_PATH}."
+            echo "Binary scan is inert until the build job publishes the artifact."
+            echo "Activates automatically once Eliashib wires the build stage."
+            exit 0
+          fi
+          echo "=== Binary scan: ${EDGE_BINARY_PATH} (authoritative stdlib gate) ==="
+          osv-scanner scan binary "${EDGE_BINARY_PATH}"
