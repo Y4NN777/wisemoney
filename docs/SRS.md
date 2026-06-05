@@ -5,7 +5,7 @@
 | **Title** | WiseMoney — Software Requirements Specification |
 | **Date** | 2026-06-02 |
 | **Version** | SRS v0.1 (derived from PRD v0.1) |
-| **Revision** | Rev 2026-06-02 — Gate-2: FR-AUTH added; multi-tenant proxy; multi-provider MVP; CSV/XLSX/JSON export; consent in localStorage. |
+| **Revision** | Rev 2026-06-02 — Gate-2: FR-AUTH added; multi-tenant proxy; multi-provider MVP; CSV/XLSX/JSON export; consent in localStorage. Rev 2026-06-03 — OQ-06 resolved (client auth token storage; see §15). |
 | **Status** | Draft |
 | **Owner** | Nathan (software architecture) |
 | **Source** | `docs/PRD.md` v0.1; `docs/intake/intent-v0.1.md` v0.1 |
@@ -766,18 +766,26 @@ and FR-AIORCH-05.
 
 ### Genuinely new open question introduced by the multi-tenant change
 
-**OQ-06 — Authentication mechanism for FR-AUTH.** The SRS requires that users
-authenticate to use the managed proxy (FR-AUTH-01) but does not specify the
-mechanism (OAuth2, email/password + JWT, magic-link, etc.), who issues credentials,
-or how the client presents its identity token to the proxy. This decision has
-CONTRACT and THREAT_MODEL implications: it determines the attack surface of the
-auth layer, what the proxy must validate on each request, and what credential
-material the client holds. Zadok and Benaiah need a decision from Y4NN before the
-CONTRACT can specify the auth invariants for the proxy.
+**OQ-06 — RESOLVED (Y4NN decision, 2026-06-03).** Client auth token storage and
+session lifecycle for managed mode are now specified. The access token (15-minute
+JWT) is held exclusively in non-persistent JavaScript module memory — never in
+localStorage, sessionStorage, document.cookie, or any unencrypted persistent
+store. The refresh token (long-lived opaque, rotating) is persisted exclusively in
+the AES-GCM-encrypted IndexedDB store under the same master key as financial data
+and BYO key material, readable only after WebAuthn/passphrase unlock. The
+managed-edge session is coupled to store unlock state: when locked, no managed-edge
+calls and no background token refresh occur; re-acquisition is transparent on
+unlock. This coupling is correct by design (INV-PERS-01 and the encryption model
+both require an unlocked store for managed-edge operation). These decisions
+introduce no wire-format change — JSON body tokens with Authorization: Bearer are
+preserved. The edge is additionally obligated to implement RFC 6749 rotation
+reuse-detection (invalidate entire token family on presentation of a
+previously-rotated token). Full invariant text: CONTRACT INV-AUTH-06 and
+INV-AUTH-07. Architecture detail: ADR-0012 (Client auth session and token
+storage).
 
 ---
 
-*End of SRS v0.1 Rev 2026-06-02. Next in sequence: CONTRACT (Zadok). This document
-owns WHAT/qualitative-HOW-MUCH. Schemas, invariants, and API guarantees begin with
-Zadok. Note for Zadok: OQ-06 (proxy auth mechanism) requires a Y4NN decision before
-the auth invariants can be specified.*
+*End of SRS v0.1 Rev 2026-06-03. This document owns WHAT/qualitative-HOW-MUCH.
+Schemas, invariants, and API guarantees belong to CONTRACT (Zadok). All open
+questions in §15 are resolved.*

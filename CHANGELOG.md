@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   security baseline and scanning policy.
 - `docs/adr/0011-mvp-ai-provider-strategy-managed-redacted-byo-key-full-egress.md` —
   MVP provider strategy (T-S0-02 verification outcome).
+- `docs/adr/0012-client-auth-session-and-token-storage.md` — client token storage
+  decision (resolves SRS OQ-06).
 - `docs/runbooks/dependency-scanning.md` — how-to for running the scans.
 
 ### Changed
@@ -51,6 +53,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (ToS §4.3 prohibits financial data + trains with no opt-out); paid managed deferred.
   ARCHITECTURE §9a/§9b, CONTRACT §8 (MVP-scoping note, INV-EGR-03a unchanged),
   THREAT_MODEL §2.1 + §7 residual updated.
+- **Client auth token storage (ADR-0012, resolves OQ-06)** — access JWT held in-memory
+  only; refresh token in the AES-GCM-encrypted IndexedDB store (master-key/WebAuthn-gated);
+  session coupled to store-unlock; no edge wire change. Adds CONTRACT INV-AUTH-06/07;
+  escalates M-EGR-04 (strict CSP/SRI) to a primary MVP control; adds an edge
+  refresh-rotation reuse-detection obligation (M-AUTH-05).
 - **Frontend** — `@vitejs/plugin-react` ^4.3.1 → ^5.2.0, `vite-plugin-pwa` ^0.20.5 →
   ^1.3.0 (required peers for Vite 7).
 - Routing library decision recorded: TanStack Router confirmed (no `react-router`).

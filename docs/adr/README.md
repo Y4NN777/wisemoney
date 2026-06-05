@@ -49,6 +49,7 @@ the decisions and specs actually state.
 | [ADR-0009](./0009-optional-encrypted-export.md) | Optional encrypted export in MVP; balanced passphrase policy | Accepted | Gate-5 26, 27 |
 | [ADR-0010](./0010-dependency-security-baseline-and-scanning-policy.md) | Dependency security baseline and scanning policy | Accepted | `/dep-audit` 2026-06-03 |
 | [ADR-0011](./0011-mvp-ai-provider-strategy-managed-redacted-byo-key-full-egress.md) | MVP AI provider strategy — managed redacted-only via free models; full-egress BYO-key only; NVIDIA hosted dropped | Accepted | T-S0-02; ARCHITECTURE §9a/§9b; THREAT_MODEL §2.1, §7; 2026-06-03 |
+| [ADR-0012](./0012-client-auth-session-and-token-storage.md) | Client auth session and token storage | Accepted | SRS OQ-06; CONTRACT INV-AUTH-06/07; THREAT_MODEL §2.4, §6; 2026-06-03 |
 
 ---
 

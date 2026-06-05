@@ -87,6 +87,14 @@
   `CONSENT_SIGNING_KEY` (must differ from JWT key), `user_id`/`feature`/`level`/`exp`(~5m),
   `X-Consent-Assertion` + `X-Feature` headers, fail-closed→redacted. Wired end-to-end on the
   edge (config/consent/egress/proxy/router). Nonce-replay denylist deferred (short TTL; §10a).
+- **T-S0-06** — Client auth-session **DECISION recorded** (*2026-06-03*, OQ-06 RESOLVED →
+  ADR-0012): access JWT in-memory only; refresh token in AES-GCM-encrypted IndexedDB
+  (master-key/WebAuthn-gated); session coupled to store-unlock; **no edge wire change**.
+  Pinned: **INV-AUTH-06/07** (CONTRACT §5); M-EGR-04 (strict CSP/SRI) **escalated to a
+  PRIMARY MVP control** (THREAT_MODEL §2.4/§6); edge **refresh-rotation reuse-detection**
+  obligation added (M-AUTH-05, RFC 6749). *Implementation pending (Phase 2):* client session
+  module (Panim) + edge refresh persistence/reuse-detection (Yasad; edge refresh is a stub).
+  *Prereq found:* no client auth/session module exists yet — this is the next dev slice.
 
 ### Blockers
 

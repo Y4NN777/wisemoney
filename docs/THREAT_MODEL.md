@@ -3,8 +3,8 @@
 | Field   | Value                                                                              |
 | ------- | ---------------------------------------------------------------------------------- |
 | Title   | WiseMoney — Threat Model                                                       |
-| Date    | 2026-06-02; amended 2026-06-03 (§7 residual risk added, §2.1 provider list updated) |
-| Version | THREAT_MODEL v0.1 rev 2026-06-03                                                   |
+| Date    | 2026-06-02; amended 2026-06-03 (§7 residual risk added, §2.1 provider list updated); amended 2026-06-03 (§2.4 M-EGR-04 escalated to primary; §6 M-EGR-04/M-AUTH-05 extended — ADR-0012) |
+| Version | THREAT_MODEL v0.1 rev 2026-06-03b                                                  |
 | Status  | Draft                                                                              |
 | Owner   | Benaiah (DevSecOps / Mishmar)                                                      |
 | Source  | PRD v0.1; SRS v0.1 Rev 2026-06-02; CONTRACT v0.1; ARCHITECTURE v0.1               |
@@ -76,8 +76,8 @@ profiles. This is not cosmetic.
 | Managed provider API keys          | Critical    | Go edge env/vault | Managed  |
 | JWT signing key                    | Critical    | Go edge env/vault | Managed  |
 | Argon2id password hashes           | High        | Postgres          | Managed  |
-| JWT access tokens (client-held)    | High        | Browser memory    | Managed  |
-| Refresh tokens                     | High        | Browser storage   | Managed  |
+| JWT access tokens (client-held)    | High        | JS module memory only (no persistent storage — ADR-0012) | Managed  |
+| Refresh tokens                     | High        | IndexedDB (AES-GCM encrypted, master-key/WebAuthn gated — ADR-0012) | Managed  |
 | Consent state                      | Medium      | localStorage      | Both     |
 | Export files (JSON/CSV/XLSX)       | Critical    | Filesystem/cloud  | Both     |
 | Rate-limit metadata                | Low         | Postgres          | Managed  |
@@ -283,14 +283,22 @@ INV-EGR-03. **Boundary:** TB-01 (user-to-client) and implicitly TB-02/TB-04.
 - **Root cause 2 (infrastructural):** the PWA assembles AI contexts client-side
   from IndexedDB data; a script that can both flip consent and trigger an AI
   call has a full exfiltration path.
-- **Mitigation — primary:** strict Content Security Policy (CSP) to prevent XSS.
-  No inline scripts. All third-party dependencies pinned and integrity-checked
-  (SRI hashes). These are the controls that make XSS hard, which removes the
-  precondition.
+- **Mitigation — primary (M-EGR-04, PRIMARY MVP CONTROL as of 2026-06-03):**
+  strict Content Security Policy (`default-src 'self'`, `script-src 'self'`, no
+  `unsafe-inline`, no `unsafe-eval`); SRI on all third-party scripts; service-worker
+  bundle integrity. This mitigation is escalated from defence-in-depth to a
+  **primary MVP control** by ADR-0012 (2026-06-03). The reason: with the access
+  token stored exclusively in JavaScript module scope and the refresh token
+  decryptable via the in-session master key + Web Crypto, any XSS executing on
+  the PWA origin during an active session can reach both tokens. CSP/SRI is the
+  control that prevents XSS from executing at all. Without it, the token storage
+  strategy does not deliver the isolation it is designed to provide. M-EGR-04 is
+  an MVP gate — it must be in place before any user can authenticate in managed
+  mode. See also §6.
 - **Mitigation — secondary:** the Go edge structural payload cap (AQ-01
-  resolution, §4) closes the managed-mode exfiltration path even if XSS succeeds.
-  BYO-key mode cannot have this secondary; therefore CSP is especially important
-  for BYO-key users.
+  resolution, §3) closes the managed-mode financial-data exfiltration path even
+  if XSS succeeds in obtaining a token. BYO-key mode cannot have this secondary
+  (no edge in the path); therefore CSP is especially important for BYO-key users.
 
 ---
 
@@ -693,12 +701,12 @@ the egress subsystem.
 | M-EGR-01    | Consent flag tampered to escalate egress       | Edge structural payload cap + signed consent assertion for full-egress (§3) | Go edge | MVP |
 | M-EGR-02    | localStorage cleared → defaults to full-egress | Clear = not-granted; re-prompt required; never assume granted | Consent subsystem | MVP |
 | M-EGR-03    | Provider-side retention outside operator control | Disclose to user; verify provider terms; link from consent prompt | UX + ops | MVP |
-| M-EGR-04    | XSS flips consent + triggers AI call          | Strict CSP, SRI on all third-party assets, no inline script  | PWA build / infra      | MVP |
+| M-EGR-04    | XSS flips consent + triggers AI call; XSS reaches in-memory access token or Web Crypto-decryptable refresh token (ADR-0012, 2026-06-03) | **PRIMARY MVP CONTROL** (escalated from defence-in-depth — ADR-0012). Strict CSP (`default-src 'self'`, `script-src 'self'`, no `unsafe-inline`, no `unsafe-eval`); SRI on all third-party scripts; service-worker bundle integrity. MVP gate: must be active before any user authenticates in managed mode. | PWA build / infra | MVP |
 | M-AUTH-01   | Credential stuffing / brute-force             | Per-IP + per-account rate limit + lockout on /login          | Go edge                | MVP |
 | M-AUTH-02   | JWT forgery via leaked signing key            | Key from secrets manager (SOPS/age), never committed        | Ops / Docker Compose   | MVP |
 | M-AUTH-03   | Account enumeration                           | Constant-time comparison; uniform error messages            | Go edge                | MVP |
 | M-AUTH-04   | Password-reset token attack                   | 128-bit random token, single-use, 15-min TTL, user-session-bound | Go edge           | MVP |
-| M-AUTH-05   | Long JWT window after token theft             | 15-min access JWT + rotating refresh token                  | Go edge                | MVP |
+| M-AUTH-05   | Long JWT window after token theft; stolen refresh token used in parallel after rotation | 15-min access JWT + rotating refresh token. **Refresh-rotation reuse detection required (ADR-0012, 2026-06-03):** if a rotated (invalidated) refresh token is presented to the edge, the entire token family for that user MUST be invalidated and full re-authentication forced (RFC 6749 §10.4). Without this, a stolen refresh token generates a parallel valid token lineage indefinitely. | Go edge | MVP |
 | M-AUTH-06   | Cross-tenant routing via client-supplied ID   | All routing keyed on JWT `sub` only; no client-supplied user ID trusted | Go edge       | MVP |
 | M-KEY-01    | Weak passphrase enables offline crack         | Enforce min entropy at setup; Argon2id ≥ 64 MiB / 3 iter   | PWA client             | MVP |
 | M-KEY-02    | Passphrase loss = data loss                   | Active in-app export prompts; unambiguous irreversibility warning | PWA client / UX    | MVP |

@@ -3,14 +3,15 @@
 | Field    | Value                                      |
 | -------- | ------------------------------------------ |
 | Title    | WiseMoney — System Contract            |
-| Date     | 2026-06-02; amended 2026-06-03 (§8 provider list + MVP scoping note) |
-| Version  | CONTRACT v0.1 rev 2026-06-03               |
+| Date     | 2026-06-02; amended 2026-06-03 (§8 provider list + MVP scoping note); amended 2026-06-03 (§5 INV-AUTH-06/07 + reuse-detection obligation — OQ-06 resolved) |
+| Version  | CONTRACT v0.1 rev 2026-06-03b              |
 | Status   | Draft                                      |
 | Owner    | Zadok (design-system / contract master)    |
 | Source   | PRD v0.1; SRS v0.1 Rev 2026-06-02         |
 
 Rev 2026-06-02 — Gate-5: INV-EGR-03 amended to mode-split (managed = server-enforced; BYO-key = client-side, user-as-principal) per THREAT_MODEL §5.
 Rev 2026-06-03 — §8 provider list updated (NVIDIA hosted removed; OpenRouter added); MVP-scoping note added recording managed=redacted-only at MVP and deferred full-egress (ADR-0011).
+Rev 2026-06-03b — §5: INV-AUTH-06 (client token storage) and INV-AUTH-07 (session/lock coupling) added; refresh-token reuse-detection obligation noted; §8 "Must not change" list updated. OQ-06 resolved. (Y4NN decision 2026-06-03; ADR-0012.)
 
 > This document states invariants and guarantees that must hold for the lifetime
 > of the system. They are small, precise, and binding. Implementation details
@@ -228,9 +229,47 @@ managed proxy and zero cloud dependency.
 *Why: local-first operation is a user choice, not a degraded mode; requiring auth
 for BYO-key would covertly eliminate the local-only path.*
 
-> Auth mechanism detail (credential storage schema, JWT rotation policy, brute-
-> force defenses, password-reset flow) belongs to ARCHITECTURE and THREAT_MODEL.
-> This CONTRACT binds only the invariants above.
+**INV-AUTH-06 (client token storage — managed mode)** In managed mode, the
+access token (short-lived JWT) is held exclusively in non-persistent JavaScript
+module memory. The refresh token (long-lived opaque, rotating) is persisted
+exclusively in the AES-GCM-encrypted IndexedDB store, under the same master key
+as financial data and BYO key material, readable only after WebAuthn/passphrase
+unlock. Neither token may appear in localStorage, sessionStorage, document.cookie,
+or any other unencrypted or non-module-scoped persistent store, at any point in
+the token lifecycle.
+
+*Why: localStorage and sessionStorage are readable by any same-origin script,
+making tokens stored there trivially extractable via XSS. Auth tokens are live
+credentials with materially higher sensitivity than the consent flag already
+flagged as a Mishmar concern in INV-EGR-03(a). In-memory access tokens with
+encrypted-at-rest refresh tokens is the minimum acceptable posture against the
+XSS surface modelled in THREAT_MODEL T-CONSENT-02 / §2.4.*
+
+**INV-AUTH-07 (session/lock coupling — managed mode)** The client's managed-edge
+session lifecycle is coupled to store unlock state. When the store is locked, no
+managed-edge calls are made and no background token refresh occurs. Token
+re-acquisition happens transparently on unlock. There is no provision for
+background managed-edge activity while the store is locked.
+
+*Why: decoupling session refresh from store lock state would require the refresh
+token to be accessible without unlock — which requires it in an unprotected
+location, collapsing the security property established by INV-AUTH-06. The
+coupling is not a limitation but a necessary consequence of the encryption model;
+financial context (INV-PERS-01) and managed-edge calls both require an unlocked
+store, so they are naturally co-dependent by design.*
+
+> Refresh-token reuse-detection obligation: the edge must detect presentation of a
+> previously-invalidated (rotated) refresh token and respond by invalidating the
+> entire refresh-token family for that user, forcing full re-authentication. This
+> is RFC 6749 rotation reuse-detection. It is an edge implementation obligation
+> binding on ARCHITECTURE; it carries no wire-format change (JSON body +
+> Authorization: Bearer is preserved). Failure to implement reuse-detection removes
+> the security property that makes rotating refresh tokens preferable to long-lived
+> static tokens.
+
+> Auth mechanism detail (credential storage schema, JWT rotation schedule, brute-
+> force defenses, password-reset flow, WebAuthn integration) belongs to ARCHITECTURE
+> and THREAT_MODEL. This CONTRACT binds only the invariants and obligations above.
 
 ---
 
@@ -349,7 +388,8 @@ consent gate (ARCHITECTURE §10a) is already the mechanism.
   server-enforcement and BYO-key client-side-as-accepted-maximum — (INV-EGR-03).
 - Key isolation and encryption-at-rest invariants (INV-KEY-01 through INV-KEY-04).
 - Auth and per-user isolation invariants for the managed proxy
-  (INV-AUTH-01 through INV-AUTH-05).
+  (INV-AUTH-01 through INV-AUTH-05); client token storage and session/lock
+  coupling (INV-AUTH-06, INV-AUTH-07); refresh-token reuse-detection obligation.
 - Offline-first capture and read guarantee (INV-PERS-01).
 - JSON export losslessness (INV-PERS-03).
 - Proxy statelesness with respect to financial data (INV-PROXY-01).
