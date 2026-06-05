@@ -64,15 +64,23 @@
   chi 5.2.1→5.2.4, Go 1.23→1.25.11 (`toolchain` directive + Dockerfile, clears 51 stdlib).
   Frontend: vite→^7.3.5 / vitest→^4.1.8 (9.8) / plugin-react→^5.2.0 / vite-plugin-pwa→^1.3.0;
   Vite-7 target for portfolio alignment. osv-scanner v2.3.8 → both surfaces clean.
-  Added `GOTOOLCHAIN=local`, `.gitlab-ci.yml` `security:scan` stage, ADR-0010, scanning
+  Added `GOTOOLCHAIN=local`, `.github/workflows/security-scan.yml` (GitHub Actions —
+  repo is GitHub-hosted; project override of the Migdal GitLab default), ADR-0010, scanning
   runbook, CHANGELOG. *Carry-forward (Migdal):* wire the edge **build stage** so the CI
   **binary-scan** gate (`osv-scanner scan binary`, authoritative) activates — currently
   guarded by `exists: dist/edge`; confirm `EDGE_BINARY_PATH` when build lands. **Y4NN runs
   `go mod tidy` (done) + commits; no installs/deploys by AI.**
+- **T-S0-05** — Consent gate on `/v1/ai/proxy` (*done 2026-06-03*): `consentSvc.Verify`
+  wired into the proxy handler (Hizkiah); fail-closed→redacted on any verify failure, then
+  structural cap (`egress.Validator`) yields 400 on full-only fields. Feature transport pinned:
+  **`X-Feature` header** (ARCHITECTURE §10a amended). 10 gate tests pass (build+vet+test via
+  golang:1.25.11 container); Uriah QA **PASS** — no bypass path, JWT-sub sole identity, no
+  payload logged. *Client carry-forward:* `apps/web/src/ai/orchestration.ts` managed path must
+  attach `X-Feature` + `X-Consent-Assertion` when implemented (still a stub).
 - **Consent-assertion wire shape — PINNED** (ARCHITECTURE §10a): HMAC-SHA256, dedicated
   `CONSENT_SIGNING_KEY` (must differ from JWT key), `user_id`/`feature`/`level`/`exp`(~5m),
-  `X-Consent-Assertion` header, fail-closed→redacted. Wired in config/consent/router +
-  client store. *Remaining:* wire `consentSvc.Verify` into `/v1/ai/proxy` (egress subsystem).
+  `X-Consent-Assertion` + `X-Feature` headers, fail-closed→redacted. Wired end-to-end on the
+  edge (config/consent/egress/proxy/router). Nonce-replay denylist deferred (short TTL; §10a).
 
 ### Blockers
 

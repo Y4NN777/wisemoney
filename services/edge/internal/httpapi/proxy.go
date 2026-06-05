@@ -2,8 +2,10 @@ package httpapi
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
+	"github.com/y4nn/wisemoney/services/edge/internal/consent"
 	"github.com/y4nn/wisemoney/services/edge/internal/egress"
 	"github.com/y4nn/wisemoney/services/edge/internal/middleware"
 	"github.com/y4nn/wisemoney/services/edge/internal/provider"
@@ -12,7 +14,7 @@ import (
 // ProxyRequest is the body the client sends to /v1/ai/proxy.
 // X-Egress-Level header must be "redacted" or "full" (INV-EGR-03 managed clause).
 // For "full" requests, X-Consent-Assertion must carry a valid server-signed assertion
-// (AQ-01 resolution, THREAT_MODEL §3).
+// and X-Feature must name the requesting feature (AQ-01 resolution, ARCHITECTURE §10a).
 type ProxyRequest struct {
 	// TaskType is one of: "reasoning", "classification", "teaching", "summarization"
 	// (FR-AIORCH-03, ARCHITECTURE §9).
@@ -33,7 +35,10 @@ type ProxyResponse struct {
 	Provider string `json:"provider"`
 }
 
-func newProxyHandler(router *provider.Router, validator *egress.Validator) http.HandlerFunc {
+// newProxyHandler returns the handler for POST /v1/ai/proxy.
+// consentSvc gates full-egress: an HMAC-signed assertion must be present and valid
+// or the request is forced to "redacted" (fail-closed, INV-EGR-03a, ARCHITECTURE §10a).
+func newProxyHandler(router *provider.Router, validator *egress.Validator, consentSvc *consent.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// UserID is extracted from the validated JWT by JWTAuth middleware (INV-AUTH-01).
 		// All routing decisions use JWT sub only — no client-supplied user ID trusted
@@ -44,26 +49,59 @@ func newProxyHandler(router *provider.Router, validator *egress.Validator) http.
 			return
 		}
 
-		egressLevel := r.Header.Get("X-Egress-Level")
-		if egressLevel == "" {
-			egressLevel = "redacted" // fail-safe default (THREAT_MODEL §3 step 3)
+		// -- Egress-level gate (INV-EGR-03a, ARCHITECTURE §10a) ----------------
+		// Default to "redacted" (fail-safe). Only promote to "full" when ALL of:
+		//   1. Client requested "full" via X-Egress-Level.
+		//   2. X-Feature header is present and non-empty.
+		//   3. X-Consent-Assertion header is present, decodes cleanly, and passes
+		//      consentSvc.Verify (HMAC valid, not expired, user_id == JWT sub,
+		//      feature == X-Feature, level == "full").
+		// Any failure forces "redacted" — never outright reject; the structural cap
+		// (validator.Validate) decides whether the payload then passes as redacted.
+		requestedLevel := r.Header.Get("X-Egress-Level")
+		effectiveLevel := "redacted"
+
+		if requestedLevel == "full" {
+			featureHeader := r.Header.Get("X-Feature")
+			assertionHeader := r.Header.Get("X-Consent-Assertion")
+
+			switch {
+			case featureHeader == "":
+				log.Printf("egress-gate: forced redacted; userID=%s feature=<missing> reason=missing X-Feature header", userID)
+
+			case assertionHeader == "":
+				log.Printf("egress-gate: forced redacted; userID=%s feature=%s reason=missing X-Consent-Assertion header", userID, featureHeader)
+
+			default:
+				var assertion consent.ConsentAssertion
+				if err := json.Unmarshal([]byte(assertionHeader), &assertion); err != nil {
+					log.Printf("egress-gate: forced redacted; userID=%s feature=%s reason=assertion decode error", userID, featureHeader)
+				} else if err := consentSvc.Verify(userID, featureHeader, &assertion); err != nil {
+					log.Printf("egress-gate: forced redacted; userID=%s feature=%s reason=%s", userID, featureHeader, err.Error())
+				} else {
+					effectiveLevel = "full"
+				}
+			}
 		}
 
+		// -- Request body -------------------------------------------------------
 		var req ProxyRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}
 
-		// Egress enforcement: structural payload cap (AQ-01 resolution, INV-EGR-03a).
-		// For "full" egress the consent assertion must also be validated (consent package).
-		// TODO(impl): call validator.Validate(egressLevel, req.Payload, consentAssertion)
-		// and return 400 on violation before forwarding to the provider.
-		_ = validator
-		_ = egressLevel
+		// -- Structural payload cap (AQ-01, INV-EGR-03a) -----------------------
+		// Validate against the effective (possibly downgraded) egress level.
+		// A forced-redacted request carrying full-only fields is rejected 400.
+		if err := validator.Validate(effectiveLevel, req.Payload); err != nil {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+			return
+		}
 
-		// TODO(FR-AIORCH-03, FR-AIORCH-05): route to the appropriate provider adapter
-		// using req.TaskType and the operator routing config; apply cross-provider fallback.
+		// -- Provider dispatch --------------------------------------------------
 		resp, err := router.Dispatch(r.Context(), userID, req.TaskType, req.Payload)
 		if err != nil {
 			// Graceful degradation: AI unavailable must not affect Financial State (INV-PROXY-04).

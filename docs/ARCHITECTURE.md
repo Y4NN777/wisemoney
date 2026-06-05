@@ -390,7 +390,8 @@ client.
 | **TTL** | `CONSENT_ASSERTION_TTL` ≈ **5 min** — short, so a stale/leaked slip cannot be replayed for long. |
 | **Issued by** | `POST /v1/consent/assert` (authenticated) on per-feature full-egress grant → returned to the client, cached **opaquely** per feature. |
 | **Carried on** | request header **`X-Consent-Assertion`** (kept separate from `Authorization`). |
-| **Edge verification** | on `/v1/ai/proxy`: valid HMAC **and** not expired **and** `user_id`==caller **and** `feature`==request's feature **and** `level=="full"` → permit full payload; **any failure ⇒ force redacted** (structural payload cap rejects full-only fields). Fail-closed. |
+| **Feature transport** | request header **`X-Feature`** — the client attaches this alongside `X-Consent-Assertion` and `X-Egress-Level` to declare which feature the request pertains to. The request body carries `task_type` + `payload` only; consent/egress metadata stays in headers. (X-Feature transport pinned 2026-06-03) |
+| **Edge verification** | on `/v1/ai/proxy`: valid HMAC **and** not expired **and** `user_id`==caller **and** `assertion.feature`==`X-Feature` (header mismatch ⇒ force redacted) **and** `level=="full"` → permit full payload; **any failure ⇒ force redacted** (structural payload cap rejects full-only fields). Fail-closed. |
 | **Revocation** | short TTL + client dropping the cached slip on revoke. A `nonce`/`jti` one-time-use denylist is **deferred** (overkill at this TTL and scale) — recorded as a hardening TODO. |
 
 Until the proxy handler wires `consentSvc.Verify(...)`, `/v1/ai/proxy` MUST treat

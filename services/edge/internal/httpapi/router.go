@@ -69,12 +69,10 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool) http.Handler {
 		providerRouter := provider.NewRouter(cfg)
 		egressValidator := egress.NewValidator()
 
-		// TODO(egress-subsystem): pass consentSvc into the proxy handler so a
-		// full-egress request is gated by consentSvc.Verify(userID, feature, assertion)
-		// reading the X-Consent-Assertion header — absent/invalid ⇒ force redacted
-		// (structural cap). See ARCHITECTURE §10a. Until wired, /v1/ai/proxy must
-		// treat every request as redacted (fail-closed, INV-EGR-03a).
-		r.Post("/v1/ai/proxy", newProxyHandler(providerRouter, egressValidator))
+		// consentSvc gates full-egress in the proxy handler: valid HMAC + not
+		// expired + user_id == JWT sub + feature == X-Feature + level == "full"
+		// required; any failure forces redacted (INV-EGR-03a, ARCHITECTURE §10a).
+		r.Post("/v1/ai/proxy", newProxyHandler(providerRouter, egressValidator, consentSvc))
 		r.Post("/v1/consent/assert", consentSvc.HandleAssert)
 	})
 

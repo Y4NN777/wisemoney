@@ -26,10 +26,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Edge — consent gate on `POST /v1/ai/proxy`** — `consentSvc.Verify` wired into the
+  proxy handler (ARCHITECTURE §10a, INV-EGR-03a). Full-egress requires a valid, unexpired,
+  signature-correct assertion bound to the caller's JWT sub, the `X-Feature` header, and
+  `level="full"`; any failure forces redacted and the structural cap rejects full-only
+  fields with 400. Fail-closed; no payload logged (INV-PROXY-02). 10 gate tests.
+- **`X-Feature` request header** — declares the feature a `/v1/ai/proxy` request pertains
+  to (ARCHITECTURE §10a). Sibling to `X-Egress-Level` / `X-Consent-Assertion`.
 - `GOTOOLCHAIN=local` in the edge Dockerfile builder — hermetic build, no surprise
   toolchain auto-download.
-- `.gitlab-ci.yml` `security:scan` stage — osv-scanner v2.3.8 (pinned, SHA256-verified)
-  manifest scan + authoritative binary scan; fails on new critical/high.
+- `.github/workflows/security-scan.yml` (GitHub Actions) — osv-scanner v2.3.8 (pinned,
+  SHA256-verified) manifest scan + authoritative binary scan; fails on new critical/high.
 - `docs/adr/0010-dependency-security-baseline-and-scanning-policy.md` — dependency
   security baseline and scanning policy.
 - `docs/runbooks/dependency-scanning.md` — how-to for running the scans.
