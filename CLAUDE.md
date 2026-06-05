@@ -50,9 +50,15 @@
   *Carry-forward (implementation-time):* DQ-01 projection-staleness rebuild strategy;
   DQ-02 atomic key-rotation. (DQ-03 export format — resolved: decrypted portable JSON;
   encrypted variant = passphrase-wrapped; keyMeta + BYO keys excluded from plaintext.)
-- **T-S0-02** — Verify and link AI provider data-handling terms (Gemini · NVIDIA
-  NIM · OpenAI): retention + model-training opt-out. **Launch-blocker** (Gate-5
-  decision 28; `docs/runbooks/provider-terms-verification.md`). Ops/legal.
+- **T-S0-02** — AI provider data-handling terms (*verified 2026-06-03*): OpenAI API
+  (no-train default, 30d), Gemini paid (no-train, 55d) / free (TRAINS → banned), NVIDIA
+  hosted (trains + §4.3 prohibits financial data → **dropped**), OpenRouter (free models
+  require training-opt-in → redacted-only). **Strategy DECIDED → ADR-0011:** managed =
+  free models REDACTED-only (OpenRouter + Gemini-free); full-egress = **BYO-key only**;
+  paid managed deferred. Records: ARCH §9a/§9b, CONTRACT §8, THREAT_MODEL §2.1/§7, runbook.
+  *Remaining (Y4NN/ops, gates launch of managed full-egress only):* legal sign-off;
+  consent-UI provider naming; chase UNVERIFIED items (OpenAI ZDR financial eligibility,
+  NVIDIA prod subscription, OpenRouter toggle/ZDR free list, region/GDPR).
 - **T-S0-03** — Scaffold (*done*): `apps/web` (React/TS PWA, 27 files) + `services/edge`
   (Go, 22 files) + root contract (compose, env, README, SECURITY). Pinned, idiomatic,
   typed stubs citing FR/INV; **no installs/builds run** — run sequence in `README.md`.
@@ -85,7 +91,8 @@
 ### Blockers
 
 <!-- raised by any agent; Mishmar flags carry highest priority -->
-- None blocking development. (T-S0-02 is a *launch*-blocker, not a dev-blocker.)
+- None blocking development. (T-S0-02 verified + strategy decided (ADR-0011); residual
+  *launch*-gate is now only managed full-egress, which is deferred — so not blocking MVP.)
 
 ### Open flags
 

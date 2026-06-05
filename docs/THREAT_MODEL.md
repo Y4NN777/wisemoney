@@ -3,8 +3,8 @@
 | Field   | Value                                                                              |
 | ------- | ---------------------------------------------------------------------------------- |
 | Title   | WiseMoney — Threat Model                                                       |
-| Date    | 2026-06-02                                                                         |
-| Version | THREAT_MODEL v0.1                                                                  |
+| Date    | 2026-06-02; amended 2026-06-03 (§7 residual risk added, §2.1 provider list updated) |
+| Version | THREAT_MODEL v0.1 rev 2026-06-03                                                   |
 | Status  | Draft                                                                              |
 | Owner   | Benaiah (DevSecOps / Mishmar)                                                      |
 | Source  | PRD v0.1; SRS v0.1 Rev 2026-06-02; CONTRACT v0.1; ARCHITECTURE v0.1               |
@@ -128,10 +128,17 @@ whose data-handling practices are outside the user's control once egress occurs.
     deliberately allows full egress with consent. The risk is real and accepted
     by design. It must be named plainly and disclosed to the user — it cannot be
     engineered away.
-  - **Must verify:** each provider's (Gemini, NVIDIA NIM, OpenAI) current data
-    retention and model-training opt-out terms must be checked before MVP launch.
-    Do not assert specifics here; provider terms change. Flag in onboarding and
-    in the consent prompt exactly which provider the feature routes to.
+  - **Must verify (updated 2026-06-03):** provider terms are partially resolved
+    (ADR-0011): NVIDIA hosted API is dropped (terms breach; trains with no
+    opt-out, ToS §4.3 prohibits financial data). MVP managed-mode providers are
+    OpenRouter free-tier and Gemini free-tier — both train on data as a condition
+    of free access; this is accepted for redacted/aggregate egress only (see §7
+    and ARCHITECTURE §9a). Full-egress in managed mode is deferred; when a paid
+    no-train provider is configured (OpenAI API, Gemini paid + ZDR, or OpenRouter
+    + data_collection:deny), its retention terms must be verified and linked from
+    the consent prompt before activating the full-egress path. T-S0-02 remains a
+    launch-blocker for the full-egress managed path; it is not a dev-blocker for
+    the MVP redacted-only managed path.
 
 #### D — Denial of service: not applicable to egress as a standalone vector.
 
@@ -718,6 +725,7 @@ product at this scale (personal-finance, tens–hundreds of users).
 | Risk                                    | Why accepted                                                                                     |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | Provider-side retention/training on full-egress data | Irreducible once data egresses. Mitigated by disclosure, consent, and verified provider terms. The user consciously opted in. |
+| Free-model training on managed-mode redacted/aggregate data (2026-06-03) | MVP managed mode routes to free-tier models (OpenRouter free, Gemini free) whose upstream providers require training/logging enabled as a condition of free access. Because managed-mode egress is structurally capped at aggregate/redacted (no individual amounts, dates, merchants, notes — INV-EGR-01), the training surface is aggregate statistical context only. This is a marginal residual layered on the existing I-EGR-01 accepted risk. It does not extend to raw financial PII, which is unreachable in managed mode at MVP. Accepted by design (ADR-0011). |
 | BYO-key mode client-side-only consent enforcement | User is sole principal, key-holder, and data subject. Server enforcement would eliminate the mode's defining property. Disclosed to user. |
 | Passphrase loss = unrecoverable data    | Explicit design choice. Recovery is the JSON export. Mitigated by active export prompts. |
 | Plaintext export file (MVP)            | Disclosed at export time. Encrypted export is post-MVP. |

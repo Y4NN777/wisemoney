@@ -3,8 +3,8 @@
 | Field   | Value                                                        |
 | ------- | ------------------------------------------------------------ |
 | Title   | WiseMoney — Architecture                                 |
-| Date    | 2026-06-02                                                   |
-| Version | ARCHITECTURE v0.1                                            |
+| Date    | 2026-06-02; amended 2026-06-03 (provider strategy, §9)       |
+| Version | ARCHITECTURE v0.1 rev 2026-06-03                             |
 | Status  | Draft                                                        |
 | Owners  | Bezalel (CTO) · Nathan (software architecture)               |
 | Source  | PRD v0.1; SRS v0.1 Rev 2026-06-02; CONTRACT v0.1             |
@@ -100,10 +100,13 @@ solely to hold provider keys the user has chosen not to hold themselves.
   per-user isolation at the limiting layer (INV-AUTH-04).
 - **Request Router** — authenticates → rate-limits → selects provider/model for the
   task type → dispatches. Owns concurrent fan-out and cross-provider fallback.
-- **Provider-Adapter Layer** — one adapter per provider (Gemini, NVIDIA NIM,
-  OpenAI), each translating the internal request into the provider's API and back.
-  Adding a provider is adding an adapter + routing config — no cross-cutting change
-  (FR-AIORCH-01, INV-PROXY-03).
+- **Provider-Adapter Layer** — one adapter per provider, each translating the
+  internal request into the provider's API and back. Adding a provider is adding
+  an adapter + routing config — no cross-cutting change (FR-AIORCH-01,
+  INV-PROXY-03). **MVP managed-mode adapters: OpenRouter (free-model aggregator)
+  and Gemini free tier (eligible for redacted-egress; see §9 for the constraint
+  that makes this safe).** NVIDIA hosted API is **not** in the roster (terms
+  breach — §9). BYO-key adapters are client-side and are user-determined.
 - **Response Normalizer** — collapses every provider response into one internal
   shape before it returns to the client (INV-PROXY-03). No feature depends on a
   provider-specific format.
@@ -301,6 +304,78 @@ Refresh: short-lived access JWT + refresh token rotation (detail → THREAT_MODE
 ---
 
 ## 9. AI orchestration
+
+### 9a. MVP provider strategy (2026-06-03, Y4NN decision)
+
+The provider roster and egress-level split are constrained at MVP by operator
+budget and provider terms. These constraints are architectural inputs, not
+preferences; they determine which adapters exist and which routing paths are live.
+
+**Managed mode — redacted-egress only at MVP.**
+The Go edge routes managed-mode AI requests exclusively to free-tier models.
+Two providers are eligible:
+
+- **OpenRouter** (`:free` model suffix) — acts as a free-model aggregator across
+  multiple upstream providers. OpenRouter itself does not retain or train on
+  request data; however, its free (`:free`) models require enabling
+  logging/training at the upstream provider level as a condition of free access.
+  This is acceptable for managed-mode traffic **only because managed-mode egress
+  is structurally capped at the redacted level** (aggregate period totals,
+  percentages, trend direction — no individual amounts, dates, merchants, or notes
+  per INV-EGR-01). Free-model training on aggregate/redacted data is a marginal,
+  accepted residual risk layered on top of the already-accepted I-EGR-01 residual
+  (THREAT_MODEL §7); it does not extend to raw financial detail. See §9b.
+- **Gemini free tier** — eligible for redacted-egress managed-mode routing under
+  the same logic. **Gemini free tier trains on data and permits human review**;
+  this is acceptable only for the same reason: managed-mode traffic is structurally
+  capped at redacted/aggregate and never contains raw financial PII. Gemini free
+  is **banned for full-egress** (raw financial detail).
+
+**Full-egress — BYO-key only at MVP.**
+Full-egress (raw transaction detail) is available exclusively in BYO-key mode.
+The user holds the key, bears the cost, and owns the provider relationship
+(flow (d), §3). Paid managed full-egress — which would require a paid provider
+with no-train terms (OpenAI paid, Gemini paid + ZDR, or OpenRouter + ZDR deny)
+— is **deferred until operator budget permits**. No managed-mode path to a
+full-egress provider exists at MVP.
+
+**NVIDIA hosted API — dropped.**
+NVIDIA NIM hosted API is removed from the provider roster permanently. NVIDIA's
+ToS §4.3 prohibits uploading financial data and the hosted service trains with no
+opt-out — both a terms breach and a data-handling incompatibility. NVIDIA NIM may
+be revisited only as a self-hosted deployment (operator infra, no training, data
+stays on-premise), which is a Post-MVP ops decision, not an adapter question.
+
+**Provider extensibility preserved.**
+This decision does not alter the provider-adapter extensibility model: adding a
+future provider (e.g. paid OpenAI or OpenRouter+ZDR for managed full-egress) is
+still an adapter + routing config change with no cross-cutting impact (FR-AIORCH-01,
+INV-PROXY-03, §2.2).
+
+### 9b. Consent gate and managed-redacted-only structural guarantee (2026-06-03)
+
+The consent-assertion gate (§10a) is designed around a full-egress / redacted-egress
+split. With no full-egress provider configured in managed mode at MVP, the
+interaction is:
+
+- A managed-mode client that presents a valid consent assertion for full-egress
+  will find **no full-egress provider in the routing table**. The router fails
+  closed to redacted (INV-PROXY-04 graceful degradation path applies: no provider
+  available for the requested level → fail closed).
+- The existing structural payload cap (THREAT_MODEL §3, Option C) independently
+  rejects any full-only fields at the edge, providing a second enforcement layer.
+- The net effect: **managed mode is structurally redacted-only at MVP by the
+  combination of (1) no configured full-egress provider and (2) the structural
+  payload cap.** The consent gate remains in place so the code path is correct
+  when a paid provider is eventually configured; the gate does not need to
+  distinguish "no provider configured" from "consent absent" — both fail to
+  redacted identically.
+- **This does NOT require a new "reject full outright" code path.** The
+  existing fail-closed behavior is the guarantee. The managed-full-egress path
+  becomes active only when a paid provider adapter is added to the routing config
+  — at that point the consent gate is already the enforcement mechanism.
+
+### 9c. Task-type routing and fallback
 
 - **Task-type routing.** Four task types map to provider/model choices via an
   **operator-configurable routing config** (FR-AIORCH-03), no code change to

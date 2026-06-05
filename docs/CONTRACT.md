@@ -3,13 +3,14 @@
 | Field    | Value                                      |
 | -------- | ------------------------------------------ |
 | Title    | WiseMoney — System Contract            |
-| Date     | 2026-06-02                                 |
-| Version  | CONTRACT v0.1                              |
+| Date     | 2026-06-02; amended 2026-06-03 (§8 provider list + MVP scoping note) |
+| Version  | CONTRACT v0.1 rev 2026-06-03               |
 | Status   | Draft                                      |
 | Owner    | Zadok (design-system / contract master)    |
 | Source   | PRD v0.1; SRS v0.1 Rev 2026-06-02         |
 
 Rev 2026-06-02 — Gate-5: INV-EGR-03 amended to mode-split (managed = server-enforced; BYO-key = client-side, user-as-principal) per THREAT_MODEL §5.
+Rev 2026-06-03 — §8 provider list updated (NVIDIA hosted removed; OpenRouter added); MVP-scoping note added recording managed=redacted-only at MVP and deferred full-egress (ADR-0011).
 
 > This document states invariants and guarantees that must hold for the lifetime
 > of the system. They are small, precise, and binding. Implementation details
@@ -321,11 +322,22 @@ layer: client, proxy, persistence, AI orchestration, and export. An implementati
 that satisfies the requirements but violates an invariant is incorrect; fix the
 implementation.
 
-**May change freely:** UI design, component library, provider set (Gemini / NIM /
-OpenAI / others), model choices and routing configuration, FX-rate sourcing
-mechanism (manual / periodic refresh / hybrid), per-feature redaction shapes
-(beyond the FR-CONSENT-07 minimum floor), export column layout in CSV/XLSX,
-dashboard layout and visual design, learning content library, AI prompt templates.
+**May change freely:** UI design, component library, provider set (OpenRouter /
+Gemini / OpenAI / others — NVIDIA hosted excluded; see ARCHITECTURE §9a), model
+choices and routing configuration, FX-rate sourcing mechanism (manual / periodic
+refresh / hybrid), per-feature redaction shapes (beyond the FR-CONSENT-07 minimum
+floor), export column layout in CSV/XLSX, dashboard layout and visual design,
+learning content library, AI prompt templates.
+
+**MVP provider-strategy scoping note (2026-06-03).** At MVP, managed mode serves
+redacted-egress only via free-tier models (OpenRouter free + Gemini free). Full-egress
+in managed mode (which INV-EGR-03(a) governs and requires server-boundary enforcement
+for) is DEFERRED — no paid no-train provider is configured. INV-EGR-03(a) is not
+weakened: managed mode at MVP is structurally redacted-only (a stronger position than
+the invariant requires), enforced by the absence of a full-egress provider in the
+routing config and the structural payload cap (THREAT_MODEL §3). When a paid provider
+is added, INV-EGR-03(a)'s full enforcement obligation activates automatically — the
+consent gate (ARCHITECTURE §10a) is already the mechanism.
 
 **Must not change without invalidating this CONTRACT:**
 - The integer-minor-units monetary representation (INV-MON-01 through INV-MON-05).

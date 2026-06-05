@@ -39,10 +39,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   SHA256-verified) manifest scan + authoritative binary scan; fails on new critical/high.
 - `docs/adr/0010-dependency-security-baseline-and-scanning-policy.md` — dependency
   security baseline and scanning policy.
+- `docs/adr/0011-mvp-ai-provider-strategy-managed-redacted-byo-key-full-egress.md` —
+  MVP provider strategy (T-S0-02 verification outcome).
 - `docs/runbooks/dependency-scanning.md` — how-to for running the scans.
 
 ### Changed
 
+- **AI provider strategy (ADR-0011)** — provider data-handling terms verified
+  (2026-06-03). MVP: managed mode = free models (OpenRouter + Gemini-free),
+  **redacted-egress only**; full-egress = **BYO-key only**; NVIDIA hosted **dropped**
+  (ToS §4.3 prohibits financial data + trains with no opt-out); paid managed deferred.
+  ARCHITECTURE §9a/§9b, CONTRACT §8 (MVP-scoping note, INV-EGR-03a unchanged),
+  THREAT_MODEL §2.1 + §7 residual updated.
 - **Frontend** — `@vitejs/plugin-react` ^4.3.1 → ^5.2.0, `vite-plugin-pwa` ^0.20.5 →
   ^1.3.0 (required peers for Vite 7).
 - Routing library decision recorded: TanStack Router confirmed (no `react-router`).
