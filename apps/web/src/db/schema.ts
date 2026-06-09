@@ -149,16 +149,37 @@ export type BYOProviderKeyRecord = EncryptedRecord & {
   provider: string; // human-readable provider name — plaintext
 };
 
+/**
+ * authSession — sealed refresh-token store (INV-AUTH-06/ADR-0012).
+ *
+ * id = "primary" (singleton).
+ * The access JWT is NEVER stored here — it lives only in the zustand session store
+ * (module-scope in-memory). Only the refresh token is persisted, sealed under the
+ * master key so the device-at-rest attacker cannot replay it without the passphrase.
+ *
+ * refreshCiphertext / refreshIv are the AES-GCM envelope from envelope.seal().
+ * The masterKey is required to open() the record — INV-AUTH-07: no offline replay
+ * without the unlock credential.
+ */
+export type AuthSessionRecord = {
+  id: string;                    // "primary" — plaintext PK
+  refreshCiphertext: Uint8Array; // AES-GCM ciphertext of the refresh token bytes
+  refreshIv: Uint8Array;         // nonce for refreshCiphertext
+};
+
 // ---------------------------------------------------------------------------
 // Dexie database class
 // ---------------------------------------------------------------------------
 
 /**
- * WiseMoneyDB — current schema version: 2.
+ * WiseMoneyDB — current schema version: 3.
  *
  * Version 1 → 2: added `wrappedIv` to keyMeta (WebAuthn wrap IV, parallel to
  * wrappedKey). data-model.md §A.3 records the migration rationale.
  * Shallum documents this in data-model.md in parallel.
+ *
+ * Version 2 → 3: added `authSession` store (ADR-0012, INV-AUTH-06).
+ * Additive only — no transform on existing records.
  *
  * Version increments on every schema change per data-model.md §A.3 strategy.
  * Projection stores are clearable + replayable from financialEvents (INV-EVT-01/02).
@@ -176,6 +197,7 @@ export class WiseMoneyDB extends Dexie {
   fxRates!: Table<FxRateRecord, string>;
   keyMeta!: Table<KeyMetaRecord, string>;
   byoProviderKeys!: Table<BYOProviderKeyRecord, string>;
+  authSession!: Table<AuthSessionRecord, string>;
 
   constructor() {
     super("WiseMoney");
@@ -272,6 +294,55 @@ export class WiseMoneyDB extends Dexie {
           wrappedIv: null,
         });
       });
+
+    // Version 3 — adds `authSession` store (ADR-0012, INV-AUTH-06).
+    // Additive migration: no existing records are modified. The upgrade callback
+    // is a no-op but is declared explicitly to satisfy Dexie's upgrade chain
+    // requirement and to document intent for future readers.
+    this.version(3)
+      .stores({
+        financialEvents:
+          "id, timestamp, type, entityId, [type+timestamp]",
+
+        accounts:
+          "id, currency, isActive",
+
+        transactions:
+          "id, timestamp, accountId, categoryId, [accountId+timestamp], [categoryId+timestamp]",
+
+        categories:
+          "id, parentId",
+
+        budgets:
+          "id, categoryId, periodMonth, [categoryId+periodMonth]",
+
+        goals:
+          "id",
+
+        goalContributions:
+          "id, goalId, [goalId+timestamp]",
+
+        recurringItems:
+          "id, categoryId",
+
+        financialStateSnapshot:
+          "id",
+
+        fxRates:
+          "id, baseCurrency, quoteCurrency, lastUpdated",
+
+        keyMeta:
+          "id",
+
+        byoProviderKeys:
+          "id, provider",
+
+        // authSession: singleton store, keyed on id = "primary".
+        // Contains the sealed refresh token only — access JWTs are never persisted.
+        authSession:
+          "id",
+      });
+    // No .upgrade() needed — pure addition of a new store; Dexie creates it empty.
   }
 }
 

@@ -128,6 +128,17 @@
   edge-headers/PWA-CSP → **staging deploy** (Eliashib/Huram); MED-05 structured logging + LOW-01
   auth rate-limit → **pre-login-launch** (Zerubbabel); HIGH-01 nonce denylist → **managed-full-egress
   launch**; INFO-01/02 ongoing.
+- **T-S0-10** — Client auth-session module (*2026-06-05*): `api/edgeClient.ts` (typed
+  register/login/refresh, Bearer attach, HTTPS-guarded), `auth/session.ts` (zustand,
+  **access JWT in-memory only**, refresh token **sealed via crypto envelope** into a new
+  **`authSession` Dexie v3 store**, on-demand refresh + rotation, 401→clear+delete,
+  `restoreSession` on unlock, logout). Oholiab impl; Shallum v3 design (data-model). **Joab
+  security PASS-WITH-NITS** (INV-AUTH-06/07 satisfied; closed CWE-319 edgeClient HTTPS
+  self-guard + CWE-668 `_sessionStore` unexport) + **Jahaziel QA PASS**. 59 web tests pass /
+  2 skip; typecheck+lint 0. INV-AUTH-06 (in-memory access, sealed refresh) + INV-AUTH-07
+  (unlock-coupled, no background refresh) enforced + tested. *Carry-forward:* wire the managed
+  AI path in `ai/orchestration.ts` (attach Bearer + `X-Feature` + `X-Consent-Assertion`) — the
+  remaining client↔edge integration; depends on this + the consent store.
 - **Scaffold quality gates GREEN (2026-06-05):** first real verify surfaced gate failures, now
   fixed — `tsconfig` `allowImportingTsExtensions`+`noEmit`; eslint `no-unused-vars` honors the
   `^_` convention; 61 stub lint errors cleared **without implementing product logic** (async

@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Client auth-session module** — `api/edgeClient.ts` (typed register/login/refresh,
+  `Authorization: Bearer`, HTTPS-enforced base URL) + `auth/session.ts` (zustand store).
+  Access JWT held **in-memory only**; refresh token **AES-GCM-sealed** into a new `authSession`
+  IndexedDB store (**Dexie v3**); on-demand refresh with rotation, 401 → clear + delete,
+  `restoreSession` on unlock, `logout`. INV-AUTH-06/07 enforced (in-memory access, sealed
+  refresh, unlock-coupled, no background refresh). Mishmar PASS-WITH-NITS (closed) + QA PASS.
 - **Edge — managed-mode auth** (`/v1/auth/register|login|refresh`) — wired to the Postgres
   repos. Argon2id PHC password hashing + constant-time verify (INV-AUTH-02, M-AUTH-03);
   15-min HS256 access JWT (alg-pinned) + rotating single-use refresh token with

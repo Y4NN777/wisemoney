@@ -4,7 +4,7 @@
 | ------- | ----------------------------------------------------------------------- |
 | Title   | Data Model — IndexedDB (client) + PostgreSQL (edge)                     |
 | Date    | 2026-06-05                                                              |
-| Version | MODELING T-S0-01 v0.2                                                   |
+| Version | MODELING T-S0-01 v0.3                                                   |
 | Status  | Draft                                                                   |
 | Owner   | Shallum (databases)                                                     |
 | Source  | CONTRACT v0.1; ARCHITECTURE v0.1; diagrams/UML/01-domain-er.md v0.1    |
@@ -318,6 +318,48 @@ Invariants:
   - No raw key exists in plaintext in persistent storage at any time (INV-KEY-03).
 ```
 
+#### `authSession` (auth session — INV-AUTH-06/07, ADR-0012)
+
+Singleton store. Holds the long-lived refresh token sealed under the master key.
+Added in Dexie v3 (2026-06-05) to support the client auth-session module.
+
+```
+authSession {
+  id                : string        // singleton key "primary" — plaintext PK
+                                    // (only one session at a time per device)
+  refreshCiphertext : Uint8Array    // AES-GCM ciphertext of the raw refresh token,
+                                    //   sealed via envelope.seal under the master key.
+                                    //   The raw refresh token is NEVER stored in
+                                    //   plaintext anywhere — this is the only
+                                    //   persistent form (INV-AUTH-06).
+  refreshIv         : Uint8Array    // 96-bit AES-GCM nonce (IV) used when sealing
+                                    //   refreshCiphertext. A nonce is not secret by
+                                    //   cryptographic definition; plaintext storage
+                                    //   does not weaken the confidentiality guarantee.
+                                    //   Required alongside refreshCiphertext to unseal.
+}
+
+Dexie indexes: "id"
+
+Invariants:
+  - The raw refresh token (a string received from the edge on login) is sealed via
+    envelope.seal(masterKey, rawToken) before writing; the resulting {ciphertext, iv}
+    pair is what is stored (INV-AUTH-06). No other token representation is persisted.
+  - The record is encrypted under the master key (unlock-gated): the store is only
+    readable after the user has unlocked the database (passphrase or WebAuthn-PRF).
+    Reading refreshCiphertext without the master key produces undecryptable bytes.
+  - No expiry copy is stored. The edge enforces refresh-token expiry; on a failed
+    refresh the client discards the local record and prompts re-login. Storing an
+    expiry copy would create a second authority on token validity and a stale-expiry
+    attack surface — both undesirable.
+  - On explicit logout the record keyed "primary" is deleted from this store and the
+    in-memory access JWT is dropped. After logout, no session material persists on
+    the device (INV-AUTH-07).
+  - The store is separate from keyMeta (key-management artifacts) and all financial
+    data stores. This separation ensures that a targeted read of auth session state
+    does not co-locate with key derivation material.
+```
+
 ### A.3 Dexie versioning and upgrade strategy
 
 Dexie's `version(n).stores({...})` API governs client schema migrations. The
@@ -559,6 +601,7 @@ migration design. Execution is always client-side and automatic on version bump.
 | ------- | ---------- | --------------------------------------- | --------------- |
 | 1       | 2026-06-02 | Initial schema — all stores created     | all             |
 | 2       | 2026-06-05 | keyMeta v2 — add `wrappedIv` field      | keyMeta         |
+| 3       | 2026-06-05 | authSession — new store for sealed refresh token (client session module, ADR-0012) | authSession (new) |
 
 ---
 
@@ -617,6 +660,86 @@ presence). No data is corrupted.
   Dexie's version-upgrade transaction.
 - The callback is idempotent: if the record already has `wrappedIv` set (e.g.
   from a prior partial run), `update` with `{ wrappedIv: null }` is a safe no-op.
+
+---
+
+#### Version 3 — authSession: new store for sealed refresh token (2026-06-05)
+
+**Driver.** The client auth-session module (ADR-0012, INV-AUTH-06/07) must persist
+the long-lived refresh token across page reloads without ever writing it in
+plaintext. The token is sealed under the master key via `envelope.seal`
+(AES-GCM-256) and stored as `{refreshCiphertext, refreshIv}` in a new dedicated
+`authSession` store.
+
+A dedicated store is used rather than co-locating with `keyMeta` or a financial
+store for the following reasons:
+- Isolation of concerns: key-derivation material (`keyMeta`) and auth session
+  state have different read/write lifecycles and different application-layer owners.
+- Targeted deletion on logout: `authSession.delete('primary')` is a precise,
+  auditable logout action with no risk of touching key or financial data.
+- Reviewability: the auth surface area is a separate store, making security review
+  of the auth module's persistence scope unambiguous.
+
+Cross-references: INV-AUTH-06 (raw refresh token never persisted in plaintext);
+INV-AUTH-07 (session cleared on logout); ADR-0012 (auth session + refresh token
+storage decision); `crypto/envelope.ts` (seal/open — the encryption primitive);
+`keyMeta` store (the master key under which the token is sealed).
+
+**Nature of change.** Purely additive. No existing store is modified, renamed, or
+removed. No existing index is changed. No data is transformed. Backward-safe: a
+v2 client opening a v3 database simply has no `authSession` records until first
+login — the application's session module handles the absent record as "no active
+session" and prompts login.
+
+**Designed Dexie migration (DESIGNED — client-side; executed by browser on first
+open after schema.ts version bump to 3):**
+
+```typescript
+// DESIGNED — not executed here; Oholiab wires this in schema.ts
+db.version(3)
+  .stores({
+    // All stores from v2 re-declared; only authSession is new.
+    // Dexie requires all current stores to appear in the highest version block.
+    financialEvents:        'id, timestamp, type, entityId, [type+timestamp]',
+    accounts:               'id, currency, isActive',
+    transactions:           'id, timestamp, accountId, categoryId, [accountId+timestamp], [categoryId+timestamp]',
+    categories:             'id, parentId',
+    budgets:                'id, categoryId, periodMonth, [categoryId+periodMonth]',
+    goals:                  'id',
+    goalContributions:      'id, goalId, [goalId+timestamp]',
+    recurringItems:         'id, categoryId',
+    financialStateSnapshot: 'id',
+    fxRates:                'id, baseCurrency, quoteCurrency, lastUpdated',
+    keyMeta:                'id',
+    byoProviderKeys:        'id, provider',
+    authSession:            'id',   // NEW — singleton store, keyed on "primary"
+  });
+  // No .upgrade() callback is needed: the new store is empty on creation.
+  // Dexie creates the authSession object store automatically; no existing data
+  // is transformed or backfilled. The application writes the first record on
+  // successful login.
+```
+
+**Rollback.** If v3 must be reverted, the `authSession` store contains at most one
+record (the sealed refresh token). On rollback: the store is absent from v2's
+`stores()` declaration and Dexie will not expose it. The record is orphaned in
+IndexedDB but is never read by v2 code. No data corruption; the user will be
+prompted to log in again on first open (no active session found). The orphaned
+store can be cleaned up by opening the database at v3 and deleting the store, but
+this is not required for correctness or safety.
+
+**Safety assertions:**
+- No financial data is touched.
+- No key derivation is performed. The `.stores()` declaration does not read or
+  write any existing record.
+- No `.upgrade()` callback is registered: the version bump is a declaration-only
+  schema change (new empty store). There is no callback code path that could
+  inadvertently touch records.
+- Additive-only: no store removed, no index changed on any existing store.
+- The store is unlock-gated by the master-key requirement on `envelope.open` at
+  read time — the Dexie-level store definition carries no access control, but the
+  application layer enforces that `authSession` is never read before the master key
+  is available (same unlock gate as all other encrypted stores).
 
 ---
 
@@ -733,7 +856,7 @@ table at MVP."
 
 ---
 
-*End of MODELING T-S0-01 v0.2 — data-model.md. Owned by Shallum (databases).
-Next in sequence: implementation of the Dexie schema module (client, Dexie v2
-with wrappedIv — Oholiab) and the golang-migrate migration files (edge). Both
+*End of MODELING T-S0-01 v0.3 — data-model.md. Owned by Shallum (databases).
+Next in sequence: implementation of the Dexie schema module (client, Dexie v3
+with authSession — Oholiab) and the golang-migrate migration files (edge). Both
 are implementation artifacts; execution is owned by Y4NN.*
