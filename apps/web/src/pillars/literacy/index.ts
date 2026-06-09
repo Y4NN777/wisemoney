@@ -25,13 +25,13 @@ export type ConceptEntry = {
  * - Route to AIOrchestrClient with task type "teaching".
  * - On provider failure, fail closed with a user-facing message (INV-PROXY-04).
  */
-export async function sendConversationMessage(
+export function sendConversationMessage(
   _featureId: string,
   _message: string,
   _snapshot: FinancialStateSnapshot
 ): Promise<void> {
   // TODO: implement — route through ConsentRedactionSubsystem then AIOrchestrClient
-  throw new Error("sendConversationMessage: not yet implemented");
+  return Promise.reject(new Error("sendConversationMessage: not yet implemented"));
 }
 
 /**
@@ -40,9 +40,9 @@ export async function sendConversationMessage(
  * TODO (FR-LIT-01): implement concept library lookup (static content +
  * optional contextual enrichment from the snapshot).
  */
-export async function loadConceptEntry(
+export function loadConceptEntry(
   _conceptId: string
 ): Promise<ConceptEntry> {
   // TODO: implement
-  throw new Error("loadConceptEntry: not yet implemented");
+  return Promise.reject(new Error("loadConceptEntry: not yet implemented"));
 }

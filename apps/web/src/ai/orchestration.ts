@@ -68,14 +68,14 @@ export type AIResult = NormalizedAIResponse | ProviderUnavailableSignal;
  * @param mode          - managed or byo
  * @param featureId     - for normalised response attribution
  */
-export async function submit(
+export function submit(
   _egressContext: EgressContext,
   _taskType: TaskType,
   _mode: AIMode,
   _featureId: string
 ): Promise<AIResult> {
   // TODO: implement managed + BYO paths
-  throw new Error("submit: not yet implemented");
+  return Promise.reject(new Error("submit: not yet implemented"));
 }
 
 /**

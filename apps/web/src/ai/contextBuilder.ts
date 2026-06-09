@@ -42,7 +42,7 @@ import { shapeEgress } from "@/consent/redaction.ts";
  * @param consentState - current per-feature consent state
  * @param masterKey    - session master key (for decrypting eventSlice — TODO)
  */
-export async function buildContext(
+export function buildContext(
   featureId: string,
   _snapshot: FinancialStateSnapshot,
   _eventSlice: FinancialEventRecord[],
@@ -52,5 +52,5 @@ export async function buildContext(
   // TODO: decrypt and aggregate snapshot + eventSlice into a raw context,
   // then route through shapeEgress.
   const rawContext = {}; // placeholder — will be a typed struct once FR-DE-06/07 is implemented
-  return shapeEgress(featureId, rawContext, consentState);
+  return Promise.resolve(shapeEgress(featureId, rawContext, consentState));
 }

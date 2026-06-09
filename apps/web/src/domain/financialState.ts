@@ -45,12 +45,12 @@ export type FinancialStateSnapshot = {
  * INV-EVT-03: referential integrity (accountId, categoryId) is validated at
  *   append time, not here; replay trusts the log is internally consistent.
  */
-export async function replayFromInception(
+export function replayFromInception(
   _events: FinancialEventRecord[],
   _masterKey: MasterKey
 ): Promise<FinancialStateSnapshot> {
   // TODO: implement full replay fold
-  throw new Error("replayFromInception: not yet implemented");
+  return Promise.reject(new Error("replayFromInception: not yet implemented"));
 }
 
 /**
@@ -61,13 +61,13 @@ export async function replayFromInception(
  * TODO (INV-EVT-02): implement incremental fold; if the event type cannot be
  * applied incrementally, fall back to replayFromInception.
  */
-export async function applyEventToSnapshot(
+export function applyEventToSnapshot(
   _current: FinancialStateSnapshot,
   _event: FinancialEventRecord,
   _masterKey: MasterKey
 ): Promise<FinancialStateSnapshot> {
   // TODO: implement incremental apply
-  throw new Error("applyEventToSnapshot: not yet implemented");
+  return Promise.reject(new Error("applyEventToSnapshot: not yet implemented"));
 }
 
 /**
@@ -79,11 +79,11 @@ export async function applyEventToSnapshot(
  * DQ-01: individual projection stores have no equivalent guard — this is an open
  * implementation item that must be resolved before the engine is implemented.
  */
-export async function isSnapshotFresh(
+export function isSnapshotFresh(
   _snapshot: FinancialStateSnapshot
 ): Promise<boolean> {
   // TODO: compare snapshot.asOfEventId against db.financialEvents.orderBy("timestamp").last()
-  throw new Error("isSnapshotFresh: not yet implemented");
+  return Promise.reject(new Error("isSnapshotFresh: not yet implemented"));
 }
 
 /**
@@ -98,11 +98,11 @@ export async function isSnapshotFresh(
  * - Persist the freshly-derived snapshot back to financialStateSnapshot.
  * - Return the snapshot.
  */
-export async function getSnapshot(
+export function getSnapshot(
   _masterKey: MasterKey
 ): Promise<FinancialStateSnapshot> {
   // TODO: implement cache-or-replay logic
-  throw new Error("getSnapshot: not yet implemented");
+  return Promise.reject(new Error("getSnapshot: not yet implemented"));
 }
 
 /**
@@ -110,10 +110,10 @@ export async function getSnapshot(
  *
  * TODO (INV-PERS-02): serialise the snapshot, seal it, write via db.financialStateSnapshot.put().
  */
-export async function persistSnapshot(
+export function persistSnapshot(
   _snapshot: FinancialStateSnapshot,
   _masterKey: MasterKey
 ): Promise<void> {
   // TODO: implement
-  throw new Error("persistSnapshot: not yet implemented");
+  return Promise.reject(new Error("persistSnapshot: not yet implemented"));
 }

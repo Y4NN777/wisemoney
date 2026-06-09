@@ -49,7 +49,7 @@ export function assertValidMoney(value: unknown): asserts value is Money {
  */
 export function money(minorUnits: number, currency: string): Money {
   assertValidMoney({ minorUnits, currency });
-  return { minorUnits, currency } as Money;
+  return { minorUnits, currency };
 }
 
 // ---------------------------------------------------------------------------

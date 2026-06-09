@@ -29,6 +29,11 @@ export default [
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/no-unsafe-assignment": "error",
       "@typescript-eslint/strict-boolean-expressions": "error",
+      "@typescript-eslint/no-unused-vars": ["error", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      }],
     },
   },
 ];

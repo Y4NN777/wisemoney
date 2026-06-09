@@ -29,12 +29,12 @@ export type IntelligenceFeatureId =
  * - On provider failure, return a ProviderUnavailableSignal — never fabricate.
  * - On consent not granted, operate with the redacted context ceiling (INV-EGR-01).
  */
-export async function requestInsight(
+export function requestInsight(
   _featureId: IntelligenceFeatureId,
   _snapshot: FinancialStateSnapshot
 ): Promise<void> {
   // TODO: implement — route through ConsentRedactionSubsystem then AIOrchestrClient
-  throw new Error("requestInsight: not yet implemented");
+  return Promise.reject(new Error("requestInsight: not yet implemented"));
 }
 
 /**
@@ -42,10 +42,10 @@ export async function requestInsight(
  *
  * TODO (FR-AI-02): same routing contract as requestInsight. Task type: "reasoning".
  */
-export async function requestRecommendation(
+export function requestRecommendation(
   _featureId: IntelligenceFeatureId,
   _snapshot: FinancialStateSnapshot
 ): Promise<void> {
   // TODO: implement
-  throw new Error("requestRecommendation: not yet implemented");
+  return Promise.reject(new Error("requestRecommendation: not yet implemented"));
 }

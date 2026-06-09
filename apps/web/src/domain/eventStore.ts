@@ -14,10 +14,8 @@
  * data-model.md §A.2 financialEvents.
  */
 
-import { db } from "@/db/schema.ts";
 import type { FinancialEventRecord } from "@/db/schema.ts";
 import type { MasterKey } from "@/crypto/envelope.ts";
-import { seal } from "@/crypto/envelope.ts";
 
 /** Discriminated union of all event types — expand as FR-FS evolves. */
 export type FinancialEventType =
@@ -65,9 +63,9 @@ export type AppendEventParams = {
  * - Write the record to db.financialEvents via Dexie.add() (not put/update).
  * - Throw AppendEventError if Dexie reports a constraint violation (duplicate id).
  */
-export async function appendEvent(_params: AppendEventParams): Promise<void> {
+export function appendEvent(_params: AppendEventParams): Promise<void> {
   // TODO: implement sealed append
-  throw new Error("appendEvent: not yet implemented");
+  return Promise.reject(new Error("appendEvent: not yet implemented"));
 }
 
 /**
@@ -78,9 +76,9 @@ export async function appendEvent(_params: AppendEventParams): Promise<void> {
  *
  * TODO: return db.financialEvents.orderBy("timestamp").toArray()
  */
-export async function readAllEvents(): Promise<FinancialEventRecord[]> {
+export function readAllEvents(): Promise<FinancialEventRecord[]> {
   // TODO: implement
-  throw new Error("readAllEvents: not yet implemented");
+  return Promise.reject(new Error("readAllEvents: not yet implemented"));
 }
 
 /**
@@ -91,9 +89,9 @@ export async function readAllEvents(): Promise<FinancialEventRecord[]> {
  * TODO (INV-EVT-02): query by timestamp > snapshot.asOfTimestamp, then filter
  * to events with id !== asOfEventId (in case of same-ms events).
  */
-export async function readEventsSince(
+export function readEventsSince(
   _afterEventId: string
 ): Promise<FinancialEventRecord[]> {
   // TODO: implement
-  throw new Error("readEventsSince: not yet implemented");
+  return Promise.reject(new Error("readEventsSince: not yet implemented"));
 }

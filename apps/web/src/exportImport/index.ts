@@ -55,13 +55,13 @@ export type WiseMoneyExport = {
  * @param encrypt         - if true, wrap with exportPassphrase (FR-PERSIST-08)
  * @param exportPassphrase - required if encrypt is true
  */
-export async function exportJSON(
+export function exportJSON(
   _masterKey: MasterKey,
   _encrypt: boolean,
   _exportPassphrase?: string
 ): Promise<Blob> {
   // TODO: implement lossless decrypted export
-  throw new Error("exportJSON: not yet implemented");
+  return Promise.reject(new Error("exportJSON: not yet implemented"));
 }
 
 /**
@@ -78,13 +78,13 @@ export async function exportJSON(
  * @param masterKey       - current device's session master key
  * @param exportPassphrase - required if the export is passphrase-encrypted
  */
-export async function importJSON(
+export function importJSON(
   _blob: Blob,
   _masterKey: MasterKey,
   _exportPassphrase?: string
 ): Promise<void> {
   // TODO: implement
-  throw new Error("importJSON: not yet implemented");
+  return Promise.reject(new Error("importJSON: not yet implemented"));
 }
 
 /**
@@ -96,11 +96,11 @@ export async function importJSON(
  * TODO (FR-PERSIST-06): implement CSV serialisation of the decrypted transaction
  * ledger. Column layout is a UI-layer decision (may change freely per CONTRACT §8).
  */
-export async function exportCSV(
+export function exportCSV(
   _masterKey: MasterKey
 ): Promise<Blob> {
   // TODO: implement
-  throw new Error("exportCSV: not yet implemented");
+  return Promise.reject(new Error("exportCSV: not yet implemented"));
 }
 
 /**
@@ -111,9 +111,9 @@ export async function exportCSV(
  * TODO (FR-PERSIST-06): implement XLSX serialisation. Consider SheetJS (xlsx)
  * as the library — run /dep-audit before adding it.
  */
-export async function exportXLSX(
+export function exportXLSX(
   _masterKey: MasterKey
 ): Promise<Blob> {
   // TODO: implement
-  throw new Error("exportXLSX: not yet implemented");
+  return Promise.reject(new Error("exportXLSX: not yet implemented"));
 }
