@@ -118,7 +118,9 @@ export type FxRateRecord = EncryptedRecord & {
  * id = "primary".
  * argon2idSalt and argon2idParams are INTENTIONALLY plaintext — they are public
  * KDF parameters; the passphrase is the secret (INV-KEY-03).
- * wrappedKey is encrypted key material, not the raw master key.
+ * wrappedKey is the AES-GCM ciphertext of the raw master key bytes sealed under
+ * the PRF-derived wrapping key. wrappedIv is the nonce for that sealing operation.
+ * Both are null when WebAuthn unlock has not been configured.
  */
 export type KeyMetaRecord = {
   id: string;                        // "primary" — plaintext PK
@@ -129,7 +131,8 @@ export type KeyMetaRecord = {
     parallelism: number;
   };
   webAuthnHandle: Uint8Array | null; // credential handle — plaintext opaque id
-  wrappedKey: Uint8Array | null;     // AES-GCM-wrapped master key (INV-KEY-03)
+  wrappedKey: Uint8Array | null;     // AES-GCM ciphertext of wrapped master key (INV-KEY-03)
+  wrappedIv: Uint8Array | null;      // nonce for wrappedKey seal (null when WebAuthn not configured)
   verificationToken: Uint8Array;     // AES-GCM ciphertext of known constant
   verificationIv: Uint8Array;        // nonce for verificationToken
 };
@@ -151,13 +154,14 @@ export type BYOProviderKeyRecord = EncryptedRecord & {
 // ---------------------------------------------------------------------------
 
 /**
- * WiseMoneyDB — version 1 initial schema.
+ * WiseMoneyDB — current schema version: 2.
+ *
+ * Version 1 → 2: added `wrappedIv` to keyMeta (WebAuthn wrap IV, parallel to
+ * wrappedKey). data-model.md §A.3 records the migration rationale.
+ * Shallum documents this in data-model.md in parallel.
  *
  * Version increments on every schema change per data-model.md §A.3 strategy.
  * Projection stores are clearable + replayable from financialEvents (INV-EVT-01/02).
- *
- * TODO (data-model.md §A.3): add .upgrade() callbacks as schema evolves;
- * re-derive all projection stores from the financialEvents log on structural changes.
  */
 export class WiseMoneyDB extends Dexie {
   financialEvents!: Table<FinancialEventRecord, string>;
@@ -176,9 +180,10 @@ export class WiseMoneyDB extends Dexie {
   constructor() {
     super("WiseMoney");
 
+    // Version 1 — original schema; must remain present for Dexie's upgrade chain.
+    // PK is the first field in the index string; Dexie uses it as the primary key.
+    // Dexie index syntax: "pk, index1, index2, [compound+index]"
     this.version(1).stores({
-      // PK is the first field in the index string; Dexie uses it as the primary key.
-      // Dexie index syntax: "pk, index1, index2, [compound+index]"
       financialEvents:
         "id, timestamp, type, entityId, [type+timestamp]",
 
@@ -215,6 +220,58 @@ export class WiseMoneyDB extends Dexie {
       byoProviderKeys:
         "id, provider",
     });
+
+    // Version 2 — adds `wrappedIv` to keyMeta (WebAuthn seal nonce, matches wrappedKey).
+    // Upgrade callback sets the field to null on any existing "primary" record so reads
+    // against the new type are safe without a code-path branch.
+    this.version(2)
+      .stores({
+        // Re-declare every store; Dexie requires all stores to be present in the
+        // version that changes them, even if the index definition is unchanged.
+        financialEvents:
+          "id, timestamp, type, entityId, [type+timestamp]",
+
+        accounts:
+          "id, currency, isActive",
+
+        transactions:
+          "id, timestamp, accountId, categoryId, [accountId+timestamp], [categoryId+timestamp]",
+
+        categories:
+          "id, parentId",
+
+        budgets:
+          "id, categoryId, periodMonth, [categoryId+periodMonth]",
+
+        goals:
+          "id",
+
+        goalContributions:
+          "id, goalId, [goalId+timestamp]",
+
+        recurringItems:
+          "id, categoryId",
+
+        financialStateSnapshot:
+          "id",
+
+        fxRates:
+          "id, baseCurrency, quoteCurrency, lastUpdated",
+
+        keyMeta:
+          "id",
+
+        byoProviderKeys:
+          "id, provider",
+      })
+      .upgrade(async (tx) => {
+        // Set wrappedIv = null on the existing "primary" keyMeta record so it
+        // conforms to the updated KeyMetaRecord shape. New records written by
+        // setupMasterKey always include wrappedIv explicitly.
+        await tx.table("keyMeta").where("id").equals("primary").modify({
+          wrappedIv: null,
+        });
+      });
   }
 }
 

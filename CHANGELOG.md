@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Client crypto foundation** — `crypto/envelope.ts` (AES-GCM-256 seal/open, unique
+  96-bit IV) and `crypto/keyManagement.ts` (Argon2id master-key derivation via hash-wasm,
+  passphrase verification, BYO key seal/open, WebAuthn-PRF master-key wrap/unwrap). Keys
+  imported non-extractable, `encrypt`/`decrypt` usages only; raw key bytes zeroed after use
+  (INV-KEY-02/03). Dexie schema → **v2** (`keyMeta.wrappedIv`). Mishmar review PASS-WITH-NITS.
 - **Edge — consent gate on `POST /v1/ai/proxy`** — `consentSvc.Verify` wired into the
   proxy handler (ARCHITECTURE §10a, INV-EGR-03a). Full-egress requires a valid, unexpired,
   signature-correct assertion bound to the caller's JWT sub, the `X-Feature` header, and
@@ -35,6 +40,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to (ARCHITECTURE §10a). Sibling to `X-Egress-Level` / `X-Consent-Assertion`.
 - `GOTOOLCHAIN=local` in the edge Dockerfile builder — hermetic build, no surprise
   toolchain auto-download.
+
+### Fixed
+
+- **`apps/web/tsconfig.json`** — added `allowImportingTsExtensions` + `noEmit` (removed
+  `outDir`; Vite handles bundling). The scaffold imports with explicit `.ts`/`.tsx`
+  extensions; this clears the project-wide TS5097 errors surfaced by the first typecheck.
+- **`apps/web` lint hygiene** — eslint `no-unused-vars` now honors the `^_`
+  intentionally-unused convention; 61 stub-file lint errors cleared without implementing
+  product logic (async stubs converted to non-async `Promise.reject`, behaviorally identical;
+  removed dead imports; dropped one redundant type assertion). `apps/web` now passes
+  lint + typecheck + test clean.
 - `.github/workflows/security-scan.yml` (GitHub Actions) — osv-scanner v2.3.8 (pinned,
   SHA256-verified) manifest scan + authoritative binary scan; fails on new critical/high.
 - `docs/adr/0010-dependency-security-baseline-and-scanning-policy.md` — dependency
@@ -48,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **AI provider strategy (ADR-0011)** — provider data-handling terms verified
-  (2026-06-03). MVP: managed mode = free models (OpenRouter + Gemini-free),
+  (2026-06-05). MVP: managed mode = free models (OpenRouter + Gemini-free),
   **redacted-egress only**; full-egress = **BYO-key only**; NVIDIA hosted **dropped**
   (ToS §4.3 prohibits financial data + trains with no opt-out); paid managed deferred.
   ARCHITECTURE §9a/§9b, CONTRACT §8 (MVP-scoping note, INV-EGR-03a unchanged),

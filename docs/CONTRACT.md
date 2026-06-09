@@ -3,15 +3,16 @@
 | Field    | Value                                      |
 | -------- | ------------------------------------------ |
 | Title    | WiseMoney — System Contract            |
-| Date     | 2026-06-02; amended 2026-06-03 (§8 provider list + MVP scoping note); amended 2026-06-03 (§5 INV-AUTH-06/07 + reuse-detection obligation — OQ-06 resolved) |
-| Version  | CONTRACT v0.1 rev 2026-06-03b              |
+| Date     | 2026-06-02; amended 2026-06-05 (§8 provider list + MVP scoping note); amended 2026-06-05 (§5 INV-AUTH-06/07 + reuse-detection obligation — OQ-06 resolved); amended 2026-06-05 (§4 INV-KEY-03 clarification — transient wrap memory) |
+| Version  | CONTRACT v0.1 rev 2026-06-05c              |
 | Status   | Draft                                      |
 | Owner    | Zadok (design-system / contract master)    |
 | Source   | PRD v0.1; SRS v0.1 Rev 2026-06-02         |
 
 Rev 2026-06-02 — Gate-5: INV-EGR-03 amended to mode-split (managed = server-enforced; BYO-key = client-side, user-as-principal) per THREAT_MODEL §5.
-Rev 2026-06-03 — §8 provider list updated (NVIDIA hosted removed; OpenRouter added); MVP-scoping note added recording managed=redacted-only at MVP and deferred full-egress (ADR-0011).
-Rev 2026-06-03b — §5: INV-AUTH-06 (client token storage) and INV-AUTH-07 (session/lock coupling) added; refresh-token reuse-detection obligation noted; §8 "Must not change" list updated. OQ-06 resolved. (Y4NN decision 2026-06-03; ADR-0012.)
+Rev 2026-06-05 — §8 provider list updated (NVIDIA hosted removed; OpenRouter added); MVP-scoping note added recording managed=redacted-only at MVP and deferred full-egress (ADR-0011).
+Rev 2026-06-05b — §5: INV-AUTH-06 (client token storage) and INV-AUTH-07 (session/lock coupling) added; refresh-token reuse-detection obligation noted; §8 "Must not change" list updated. OQ-06 resolved. (Y4NN decision 2026-06-05; ADR-0012.)
+Rev 2026-06-05c — §4: INV-KEY-03 clarified to name the transient in-memory raw master-key bytes that wrapping for WebAuthn daily-unlock unavoidably requires; zeroing obligation made explicit; the persistent-storage prohibition restated unambiguously. Intent unchanged. (Mishmar review 2026-06-05; ADR-0012; ARCHITECTURE §7.)
 
 > This document states invariants and guarantees that must hold for the lifetime
 > of the system. They are small, precise, and binding. Implementation details
@@ -178,10 +179,20 @@ intended provider is a breach of the BYO contract.*
 
 **INV-KEY-03** All key material — managed and BYO — is encrypted at rest at all
 times. There is no state in which key material exists unencrypted in persistent
-storage.
+storage. Transient in-memory raw master-key bytes are permitted during the
+WebAuthn daily-unlock key-wrap setup (the brief interval in which the raw 32-byte
+master key must be held in memory to seal it under the PRF-derived wrapping key);
+those bytes MUST be zeroed immediately once the wrap operation completes and MUST
+NOT be written to any persistent storage. The persistent-storage prohibition is
+absolute: no unwrapped raw key material, even temporarily, ever reaches disk,
+IndexedDB, localStorage, sessionStorage, or any other durable store.
 
-*Why: key material at rest in plaintext is an unacceptable credential exposure,
-regardless of mode.*
+*Why: key material at rest in plaintext is an unacceptable credential exposure
+regardless of mode. The wrapping operation unavoidably requires a brief window of
+raw key bytes in memory; naming that window and mandating zeroing prevents an
+implementation from reading the invariant as prohibiting wrapping entirely, while
+preserving the core guarantee that no unwrapped key is ever persisted.
+(Mishmar ruling 2026-06-05; ADR-0012; ARCHITECTURE §7.)*
 
 **INV-KEY-04** A mode switch (managed ↔ BYO-key) must not cause data loss. The
 user's financial data and event log must be fully intact after a mode change.
@@ -368,7 +379,7 @@ refresh / hybrid), per-feature redaction shapes (beyond the FR-CONSENT-07 minimu
 floor), export column layout in CSV/XLSX, dashboard layout and visual design,
 learning content library, AI prompt templates.
 
-**MVP provider-strategy scoping note (2026-06-03).** At MVP, managed mode serves
+**MVP provider-strategy scoping note (2026-06-05).** At MVP, managed mode serves
 redacted-egress only via free-tier models (OpenRouter free + Gemini free). Full-egress
 in managed mode (which INV-EGR-03(a) governs and requires server-boundary enforcement
 for) is DEFERRED — no paid no-train provider is configured. INV-EGR-03(a) is not

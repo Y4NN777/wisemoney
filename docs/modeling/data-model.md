@@ -3,8 +3,8 @@
 | Field   | Value                                                                   |
 | ------- | ----------------------------------------------------------------------- |
 | Title   | Data Model — IndexedDB (client) + PostgreSQL (edge)                     |
-| Date    | 2026-06-02                                                              |
-| Version | MODELING T-S0-01 v0.1                                                   |
+| Date    | 2026-06-05                                                              |
+| Version | MODELING T-S0-01 v0.2                                                   |
 | Status  | Draft                                                                   |
 | Owner   | Shallum (databases)                                                     |
 | Source  | CONTRACT v0.1; ARCHITECTURE v0.1; diagrams/UML/01-domain-er.md v0.1    |
@@ -271,6 +271,13 @@ keyMeta {
   wrappedKey      : Uint8Array | null  // AES-GCM-wrapped master key (wrapped by WebAuthn
                                 //   PRF output) — this is encrypted key material,
                                 //   never the raw master key
+  wrappedIv       : Uint8Array | null  // AES-GCM nonce (96-bit) for wrappedKey; plaintext
+                                //   (a nonce is not secret); null until the WebAuthn
+                                //   daily-unlock path is configured by the user.
+                                //   Required to unwrap wrappedKey — storing wrappedKey
+                                //   without this IV makes unwrap impossible (the bug
+                                //   surfaced by Joab/Oholiab, resolved 2026-06-05).
+                                //   Cross-ref: INV-KEY-03; ADR-0012; Dexie v2 migration.
   verificationToken : Uint8Array  // AES-GCM ciphertext of a known constant; decrypting
                                 //   it successfully with the derived key verifies the
                                 //   passphrase without exposing the key itself
@@ -285,6 +292,10 @@ Invariants:
     KDF parameters, not secrets. The passphrase is the secret and is never stored.
   - wrappedKey is encrypted key material (AES-GCM wrapped by WebAuthn PRF output),
     not the master key in plaintext.
+  - wrappedIv is the AES-GCM nonce paired with wrappedKey. It must be stored and
+    retrieved alongside wrappedKey to make unwrapping possible. It is not secret.
+    Absence of this field on an existing record (pre-v2) means WebAuthn wrap was
+    never configured — treat as null (no wrap present), which is safe (INV-KEY-03).
   - verificationToken allows passphrase verification on unlock without storing the
     passphrase or the raw key.
 ```
@@ -338,6 +349,13 @@ This approach is correct because `financialEvents` is the sole source of truth
 (INV-EVT-02); clearing derived stores loses nothing that cannot be recovered
 by replay. Replay correctness is guaranteed by the append-only, immutable log
 (INV-EVT-01).
+
+**Client-side execution model.** IndexedDB/Dexie migrations run automatically in
+the browser the first time a client opens a database whose declared version exceeds
+the stored version. No server-side operation is involved. The migration is
+DESIGNED here; it is executed by the running browser client. Y4NN does not
+manually apply these — the Dexie version declaration in `schema.ts` is the
+execution trigger (Oholiab owns `schema.ts`; Shallum owns this spec).
 
 **Encryption continuity across upgrades.** The master key derivation mechanism
 (`keyMeta`) must not change during an in-place upgrade. If the KDF parameters
@@ -532,6 +550,74 @@ single-binary distroless deployment described in ARCHITECTURE §11.
 
 Neither tool is executed by this document. Y4NN runs migrations.
 
+### A.4 Dexie schema version history
+
+Each entry records a version bump, its date, the stores affected, and the
+migration design. Execution is always client-side and automatic on version bump.
+
+| Version | Date       | Change summary                          | Stores affected |
+| ------- | ---------- | --------------------------------------- | --------------- |
+| 1       | 2026-06-02 | Initial schema — all stores created     | all             |
+| 2       | 2026-06-05 | keyMeta v2 — add `wrappedIv` field      | keyMeta         |
+
+---
+
+#### Version 2 — keyMeta: add `wrappedIv` (2026-06-05)
+
+**Driver.** The WebAuthn-PRF daily-unlock path wraps the master key with AES-GCM.
+AES-GCM decryption requires the nonce (IV) that was used at wrap time. Version 1
+stored `wrappedKey` but not the paired nonce, making unwrap impossible. This is
+the bug surfaced by Joab/Oholiab; the fix is purely additive — a new nullable
+field `wrappedIv` on the `keyMeta` store.
+
+Cross-references: INV-KEY-03 (no raw master key at rest); ADR-0012 (auth +
+refresh-token storage, which governs the edge side of the auth stack — this
+change is the client-side complement to that decision).
+
+**Nature of change.** Additive, nullable. No existing data is transformed. No
+existing field is renamed or removed. No index is added or removed. Backward-safe:
+a record written by v1 (no `wrappedIv` property) is read by v2 code as
+`wrappedIv = undefined`, which the application normalises to `null` at read time.
+No data loss on rollback (removing the field from schema.ts and reverting to v1 is
+safe because `wrappedIv` is null on all existing records at the time of migration).
+
+**Designed Dexie migration (DESIGNED — client-side; executed by browser on first
+open after schema.ts version bump to 2):**
+
+```typescript
+// DESIGNED — not executed here; Oholiab wires this in schema.ts
+db.version(2)
+  .stores({
+    // Store definitions unchanged from v1; listed here to satisfy Dexie's
+    // requirement that all stores are declared on the highest version block.
+    // (Only changed stores strictly need re-declaration; listing all is safer.)
+    keyMeta: 'id',
+    // ... all other stores unchanged, re-declared verbatim from version(1)
+  })
+  .upgrade(async (tx) => {
+    // Purely additive: set wrappedIv = null on the existing "primary" record.
+    // If the record does not exist yet (fresh install), the field will be set
+    // at first write by the application — no action needed.
+    const record = await tx.table('keyMeta').get('primary');
+    if (record) {
+      await tx.table('keyMeta').update('primary', { wrappedIv: null });
+    }
+  });
+```
+
+**Rollback.** No destructive rollback is needed. If v2 must be reverted, the
+`wrappedIv` field on stored records is null and is silently ignored by v1 code
+(IndexedDB stores arbitrary object properties; Dexie does not enforce field
+presence). No data is corrupted.
+
+**Safety assertions:**
+- No financial data is touched.
+- No encryption key material is read, written, or derived.
+- The `.upgrade()` callback runs once per client database, atomically, inside
+  Dexie's version-upgrade transaction.
+- The callback is idempotent: if the record already has `wrappedIv` set (e.g.
+  from a prior partial run), `update` with `{ wrappedIv: null }` is a safe no-op.
+
 ---
 
 ## C. Cross-cutting assertions
@@ -571,8 +657,13 @@ Confirmed. Every IndexedDB object store entry that carries financial data stores
 that data inside `ciphertext` (AES-GCM). The only plaintext fields are structural
 index keys (UUIDs, timestamps, type discriminators, FK references). The Postgres
 store has no financial data. Key material is stored either as the Argon2id encoded
-string (password) or as wrapped/encrypted blobs (BYO keys, wrappedKey). No raw
-master key exists in persistent storage (INV-KEY-03).
+string (password) or as wrapped/encrypted blobs (BYO keys, `wrappedKey`). No raw
+master key exists in persistent storage (INV-KEY-03). `wrappedIv` (added in Dexie
+v2, 2026-06-05) is an AES-GCM nonce — a nonce is not secret by cryptographic
+definition and its plaintext storage does not weaken INV-PERS-02. The nonce
+stored alongside `wrappedKey` leaks only that a WebAuthn wrap was set up, which
+is already implied by a non-null `webAuthnHandle` — no new sensitive information
+is disclosed.
 
 ---
 
@@ -642,7 +733,7 @@ table at MVP."
 
 ---
 
-*End of MODELING T-S0-01 v0.1 — data-model.md. Owned by Shallum (databases).
-Next in sequence: implementation of the Dexie schema module (client) and the
-golang-migrate migration files (edge). Both are implementation artifacts;
-execution is owned by Y4NN.*
+*End of MODELING T-S0-01 v0.2 — data-model.md. Owned by Shallum (databases).
+Next in sequence: implementation of the Dexie schema module (client, Dexie v2
+with wrappedIv — Oholiab) and the golang-migrate migration files (edge). Both
+are implementation artifacts; execution is owned by Y4NN.*

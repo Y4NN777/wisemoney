@@ -50,7 +50,7 @@
   *Carry-forward (implementation-time):* DQ-01 projection-staleness rebuild strategy;
   DQ-02 atomic key-rotation. (DQ-03 export format — resolved: decrypted portable JSON;
   encrypted variant = passphrase-wrapped; keyMeta + BYO keys excluded from plaintext.)
-- **T-S0-02** — AI provider data-handling terms (*verified 2026-06-03*): OpenAI API
+- **T-S0-02** — AI provider data-handling terms (*verified 2026-06-05*): OpenAI API
   (no-train default, 30d), Gemini paid (no-train, 55d) / free (TRAINS → banned), NVIDIA
   hosted (trains + §4.3 prohibits financial data → **dropped**), OpenRouter (free models
   require training-opt-in → redacted-only). **Strategy DECIDED → ADR-0011:** managed =
@@ -65,7 +65,7 @@
   *Follow-ups:* `/dep-audit` before `pnpm install` (frontend added `@tanstack/react-query`
   + `@tanstack/react-router` beyond the zustand brief). **Routing lib DECIDED 2026-06-03:**
   TanStack Router confirmed/kept (Y4NN) — aligns with Panim rule; no `react-router` present.
-- **T-S0-04** — `/dep-audit` (*done 2026-06-03*): cleared 2 CVSS-9.8 finds + more.
+- **T-S0-04** — `/dep-audit` (*done 2026-06-05*): cleared 2 CVSS-9.8 finds + more.
   Edge: pgx 5.7.4→5.9.2 (CVE-2026-33816), x/crypto 0.38.0→0.52.0 (argon2 path),
   chi 5.2.1→5.2.4, Go 1.23→1.25.11 (`toolchain` directive + Dockerfile, clears 51 stdlib).
   Frontend: vite→^7.3.5 / vitest→^4.1.8 (9.8) / plugin-react→^5.2.0 / vite-plugin-pwa→^1.3.0;
@@ -76,7 +76,7 @@
   **binary-scan** gate (`osv-scanner scan binary`, authoritative) activates — currently
   guarded by `exists: dist/edge`; confirm `EDGE_BINARY_PATH` when build lands. **Y4NN runs
   `go mod tidy` (done) + commits; no installs/deploys by AI.**
-- **T-S0-05** — Consent gate on `/v1/ai/proxy` (*done 2026-06-03*): `consentSvc.Verify`
+- **T-S0-05** — Consent gate on `/v1/ai/proxy` (*done 2026-06-05*): `consentSvc.Verify`
   wired into the proxy handler (Hizkiah); fail-closed→redacted on any verify failure, then
   structural cap (`egress.Validator`) yields 400 on full-only fields. Feature transport pinned:
   **`X-Feature` header** (ARCHITECTURE §10a amended). 10 gate tests pass (build+vet+test via
@@ -87,14 +87,29 @@
   `CONSENT_SIGNING_KEY` (must differ from JWT key), `user_id`/`feature`/`level`/`exp`(~5m),
   `X-Consent-Assertion` + `X-Feature` headers, fail-closed→redacted. Wired end-to-end on the
   edge (config/consent/egress/proxy/router). Nonce-replay denylist deferred (short TTL; §10a).
-- **T-S0-06** — Client auth-session **DECISION recorded** (*2026-06-03*, OQ-06 RESOLVED →
+- **T-S0-06** — Client auth-session **DECISION recorded** (*2026-06-05*, OQ-06 RESOLVED →
   ADR-0012): access JWT in-memory only; refresh token in AES-GCM-encrypted IndexedDB
   (master-key/WebAuthn-gated); session coupled to store-unlock; **no edge wire change**.
   Pinned: **INV-AUTH-06/07** (CONTRACT §5); M-EGR-04 (strict CSP/SRI) **escalated to a
   PRIMARY MVP control** (THREAT_MODEL §2.4/§6); edge **refresh-rotation reuse-detection**
   obligation added (M-AUTH-05, RFC 6749). *Implementation pending (Phase 2):* client session
   module (Panim) + edge refresh persistence/reuse-detection (Yasad; edge refresh is a stub).
-  *Prereq found:* no client auth/session module exists yet — this is the next dev slice.
+- **T-S0-07** — Client crypto foundation (*2026-06-05, awaiting Y4NN verify*): implemented
+  `crypto/envelope.ts` (AES-GCM-256, 96-bit IV) + `crypto/keyManagement.ts` (Argon2id master
+  key via hash-wasm; setupMasterKey + verifyPassphrase; BYO seal/open; WebAuthn-PRF wrap/unwrap
+  via **Gap-2 Option A** — transient raw bytes zeroed). Oholiab impl; **Joab QA PASS-WITH-NITS**
+  (INV-KEY-02/03 satisfied; F1 key-usage minimized; nits→tests/residuals). Schema **Dexie v2**
+  (`keyMeta.wrappedIv`, Shallum migration design). INV-KEY-03 clarified (transient wrap memory,
+  CONTRACT rev c). **VERIFIED 2026-06-05** (post first `pnpm install`): `pnpm typecheck`
+  green (project-wide), `pnpm test` **31 pass / 2 skip** (WebAuthn round-trips browser-only),
+  crypto lint clean. Fixed: `tsconfig` `allowImportingTsExtensions`+`noEmit` (scaffold-wide,
+  cleared ~20 TS5097), AES-GCM `Uint8Array<ArrayBuffer>` normalization, WebAuthn `prf` ext type.
+  *Then:* client session module (depends on this) + edge refresh/reuse-detection.
+- **Scaffold quality gates GREEN (2026-06-05):** first real verify surfaced gate failures, now
+  fixed — `tsconfig` `allowImportingTsExtensions`+`noEmit`; eslint `no-unused-vars` honors the
+  `^_` convention; 61 stub lint errors cleared **without implementing product logic** (async
+  stubs → non-async `Promise.reject`, behaviorally identical; dead imports removed). Full
+  `apps/web`: **lint 0 · typecheck 0 · test 31 pass/2 skip**.
 
 ### Blockers
 

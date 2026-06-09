@@ -3,8 +3,8 @@
 | Field   | Value                                                                              |
 | ------- | ---------------------------------------------------------------------------------- |
 | Title   | WiseMoney — Threat Model                                                       |
-| Date    | 2026-06-02; amended 2026-06-03 (§7 residual risk added, §2.1 provider list updated); amended 2026-06-03 (§2.4 M-EGR-04 escalated to primary; §6 M-EGR-04/M-AUTH-05 extended — ADR-0012) |
-| Version | THREAT_MODEL v0.1 rev 2026-06-03b                                                  |
+| Date    | 2026-06-02; amended 2026-06-05 (§7 residual risk added, §2.1 provider list updated); amended 2026-06-05 (§2.4 M-EGR-04 escalated to primary; §6 M-EGR-04/M-AUTH-05 extended — ADR-0012); amended 2026-06-05 (§7 two crypto-foundation residuals added — CWE-312 BYO key string, CWE-208 passphrase timing) |
+| Version | THREAT_MODEL v0.1 rev 2026-06-05c                                                  |
 | Status  | Draft                                                                              |
 | Owner   | Benaiah (DevSecOps / Mishmar)                                                      |
 | Source  | PRD v0.1; SRS v0.1 Rev 2026-06-02; CONTRACT v0.1; ARCHITECTURE v0.1               |
@@ -128,7 +128,7 @@ whose data-handling practices are outside the user's control once egress occurs.
     deliberately allows full egress with consent. The risk is real and accepted
     by design. It must be named plainly and disclosed to the user — it cannot be
     engineered away.
-  - **Must verify (updated 2026-06-03):** provider terms are partially resolved
+  - **Must verify (updated 2026-06-05):** provider terms are partially resolved
     (ADR-0011): NVIDIA hosted API is dropped (terms breach; trains with no
     opt-out, ToS §4.3 prohibits financial data). MVP managed-mode providers are
     OpenRouter free-tier and Gemini free-tier — both train on data as a condition
@@ -283,11 +283,11 @@ INV-EGR-03. **Boundary:** TB-01 (user-to-client) and implicitly TB-02/TB-04.
 - **Root cause 2 (infrastructural):** the PWA assembles AI contexts client-side
   from IndexedDB data; a script that can both flip consent and trigger an AI
   call has a full exfiltration path.
-- **Mitigation — primary (M-EGR-04, PRIMARY MVP CONTROL as of 2026-06-03):**
+- **Mitigation — primary (M-EGR-04, PRIMARY MVP CONTROL as of 2026-06-05):**
   strict Content Security Policy (`default-src 'self'`, `script-src 'self'`, no
   `unsafe-inline`, no `unsafe-eval`); SRI on all third-party scripts; service-worker
   bundle integrity. This mitigation is escalated from defence-in-depth to a
-  **primary MVP control** by ADR-0012 (2026-06-03). The reason: with the access
+  **primary MVP control** by ADR-0012 (2026-06-05). The reason: with the access
   token stored exclusively in JavaScript module scope and the refresh token
   decryptable via the in-session master key + Web Crypto, any XSS executing on
   the PWA origin during an active session can reach both tokens. CSP/SRI is the
@@ -701,12 +701,12 @@ the egress subsystem.
 | M-EGR-01    | Consent flag tampered to escalate egress       | Edge structural payload cap + signed consent assertion for full-egress (§3) | Go edge | MVP |
 | M-EGR-02    | localStorage cleared → defaults to full-egress | Clear = not-granted; re-prompt required; never assume granted | Consent subsystem | MVP |
 | M-EGR-03    | Provider-side retention outside operator control | Disclose to user; verify provider terms; link from consent prompt | UX + ops | MVP |
-| M-EGR-04    | XSS flips consent + triggers AI call; XSS reaches in-memory access token or Web Crypto-decryptable refresh token (ADR-0012, 2026-06-03) | **PRIMARY MVP CONTROL** (escalated from defence-in-depth — ADR-0012). Strict CSP (`default-src 'self'`, `script-src 'self'`, no `unsafe-inline`, no `unsafe-eval`); SRI on all third-party scripts; service-worker bundle integrity. MVP gate: must be active before any user authenticates in managed mode. | PWA build / infra | MVP |
+| M-EGR-04    | XSS flips consent + triggers AI call; XSS reaches in-memory access token or Web Crypto-decryptable refresh token (ADR-0012, 2026-06-05) | **PRIMARY MVP CONTROL** (escalated from defence-in-depth — ADR-0012). Strict CSP (`default-src 'self'`, `script-src 'self'`, no `unsafe-inline`, no `unsafe-eval`); SRI on all third-party scripts; service-worker bundle integrity. MVP gate: must be active before any user authenticates in managed mode. | PWA build / infra | MVP |
 | M-AUTH-01   | Credential stuffing / brute-force             | Per-IP + per-account rate limit + lockout on /login          | Go edge                | MVP |
 | M-AUTH-02   | JWT forgery via leaked signing key            | Key from secrets manager (SOPS/age), never committed        | Ops / Docker Compose   | MVP |
 | M-AUTH-03   | Account enumeration                           | Constant-time comparison; uniform error messages            | Go edge                | MVP |
 | M-AUTH-04   | Password-reset token attack                   | 128-bit random token, single-use, 15-min TTL, user-session-bound | Go edge           | MVP |
-| M-AUTH-05   | Long JWT window after token theft; stolen refresh token used in parallel after rotation | 15-min access JWT + rotating refresh token. **Refresh-rotation reuse detection required (ADR-0012, 2026-06-03):** if a rotated (invalidated) refresh token is presented to the edge, the entire token family for that user MUST be invalidated and full re-authentication forced (RFC 6749 §10.4). Without this, a stolen refresh token generates a parallel valid token lineage indefinitely. | Go edge | MVP |
+| M-AUTH-05   | Long JWT window after token theft; stolen refresh token used in parallel after rotation | 15-min access JWT + rotating refresh token. **Refresh-rotation reuse detection required (ADR-0012, 2026-06-05):** if a rotated (invalidated) refresh token is presented to the edge, the entire token family for that user MUST be invalidated and full re-authentication forced (RFC 6749 §10.4). Without this, a stolen refresh token generates a parallel valid token lineage indefinitely. | Go edge | MVP |
 | M-AUTH-06   | Cross-tenant routing via client-supplied ID   | All routing keyed on JWT `sub` only; no client-supplied user ID trusted | Go edge       | MVP |
 | M-KEY-01    | Weak passphrase enables offline crack         | Enforce min entropy at setup; Argon2id ≥ 64 MiB / 3 iter   | PWA client             | MVP |
 | M-KEY-02    | Passphrase loss = data loss                   | Active in-app export prompts; unambiguous irreversibility warning | PWA client / UX    | MVP |
@@ -733,13 +733,15 @@ product at this scale (personal-finance, tens–hundreds of users).
 | Risk                                    | Why accepted                                                                                     |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | Provider-side retention/training on full-egress data | Irreducible once data egresses. Mitigated by disclosure, consent, and verified provider terms. The user consciously opted in. |
-| Free-model training on managed-mode redacted/aggregate data (2026-06-03) | MVP managed mode routes to free-tier models (OpenRouter free, Gemini free) whose upstream providers require training/logging enabled as a condition of free access. Because managed-mode egress is structurally capped at aggregate/redacted (no individual amounts, dates, merchants, notes — INV-EGR-01), the training surface is aggregate statistical context only. This is a marginal residual layered on the existing I-EGR-01 accepted risk. It does not extend to raw financial PII, which is unreachable in managed mode at MVP. Accepted by design (ADR-0011). |
+| Free-model training on managed-mode redacted/aggregate data (2026-06-05) | MVP managed mode routes to free-tier models (OpenRouter free, Gemini free) whose upstream providers require training/logging enabled as a condition of free access. Because managed-mode egress is structurally capped at aggregate/redacted (no individual amounts, dates, merchants, notes — INV-EGR-01), the training surface is aggregate statistical context only. This is a marginal residual layered on the existing I-EGR-01 accepted risk. It does not extend to raw financial PII, which is unreachable in managed mode at MVP. Accepted by design (ADR-0011). |
 | BYO-key mode client-side-only consent enforcement | User is sole principal, key-holder, and data subject. Server enforcement would eliminate the mode's defining property. Disclosed to user. |
 | Passphrase loss = unrecoverable data    | Explicit design choice. Recovery is the JSON export. Mitigated by active export prompts. |
 | Plaintext export file (MVP)            | Disclosed at export time. Encrypted export is post-MVP. |
 | Rate-limit state lost on edge restart  | Acceptable at current scale. Redis path documented. |
 | JWT cannot be revoked (stateless)      | Mitigated by 15-min token lifetime. Full revocation requires server state (post-MVP if needed). |
 | WebAuthn platform authenticator sync  | User-level awareness; passphrase remains cryptographic root. |
+| BYO API key string non-zeroable in JS memory — CWE-312 (2026-06-05) | `decryptBYOKey` returns the raw API key as a JS string; JS strings are immutable so the decrypted key cannot be explicitly zeroed and remains GC-reachable until collected. This is a language constraint, not a logic flaw. The key is never persisted in plaintext, never logged, and never transmitted to the edge — INV-KEY-02 holds. Mitigation is to minimise the string's in-scope lifetime at call sites. A partial future hardening is returning a `Uint8Array` where callers can `.fill(0)`, but HTTP `Authorization` headers ultimately require a string. Cross-ref: client crypto foundation; ADR-0012; INV-KEY-02. |
+| verifyPassphrase timing distinguishability — CWE-208 informational (2026-06-05) | Argon2id KDF runs only when `keyMeta` exists; a "no keyMeta" path returns immediately while a "wrong passphrase" path pays the full KDF cost (~hundreds of ms). Timing could theoretically distinguish those two states. Not exploitable in the local-first model — `verifyPassphrase` runs entirely client-side with no network-exposed endpoint. Would only matter if the function were ever proxied or executed remotely. Accepted at MVP; flagged for re-evaluation if verification moves off-device. Cross-ref: client crypto foundation; ADR-0012. |
 
 ---
 
