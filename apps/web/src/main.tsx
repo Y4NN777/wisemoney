@@ -17,6 +17,18 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App.tsx";
 
+// LOW-04 (CWE-311): Fail loudly at boot if the managed-mode transport base URL
+// is not HTTPS in a production build. An http:// URL would send access JWTs and
+// consent assertions over plaintext. undefined is also rejected — a missing URL
+// would cause the transport to fall back to an unsafe relative path or fail
+// silently, both of which are unacceptable in prod.
+if (import.meta.env.PROD) {
+  const edgeBaseUrl: string | undefined = import.meta.env.VITE_EDGE_BASE_URL;
+  if (edgeBaseUrl === undefined || !edgeBaseUrl.startsWith("https://")) {
+    throw new Error("VITE_EDGE_BASE_URL must be https:// in production builds");
+  }
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

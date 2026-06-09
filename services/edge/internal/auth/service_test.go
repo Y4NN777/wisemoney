@@ -213,6 +213,56 @@ func TestDummyPHC_Parses(t *testing.T) {
 	}
 }
 
+// -- HIGH-03: Argon2 DoS upper-bound guards on password and email length ------
+//
+// These tests verify the validation constants introduced to prevent driving
+// Argon2id with a pathologically long password (HIGH-03, CWE-400). Tests are
+// pure unit tests (no DB, no HTTP) — they call validateCredentialLengths which
+// is extracted from HandleRegister so it can be tested directly.
+
+func TestValidateCredentialLengths_ExactlyAtBoundary(t *testing.T) {
+	t.Parallel()
+	// Exactly maxPasswordLen bytes must be accepted.
+	pw := strings.Repeat("a", maxPasswordLen)
+	if err := validateCredentialLengths("user@example.com", pw); err != nil {
+		t.Errorf("expected nil for password at exactly maxPasswordLen, got %v", err)
+	}
+}
+
+func TestValidateCredentialLengths_OneBeyondMaxPassword(t *testing.T) {
+	t.Parallel()
+	// maxPasswordLen+1 bytes must be rejected.
+	pw := strings.Repeat("a", maxPasswordLen+1)
+	if err := validateCredentialLengths("user@example.com", pw); err == nil {
+		t.Error("expected error for password one byte over maxPasswordLen, got nil")
+	}
+}
+
+func TestValidateCredentialLengths_OversizedEmail(t *testing.T) {
+	t.Parallel()
+	// maxEmailLen+1 bytes must be rejected.
+	local := strings.Repeat("a", maxEmailLen) // will push total > maxEmailLen with @x.y
+	email := local + "@x.y"
+	if err := validateCredentialLengths(email, "valid-password-123"); err == nil {
+		t.Error("expected error for email over maxEmailLen, got nil")
+	}
+}
+
+func TestValidateCredentialLengths_ExactlyAtEmailBoundary(t *testing.T) {
+	t.Parallel()
+	// An email whose len() == maxEmailLen must be accepted.
+	// Construct: pad local part so total is exactly 254 bytes.
+	// "...@x.y" = 5 chars; local = 254-5 = 249 chars.
+	local := strings.Repeat("a", maxEmailLen-len("@x.y"))
+	email := local + "@x.y"
+	if len(email) != maxEmailLen {
+		t.Fatalf("test setup error: email len=%d, want %d", len(email), maxEmailLen)
+	}
+	if err := validateCredentialLengths(email, "valid-password-123"); err != nil {
+		t.Errorf("expected nil for email at exactly maxEmailLen, got %v", err)
+	}
+}
+
 // -- parseArgon2Params upper-bound guards (CWE-20) ----------------------------
 
 func TestParseArgon2Params_RejectsOversizedMemory(t *testing.T) {

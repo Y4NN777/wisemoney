@@ -49,6 +49,19 @@ var emailRE = regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]+$`)
 // This is a floor, not a strength meter — entropy analysis is out of scope here.
 const minPasswordLen = 12
 
+// maxPasswordLen caps the password accepted by HandleRegister before Argon2id
+// derivation. Without an upper bound an attacker can submit a multi-MiB string
+// and drive Argon2id memory/CPU costs to exhaustion (HIGH-03, CWE-400).
+// 128 bytes is well above any real-world password while closing the DoS vector.
+// The MED-01 body-size cap (8 KiB in the router) is the first line of defence;
+// this explicit check is the targeted, defence-in-depth control.
+const maxPasswordLen = 128
+
+// maxEmailLen is the RFC 5321 maximum total length of an email address (local +
+// @ + domain). Enforced to prevent a trivially large email field from reaching
+// DB queries or being stored (HIGH-03 / defence-in-depth alongside MED-01).
+const maxEmailLen = 254
+
 // Service handles auth HTTP endpoints.
 type Service struct {
 	cfg      *config.Config
@@ -84,6 +97,26 @@ func NewService(cfg *config.Config, users *store.UserRepository, tokens *store.R
 	return &Service{cfg: cfg, users: users, tokens: tokens, dummyPHC: dummy}
 }
 
+// -- Credential length validation (HIGH-03, CWE-400) -------------------------
+
+// validateCredentialLengths checks email and password against their upper bounds
+// before any expensive operation (Argon2id derivation). Returns a non-nil error
+// if either field exceeds its maximum.
+//
+// The error message is intentionally generic — callers must NOT expose it
+// verbatim in HTTP responses to avoid leaking which field failed (M-AUTH-03).
+// Callers should map any non-nil return to the same generic 400 they use for
+// other validation failures.
+func validateCredentialLengths(email, password string) error {
+	if len(email) > maxEmailLen {
+		return errors.New("email exceeds maximum length")
+	}
+	if len(password) > maxPasswordLen {
+		return errors.New("password exceeds maximum length")
+	}
+	return nil
+}
+
 // -- HTTP handlers ------------------------------------------------------------
 
 // HandleRegister handles POST /v1/auth/register.
@@ -101,6 +134,12 @@ func (s *Service) HandleRegister(w http.ResponseWriter, r *http.Request) {
 		Password string `json:"password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		// Distinguish body-too-large (MED-01 cap exceeded) from genuine malform.
+		var maxErr *http.MaxBytesError
+		if errors.As(err, &maxErr) {
+			writeError(w, http.StatusRequestEntityTooLarge, "payload_too_large", "request body exceeds limit")
+			return
+		}
 		writeError(w, http.StatusBadRequest, "invalid_request", "malformed request body")
 		return
 	}
@@ -112,6 +151,13 @@ func (s *Service) HandleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(body.Password) < minPasswordLen {
 		writeError(w, http.StatusBadRequest, "invalid_request", "password does not meet minimum requirements")
+		return
+	}
+	// Upper-bound checks before Argon2id derivation (HIGH-03, CWE-400).
+	// validateCredentialLengths returns a generic error — map to a generic 400
+	// to avoid revealing which field failed (M-AUTH-03).
+	if err := validateCredentialLengths(body.Email, body.Password); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid_request", "invalid request")
 		return
 	}
 
@@ -156,6 +202,11 @@ func (s *Service) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		Password string `json:"password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		var maxErr *http.MaxBytesError
+		if errors.As(err, &maxErr) {
+			writeError(w, http.StatusRequestEntityTooLarge, "payload_too_large", "request body exceeds limit")
+			return
+		}
 		writeError(w, http.StatusBadRequest, "invalid_request", "malformed request body")
 		return
 	}
@@ -251,6 +302,11 @@ func (s *Service) HandleRefresh(w http.ResponseWriter, r *http.Request) {
 		RefreshToken string `json:"refresh_token"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		var maxErr *http.MaxBytesError
+		if errors.As(err, &maxErr) {
+			writeError(w, http.StatusRequestEntityTooLarge, "payload_too_large", "request body exceeds limit")
+			return
+		}
 		writeError(w, http.StatusBadRequest, "invalid_request", "malformed request body")
 		return
 	}

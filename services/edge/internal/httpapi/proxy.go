@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
@@ -87,6 +88,12 @@ func newProxyHandler(router *provider.Router, validator *egress.Validator, conse
 		// -- Request body -------------------------------------------------------
 		var req ProxyRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			// Distinguish body-too-large (MED-01 cap) from malformed JSON.
+			var maxErr *http.MaxBytesError
+			if errors.As(err, &maxErr) {
+				http.Error(w, `{"error":"payload_too_large","message":"request body exceeds limit"}`, http.StatusRequestEntityTooLarge)
+				return
+			}
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}

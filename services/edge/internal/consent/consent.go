@@ -24,6 +24,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -81,7 +82,17 @@ func (s *Service) HandleAssert(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Feature string `json:"feature"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Feature == "" {
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		// Distinguish body-too-large (MED-01 cap) from malformed JSON.
+		var maxErr *http.MaxBytesError
+		if errors.As(err, &maxErr) {
+			http.Error(w, `{"error":"payload_too_large","message":"request body exceeds limit"}`, http.StatusRequestEntityTooLarge)
+			return
+		}
+		http.Error(w, `{"error":"invalid_request","message":"feature is required"}`, http.StatusBadRequest)
+		return
+	}
+	if body.Feature == "" {
 		http.Error(w, `{"error":"invalid_request","message":"feature is required"}`, http.StatusBadRequest)
 		return
 	}

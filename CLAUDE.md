@@ -117,6 +117,17 @@
   (M-AUTH-01) still TODO. Register-409 enumeration accepted (THREAT_MODEL §2.3). **Edge run needs
   Y4NN to apply Postgres migrations** (golang-migrate `0001_init`).
   *Then:* client session module (depends on T-S0-07) wires login/refresh + token storage.
+- **T-S0-09** — Security-review triage + quick-wins (*2026-06-05*): triaged `security-review.md`
+  (full-codebase review @ 4b8fec7) against current HEAD — **all 3 HIGH closed/neutralised**
+  (HIGH-02 ErrNoRows + LOW-02/03 already resolved by S0-07/08; **HIGH-01 nonce-replay
+  DEFERRED** — ADR-0011 removed its exploit path, gate to managed-full-egress launch). Quick-wins
+  shipped: **MED-01** body-size limits (`withBodyLimit`: 8 KiB auth/consent, 1 MiB proxy, 413),
+  **HIGH-03-max** password≤128/email≤254, **MED-04** `.env.example` `sslmode=require`, **LOW-04**
+  `main.tsx` PROD-https assertion. All green (edge container + web typecheck/lint). Triage appended
+  to `security-review.md` (now tracked). *Tracked-open (gated, not blocking):* MED-02 CORS + MED-03
+  edge-headers/PWA-CSP → **staging deploy** (Eliashib/Huram); MED-05 structured logging + LOW-01
+  auth rate-limit → **pre-login-launch** (Zerubbabel); HIGH-01 nonce denylist → **managed-full-egress
+  launch**; INFO-01/02 ongoing.
 - **Scaffold quality gates GREEN (2026-06-05):** first real verify surfaced gate failures, now
   fixed — `tsconfig` `allowImportingTsExtensions`+`noEmit`; eslint `no-unused-vars` honors the
   `^_` convention; 61 stub lint errors cleared **without implementing product logic** (async

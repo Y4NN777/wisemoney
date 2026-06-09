@@ -50,6 +50,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Security hardening (review triage quick-wins)** — request body-size limits on all edge
+  routes (8 KiB auth/consent, 1 MiB proxy; 413 on exceed, CWE-400); register password/email
+  max-length bounds (≤128 / ≤254, Argon2 DoS guard); `.env.example` → `sslmode=require`
+  (CWE-311); `apps/web` startup assertion requiring `https://` for `VITE_EDGE_BASE_URL` in
+  production builds (CWE-311). See `security-review.md` triage.
 - **`apps/web/tsconfig.json`** — added `allowImportingTsExtensions` + `noEmit` (removed
   `outDir`; Vite handles bundling). The scaffold imports with explicit `.ts`/`.tsx`
   extensions; this clears the project-wide TS5097 errors surfaced by the first typecheck.
