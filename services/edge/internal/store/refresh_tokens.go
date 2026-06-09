@@ -25,9 +25,11 @@ package store
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -81,6 +83,11 @@ func (r *RefreshTokenRepository) FindByTokenHash(ctx context.Context, hash strin
 		&t.ID, &t.UserID, &t.TokenHash, &t.IssuedAt, &t.ExpiresAt, &t.RevokedAt,
 	)
 	if err != nil {
+		// pgx.ErrNoRows: token hash not in the table (unknown / already purged).
+		// Return nil, nil so the refresh handler issues a clean 401.
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("store: refresh_tokens.FindByTokenHash: %w", err)
 	}
 	return &t, nil

@@ -23,9 +23,11 @@ package store
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -82,8 +84,11 @@ func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*User, 
 		&u.ID, &u.Email, &u.PasswordHash, &u.CreatedAt, &u.UpdatedAt,
 	)
 	if err != nil {
-		// pgx.ErrNoRows is a valid "not found" — return nil, nil.
-		// Other errors are genuine failures.
+		// pgx.ErrNoRows means no user with this email — not an error for the caller;
+		// the login handler must treat nil user the same as a wrong password (M-AUTH-03).
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("store: users.FindByEmail: %w", err)
 	}
 	return &u, nil
@@ -102,6 +107,11 @@ func (r *UserRepository) FindByID(ctx context.Context, id string) (*User, error)
 		&u.ID, &u.Email, &u.PasswordHash, &u.CreatedAt, &u.UpdatedAt,
 	)
 	if err != nil {
+		// pgx.ErrNoRows: user was deleted between token issuance and refresh.
+		// Return nil, nil so the refresh handler can issue a clean 401 (INV-AUTH-03).
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("store: users.FindByID: %w", err)
 	}
 	return &u, nil

@@ -45,7 +45,14 @@ func (a *JWTAuth) Middleware(next http.Handler) http.Handler {
 				return nil, jwt.ErrSignatureInvalid
 			}
 			return a.signingKey, nil
-		}, jwt.WithExpirationRequired())
+		},
+			// Pin to HS256 exactly (CWE-347, alg-confusion prevention).
+			// The keyfunc above already rejects non-HMAC methods; WithValidMethods
+			// adds a second check that also blocks HS384/HS512 so the only accepted
+			// algorithm is the one the server issues (issueAccessJWT uses HS256).
+			jwt.WithValidMethods([]string{"HS256"}),
+			jwt.WithExpirationRequired(),
+		)
 
 		if err != nil || !token.Valid {
 			writeUnauthorized(w)

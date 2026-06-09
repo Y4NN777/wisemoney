@@ -104,7 +104,19 @@
   green (project-wide), `pnpm test` **31 pass / 2 skip** (WebAuthn round-trips browser-only),
   crypto lint clean. Fixed: `tsconfig` `allowImportingTsExtensions`+`noEmit` (scaffold-wide,
   cleared ~20 TS5097), AES-GCM `Uint8Array<ArrayBuffer>` normalization, WebAuthn `prf` ext type.
-  *Then:* client session module (depends on this) + edge refresh/reuse-detection.
+- **T-S0-08** — Edge auth completion (*2026-06-05*): wired `register`/`login`/`refresh` to the
+  (real) repos; Argon2id **PHC** hash/verify (constant-time); login **timing-equalized** via a
+  cfg-param dummy hash; refresh **rotation + reuse-detection** (revoked token → `RevokeAllForUser`
+  family-invalidation, RFC 6749). Hizkiah impl. **Uriah QA PASS**; **Joab security PASS-WITH-NITS**
+  — caught + fixed a MEDIUM timing-oracle (dummy was `t=1` vs prod `t≥3`) and pinned JWT **HS256**
+  (`WithValidMethods`, closing HS384/512 confusion); PHC parser upper-bounds added. Fixed repo
+  `ErrNoRows` bug (FindByEmail/ID/TokenHash → `(nil,nil)`). build+vet+test green (golang:1.25.11).
+  *Carry-forward (Yasad — Zerubbabel/Shallum):* refresh rotation is non-atomic (revoke→create,
+  pool-based repos) → concurrent double-issuance race; needs **tx-variant repo methods**. Handler
+  integration tests deferred (need Postgres/testcontainers + repo interfaces). Login rate-limit
+  (M-AUTH-01) still TODO. Register-409 enumeration accepted (THREAT_MODEL §2.3). **Edge run needs
+  Y4NN to apply Postgres migrations** (golang-migrate `0001_init`).
+  *Then:* client session module (depends on T-S0-07) wires login/refresh + token storage.
 - **Scaffold quality gates GREEN (2026-06-05):** first real verify surfaced gate failures, now
   fixed — `tsconfig` `allowImportingTsExtensions`+`noEmit`; eslint `no-unused-vars` honors the
   `^_` convention; 61 stub lint errors cleared **without implementing product logic** (async

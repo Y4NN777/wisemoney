@@ -26,6 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Edge — managed-mode auth** (`/v1/auth/register|login|refresh`) — wired to the Postgres
+  repos. Argon2id PHC password hashing + constant-time verify (INV-AUTH-02, M-AUTH-03);
+  15-min HS256 access JWT (alg-pinned) + rotating single-use refresh token with
+  **reuse-detection family invalidation** (M-AUTH-05, RFC 6749 §10.4); login timing-equalized
+  against account enumeration. Mishmar review fixed a timing-oracle (dummy hash now uses prod
+  Argon2 params) and pinned JWT to HS256. (Refresh rotation atomicity + handler integration
+  tests are tracked follow-ups.)
 - **Client crypto foundation** — `crypto/envelope.ts` (AES-GCM-256 seal/open, unique
   96-bit IV) and `crypto/keyManagement.ts` (Argon2id master-key derivation via hash-wasm,
   passphrase verification, BYO key seal/open, WebAuthn-PRF master-key wrap/unwrap). Keys
