@@ -172,3 +172,127 @@ export async function refreshSession(
   const body: RefreshRequest = { refresh_token: refreshToken };
   return post<RefreshRequest, AuthTokenResponse>("/v1/auth/refresh", body);
 }
+
+// ---------------------------------------------------------------------------
+// Consent assertion
+// ---------------------------------------------------------------------------
+
+/** Request body for POST /v1/consent/assert. */
+type ConsentAssertRequest = {
+  feature: string;
+};
+
+/**
+ * Request a signed consent assertion from the edge for a given feature.
+ *
+ * POST /v1/consent/assert {feature} + Authorization: Bearer <accessToken>
+ * Response: the ConsentAssertion object signed by the edge (ARCHITECTURE §10a).
+ *
+ * The client treats the response as an OPAQUE string — it cannot verify the
+ * HMAC-SHA256 signature (CONSENT_SIGNING_KEY lives only on the edge). The
+ * returned string is stored verbatim via consentStore.storeConsentAssertion()
+ * and later forwarded as the X-Consent-Assertion header on full-egress requests.
+ *
+ * If the response body is an object it is JSON.stringify-ed so it round-trips
+ * cleanly as the X-Consent-Assertion header value (the edge parses it back on
+ * every proxied request).
+ *
+ * Throws EdgeAuthError with the HTTP status on any non-2xx response.
+ * Callers MUST branch on status 401 to trigger a token refresh before retrying.
+ */
+export async function postConsentAssert(args: {
+  accessToken: string;
+  feature: string;
+}): Promise<string> {
+  const { accessToken, feature } = args;
+  const body: ConsentAssertRequest = { feature };
+  const raw = await post<ConsentAssertRequest, unknown>(
+    "/v1/consent/assert",
+    body,
+    accessToken
+  );
+  // The edge returns the ConsentAssertion object; stringify it so the value is
+  // always a plain string that X-Consent-Assertion can carry verbatim.
+  if (typeof raw === "string") {
+    return raw;
+  }
+  return JSON.stringify(raw);
+}
+
+// ---------------------------------------------------------------------------
+// AI proxy
+// ---------------------------------------------------------------------------
+
+/** Response shape from POST /v1/ai/proxy (ARCHITECTURE §10a). */
+export type AiProxyResponse = {
+  content: string;
+  provider: string;
+};
+
+/**
+ * POST /v1/ai/proxy — forward a shaped egress context to the AI proxy.
+ *
+ * Headers per ARCHITECTURE §10a / T-S0-05:
+ *   Authorization: Bearer <accessToken>
+ *   X-Egress-Level: redacted | full
+ *   X-Feature: <featureId>
+ *   X-Consent-Assertion: <opaque> — ONLY when egressLevel === "full" AND an
+ *     assertion is present (if absent the request is downgraded to redacted).
+ *
+ * Responses:
+ *   200 → { content, provider }
+ *   401 → EdgeAuthError(401) — token invalid/expired; caller should refresh once
+ *   503 → EdgeAuthError(503) — all providers unavailable (INV-PROXY-04)
+ *   400 → EdgeAuthError(400) — egress violation (structural payload cap)
+ *
+ * Throws EdgeAuthError for all non-2xx responses.
+ */
+export async function postAiProxy(args: {
+  accessToken: string;
+  egressLevel: "redacted" | "full";
+  feature: string;
+  consentAssertion?: string;
+  taskType: string;
+  payload: unknown;
+}): Promise<AiProxyResponse> {
+  const { accessToken, egressLevel, feature, consentAssertion, taskType, payload } = args;
+
+  const extraHeaders: Record<string, string> = {
+    "X-Egress-Level": egressLevel,
+    "X-Feature": feature,
+  };
+
+  // X-Consent-Assertion is sent ONLY on full-egress requests AND only when an
+  // assertion is present. Omitting it on redacted requests prevents assertion
+  // tokens from travelling with requests that don't require them.
+  if (egressLevel === "full" && consentAssertion !== undefined) {
+    extraHeaders["X-Consent-Assertion"] = consentAssertion;
+  }
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${accessToken}`,
+    ...extraHeaders,
+  };
+
+  const response = await fetch(`${baseUrl()}/v1/ai/proxy`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ task_type: taskType, payload }),
+  });
+
+  if (!response.ok) {
+    let message = response.statusText;
+    try {
+      const errBody = (await response.json()) as { message?: string };
+      if (typeof errBody.message === "string") {
+        message = errBody.message;
+      }
+    } catch {
+      // JSON parse failed — use statusText as message (already set above).
+    }
+    throw new EdgeAuthError(response.status, message);
+  }
+
+  return (await response.json()) as AiProxyResponse;
+}

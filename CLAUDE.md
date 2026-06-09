@@ -136,9 +136,19 @@
   security PASS-WITH-NITS** (INV-AUTH-06/07 satisfied; closed CWE-319 edgeClient HTTPS
   self-guard + CWE-668 `_sessionStore` unexport) + **Jahaziel QA PASS**. 59 web tests pass /
   2 skip; typecheck+lint 0. INV-AUTH-06 (in-memory access, sealed refresh) + INV-AUTH-07
-  (unlock-coupled, no background refresh) enforced + tested. *Carry-forward:* wire the managed
-  AI path in `ai/orchestration.ts` (attach Bearer + `X-Feature` + `X-Consent-Assertion`) — the
-  remaining client↔edge integration; depends on this + the consent store.
+  (unlock-coupled, no background refresh) enforced + tested.
+- **T-S0-11** — AI orchestration MANAGED path (*2026-06-05*): `submit` managed branch wired —
+  `getAccessToken(masterKey)`→Bearer, consent→`X-Egress-Level`+`X-Feature`+(`X-Consent-Assertion`
+  on full), `postAiProxy`→edge `/v1/ai/proxy`; 401→refresh+retry-once; 503→`ProviderUnavailableSignal`
+  (INV-PROXY-04); 200→normalized. Salma impl; **Jahaziel QA PASS**, **Joab security PASS-WITH-NITS**.
+  BYO-direct path still a stub (separate slice).
+  **MEDIUM — RESOLVED (Salma + Joab re-verify PASS, MEDIUM CLOSED):** full-consent + missing/expired
+  assertion now **re-acquires** via `postConsentAssert` (`POST /v1/consent/assert`, 401→refresh+retry),
+  and on failure **gracefully downgrades** — `toRedacted()` strips full-only fields so a full-shaped
+  body is NEVER sent under a `redacted` header (safety property verified; no PII-egress path). web
+  tests now ~88 pass / 2 skip; typecheck+lint 0. *LOW nits tracked (non-blocking):* inner catch
+  swallows refresh errors (re-emit when observability wired — Hanun); `postAiProxy` could use a
+  discriminated-union type (edge enforces anyway); extract an edgeClient `request()` primitive.
 - **Scaffold quality gates GREEN (2026-06-05):** first real verify surfaced gate failures, now
   fixed — `tsconfig` `allowImportingTsExtensions`+`noEmit`; eslint `no-unused-vars` honors the
   `^_` convention; 61 stub lint errors cleared **without implementing product logic** (async

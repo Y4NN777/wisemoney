@@ -26,6 +26,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **AI orchestration — managed path** — `submit` (managed mode) attaches the in-memory
+  access JWT (`Bearer`), resolves egress level from per-feature consent (`X-Egress-Level`
+  + `X-Feature`, and `X-Consent-Assertion` only on full), and calls the edge `/v1/ai/proxy`
+  via `edgeClient.postAiProxy`. 401 → session refresh + one retry; 503 → `ProviderUnavailableSignal`
+  (INV-PROXY-04, never fabricates); 200 → normalized response. Consent-gated egress enforced
+  client-side and at the edge boundary. When full consent is granted but the assertion is
+  missing/expired, the client **re-acquires** it (`POST /v1/consent/assert`, with refresh+retry)
+  and, if that fails, **gracefully downgrades** — `toRedacted()` strips full-only fields so a
+  full-shaped payload is never sent under a `redacted` header. BYO-direct path remains a
+  separate follow-up.
 - **Client auth-session module** — `api/edgeClient.ts` (typed register/login/refresh,
   `Authorization: Bearer`, HTTPS-enforced base URL) + `auth/session.ts` (zustand store).
   Access JWT held **in-memory only**; refresh token **AES-GCM-sealed** into a new `authSession`

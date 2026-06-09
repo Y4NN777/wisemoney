@@ -17,7 +17,12 @@
  * the provider and then ZEROED from memory. Never sent to the edge. Never logged.
  */
 
-import type { EgressContext } from "@/consent/redaction.ts";
+import type { EgressContext, FullEgressContext } from "@/consent/redaction.ts";
+import { toRedacted } from "@/consent/redaction.ts";
+import { getConsentLevel, getConsentAssertion, storeConsentAssertion } from "@/consent/consentStore.ts";
+import { getAccessToken, refresh } from "@/auth/session.ts";
+import { postAiProxy, postConsentAssert, EdgeAuthError } from "@/api/edgeClient.ts";
+import type { MasterKey } from "@/crypto/envelope.ts";
 
 /** AI task types — determine provider/model routing (ARCHITECTURE §9). */
 export type TaskType = "reasoning" | "classification" | "teaching" | "summarization";
@@ -43,39 +48,236 @@ export type ProviderUnavailableSignal = {
 
 export type AIResult = NormalizedAIResponse | ProviderUnavailableSignal;
 
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Type-guard: is the egress context the Full variant?
+ *
+ * FullEgressContext is a superset of RedactedEgressContext (it adds
+ * `transactions`). We narrow on the presence of that field.
+ */
+function isFullEgressContext(ctx: EgressContext): ctx is FullEgressContext {
+  return "transactions" in ctx;
+}
+
+/**
+ * Determine the effective egress level and the assertion to attach.
+ *
+ * Full egress requires ALL three conditions to be true:
+ *   1. consentStore reports FullGranted for this feature.
+ *   2. A stored assertion is present (the edge signed it; client holds it opaquely).
+ *   3. The egressContext is the Full variant (i.e. the caller shaped full data).
+ *
+ * Conditions 1 and 3 are evaluated synchronously here. Condition 2 — whether
+ * the assertion is present (and not expired) — may require a network call to
+ * re-acquire the assertion from POST /v1/consent/assert when it is absent or
+ * expired. That re-acquisition is handled in resolveFullEgress (async).
+ *
+ * If conditions 1 or 3 are false the call is immediately downgraded to
+ * "redacted" — no async work needed.
+ */
+function needsFullEgressCheck(
+  featureId: string,
+  egressContext: EgressContext
+): boolean {
+  return (
+    getConsentLevel(featureId) === "FullGranted" &&
+    isFullEgressContext(egressContext)
+  );
+}
+
+/**
+ * Attempt to resolve a valid assertion for full-egress.
+ *
+ * - If a stored assertion is present, return it immediately.
+ * - If no assertion is stored, request one from POST /v1/consent/assert using
+ *   the current access token, store it, and return it.
+ * - If re-acquisition fails for any reason other than a 401 (or fails after a
+ *   single 401→refresh retry), return null so the caller can downgrade.
+ *
+ * The 401→refresh path uses the same `masterKey` already materialised by the
+ * caller so no extra key derivation is needed.
+ */
+async function resolveFullEgress(
+  featureId: string,
+  accessToken: string,
+  masterKey: MasterKey
+): Promise<{ assertion: string } | null> {
+  // Fast path: assertion already cached.
+  const stored = getConsentAssertion(featureId);
+  if (stored !== null) {
+    return { assertion: stored };
+  }
+
+  // Slow path: re-acquire from the edge.
+  const acquire = async (token: string): Promise<string> => {
+    return postConsentAssert({ accessToken: token, feature: featureId });
+  };
+
+  try {
+    const assertion = await acquire(accessToken);
+    storeConsentAssertion(featureId, assertion);
+    return { assertion };
+  } catch (err) {
+    if (err instanceof EdgeAuthError && err.status === 401) {
+      // Single token-refresh attempt, then retry the assertion call once.
+      try {
+        await refresh(masterKey);
+        const freshToken = await getAccessToken(masterKey);
+        const assertion = await acquire(freshToken);
+        storeConsentAssertion(featureId, assertion);
+        return { assertion };
+      } catch {
+        // Refresh or second assertion attempt failed — downgrade to redacted.
+        return null;
+      }
+    }
+    // Network error, 4xx (non-401), 5xx — downgrade to redacted.
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
 /**
  * Submit a shaped egress context to the appropriate AI transport.
  *
- * TODO (FR-AIORCH-01/03/05):
+ * MANAGED MODE (this implementation):
  *
- * Managed mode path:
- * - Attach JWT (from auth session) + consent assertion (from consentStore).
- * - POST to VITE_EDGE_BASE_URL — the Go edge handles routing, rate-limiting,
- *   cross-provider fallback, and normalization.
- * - Return the normalized response.
+ * 1. Determine egress level:
+ *    - "full" iff consentStore reports FullGranted AND a stored assertion exists
+ *      AND the egressContext is the Full variant. Any condition false → "redacted".
+ * 2. Obtain a valid access token via getAccessToken(masterKey) (refreshes near-expiry).
+ * 3. POST to /v1/ai/proxy with the correct headers (ARCHITECTURE §10a, T-S0-05).
+ * 4. On 401: refresh once, retry with the fresh token. If 401 again → surface as
+ *    unavailable (no infinite loop; INV-AUTH-07 respected throughout).
+ * 5. On 503: return ProviderUnavailableSignal (INV-PROXY-04).
+ * 6. On 200: return NormalizedAIResponse.
  *
- * BYO-key mode path:
- * - Determine primary provider + fallback chain via clientSideRoute.
- * - Call decryptBYOKey(providerId, masterKey) to get the raw key in memory.
- * - Call the provider's adapter directly with the key.
- * - ZERO the key from memory after the call (INV-KEY-02).
- * - Normalize the response to NormalizedAIResponse before returning.
- * - On failure, try the next provider in the fallback chain (FR-AIORCH-05).
- * - If all fail, return ProviderUnavailableSignal (INV-PROXY-04).
+ * BYO-KEY MODE: not yet implemented — returns a "not implemented" rejection.
+ * Callers must pass `mode` to select the path; the BYO path stub will throw.
+ * The BYO path will be implemented in a separate scoped task.
  *
  * @param egressContext - already consent-shaped context from AIContextBuilder
- * @param taskType      - determines routing config
- * @param mode          - managed or byo
- * @param featureId     - for normalised response attribution
+ * @param taskType      - determines provider/model routing (ARCHITECTURE §9)
+ * @param mode          - "managed" (edge-proxied) or "byo" (direct, not yet implemented)
+ * @param featureId     - consent + response attribution
+ * @param masterKey     - in-memory master key (INV-AUTH-07: passed in, never retained)
  */
-export function submit(
-  _egressContext: EgressContext,
-  _taskType: TaskType,
-  _mode: AIMode,
-  _featureId: string
+export async function submit(
+  egressContext: EgressContext,
+  taskType: TaskType,
+  mode: AIMode,
+  featureId: string,
+  masterKey: MasterKey
 ): Promise<AIResult> {
-  // TODO: implement managed + BYO paths
-  return Promise.reject(new Error("submit: not yet implemented"));
+  if (mode === "byo") {
+    // BYO-key path not yet implemented (separate scoped task).
+    // clientSideRoute / clientSideFallback / decryptBYOKey wire-up deferred.
+    return Promise.reject(new Error("submit: BYO-key mode not yet implemented"));
+  }
+
+  // ── Managed path ──────────────────────────────────────────────────────────
+
+  // Obtain (or refresh near-expiry) access token. INV-AUTH-07: masterKey passed
+  // in, never retained in this module.
+  const accessToken = await getAccessToken(masterKey);
+
+  // ── Egress level resolution ───────────────────────────────────────────────
+  //
+  // Full egress requires FullGranted consent + Full context variant + a valid
+  // assertion. The assertion may need to be re-acquired if absent/expired.
+  //
+  // If re-acquisition fails we downgrade to redacted (toRedacted strips the
+  // full-only fields) — never send a Full-shaped body under X-Egress-Level: redacted,
+  // which would produce a 400 from the edge structural cap (INV-EGR-03a).
+
+  let effectiveEgressLevel: "redacted" | "full";
+  let effectiveAssertion: string | undefined;
+  let effectivePayload: EgressContext;
+
+  if (needsFullEgressCheck(featureId, egressContext)) {
+    const resolved = await resolveFullEgress(featureId, accessToken, masterKey);
+    if (resolved !== null) {
+      // Assertion acquired (or already cached) — send full.
+      effectiveEgressLevel = "full";
+      effectiveAssertion = resolved.assertion;
+      effectivePayload = egressContext;
+    } else {
+      // Re-acquisition failed — graceful downgrade: strip full-only fields so
+      // the payload is structurally RedactedEgressContext (INV-EGR-01).
+      effectiveEgressLevel = "redacted";
+      effectiveAssertion = undefined;
+      effectivePayload = toRedacted(egressContext);
+    }
+  } else {
+    // Consent is Redacted/NotPrompted, or context is already the Redacted
+    // variant — send redacted without attempting assertion re-acquisition.
+    effectiveEgressLevel = "redacted";
+    effectiveAssertion = undefined;
+    effectivePayload = egressContext;
+  }
+
+  const callProxy = async (token: string): Promise<AIResult> => {
+    try {
+      // exactOptionalPropertyTypes: build the args object without the optional
+      // key when there is no assertion, so `undefined` is not assigned to an
+      // optional property (TS2379).
+      const proxyArgs =
+        effectiveAssertion !== undefined
+          ? {
+              accessToken: token,
+              egressLevel: effectiveEgressLevel,
+              feature: featureId,
+              consentAssertion: effectiveAssertion,
+              taskType,
+              payload: effectivePayload,
+            }
+          : {
+              accessToken: token,
+              egressLevel: effectiveEgressLevel,
+              feature: featureId,
+              taskType,
+              payload: effectivePayload,
+            };
+      const resp = await postAiProxy(proxyArgs);
+      return { text: resp.content, featureId, taskType, provider: resp.provider };
+    } catch (err) {
+      if (err instanceof EdgeAuthError && err.status === 503) {
+        // All providers unavailable — surface a clear user-facing signal (INV-PROXY-04).
+        return {
+          unavailable: true,
+          taskType,
+          message:
+            "AI is temporarily unavailable. Your financial data is unaffected.",
+        };
+      }
+      // Re-throw all other errors (401, 400, network failures) so the caller
+      // or the retry wrapper can handle them.
+      throw err;
+    }
+  };
+
+  try {
+    return await callProxy(accessToken);
+  } catch (err) {
+    if (err instanceof EdgeAuthError && err.status === 401) {
+      // Token was rejected — perform one refresh attempt and retry.
+      // INV-AUTH-07: masterKey passed through, not retained.
+      // Note: assertion re-acquisition already performed a refresh if the
+      // assertion call 401-ed. This retry covers a 401 on the proxy call itself.
+      await refresh(masterKey);
+      const freshToken = await getAccessToken(masterKey);
+      // Second attempt: if this 401s again the error propagates to the caller —
+      // no further retry to prevent loops (RFC 6749 §6; ADR-0012 M-AUTH-05).
+      return await callProxy(freshToken);
+    }
+    throw err;
+  }
 }
 
 /**

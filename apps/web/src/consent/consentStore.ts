@@ -75,6 +75,23 @@ export function revokeConsent(featureId: string): void {
 }
 
 /**
+ * Get the stored consent assertion for a feature, or null if none is present.
+ *
+ * The assertion is an opaque server-signed blob (ARCHITECTURE §10a). The client
+ * treats it as an opaque string — it does NOT validate the signature. The edge
+ * verifies it on every full-egress request.
+ *
+ * Returns null when:
+ *   - no assertion has been stored (feature never granted full consent), or
+ *   - revokeConsent() has cleared it.
+ *
+ * NFR-MOD-03: callers MUST NOT access localStorage consent keys directly.
+ */
+export function getConsentAssertion(featureId: string): string | null {
+  return localStorage.getItem(`${STORAGE_KEY_PREFIX}${featureId}:assertion`);
+}
+
+/**
  * Clear all consent state (e.g. on sign-out or local data clear).
  *
  * After clearing, all features revert to Redacted (safe fallback, INV-EGR-01).
