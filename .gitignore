@@ -28,3 +28,6 @@ build/
 
 # coverage
 coverage/
+
+# generated code-structure graph (Graphify)
+graphify-out/
