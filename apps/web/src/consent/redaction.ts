@@ -57,6 +57,45 @@ export type FullEgressContext = RedactedEgressContext & {
 export type EgressContext = RedactedEgressContext | FullEgressContext;
 
 /**
+ * Downgrade a FullEgressContext to a RedactedEgressContext by stripping all
+ * full-only fields.
+ *
+ * FullEgressContext extends RedactedEgressContext by adding `transactions`.
+ * This function returns a new object that contains only the RedactedEgressContext
+ * keys, guaranteeing no full-only data crosses the egress boundary when the
+ * assertion re-acquisition fails and the path falls back to redacted.
+ *
+ * Pure function — does not mutate the input. No `any`.
+ *
+ * INV-EGR-01 defence-in-depth: even if the caller already shaped a Full context,
+ * a failed assertion re-acquire must not send that data under X-Egress-Level: redacted.
+ */
+export function toRedacted(ctx: EgressContext): RedactedEgressContext {
+  // Destructure to an explicit set of RedactedEgressContext keys.
+  // TypeScript narrows: if ctx is FullEgressContext the `transactions` key is
+  // present but is not in the destructured set — it is excluded by the spread.
+  const {
+    periodTotalsPerCategory,
+    totalIncome,
+    totalExpenses,
+    netCashFlow,
+    budgetStatusPercent,
+    goalProgressPercent,
+    trendDirection,
+  } = ctx;
+
+  return {
+    periodTotalsPerCategory,
+    totalIncome,
+    totalExpenses,
+    netCashFlow,
+    budgetStatusPercent,
+    goalProgressPercent,
+    trendDirection,
+  };
+}
+
+/**
  * Shape a raw context into the permitted egress form for the given feature.
  *
  * This is the single gate all outbound AI contexts MUST pass through.
