@@ -1,0 +1,138 @@
+# WiseMoney — GitHub Actions Build-Correctness Gate
+#
+# SCOPE: build correctness (typecheck + lint + test) for both surfaces.
+# This is the complementary gate to security-scan.yml (dependency/CVE gate).
+# Together these two workflows form the full required-checks set for main:
+#
+#   security-scan.yml  → dependency/manifest/binary CVE gate  (job: osv-scan)
+#   verify.yml         → build correctness gate                (jobs: verify-web, verify-edge)
+#
+# All three job names — osv-scan, verify-web, verify-edge — must be set as
+# required status checks under:
+#   Repository → Settings → Branches → Branch protection rules → main →
+#   "Require status checks to pass before merging"
+#
+# This workflow was introduced to close the gap that allowed a tsc-breaking
+# commit to reach main undetected (no build gate existed; only osv-scan ran).
+# Created: 2026-06-05. Owned by Migdal (Eliashib / Meremoth).
+
+name: verify
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+# Least-privilege permissions (Migdal rule). Read-only access to repo contents;
+# nothing else. Declared at workflow level so every job inherits it.
+permissions:
+  contents: read
+
+# ---------------------------------------------------------------------------
+# Jobs
+# ---------------------------------------------------------------------------
+jobs:
+
+  # -------------------------------------------------------------------------
+  # verify-web — typecheck + lint + test for apps/web (React/TS PWA)
+  #
+  # Runs against the pnpm workspace root (pnpm-lock.yaml committed at root).
+  # All three gates must pass; any non-zero exit fails the job and blocks merge.
+  # -------------------------------------------------------------------------
+  verify-web:
+    name: verify-web
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        # actions/checkout v4.2.2 — pinned to full commit SHA (supply-chain rule;
+        # ADR-0010). Same SHA as security-scan.yml for consistency.
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Install pnpm
+        # pnpm/action-setup v4.0.0 — pinned to full commit SHA.
+        # version: 9.15.9 matches root package.json `packageManager: pnpm@9.15.9`.
+        # engines.node >=20 <21 is enforced by setup-node below.
+        uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2
+        with:
+          version: "9.15.9"
+
+      - name: Set up Node.js
+        # actions/setup-node v4.3.0 — pinned to full commit SHA.
+        # node-version: 20 matches root package.json engines `node: >=20 <21`.
+        # cache: pnpm enables pnpm store caching via setup-node's built-in support.
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies (frozen)
+        # Install from the committed root pnpm-lock.yaml — no version drift.
+        # --frozen-lockfile fails the job if the lockfile is out of sync with
+        # package.json, preventing silent manifest/lockfile skew from landing.
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        # tsc --noEmit over apps/web. Zero TS errors required.
+        # Runs via the workspace package script to stay consistent with local dev.
+        run: pnpm --filter @wisemoney/web typecheck
+
+      - name: Lint
+        # ESLint with --max-warnings 0 (defined in apps/web package.json lint script).
+        # Zero warnings accepted — matches the quality gate verified locally on 2026-06-05.
+        run: pnpm --filter @wisemoney/web lint
+
+      - name: Test
+        # vitest run (non-watch, exits after one pass). 2 tests are intentionally
+        # skipped (WebAuthn round-trips; browser-only API unavailable in CI) — this
+        # is expected and does not fail the job. All other tests must pass.
+        run: pnpm --filter @wisemoney/web test
+
+  # -------------------------------------------------------------------------
+  # verify-edge — build + vet + test for services/edge (Go managed edge)
+  #
+  # Unit tests only — they require no database. Handler integration tests
+  # (testcontainers/Postgres) are deferred. go build confirms the binary
+  # compiles; go vet catches structural issues; go test covers unit coverage.
+  # -------------------------------------------------------------------------
+  verify-edge:
+    name: verify-edge
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: services/edge
+
+    steps:
+      - name: Checkout
+        # Same pinned SHA as verify-web and security-scan.yml.
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Go
+        # actions/setup-go v5.4.0 — pinned to full commit SHA.
+        # go-version: 1.25.11 matches go.mod `toolchain go1.25.11` and the edge
+        # Dockerfile builder stage (golang:1.25.11-alpine). Keeping these in sync
+        # ensures CI builds against the same stdlib as the production binary,
+        # which activates the binary-scan gate in security-scan.yml accurately.
+        # cache: true enables the Go module cache (GOPATH/pkg/mod).
+        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b
+        with:
+          go-version: "1.25.11"
+          cache: true
+
+      - name: Build
+        # Compiles all packages — fails immediately on any compilation error.
+        # This is the primary guard against a broken-build commit reaching main.
+        run: go build ./...
+
+      - name: Vet
+        # go vet catches structural issues the compiler does not: unreachable code,
+        # misused printf verbs, suspicious composite literals, etc.
+        run: go vet ./...
+
+      - name: Test
+        # Unit tests only. No DB dependency — handler integration tests that need
+        # Postgres/testcontainers are deferred (tracked in T-S0-08 carry-forward).
+        # -count=1 disables the test cache so CI always executes tests fresh.
+        run: go test -count=1 ./...
