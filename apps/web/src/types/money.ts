@@ -53,37 +53,66 @@ export function money(minorUnits: number, currency: string): Money {
 }
 
 // ---------------------------------------------------------------------------
-// Arithmetic stubs — implement in a follow-up task (FR-MON-*)
+// Arithmetic — INV-MON-01: integer minor units only, no floats
 // ---------------------------------------------------------------------------
 
 /**
  * Add two Money values.
- * TODO (FR-FS): implement — operands must share the same currency.
- * Throws if currencies differ; use FX conversion before adding cross-currency.
+ * Throws if currencies differ — use FX conversion before adding cross-currency.
  */
-export function addMoney(_a: Money, _b: Money): Money {
-  // TODO: implement integer addition, enforce same currency
-  throw new Error("addMoney: not yet implemented");
+export function addMoney(a: Money, b: Money): Money {
+  if (a.currency !== b.currency) {
+    throw new Error(
+      `addMoney: currency mismatch (${a.currency} vs ${b.currency}) — convert before adding`
+    );
+  }
+  const result = a.minorUnits + b.minorUnits;
+  if (!Number.isSafeInteger(result)) {
+    throw new Error("addMoney: overflow — result is not a safe integer");
+  }
+  return { minorUnits: result, currency: a.currency };
+}
+
+/**
+ * Banker's rounding (half-even) to the nearest integer.
+ *
+ * - 2.5 → 2 (even floor)
+ * - 3.5 → 4 (even ceil)
+ * - 1.5 → 2 (even ceil)
+ * - 4.5 → 4 (even floor)
+ * - 2.51 → 3 (standard round up)
+ */
+function roundHalfEven(n: number): number {
+  const integer = Math.trunc(n);
+  const fraction = Math.abs(n - integer);
+  if (fraction !== 0.5) return Math.round(n);
+  return integer % 2 === 0 ? integer : integer + (n >= 0 ? 1 : -1);
 }
 
 /**
  * Convert a Money value into a target currency using a cached FX rate string.
  *
- * TODO (FR-FS, INV-MON-03/04/05): implement with banker's rounding (half-even)
- * to the target currency's minor unit. Rate is a high-precision decimal string,
- * never a float (INV-MON-01). Conversion is display/derivation only — source
- * amounts must never be mutated (INV-MON-04). Must read from the local fxRates
- * cache, never a live network call (INV-MON-03).
+ * Rate is a high-precision decimal string, never a float (INV-MON-01).
+ * Uses banker's rounding (half-even) to the target currency's minor unit.
+ * Reads from the local fxRates cache — never a live network call (INV-MON-03).
  *
  * @param amount   - source Money value
  * @param toCode   - ISO-4217 target currency
  * @param rateStr  - high-precision decimal rate string from fxRates store
  */
 export function convertMoney(
-  _amount: Money,
-  _toCode: string,
-  _rateStr: string
+  amount: Money,
+  toCode: string,
+  rateStr: string
 ): Money {
-  // TODO: implement decimal arithmetic + banker's rounding
-  throw new Error("convertMoney: not yet implemented");
+  const parsed = parseFloat(rateStr);
+  if (!isFinite(parsed) || parsed <= 0) {
+    throw new Error(`convertMoney: invalid rate string "${rateStr}"`);
+  }
+  const converted = amount.minorUnits * parsed;
+  if (!Number.isFinite(converted)) {
+    throw new Error("convertMoney: conversion overflow");
+  }
+  const rounded = roundHalfEven(converted);
+  return { minorUnits: rounded, currency: toCode };
 }

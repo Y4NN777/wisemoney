@@ -1,51 +1,95 @@
-/**
- * Financial Intelligence pillar — insight, recommendation, prediction,
- * behavioural pattern detection.
- *
- * NFR-MOD-01: failure of this pillar must not affect the Financial State pillar.
- * INV-PROXY-04: if all AI providers are unavailable, this pillar fails closed
- * with a clear user-facing message — it never fabricates a response.
- *
- * Dependency direction: Intelligence → State (reads snapshot); never State → Intelligence.
- * UI surfaces invoke this pillar through the module interface; they do NOT call
- * AIOrchestrClient directly (NFR-MOD-02).
- */
+import type { FinancialStateSnapshot } from "@/domain/financialState.ts";
+import type { MasterKey } from "@/crypto/envelope.ts";
+import { buildContext } from "@/ai/contextBuilder.ts";
+import { shapeEgress } from "@/consent/redaction.ts";
+import {
+  getConsentLevel,
+  markNotPrompted,
+} from "@/consent/consentStore.ts";
+import { submit, type AIResult, type TaskType } from "@/ai/orchestration.ts";
 
-import type { FinancialStateSnapshot } from "@/pillars/state/index.ts";
-
-/** AI feature identifiers for consent scoping (INV-EGR-02: per-feature consent). */
 export type IntelligenceFeatureId =
   | "insight"
   | "recommendation"
   | "prediction"
   | "pattern_detection";
 
+export type { AIResult } from "@/ai/orchestration.ts";
+
 /**
  * Request an AI-driven insight for the current financial state.
- *
- * TODO (FR-AI-01, INV-PROXY-04):
- * - Build context via AIContextBuilder (MUST pass through ConsentRedactionSubsystem).
- * - Route to AIOrchestrClient with task type "reasoning" or "summarization".
- * - On provider failure, return a ProviderUnavailableSignal — never fabricate.
- * - On consent not granted, operate with the redacted context ceiling (INV-EGR-01).
  */
-export function requestInsight(
-  _featureId: IntelligenceFeatureId,
-  _snapshot: FinancialStateSnapshot
-): Promise<void> {
-  // TODO: implement — route through ConsentRedactionSubsystem then AIOrchestrClient
-  return Promise.reject(new Error("requestInsight: not yet implemented"));
+export async function requestInsight(
+  featureId: IntelligenceFeatureId,
+  snapshot: FinancialStateSnapshot,
+  masterKey: MasterKey
+): Promise<AIResult> {
+  return requestAI(featureId, "reasoning", snapshot, masterKey);
 }
 
 /**
  * Request a spending recommendation.
- *
- * TODO (FR-AI-02): same routing contract as requestInsight. Task type: "reasoning".
  */
-export function requestRecommendation(
-  _featureId: IntelligenceFeatureId,
-  _snapshot: FinancialStateSnapshot
-): Promise<void> {
-  // TODO: implement
-  return Promise.reject(new Error("requestRecommendation: not yet implemented"));
+export async function requestRecommendation(
+  featureId: IntelligenceFeatureId,
+  snapshot: FinancialStateSnapshot,
+  masterKey: MasterKey
+): Promise<AIResult> {
+  return requestAI(featureId, "reasoning", snapshot, masterKey);
+}
+
+/**
+ * Request a financial prediction (e.g. next-month cash flow).
+ */
+export async function requestPrediction(
+  featureId: IntelligenceFeatureId,
+  snapshot: FinancialStateSnapshot,
+  masterKey: MasterKey
+): Promise<AIResult> {
+  return requestAI(featureId, "classification", snapshot, masterKey);
+}
+
+/**
+ * Detect behavioural patterns in financial data.
+ */
+export async function detectPatterns(
+  featureId: IntelligenceFeatureId,
+  snapshot: FinancialStateSnapshot,
+  masterKey: MasterKey
+): Promise<AIResult> {
+  return requestAI(featureId, "summarization", snapshot, masterKey);
+}
+
+async function requestAI(
+  featureId: string,
+  taskType: TaskType,
+  snapshot: FinancialStateSnapshot,
+  masterKey: MasterKey
+): Promise<AIResult> {
+  const currentLevel = getConsentLevel(featureId);
+  if (currentLevel === "NotPrompted") {
+    markNotPrompted(featureId);
+  }
+
+  const rawContext = await buildContext(snapshot, masterKey);
+
+  const consentState = buildConsentState(featureId);
+
+  const egressContext = shapeEgress(featureId, rawContext, consentState);
+
+  return submit(egressContext, taskType, "managed", featureId, masterKey);
+}
+
+function buildConsentState(
+  featureId: string
+): { status: "NotPrompted" } | { status: "Redacted" } | { status: "FullGranted"; assertionExpiresAt: number } {
+  const level = getConsentLevel(featureId);
+  switch (level) {
+    case "FullGranted":
+      return { status: "FullGranted", assertionExpiresAt: Number.MAX_SAFE_INTEGER };
+    case "NotPrompted":
+      return { status: "NotPrompted" };
+    default:
+      return { status: "Redacted" };
+  }
 }

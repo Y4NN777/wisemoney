@@ -23,6 +23,7 @@ import { getConsentLevel, getConsentAssertion, storeConsentAssertion } from "@/c
 import { getAccessToken, refresh } from "@/auth/session.ts";
 import { postAiProxy, postConsentAssert, EdgeAuthError } from "@/api/edgeClient.ts";
 import type { MasterKey } from "@/crypto/envelope.ts";
+import { decryptBYOKey } from "@/crypto/keyManagement.ts";
 
 /** AI task types — determine provider/model routing (ARCHITECTURE §9). */
 export type TaskType = "reasoning" | "classification" | "teaching" | "summarization";
@@ -146,8 +147,9 @@ async function resolveFullEgress(
 /**
  * Submit a shaped egress context to the appropriate AI transport.
  *
- * MANAGED MODE (this implementation):
+ * Two paths (selected via `mode`):
  *
+ * MANAGED MODE:
  * 1. Determine egress level:
  *    - "full" iff consentStore reports FullGranted AND a stored assertion exists
  *      AND the egressContext is the Full variant. Any condition false → "redacted".
@@ -158,16 +160,144 @@ async function resolveFullEgress(
  * 5. On 503: return ProviderUnavailableSignal (INV-PROXY-04).
  * 6. On 200: return NormalizedAIResponse.
  *
- * BYO-KEY MODE: not yet implemented — returns a "not implemented" rejection.
- * Callers must pass `mode` to select the path; the BYO path stub will throw.
- * The BYO path will be implemented in a separate scoped task.
+ * BYO-KEY MODE:
+ * 1. Look up the provider routing chain for the task type (byoRouting table).
+ * 2. For each provider in the chain: decrypt the BYO API key via decryptBYOKey,
+ *    call the provider directly via callProviderDirect, return on first success.
+ * 3. If all providers fail, return ProviderUnavailableSignal (INV-PROXY-04).
  *
  * @param egressContext - already consent-shaped context from AIContextBuilder
  * @param taskType      - determines provider/model routing (ARCHITECTURE §9)
- * @param mode          - "managed" (edge-proxied) or "byo" (direct, not yet implemented)
+ * @param mode          - "managed" (edge-proxied) or "byo" (direct)
  * @param featureId     - consent + response attribution
  * @param masterKey     - in-memory master key (INV-AUTH-07: passed in, never retained)
  */
+// ---------------------------------------------------------------------------
+// BYO-key routing configuration — mirrors edge router.go (FR-AIORCH-03)
+// ---------------------------------------------------------------------------
+
+type ProviderRoute = {
+  provider: string;
+  model: string;
+  baseURL: string;
+};
+
+const byoRouting: Record<TaskType, ProviderRoute[]> = {
+  reasoning: [
+    { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "openai", model: "gpt-4o", baseURL: "https://api.openai.com" },
+    { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
+  ],
+  classification: [
+    { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
+    { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "openai", model: "gpt-4o-mini", baseURL: "https://api.openai.com" },
+  ],
+  teaching: [
+    { provider: "openai", model: "gpt-4o", baseURL: "https://api.openai.com" },
+    { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
+  ],
+  summarization: [
+    { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "openai", model: "gpt-4o-mini", baseURL: "https://api.openai.com" },
+    { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
+  ],
+};
+
+async function callProviderDirect(
+  route: ProviderRoute,
+  apiKey: string,
+  payload: EgressContext,
+  taskType: string,
+  featureId: string
+): Promise<AIResult> {
+  let url: string;
+  let body: unknown;
+
+  switch (route.provider) {
+    case "gemini": {
+      url = `${route.baseURL}/v1beta/models/${route.model}:generateContent`;
+      body = {
+        contents: [{ parts: [{ text: JSON.stringify(payload) }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
+      };
+      break;
+    }
+    case "openai": {
+      url = `${route.baseURL}/v1/chat/completions`;
+      body = {
+        model: route.model,
+        messages: [
+          { role: "system", content: "You are a helpful financial assistant." },
+          { role: "user", content: JSON.stringify(payload) },
+        ],
+        temperature: 0.7,
+        max_tokens: 1024,
+      };
+      break;
+    }
+    case "nvidia_nim": {
+      url = `${route.baseURL}/v1/chat/completions`;
+      body = {
+        model: route.model,
+        messages: [
+          { role: "system", content: "You are a helpful financial assistant." },
+          { role: "user", content: JSON.stringify(payload) },
+        ],
+        temperature: 0.7,
+        max_tokens: 1024,
+      };
+      break;
+    }
+    default:
+      return {
+        unavailable: true,
+        taskType: taskType as TaskType,
+        message: `Unknown provider: ${route.provider}`,
+      };
+  }
+
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(route.provider === "gemini"
+        ? { "x-goog-api-key": apiKey }
+        : { Authorization: `Bearer ${apiKey}` }),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!resp.ok) {
+    if (resp.status >= 500) {
+      return {
+        unavailable: true,
+        taskType: taskType as TaskType,
+        message: `${route.provider} is temporarily unavailable.`,
+      };
+    }
+    throw new Error(`${route.provider} returned status ${resp.status}`);
+  }
+
+  const data = (await resp.json()) as Record<string, unknown>;
+  let text = "";
+
+  if (route.provider === "gemini") {
+    const candidates = data.candidates as Array<Record<string, unknown>> | undefined;
+    const content = candidates?.[0]?.content as Record<string, unknown> | undefined;
+    const parts = content?.parts as Array<Record<string, unknown>> | undefined;
+    text = parts?.map((p) => { const t = p.text as string | undefined; return t ?? ""; }).join("") ?? "";
+  } else {
+    const choices = data.choices as Array<Record<string, unknown>> | undefined;
+    const message = choices?.[0]?.message as Record<string, unknown> | undefined;
+    const content = message?.content;
+    text = typeof content === "string" ? content : "";
+  }
+
+  return { text, featureId, taskType: taskType as TaskType, provider: route.provider };
+}
+
 export async function submit(
   egressContext: EgressContext,
   taskType: TaskType,
@@ -176,9 +306,37 @@ export async function submit(
   masterKey: MasterKey
 ): Promise<AIResult> {
   if (mode === "byo") {
-    // BYO-key path not yet implemented (separate scoped task).
-    // clientSideRoute / clientSideFallback / decryptBYOKey wire-up deferred.
-    return Promise.reject(new Error("submit: BYO-key mode not yet implemented"));
+    const chain = byoRouting[taskType];
+    if (chain == null || chain.length === 0) {
+      return {
+        unavailable: true,
+        taskType,
+        message: `No provider configured for ${taskType} in BYO-key mode.`,
+      };
+    }
+
+    let lastErr: Error | null = null;
+    const triedProviders = new Set<string>();
+    for (let i = 0; i < chain.length; i++) {
+      const route = chain[i]!;
+      if (triedProviders.has(route.provider)) continue;
+      triedProviders.add(route.provider);
+      try {
+        const apiKey = await decryptBYOKey(route.provider, masterKey);
+        const result = await callProviderDirect(route, apiKey, egressContext, taskType, featureId);
+        return result;
+      } catch (err) {
+        lastErr = err instanceof Error ? err : new Error(String(err));
+      }
+    }
+
+    return {
+      unavailable: true,
+      taskType,
+      message: lastErr != null
+        ? `AI temporarily unavailable: ${lastErr.message}`
+        : "AI is temporarily unavailable. Your financial data is unaffected.",
+    };
   }
 
   // ── Managed path ──────────────────────────────────────────────────────────
@@ -282,28 +440,36 @@ export async function submit(
 
 /**
  * Resolve the primary provider config for a task type in BYO-key mode.
- *
- * TODO (FR-AIORCH-03): read from the operator-configurable routing config.
- * Routing config maps task type → { primaryProvider, fallbackChain }.
- * Config is loaded at app start; no code change required to re-route.
  */
 export function clientSideRoute(
-  _taskType: TaskType
+  taskType: TaskType,
+  preferredProvider?: string
 ): { provider: string; model: string } {
-  // TODO: implement routing config lookup
-  throw new Error("clientSideRoute: not yet implemented");
+  const chain = byoRouting[taskType];
+  if (chain == null || chain.length === 0) {
+    throw new Error(`clientSideRoute: no route for task type "${taskType}"`);
+  }
+  const entry = preferredProvider != null
+    ? chain.find((c) => c.provider === preferredProvider)
+    : chain[0];
+  if (entry == null) {
+    throw new Error(`clientSideRoute: provider "${preferredProvider}" not found for "${taskType}"`);
+  }
+  return { provider: entry.provider, model: entry.model };
 }
 
 /**
  * Resolve the next fallback provider for a task type in BYO-key mode.
- *
- * TODO (FR-AIORCH-05): cross-provider fallback; the fallback provider must be
- * on a DIFFERENT provider than the one that failed.
+ * Cross-provider fallback (FR-AIORCH-05): the fallback must be on a
+ * DIFFERENT provider than the one that failed.
  */
 export function clientSideFallback(
-  _taskType: TaskType,
-  _failedProvider: string
+  taskType: TaskType,
+  failedProvider: string
 ): { provider: string; model: string } | null {
-  // TODO: implement ordered cross-provider fallback chain
-  throw new Error("clientSideFallback: not yet implemented");
+  const chain = byoRouting[taskType];
+  if (chain == null) return null;
+  const next = chain.find((c) => c.provider !== failedProvider);
+  if (next == null) return null;
+  return { provider: next.provider, model: next.model };
 }

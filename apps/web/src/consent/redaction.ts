@@ -115,7 +115,7 @@ export function toRedacted(ctx: EgressContext): RedactedEgressContext {
  */
 export function shapeEgress(
   featureId: string,
-  _rawContext: unknown,
+  rawContext: unknown,
   consentState: ConsentState
 ): EgressContext {
   const level = getConsentLevel(featureId);
@@ -125,18 +125,39 @@ export function shapeEgress(
     consentState.status === "FullGranted" &&
     !isAssertionExpired(consentState);
 
-  if (!isFullGranted) {
-    // TODO: extract and return real aggregated data from _rawContext
-    // For now, return a typed empty redacted context as a stub.
-    return buildRedactedStub();
+  if (isFullGranted && isFullEgressShape(rawContext)) {
+    return rawContext;
   }
 
-  // TODO: return full context with raw transaction detail (INV-EGR-02)
-  throw new Error("shapeEgress (full): not yet implemented");
+  return extractRedacted(rawContext);
 }
 
-/** Stub — returns an empty redacted context. Replace with real extraction. */
-function buildRedactedStub(): RedactedEgressContext {
+function isFullEgressShape(ctx: unknown): ctx is FullEgressContext {
+  return (
+    typeof ctx === "object" &&
+    ctx !== null &&
+    "transactions" in ctx
+  );
+}
+
+function extractRedacted(ctx: unknown): RedactedEgressContext {
+  if (typeof ctx !== "object" || ctx == null) {
+    return emptyRedacted();
+  }
+
+  const r = ctx as Record<string, unknown>;
+  return {
+    periodTotalsPerCategory: (r.periodTotalsPerCategory as Record<string, { minorUnits: number; currency: string }>) ?? {},
+    totalIncome: (r.totalIncome as { minorUnits: number; currency: string }) ?? { minorUnits: 0, currency: "EUR" },
+    totalExpenses: (r.totalExpenses as { minorUnits: number; currency: string }) ?? { minorUnits: 0, currency: "EUR" },
+    netCashFlow: (r.netCashFlow as { minorUnits: number; currency: string }) ?? { minorUnits: 0, currency: "EUR" },
+    budgetStatusPercent: (r.budgetStatusPercent as Record<string, number>) ?? {},
+    goalProgressPercent: (r.goalProgressPercent as Record<string, number>) ?? {},
+    trendDirection: (r.trendDirection as Record<string, "up" | "down" | "stable">) ?? {},
+  };
+}
+
+function emptyRedacted(): RedactedEgressContext {
   return {
     periodTotalsPerCategory: {},
     totalIncome: { minorUnits: 0, currency: "EUR" },

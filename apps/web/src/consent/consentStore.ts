@@ -65,6 +65,20 @@ export function storeConsentAssertion(
 }
 
 /**
+ * Set the consent level for a feature directly.
+ *
+ * Use this to record the user's intent (e.g. "Grant full access" button click).
+ * For FullGranted this expresses user willingness; the signed assertion is
+ * obtained later by orchestration.ts → resolveFullEgress() → postConsentAssert().
+ * If assertion acquisition fails, submit() gracefully downgrades to redacted.
+ *
+ * For Redacted, prefer revokeConsent() which also clears any stored assertion.
+ */
+export function setConsentLevel(featureId: string, level: ConsentLevel): void {
+  localStorage.setItem(`${STORAGE_KEY_PREFIX}${featureId}`, level);
+}
+
+/**
  * Revoke consent for a feature — transition FullGranted → Redacted.
  *
  * Also clears any stored consent assertion for the feature.

@@ -503,10 +503,12 @@ describe("managed mode — successful 200 response", () => {
 // M-10: BYO mode → not yet implemented
 // ---------------------------------------------------------------------------
 
-describe("BYO mode stub", () => {
-  it("M-10: mode=byo → rejects with 'not yet implemented'", async () => {
-    await expect(
-      submit(REDACTED_CTX, "reasoning", "byo", "feature-i", FAKE_MASTER_KEY)
-    ).rejects.toThrow("BYO-key mode not yet implemented");
+describe("BYO mode", () => {
+  it("M-10: mode=byo → returns unavailable when IndexedDB unavailable", async () => {
+    const result = await submit(REDACTED_CTX, "reasoning", "byo", "feature-i", FAKE_MASTER_KEY);
+    expect("unavailable" in result && result.unavailable).toBe(true);
+    if ("unavailable" in result) {
+      expect(result.taskType).toBe("reasoning");
+    }
   });
 });
