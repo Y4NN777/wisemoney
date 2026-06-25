@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent, type ReactNode } from "react";
 import {
   deriveMasterKey,
   setupMasterKey,
@@ -13,7 +13,7 @@ import { router } from "../../router.ts";
 import { MasterKeyContext } from "../../lib/masterKeyContext.ts";
 import { Toaster } from "../../components/ui/sonner.tsx";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
-import { Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, ShieldCheck, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -22,6 +22,7 @@ import Logo from "../../components/Logo.tsx";
 
 type Flow =
   | "loading"
+  | "landing"
   | "setup"
   | "unlock-passphrase"
   | "unlock-webauthn"
@@ -35,7 +36,7 @@ export default function KeyUnlock() {
   useEffect(() => {
     void db.keyMeta.get("primary").then((meta) => {
       if (meta == null) {
-        setFlow("setup");
+        setFlow("landing");
       } else if (meta.webAuthnHandle != null) {
         setFlow("unlock-webauthn");
       } else {
@@ -53,6 +54,8 @@ export default function KeyUnlock() {
         <p className="text-sm text-muted-foreground animate-pulse">Loading…</p>
       </div>
     );
+  } else if (flow === "landing") {
+    content = <LandingOnboarding onStart={() => setFlow("setup")} />;
   } else if (flow === "setup") {
     content = (
       <LocalSetup
@@ -98,6 +101,107 @@ export default function KeyUnlock() {
       <Toaster />
       {content}
     </>
+  );
+}
+
+type LandingOnboardingProps = {
+  onStart: () => void;
+};
+
+function LandingOnboarding({ onStart }: LandingOnboardingProps) {
+  return (
+    <main aria-label="WiseMoney introduction" className="landing-grid min-h-dvh bg-white text-[#111111]">
+      <section className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
+        <header className="flex items-center justify-between border-b border-[#111111] py-3">
+          <Logo className="h-8 w-auto" />
+          <Button type="button" onClick={onStart} className="h-9 rounded-none bg-[#002FA7] px-4 text-white hover:bg-[#002FA7]/90">
+            Start
+          </Button>
+        </header>
+
+        <div className="grid flex-1 gap-0 border-b border-[#111111] lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
+          <div className="flex flex-col justify-between border-[#111111] py-8 lg:border-r lg:py-12 lg:pr-10">
+            <div className="space-y-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#002FA7]">Local-first finance PWA</p>
+              <h1 className="max-w-4xl text-5xl font-bold leading-[0.94] tracking-normal text-[#111111] sm:text-7xl lg:text-8xl">
+                WiseMoney starts with your device, not a login wall.
+              </h1>
+            </div>
+
+            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:max-w-3xl">
+              <Button type="button" onClick={onStart} className="h-12 justify-between rounded-none bg-[#002FA7] px-4 text-white hover:bg-[#002FA7]/90">
+                Create local vault
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <a
+                href="#pwa-onboarding"
+                className="flex h-12 items-center justify-between border border-[#111111] px-4 text-sm font-semibold transition-colors hover:bg-[#F7F7F8]"
+              >
+                View setup steps
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+
+          <aside id="pwa-onboarding" className="grid content-start gap-0 py-6 lg:py-12 lg:pl-8">
+            <div className="border border-[#111111] bg-[#F7F7F8]">
+              <OnboardingRow
+                number="01"
+                icon={<ShieldCheck className="h-5 w-5" />}
+                title="Create an encrypted vault"
+                body="Your financial records are sealed on this device with a passphrase you control."
+              />
+              <OnboardingRow
+                number="02"
+                icon={<WifiOff className="h-5 w-5" />}
+                title="Use the app offline"
+                body="Capture transactions, manage accounts, and review budgets without waiting for a server."
+              />
+              <OnboardingRow
+                number="03"
+                icon={<Bot className="h-5 w-5" />}
+                title="Add AI when ready"
+                body="Use personal provider keys now, then connect the managed edge when the backend is deployed."
+              />
+              <OnboardingRow
+                number="04"
+                icon={<Download className="h-5 w-5" />}
+                title="Install as a PWA"
+                body="After setup, install WiseMoney from your browser menu for a full-screen app experience."
+                isLast
+              />
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function OnboardingRow({
+  number,
+  icon,
+  title,
+  body,
+  isLast = false,
+}: {
+  number: string;
+  icon: ReactNode;
+  title: string;
+  body: string;
+  isLast?: boolean;
+}) {
+  return (
+    <article className={`landing-step grid grid-cols-[4rem_1fr] gap-0 ${isLast ? "" : "border-b border-[#111111]"}`}>
+      <div className="border-r border-[#111111] p-3 text-2xl font-bold tabular-nums text-[#002FA7]">{number}</div>
+      <div className="p-4">
+        <div className="mb-4 flex h-9 w-9 items-center justify-center border border-[#111111] bg-white text-[#002FA7]">
+          {icon}
+        </div>
+        <h2 className="text-lg font-bold leading-tight text-[#111111]">{title}</h2>
+        <p className="mt-2 text-sm leading-relaxed text-[#333333]">{body}</p>
+      </div>
+    </article>
   );
 }
 
