@@ -10,6 +10,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: "auto",
       includeAssets: ["icons/*.png", "icons/*.svg"],
       manifest: {
         name: "WiseMoney",
@@ -43,6 +44,9 @@ export default defineConfig({
       workbox: {
         // Offline-first: cache all navigation to index.html (INV-PERS-01).
         navigateFallback: "/index.html",
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         globPatterns: ["**/*.{js,css,html,wasm}"],
         // hash-wasm Argon2id .wasm must be cached for offline unlock.
         runtimeCaching: [

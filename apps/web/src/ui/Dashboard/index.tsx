@@ -16,6 +16,7 @@ import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 import { requestInsight } from "../../pillars/intelligence/index.ts";
 import type { AIResult } from "../../pillars/intelligence/index.ts";
+import { useTranslation } from "react-i18next";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -259,6 +260,7 @@ function HealthRail({
   recurringCount: number;
   snapshot: FinancialStateSnapshot;
 }) {
+  const { t } = useTranslation();
   const budgetAverage = activeBudgets.length === 0
     ? 0
     : Math.round(activeBudgets.reduce((sum, budget) => sum + (snapshot.budgetProgress[budget.id]?.percentage ?? 0), 0) / activeBudgets.length);
@@ -271,9 +273,9 @@ function HealthRail({
 
   return (
     <div className="grid gap-2 sm:grid-cols-3">
-      <HealthPill label="Budget use" value={`${budgetAverage}%`} progress={Math.min(100, budgetAverage)} tone={budgetAverage > 90 ? "risk" : "normal"} />
-      <HealthPill label="Goal progress" value={`${goalAverage}%`} progress={Math.min(100, goalAverage)} tone="good" />
-      <HealthPill label="Cash margin" value={`${cashflowScore}%`} progress={cashflowScore} tone={cashflowScore < 10 ? "risk" : "good"} footer={`${recurringCount} upcoming`} />
+      <HealthPill label={t("dashboard.budgetUse")} value={`${budgetAverage}%`} progress={Math.min(100, budgetAverage)} tone={budgetAverage > 90 ? "risk" : "normal"} />
+      <HealthPill label={t("dashboard.goalProgress")} value={`${goalAverage}%`} progress={Math.min(100, goalAverage)} tone="good" />
+      <HealthPill label={t("dashboard.cashMargin")} value={`${cashflowScore}%`} progress={cashflowScore} tone={cashflowScore < 10 ? "risk" : "good"} footer={t("dashboard.cashMarginFooter", { count: recurringCount })} />
     </div>
   );
 }
@@ -294,12 +296,13 @@ function HealthPill({ label, value, progress, tone, footer }: { label: string; v
 
 // ── Analysis card (AI insight) ─────────────────────────────────────────
 function InsightCard({ insight }: { insight: AIResult }) {
+  const { t } = useTranslation();
   if ("unavailable" in insight) {
     return (
       <Card>
         <CardHeader className="flex flex-row items-center gap-2 pb-2">
           <Lightbulb className="h-4 w-4 text-muted-foreground" />
-          <CardTitle className="text-sm font-medium">AI Insight</CardTitle>
+          <CardTitle className="text-sm font-medium">{t("dashboard.aiInsight")}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">{insight.message}</p>
@@ -308,16 +311,16 @@ function InsightCard({ insight }: { insight: AIResult }) {
     );
   }
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center gap-2 pb-2">
-        <Lightbulb className="h-4 w-4 text-ocean-secondary" />
-        <CardTitle className="text-sm font-medium">AI Insight</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm leading-relaxed">{insight.text}</p>
-        <p className="text-xs text-muted-foreground mt-2">via {insight.provider}</p>
-      </CardContent>
-    </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center gap-2 pb-2">
+          <Lightbulb className="h-4 w-4 text-ocean-secondary" />
+          <CardTitle className="text-sm font-medium">{t("dashboard.aiInsight")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm leading-relaxed">{insight.text}</p>
+          <p className="text-xs text-muted-foreground mt-2">via {insight.provider}</p>
+        </CardContent>
+      </Card>
   );
 }
 

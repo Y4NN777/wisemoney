@@ -5,6 +5,7 @@ import { Button } from "../../components/ui/button.tsx";
 import { Monitor, Smartphone, Laptop, Globe, Clock, LogOut } from "lucide-react";
 import { getSessionStatus } from "../../auth/session.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
+import { useTranslation } from "react-i18next";
 
 type DeviceInfo = {
   userAgent: string;
@@ -44,6 +45,7 @@ function browserName(ua: string): string {
 }
 
 export default function DevicesSection() {
+  const { t } = useTranslation();
   const [device] = useState<DeviceInfo>(detectDevice);
   const [sessionStatus, setSessionStatus] = useState(getSessionStatus());
   const [now] = useState(() => new Date().toLocaleString());
@@ -64,16 +66,21 @@ export default function DevicesSection() {
 
   const isAuthenticated = sessionStatus === "authenticated";
   const edgeConfigured = isEdgeConfigured();
+  const statusLabel = !edgeConfigured
+    ? t("settings.devices.localOnly")
+    : isAuthenticated
+      ? t("settings.devices.onlineReady")
+      : t("settings.devices.active");
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Monitor className="h-5 w-5" />
-          Devices & Sessions
+          {t("settings.devices.title")}
         </CardTitle>
         <CardDescription>
-          Current device and active session information
+          {t("settings.devices.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -85,29 +92,29 @@ export default function DevicesSection() {
                 {browserName(device.userAgent)} — {device.platform}
               </p>
               <p className="text-xs text-muted-foreground">
-                {device.language} &middot; {device.viewport}
+                {t("settings.devices.language")}: {device.language} &middot; {device.viewport}
               </p>
             </div>
           </div>
           <Badge variant={isAuthenticated ? "default" : "secondary"}>
-            {isAuthenticated ? "Cloud sync active" : edgeConfigured ? "Cloud sync disconnected" : "Local only"}
+            {statusLabel}
           </Badge>
         </div>
 
         {!edgeConfigured && (
           <div className="rounded-lg border border-border bg-accent/50 p-3 text-sm text-muted-foreground">
-            Cloud sync is not configured for this deployment. Your vault, accounts, budgets, and transactions remain available locally on this device.
+            {t("settings.devices.localOnlyMessage")}
           </div>
         )}
 
         <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
           <div className="flex items-center gap-1.5">
             <Globe className="h-3.5 w-3.5" />
-            <span>Language: {device.language}</span>
+            <span>{t("settings.devices.language")}: {device.language}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" />
-            <span>Session: {now}</span>
+            <span>{t("settings.devices.session")}: {now}</span>
           </div>
         </div>
 
@@ -125,7 +132,7 @@ export default function DevicesSection() {
           }}
         >
           <LogOut className="h-4 w-4" />
-          Sign out of all sessions
+          {t("settings.devices.signOut")}
         </Button>
       </CardContent>
     </Card>

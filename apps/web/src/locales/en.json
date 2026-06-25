@@ -60,9 +60,9 @@
     },
     "landing": {
       "aria": "WiseMoney introduction",
-      "kicker": "A money app that works on your device",
+      "kicker": "A personal finance app that works on your device",
       "title": "WiseMoney starts with your device, not a login wall.",
-      "body": "Build your private money workspace first: dashboard, quick expense entry, budgets, goals, recurring payments, exports, and settings all open from one protected space.",
+      "body": "Build your private finance workspace first: dashboard, quick expense entry, budgets, goals, recurring payments, exports, and settings all open from one protected space.",
       "existingVault": "A private space already exists in this browser. Open it to continue with your saved records.",
       "openVault": "Open my space",
       "startOnboarding": "See how it works",
@@ -88,6 +88,32 @@
           "title": "Install the app",
           "body": "After setup, add WiseMoney to your home screen from your browser menu for a full-screen app experience."
         }
+      }
+    },
+    "restore": {
+      "aria": "Restore an existing WiseMoney space",
+      "kicker": "Move an existing space",
+      "title": "Bring your saved space to this device",
+      "body": "If you already use WiseMoney in another browser or on another phone, export that space there and restore it here. This keeps one private space instead of creating a second one.",
+      "helper": "Choose the export file from your current browser or phone, then create a passphrase for this device. If the export was protected, enter that export passphrase too.",
+      "fileLabel": "Export file",
+      "passphrase": "New passphrase for this device",
+      "confirmPassphrase": "Confirm new passphrase",
+      "exportPassphrase": "Export passphrase, if used",
+      "exportPassphraseHelp": "Leave this blank for an unprotected export file.",
+      "restoring": "Restoring…",
+      "restore": "Restore space",
+      "createNew": "Create a new space instead",
+      "steps": {
+        "export": "Export your existing space from the browser or phone you already use.",
+        "file": "Pick the export file on this device.",
+        "passphrase": "Choose a new passphrase for this device.",
+        "open": "Import the file and open your restored space."
+      },
+      "errors": {
+        "fileRequired": "Select an export file first",
+        "passphraseRequired": "A passphrase is required",
+        "failed": "Restore failed"
       }
     },
     "preview": {
@@ -125,8 +151,8 @@
     "help": {
       "aria": "WiseMoney help center and FAQ",
       "kicker": "Help center",
-      "title": "Plain answers before you create anything",
-      "body": "WiseMoney is designed for people who want to track money without learning technical terms first. This guide explains the important choices in everyday language.",
+      "title": "Answers before you create anything",
+      "body": "This guide covers the main things you need to know about WiseMoney: accounts, expenses, planning, offline use, and optional services.",
       "faqKicker": "FAQ",
       "faqTitle": "Common questions",
       "guide": {
@@ -140,7 +166,7 @@
         },
         "offline": {
           "title": "Works without internet",
-          "body": "You can open the app, add expenses, and review your money even when the connection is weak or unavailable."
+          "body": "You can open the app, add expenses, and review your finances even when the connection is weak or unavailable."
         },
         "assistant": {
           "title": "Assistant is optional",
@@ -265,11 +291,11 @@
       },
       "offline": {
         "question": "Can I use the app without internet?",
-        "answer": "Yes. WiseMoney keeps the main app available on this device, so you can add records and review your money without a connection."
+        "answer": "Yes. WiseMoney keeps the main app available on this device, so you can add records and review your finances without a connection."
       },
       "assistant": {
         "question": "Do I have to use the assistant?",
-        "answer": "No. The assistant is optional. If it is not set up, WiseMoney keeps the normal money tools available."
+        "answer": "No. The assistant is optional. If it is not set up, WiseMoney keeps the normal finance tools available."
       },
       "sync": {
         "question": "Can I back up or sync online?",
@@ -280,6 +306,11 @@
   "dashboard": {
     "title": "Dashboard",
     "alerts": "Alerts",
+    "aiInsight": "AI insight",
+    "budgetUse": "Budget use",
+    "goalProgress": "Goal progress",
+    "cashMargin": "Cash margin",
+    "cashMarginFooter": "{{count}} upcoming",
     "netWorth": "Net Worth",
     "periodRange": "Period",
     "income": "Income",
@@ -411,6 +442,11 @@
   },
   "assistant": {
     "title": "Assistant",
+    "heading": "Insights and learning",
+    "checkingSetup": "Checking AI setup.",
+    "emptyPaused": "AI features are paused until you configure a provider key or connect the managed edge.",
+    "aiNoticeTitle": "AI is optional and not configured",
+    "aiNoticeAction": "Configure AI keys",
     "tabs": {
       "insights": "Insights",
       "learn": "Learn"
@@ -647,12 +683,16 @@
     "cardDescription": "Plan your spending, save toward goals, and track recurring transactions"
   },
   "settings": {
+    "system": "System",
     "title": "Settings",
     "devices": {
       "title": "Devices & Sessions",
       "description": "Current device and active session information",
       "active": "Active",
       "offline": "Offline",
+      "localOnly": "Local only",
+      "onlineReady": "Online backup ready",
+      "localOnlyMessage": "Online backup is not connected in this deployment. Your space, accounts, budgets, and transactions stay on this device.",
       "language": "Language",
       "session": "Session",
       "signOut": "Sign out of all sessions",

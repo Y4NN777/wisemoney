@@ -60,9 +60,9 @@
     },
     "landing": {
       "aria": "Présentation de WiseMoney",
-      "kicker": "Une application d'argent qui fonctionne sur votre appareil",
+      "kicker": "Une application de gestion financière qui fonctionne sur votre appareil",
       "title": "WiseMoney commence sur votre appareil, pas par un mur de connexion.",
-      "body": "Créez d'abord votre espace financier privé : tableau de bord, saisie rapide des dépenses, budgets, objectifs, paiements récurrents, exports et paramètres s'ouvrent depuis un espace protégé.",
+      "body": "Créez d'abord votre espace de gestion financière privé : tableau de bord, saisie rapide des dépenses, budgets, objectifs, paiements récurrents, exports et paramètres s'ouvrent depuis un espace protégé.",
       "existingVault": "Un espace privé existe déjà dans ce navigateur. Ouvrez-le pour continuer avec vos données enregistrées.",
       "openVault": "Ouvrir mon espace",
       "startOnboarding": "Voir comment ça marche",
@@ -88,6 +88,32 @@
           "title": "Installer l'application",
           "body": "Après la configuration, ajoutez WiseMoney à votre écran d'accueil depuis le menu du navigateur pour une expérience plein écran."
         }
+      }
+    },
+    "restore": {
+      "aria": "Restaurer un espace WiseMoney existant",
+      "kicker": "Déplacer un espace existant",
+      "title": "Amenez votre espace enregistré sur cet appareil",
+      "body": "Si vous utilisez déjà WiseMoney dans un autre navigateur ou sur un autre téléphone, exportez cet espace là-bas puis restaurez-le ici. Cela garde un seul espace privé au lieu d'en créer un deuxième.",
+      "helper": "Choisissez le fichier d'export depuis votre navigateur ou téléphone actuel, puis créez une phrase secrète pour cet appareil. Si l'export est protégé, saisissez aussi la phrase secrète d'export.",
+      "fileLabel": "Fichier d'export",
+      "passphrase": "Nouvelle phrase secrète pour cet appareil",
+      "confirmPassphrase": "Confirmer la nouvelle phrase secrète",
+      "exportPassphrase": "Phrase secrète d'export, si utilisée",
+      "exportPassphraseHelp": "Laissez ce champ vide pour un fichier d'export non protégé.",
+      "restoring": "Restauration…",
+      "restore": "Restaurer l'espace",
+      "createNew": "Créer plutôt un nouvel espace",
+      "steps": {
+        "export": "Exportez votre espace existant depuis le navigateur ou le téléphone que vous utilisez déjà.",
+        "file": "Choisissez le fichier d'export sur cet appareil.",
+        "passphrase": "Choisissez une nouvelle phrase secrète pour cet appareil.",
+        "open": "Importez le fichier et ouvrez votre espace restauré."
+      },
+      "errors": {
+        "fileRequired": "Sélectionnez d'abord un fichier d'export",
+        "passphraseRequired": "Une phrase secrète est requise",
+        "failed": "Échec de la restauration"
       }
     },
     "preview": {
@@ -125,8 +151,8 @@
     "help": {
       "aria": "Centre d'aide et FAQ WiseMoney",
       "kicker": "Centre d'aide",
-      "title": "Des réponses simples avant de créer quoi que ce soit",
-      "body": "WiseMoney est pensé pour les personnes qui veulent suivre leur argent sans apprendre des termes techniques. Ce guide explique les choix importants avec des mots simples.",
+      "title": "Des réponses avant de créer quoi que ce soit",
+      "body": "Ce guide couvre l'essentiel de WiseMoney : comptes, dépenses, planification, utilisation hors ligne et services optionnels.",
       "faqKicker": "FAQ",
       "faqTitle": "Questions fréquentes",
       "guide": {
@@ -140,7 +166,7 @@
         },
         "offline": {
           "title": "Fonctionne sans internet",
-          "body": "Vous pouvez ouvrir l'app, ajouter des dépenses et consulter votre argent même quand la connexion est faible ou absente."
+          "body": "Vous pouvez ouvrir l'app, ajouter des dépenses et consulter vos finances même quand la connexion est faible ou absente."
         },
         "assistant": {
           "title": "L'assistant est optionnel",
@@ -238,7 +264,7 @@
         "body": "Ajoutez des comptes espèces, mobile money, banque ou carte depuis Saisie > Gérer."
       },
       "capture": {
-        "title": "Enregistrer les mouvements d'argent",
+        "title": "Enregistrer les mouvements financiers",
         "body": "Ajoutez revenus, dépenses, virements et contributions aux objectifs. Vous pouvez le faire sans internet."
       },
       "planning": {
@@ -247,7 +273,7 @@
       },
       "dashboard": {
         "title": "Consulter le tableau de bord",
-        "body": "Vérifiez le flux d'argent, les dépenses par catégorie, les alertes, les objectifs et les paiements à venir."
+        "body": "Vérifiez le flux de trésorerie, les dépenses par catégorie, les alertes, les objectifs et les paiements à venir."
       },
       "services": {
         "title": "Ajouter les extras seulement si besoin",
@@ -265,11 +291,11 @@
       },
       "offline": {
         "question": "Puis-je utiliser l'app sans internet ?",
-        "answer": "Oui. WiseMoney garde l'application principale disponible sur cet appareil, pour ajouter des données et consulter votre argent sans connexion."
+        "answer": "Oui. WiseMoney garde l'application principale disponible sur cet appareil, pour ajouter des données et consulter vos finances sans connexion."
       },
       "assistant": {
         "question": "Suis-je obligé d'utiliser l'assistant ?",
-        "answer": "Non. L'assistant est optionnel. S'il n'est pas configuré, WiseMoney garde les outils d'argent normaux disponibles."
+        "answer": "Non. L'assistant est optionnel. S'il n'est pas configuré, WiseMoney garde les outils normaux de gestion financière disponibles."
       },
       "sync": {
         "question": "Puis-je sauvegarder ou synchroniser en ligne ?",
@@ -280,6 +306,11 @@
   "dashboard": {
     "title": "Tableau de bord",
     "alerts": "Alertes",
+    "aiInsight": "Analyse IA",
+    "budgetUse": "Utilisation du budget",
+    "goalProgress": "Progression des objectifs",
+    "cashMargin": "Marge de trésorerie",
+    "cashMarginFooter": "{{count}} à venir",
     "netWorth": "Patrimoine net",
     "periodRange": "Période",
     "income": "Revenus",
@@ -411,6 +442,11 @@
   },
   "assistant": {
     "title": "Assistant",
+    "heading": "Analyses et apprentissage",
+    "checkingSetup": "Vérification de la configuration de l'IA.",
+    "emptyPaused": "Les fonctions d'IA sont en pause tant que vous n'avez pas configuré une clé de fournisseur ou connecté la passerelle gérée.",
+    "aiNoticeTitle": "L'IA est facultative et non configurée",
+    "aiNoticeAction": "Configurer les clés IA",
     "tabs": {
       "insights": "Analyses",
       "learn": "Apprendre"
@@ -647,12 +683,16 @@
     "cardDescription": "Planifiez vos dépenses, épargnez vers des objectifs et suivez les transactions récurrentes"
   },
   "settings": {
+    "system": "Système",
     "title": "Paramètres",
     "devices": {
       "title": "Appareils et sessions",
       "description": "Informations sur l'appareil actuel et la session active",
       "active": "Actif",
       "offline": "Hors ligne",
+      "localOnly": "Local uniquement",
+      "onlineReady": "Sauvegarde en ligne prête",
+      "localOnlyMessage": "La sauvegarde en ligne n'est pas connectée dans ce déploiement. Votre espace, vos comptes, vos budgets et vos transactions restent sur cet appareil.",
       "language": "Langue",
       "session": "Session",
       "signOut": "Déconnexion de toutes les sessions",

@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent, type ReactNode } from "react";
+import { useState, useEffect, useRef, type FormEvent, type ReactNode } from "react";
 import {
   deriveMasterKey,
   setupMasterKey,
@@ -8,13 +8,14 @@ import {
 import type { MasterKey } from "../../crypto/envelope.ts";
 import { db } from "../../db/schema.ts";
 import { register, restoreSession } from "../../auth/session.ts";
+import { importJSON } from "../../exportImport/index.ts";
 import { RouterProvider } from "@tanstack/react-router";
 import { router } from "../../router.ts";
 import { MasterKeyContext } from "../../lib/masterKeyContext.ts";
 import { Toaster } from "../../components/ui/sonner.tsx";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
-import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, Languages, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, Smartphone, WalletCards, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, Languages, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, Smartphone, Upload, WalletCards, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -25,6 +26,7 @@ import { useTranslation } from "react-i18next";
 type Flow =
   | "loading"
   | "landing"
+  | "restore"
   | "onboarding"
   | "setup"
   | "unlock-passphrase"
@@ -35,6 +37,12 @@ type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
+
+function isStandaloneDisplayMode(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(display-mode: standalone)").matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+}
 
 export default function KeyUnlock() {
   const { t } = useTranslation();
@@ -47,12 +55,14 @@ export default function KeyUnlock() {
     void db.keyMeta.get("primary").then((meta) => {
       if (meta == null) {
         setVaultUnlockFlow("setup");
+        setFlow(isStandaloneDisplayMode() ? "restore" : "landing");
       } else if (meta.webAuthnHandle != null) {
         setVaultUnlockFlow("unlock-webauthn");
+        setFlow("landing");
       } else {
         setVaultUnlockFlow("unlock-passphrase");
+        setFlow("landing");
       }
-      setFlow("landing");
     });
   }, []);
 
@@ -70,6 +80,20 @@ export default function KeyUnlock() {
       <LandingOnboarding
         onStart={() => setFlow(vaultUnlockFlow === "setup" ? "onboarding" : vaultUnlockFlow)}
         hasVault={vaultUnlockFlow !== "setup"}
+      />
+    );
+  } else if (flow === "restore") {
+    content = (
+      <RestoreWorkspace
+        onBack={() => setFlow("landing")}
+        onCreateNew={() => setFlow("setup")}
+        onReady={async (mk) => {
+          setMasterKey(mk);
+          await restoreSession(mk);
+          setFlow("app");
+        }}
+        error={error}
+        setError={setError}
       />
     );
   } else if (flow === "onboarding") {
@@ -172,7 +196,7 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <a
-                href="#pwa-onboarding"
+                href="#help"
                 className="flex h-12 items-center justify-between rounded-md border border-border bg-card px-4 text-sm font-semibold transition-colors hover:bg-accent"
               >
                 {t("keyUnlock.landing.viewSteps")}
@@ -181,7 +205,7 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
             </div>
           </div>
 
-          <aside id="pwa-onboarding" className="grid content-start gap-4 py-6 lg:py-12 lg:pl-8">
+          <aside className="grid content-start gap-4 py-6 lg:py-12 lg:pl-8">
             <InstallPromptCard />
             <div className="border border-border bg-card">
               <div className="border-b border-border bg-ocean-primary p-4 text-white">
@@ -227,6 +251,147 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
           </aside>
         </div>
         <LandingHelpAndFaq />
+      </section>
+    </main>
+  );
+}
+
+type RestoreWorkspaceProps = {
+  onBack: () => void;
+  onCreateNew: () => void;
+  onReady: (masterKey: MasterKey) => Promise<void>;
+  error: string | null;
+  setError: (e: string | null) => void;
+};
+
+function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: RestoreWorkspaceProps) {
+  const { t } = useTranslation();
+  const [passphrase, setPassphrase] = useState("");
+  const [confirmPassphrase, setConfirmPassphrase] = useState("");
+  const [exportPassphrase, setExportPassphrase] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    const file = fileInputRef.current?.files?.[0];
+    if (file == null) {
+      setError(t("keyUnlock.restore.errors.fileRequired"));
+      return;
+    }
+    if (passphrase.length === 0) {
+      setError(t("keyUnlock.restore.errors.passphraseRequired"));
+      return;
+    }
+    if (passphrase !== confirmPassphrase) {
+      setError(t("keyUnlock.login.errors.passwordsMismatch"));
+      return;
+    }
+
+    setSubmitting(true);
+    void (async () => {
+      try {
+        const mk = await setupMasterKey(passphrase);
+        await importJSON(file, mk, exportPassphrase.trim().length > 0 ? exportPassphrase.trim() : undefined);
+        await onReady(mk);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t("keyUnlock.restore.errors.failed"));
+      } finally {
+        setSubmitting(false);
+      }
+    })();
+  };
+
+  return (
+    <main aria-label={t("keyUnlock.restore.aria")} className="flex min-h-dvh flex-col bg-background p-4">
+      <AuthTopBar onBack={onBack} />
+      <section className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center py-6">
+        <div className="grid gap-0 border border-border bg-card/95 shadow-sm lg:grid-cols-[0.92fr_1.08fr]">
+          <aside className="border-b border-border bg-ocean-primary p-5 text-white lg:border-b-0 lg:border-r">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80">{t("keyUnlock.restore.kicker")}</p>
+            <h1 className="mt-3 text-4xl font-bold leading-none sm:text-5xl">{t("keyUnlock.restore.title")}</h1>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-white/80">{t("keyUnlock.restore.body")}</p>
+            <div className="mt-8 grid gap-3">
+              {[
+                t("keyUnlock.restore.steps.export"),
+                t("keyUnlock.restore.steps.file"),
+                t("keyUnlock.restore.steps.passphrase"),
+                t("keyUnlock.restore.steps.open"),
+              ].map((step, index) => (
+                <div key={step} className="flex items-start gap-3 rounded-md border border-white/15 bg-white/10 p-3">
+                  <span className="text-sm font-bold tabular-nums text-white/85">{`0${index + 1}`}</span>
+                  <p className="text-sm leading-relaxed text-white/85">{step}</p>
+                </div>
+              ))}
+            </div>
+          </aside>
+          <div className="p-5 sm:p-8">
+            <div className="space-y-4">
+              <div className="rounded-md border border-border bg-accent/40 p-4 text-sm leading-relaxed text-muted-foreground">
+                {t("keyUnlock.restore.helper")}
+              </div>
+              {error != null && (
+                <p role="alert" className="text-sm text-destructive">{error}</p>
+              )}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="restore-file">{t("keyUnlock.restore.fileLabel")}</Label>
+                  <Input
+                    id="restore-file"
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".json,.wmexport"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="restore-passphrase">{t("keyUnlock.restore.passphrase")}</Label>
+                  <Input
+                    id="restore-passphrase"
+                    type="password"
+                    value={passphrase}
+                    onChange={(e) => setPassphrase(e.target.value)}
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="restore-confirm-passphrase">{t("keyUnlock.restore.confirmPassphrase")}</Label>
+                  <Input
+                    id="restore-confirm-passphrase"
+                    type="password"
+                    value={confirmPassphrase}
+                    onChange={(e) => setConfirmPassphrase(e.target.value)}
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="restore-export-passphrase">{t("keyUnlock.restore.exportPassphrase")}</Label>
+                  <Input
+                    id="restore-export-passphrase"
+                    type="password"
+                    value={exportPassphrase}
+                    onChange={(e) => setExportPassphrase(e.target.value)}
+                    autoComplete="off"
+                  />
+                  <p className="text-xs text-muted-foreground">{t("keyUnlock.restore.exportPassphraseHelp")}</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Button type="submit" disabled={submitting} className="justify-between">
+                    {submitting ? t("keyUnlock.restore.restoring") : t("keyUnlock.restore.restore")}
+                    <Upload className="h-4 w-4" />
+                  </Button>
+                  <Button type="button" variant="outline" onClick={onCreateNew} className="justify-between">
+                    {t("keyUnlock.restore.createNew")}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );

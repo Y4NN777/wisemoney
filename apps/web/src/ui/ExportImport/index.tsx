@@ -7,6 +7,7 @@ import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog.tsx";
 import { Download, Upload, AlertTriangle, Loader2, FileDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
@@ -20,6 +21,7 @@ function downloadBlob(blob: Blob, filename: string): void {
 }
 
 export default function ExportImportSection() {
+  const { t } = useTranslation();
   const masterKey = useMasterKey();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,8 +59,8 @@ export default function ExportImportSection() {
         }
       }
       downloadBlob(blob, filename);
-    } catch (err) {
-      setExportError(err instanceof Error ? err.message : "Export failed");
+    } catch {
+      setExportError(t("exportImport.export.errors.failed"));
     } finally {
       setExporting(null);
     }
@@ -66,7 +68,7 @@ export default function ExportImportSection() {
 
   const handleEncryptedExport = async () => {
     if (!passphrase || passphrase.length < 4) {
-      setPassphraseError("Passphrase must be at least 4 characters");
+      setPassphraseError(t("exportImport.passphrase.errors.tooShort"));
       return;
     }
     setPassphraseError(null);
@@ -76,8 +78,8 @@ export default function ExportImportSection() {
       downloadBlob(blob, `wisemoney-encrypted-${Date.now()}.wmexport`);
       setShowPassphraseDialog(null);
       setPassphrase("");
-    } catch (err) {
-      setExportError(err instanceof Error ? err.message : "Encrypted export failed");
+    } catch {
+      setExportError(t("exportImport.export.errors.encryptedFailed"));
     } finally {
       setExporting(null);
     }
@@ -105,13 +107,13 @@ export default function ExportImportSection() {
       // Plain JSON — import directly
       await doImport(text);
     } catch {
-      setImportResult({ ok: false, message: "Invalid file — unable to parse." });
+      setImportResult({ ok: false, message: t("exportImport.import.errors.invalidFile") });
     }
   };
 
   const handleEncryptedImport = async () => {
     if (!passphrase || passphrase.length === 0) {
-      setPassphraseError("Passphrase is required");
+      setPassphraseError(t("exportImport.passphrase.errors.required"));
       return;
     }
     setPassphraseError(null);
@@ -131,13 +133,13 @@ export default function ExportImportSection() {
         blob = new Blob([text], { type: "application/json" });
       } else {
         const file = fileInputRef.current?.files?.[0];
-        if (file == null) throw new Error("No file selected");
+        if (file == null) throw new Error(t("exportImport.import.errors.noFile"));
         blob = file;
       }
       await importJSON(blob, masterKey, exportPassphrase);
-      setImportResult({ ok: true, message: "Import successful! All data has been restored." });
-    } catch (err) {
-      setImportError(err instanceof Error ? err.message : "Import failed");
+      setImportResult({ ok: true, message: t("exportImport.import.success") });
+    } catch {
+      setImportError(t("exportImport.import.errors.failed"));
     } finally {
       setImporting(false);
     }
@@ -149,10 +151,10 @@ export default function ExportImportSection() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Download className="h-5 w-5" />
-            Export
+            {t("exportImport.export.title")}
           </CardTitle>
           <CardDescription>
-            Download your financial data. JSON exports are lossless and can be re-imported.
+            {t("exportImport.export.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -168,7 +170,7 @@ export default function ExportImportSection() {
               disabled={exporting != null}
             >
               {exporting === "json" ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <FileDown className="h-4 w-4 mr-1" />}
-              Export JSON
+              {t("exportImport.export.json")}
             </Button>
             <Button
               variant="outline"
@@ -177,7 +179,7 @@ export default function ExportImportSection() {
               disabled={exporting != null}
             >
               {exporting === "json-encrypted" ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <FileDown className="h-4 w-4 mr-1" />}
-              Encrypted Export
+              {t("exportImport.export.encrypted")}
             </Button>
             <Button
               variant="outline"
@@ -186,7 +188,7 @@ export default function ExportImportSection() {
               disabled={exporting != null}
             >
               {exporting === "csv" ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <FileDown className="h-4 w-4 mr-1" />}
-              Export CSV
+              {t("exportImport.export.csv")}
             </Button>
             <Button
               variant="outline"
@@ -195,17 +197,13 @@ export default function ExportImportSection() {
               disabled={exporting != null}
             >
               {exporting === "xlsx" ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <FileDown className="h-4 w-4 mr-1" />}
-              Export XLSX
+              {t("exportImport.export.xlsx")}
             </Button>
           </div>
 
           <div className="flex items-start gap-2 rounded-md border border-amber bg-amber-wash p-3">
             <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-700 dark:text-amber-400">
-              Plaintext JSON, CSV, and XLSX exports contain decrypted financial data.
-              Store them securely and delete after use. Encrypted exports are protected
-              by your passphrase.
-            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-400">{t("exportImport.export.warning")}</p>
           </div>
         </CardContent>
       </Card>
@@ -214,10 +212,10 @@ export default function ExportImportSection() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
-            Import
+            {t("exportImport.import.title")}
           </CardTitle>
           <CardDescription>
-            Restore data from a JSON export file. This replaces all existing data.
+            {t("exportImport.import.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -248,7 +246,7 @@ export default function ExportImportSection() {
           {importing && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Importing data…
+              {t("exportImport.import.importing")}
             </div>
           )}
         </CardContent>
@@ -268,12 +266,12 @@ export default function ExportImportSection() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {showPassphraseDialog === "export" ? "Encrypt Export" : "Decrypt Import"}
+              {showPassphraseDialog === "export" ? t("exportImport.passphrase.exportTitle") : t("exportImport.passphrase.importTitle")}
             </DialogTitle>
             <DialogDescription>
               {showPassphraseDialog === "export"
-                ? "Enter a passphrase to protect your export. You will need this passphrase to import the file later."
-                : "This file is passphrase-encrypted. Enter the passphrase to decrypt and import."}
+                ? t("exportImport.passphrase.exportDescription")
+                : t("exportImport.passphrase.importDescription")}
             </DialogDescription>
           </DialogHeader>
           <form
@@ -288,7 +286,7 @@ export default function ExportImportSection() {
             className="space-y-4"
           >
             <div className="space-y-2">
-              <Label htmlFor="export-passphrase">Passphrase</Label>
+              <Label htmlFor="export-passphrase">{t("exportImport.passphrase.label")}</Label>
               <Input
                 id="export-passphrase"
                 type="password"
@@ -312,15 +310,15 @@ export default function ExportImportSection() {
                   setPassphraseError(null);
                 }}
               >
-                Cancel
+                {t("exportImport.passphrase.cancel")}
               </Button>
               <Button type="submit" disabled={exporting != null || importing}>
                 {(exporting != null || importing) ? (
-                  <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Processing…</>
+                  <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> {t("exportImport.passphrase.processing")}</>
                 ) : showPassphraseDialog === "export" ? (
-                  "Encrypt & Download"
+                  t("exportImport.passphrase.encryptDownload")
                 ) : (
-                  "Decrypt & Import"
+                  t("exportImport.passphrase.decryptImport")
                 )}
               </Button>
             </div>
