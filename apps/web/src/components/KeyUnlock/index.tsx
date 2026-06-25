@@ -13,7 +13,7 @@ import { router } from "../../router.ts";
 import { MasterKeyContext } from "../../lib/masterKeyContext.ts";
 import { Toaster } from "../../components/ui/sonner.tsx";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
-import { ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, ShieldCheck, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, WalletCards, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -61,6 +61,7 @@ export default function KeyUnlock() {
   } else if (flow === "setup") {
     content = (
       <LocalSetup
+        onBack={() => setFlow("landing")}
         onReady={async (mk) => {
           setMasterKey(mk);
           await restoreSession(mk);
@@ -73,6 +74,7 @@ export default function KeyUnlock() {
   } else if (flow === "unlock-passphrase") {
     content = (
       <PassphraseUnlock
+        onBack={() => setFlow("landing")}
         onUnlock={async (mk) => {
           setMasterKey(mk);
           await restoreSession(mk);
@@ -85,6 +87,7 @@ export default function KeyUnlock() {
   } else if (flow === "unlock-webauthn") {
     content = (
       <WebAuthnUnlock
+        onBack={() => setFlow("landing")}
         onUnlock={async (mk) => {
           setMasterKey(mk);
           await restoreSession(mk);
@@ -124,13 +127,16 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
           </Button>
         </header>
 
-        <div className="grid flex-1 gap-0 border-b border-[#111111] lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
+        <div className="grid flex-1 gap-0 border-b border-[#111111] lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)]">
           <div className="flex flex-col justify-between border-[#111111] py-8 lg:border-r lg:py-12 lg:pr-10">
             <div className="space-y-6">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#002FA7]">Local-first finance PWA</p>
               <h1 className="max-w-4xl text-5xl font-bold leading-[0.94] tracking-normal text-[#111111] sm:text-7xl lg:text-8xl">
                 WiseMoney starts with your device, not a login wall.
               </h1>
+              <p className="max-w-2xl text-base font-medium leading-relaxed text-[#333333] sm:text-lg">
+                Build your private money workspace first: dashboard, capture, budgets, goals, recurring payments, exports, and settings all unlock from one encrypted vault.
+              </p>
               {hasVault && (
                 <p className="max-w-2xl border-l-4 border-[#002FA7] pl-4 text-base font-medium leading-relaxed text-[#333333]">
                   A vault already exists in this browser. Open it to continue with your local data.
@@ -153,7 +159,21 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
             </div>
           </div>
 
-          <aside id="pwa-onboarding" className="grid content-start gap-0 py-6 lg:py-12 lg:pl-8">
+          <aside id="pwa-onboarding" className="grid content-start gap-4 py-6 lg:py-12 lg:pl-8">
+            <div className="border border-[#111111] bg-white">
+              <div className="border-b border-[#111111] bg-[#002FA7] p-4 text-white">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em]">After setup</p>
+                <h2 className="mt-2 text-2xl font-bold leading-tight">Your WiseMoney workspace</h2>
+              </div>
+              <div className="grid grid-cols-2">
+                <ProductTile icon={<LayoutDashboard className="h-5 w-5" />} label="Dashboard" />
+                <ProductTile icon={<ReceiptText className="h-5 w-5" />} label="Capture" />
+                <ProductTile icon={<WalletCards className="h-5 w-5" />} label="Accounts" />
+                <ProductTile icon={<PiggyBank className="h-5 w-5" />} label="Planning" />
+                <ProductTile icon={<Bot className="h-5 w-5" />} label="Assistant" />
+                <ProductTile icon={<Settings className="h-5 w-5" />} label="Settings" />
+              </div>
+            </div>
             <div className="border border-[#111111] bg-[#F7F7F8]">
               <OnboardingRow
                 number="01"
@@ -188,6 +208,15 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
   );
 }
 
+function ProductTile({ icon, label }: { icon: ReactNode; label: string }) {
+  return (
+    <div className="flex min-h-24 flex-col justify-between border-b border-r border-[#111111] p-3 last:border-r-0 even:border-r-0">
+      <span className="text-[#002FA7]">{icon}</span>
+      <span className="text-sm font-bold text-[#111111]">{label}</span>
+    </div>
+  );
+}
+
 function OnboardingRow({
   number,
   icon,
@@ -215,6 +244,18 @@ function OnboardingRow({
   );
 }
 
+function AuthTopBar({ onBack }: { onBack: () => void }) {
+  return (
+    <header className="mx-auto flex w-full max-w-5xl items-center justify-between border-b border-border py-3">
+      <Logo className="h-8 w-auto" />
+      <Button type="button" variant="ghost" onClick={onBack} className="gap-2">
+        <ArrowLeft className="h-4 w-4" />
+        Back to overview
+      </Button>
+    </header>
+  );
+}
+
 type AppShellProps = {
   masterKey: MasterKey;
 };
@@ -232,12 +273,13 @@ function AppShell({ masterKey }: AppShellProps) {
 }
 
 type LocalSetupProps = {
+  onBack: () => void;
   onReady: (masterKey: MasterKey) => Promise<void>;
   error: string | null;
   setError: (e: string | null) => void;
 };
 
-function LocalSetup({ onReady, error, setError }: LocalSetupProps) {
+function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
   const [passphrase, setPassphrase] = useState("");
   const [confirmPassphrase, setConfirmPassphrase] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -267,7 +309,9 @@ function LocalSetup({ onReady, error, setError }: LocalSetupProps) {
   };
 
   return (
-    <main aria-label="Setup vault" className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-background p-4">
+    <main aria-label="Setup vault" className="flex min-h-dvh flex-col bg-background p-4">
+      <AuthTopBar onBack={onBack} />
+      <div className="flex flex-1 flex-col items-center justify-center gap-5">
       <Logo className="w-48 h-auto" />
       <Card className="metric-surface w-full max-w-sm">
         <CardHeader>
@@ -316,6 +360,7 @@ function LocalSetup({ onReady, error, setError }: LocalSetupProps) {
           <CloudEdgeAuth />
         </CardContent>
       </Card>
+      </div>
     </main>
   );
 }
@@ -436,12 +481,13 @@ function CloudEdgeAuth() {
 }
 
 type PassphraseUnlockProps = {
+  onBack: () => void;
   onUnlock: (masterKey: MasterKey) => Promise<void>;
   error: string | null;
   setError: (e: string | null) => void;
 };
 
-function PassphraseUnlock({ onUnlock, error, setError }: PassphraseUnlockProps) {
+function PassphraseUnlock({ onBack, onUnlock, error, setError }: PassphraseUnlockProps) {
   const [passphrase, setPassphrase] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -478,7 +524,9 @@ function PassphraseUnlock({ onUnlock, error, setError }: PassphraseUnlockProps) 
   };
 
   return (
-    <main aria-label="Unlock vault" className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-background p-4">
+    <main aria-label="Unlock vault" className="flex min-h-dvh flex-col bg-background p-4">
+      <AuthTopBar onBack={onBack} />
+      <div className="flex flex-1 flex-col items-center justify-center gap-5">
       <Logo className="w-48 h-auto" />
       <Card className="metric-surface w-full max-w-sm">
         <CardHeader>
@@ -508,17 +556,19 @@ function PassphraseUnlock({ onUnlock, error, setError }: PassphraseUnlockProps) 
           </form>
         </CardContent>
       </Card>
+      </div>
     </main>
   );
 }
 
 type WebAuthnUnlockProps = {
+  onBack: () => void;
   onUnlock: (masterKey: MasterKey) => Promise<void>;
   error: string | null;
   setError: (e: string | null) => void;
 };
 
-function WebAuthnUnlock({ onUnlock, error, setError }: WebAuthnUnlockProps) {
+function WebAuthnUnlock({ onBack, onUnlock, error, setError }: WebAuthnUnlockProps) {
   const [submitting, setSubmitting] = useState(false);
 
   const handleUnlock = () => {
@@ -554,7 +604,9 @@ function WebAuthnUnlock({ onUnlock, error, setError }: WebAuthnUnlockProps) {
   };
 
   return (
-    <main aria-label="Unlock vault" className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-background p-4">
+    <main aria-label="Unlock vault" className="flex min-h-dvh flex-col bg-background p-4">
+      <AuthTopBar onBack={onBack} />
+      <div className="flex flex-1 flex-col items-center justify-center gap-5">
       <Logo className="w-48 h-auto" />
       <Card className="metric-surface w-full max-w-sm">
         <CardHeader>
@@ -575,6 +627,7 @@ function WebAuthnUnlock({ onUnlock, error, setError }: WebAuthnUnlockProps) {
           </Button>
         </CardContent>
       </Card>
+      </div>
     </main>
   );
 }
