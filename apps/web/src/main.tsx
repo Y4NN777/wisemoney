@@ -7,8 +7,8 @@ import App from "./App.tsx";
 
 if (import.meta.env.PROD) {
   const edgeBaseUrl: string | undefined = import.meta.env.VITE_EDGE_BASE_URL;
-  if (edgeBaseUrl === undefined || !edgeBaseUrl.startsWith("https://")) {
-    throw new Error("VITE_EDGE_BASE_URL must be https:// in production builds");
+  if (edgeBaseUrl !== undefined && !edgeBaseUrl.startsWith("https://")) {
+    throw new Error("VITE_EDGE_BASE_URL must be https:// when set in production builds");
   }
 }
 
