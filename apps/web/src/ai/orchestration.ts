@@ -186,21 +186,25 @@ const byoRouting: Record<TaskType, ProviderRoute[]> = {
   reasoning: [
     { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
     { provider: "openai", model: "gpt-4o", baseURL: "https://api.openai.com" },
+    { provider: "openrouter", model: "openai/gpt-4o", baseURL: "https://openrouter.ai/api" },
     { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
   ],
   classification: [
     { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
     { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "openrouter", model: "openai/gpt-4o-mini", baseURL: "https://openrouter.ai/api" },
     { provider: "openai", model: "gpt-4o-mini", baseURL: "https://api.openai.com" },
   ],
   teaching: [
     { provider: "openai", model: "gpt-4o", baseURL: "https://api.openai.com" },
     { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "openrouter", model: "openai/gpt-4o", baseURL: "https://openrouter.ai/api" },
     { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
   ],
   summarization: [
     { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
     { provider: "openai", model: "gpt-4o-mini", baseURL: "https://api.openai.com" },
+    { provider: "openrouter", model: "openai/gpt-4o-mini", baseURL: "https://openrouter.ai/api" },
     { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
   ],
 };
@@ -224,7 +228,8 @@ async function callProviderDirect(
       };
       break;
     }
-    case "openai": {
+    case "openai":
+    case "openrouter": {
       url = `${route.baseURL}/v1/chat/completions`;
       body = {
         model: route.model,
