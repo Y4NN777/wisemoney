@@ -303,14 +303,33 @@
 
   .landing-grid {
     background:
-      linear-gradient(to right, rgba(17, 17, 17, 0.08) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(17, 17, 17, 0.08) 1px, transparent 1px),
-      #ffffff;
-    background-size: 32px 32px;
+      linear-gradient(to right, rgba(0, 109, 143, 0.09) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 109, 143, 0.09) 1px, transparent 1px),
+      radial-gradient(circle at 18% 18%, rgba(227, 247, 248, 0.95), transparent 30rem),
+      linear-gradient(180deg, rgba(227, 247, 248, 0.72), rgba(244, 247, 249, 0) 34rem),
+      var(--background);
+    background-size: 32px 32px, 32px 32px, auto, auto, auto;
   }
 
   .landing-step {
     animation: landing-step-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .preview-row {
+    animation: preview-row-in 520ms var(--ease-standard) both;
+  }
+
+  .preview-row:nth-child(2) {
+    animation-delay: 110ms;
+  }
+
+  .preview-row:nth-child(3) {
+    animation-delay: 220ms;
+  }
+
+  .preview-flow-line {
+    transform-origin: left center;
+    animation: preview-flow 3.2s var(--ease-standard) infinite;
   }
 
   .landing-step:nth-child(2) {
@@ -345,6 +364,29 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes preview-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes preview-flow {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: scaleX(0.68);
+  }
+  48% {
+    opacity: 1;
+    transform: scaleX(1);
   }
 }
 

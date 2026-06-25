@@ -45,6 +45,127 @@
         "notConfigured": "WebAuthn non configuré",
         "failed": "Échec du déverrouillage WebAuthn"
       }
+    },
+    "backToOverview": "Retour à la présentation",
+    "setup": {
+      "aria": "Configuration du coffre",
+      "title": "Configurer votre coffre",
+      "description": "Créez une phrase de chiffrement pour protéger vos données financières sur cet appareil. Aucun compte requis.",
+      "confirmPassphrase": "Confirmer la phrase de chiffrement",
+      "submitting": "Configuration…",
+      "createVault": "Créer le coffre",
+      "errors": {
+        "failed": "Échec de la configuration"
+      }
+    },
+    "landing": {
+      "aria": "Présentation de WiseMoney",
+      "kicker": "PWA financière locale d'abord",
+      "title": "WiseMoney commence sur votre appareil, pas par un mur de connexion.",
+      "body": "Créez d'abord votre espace financier privé : tableau de bord, saisie, budgets, objectifs, paiements récurrents, exports et paramètres s'ouvrent depuis un seul coffre chiffré.",
+      "existingVault": "Un coffre existe déjà dans ce navigateur. Ouvrez-le pour continuer avec vos données locales.",
+      "openVault": "Ouvrir le coffre",
+      "startOnboarding": "Commencer l'accueil",
+      "openApp": "Ouvrir l'app",
+      "start": "Commencer",
+      "viewSteps": "Voir les étapes",
+      "afterSetup": "Après configuration",
+      "workspaceTitle": "Votre espace WiseMoney",
+      "steps": {
+        "vault": {
+          "title": "Créer un coffre chiffré",
+          "body": "Vos données financières sont protégées sur cet appareil par une phrase de chiffrement que vous contrôlez."
+        },
+        "offline": {
+          "title": "Utiliser l'app hors ligne",
+          "body": "Saisissez des transactions, gérez les comptes et consultez les budgets sans attendre un serveur."
+        },
+        "ai": {
+          "title": "Ajouter l'IA quand vous êtes prêt",
+          "body": "Utilisez vos clés personnelles maintenant, puis connectez l'edge géré lorsque le backend sera déployé."
+        },
+        "install": {
+          "title": "Installer comme PWA",
+          "body": "Après la configuration, installez WiseMoney depuis le menu du navigateur pour une expérience plein écran."
+        }
+      }
+    },
+    "preview": {
+      "aria": "Aperçu de l'espace WiseMoney",
+      "kicker": "Espace d'exemple",
+      "title": "Tableau de bord, saisie et planification dans un seul coffre",
+      "offlineReady": "Prêt hors ligne",
+      "rows": {
+        "cashFlow": "Flux de trésorerie",
+        "budgetChecks": "Suivi des budgets",
+        "savingsGoals": "Objectifs d'épargne"
+      },
+      "rowStates": {
+        "live": "Actif",
+        "review": "Revoir",
+        "track": "Suivre"
+      },
+      "metrics": {
+        "accounts": "Suivre les soldes",
+        "capture": "Saisir les dépenses",
+        "planning": "Revoir les budgets",
+        "settings": "Ajouter des services"
+      },
+      "status": {
+        "vault": "Coffre",
+        "local": "Local",
+        "network": "Réseau",
+        "offline": "Hors ligne",
+        "services": "Services",
+        "optional": "Optionnels"
+      },
+      "deviceLabel": "PWA mobile",
+      "deviceBody": "Installez une fois, puis ouvrez WiseMoney depuis l'écran d'accueil quand la connexion est faible ou indisponible."
+    },
+    "onboarding": {
+      "aria": "Accueil WiseMoney",
+      "kicker": "Aperçu de configuration",
+      "title": "Ce qui se passe avant l'ouverture du coffre",
+      "stepLabel": "Étape {{number}}",
+      "steps": {
+        "vault": {
+          "title": "Créer un coffre local",
+          "body": "WiseMoney commence par chiffrer vos données financières sur cet appareil avec une phrase que vous contrôlez."
+        },
+        "offline": {
+          "title": "L'utiliser hors ligne",
+          "body": "L'app, le tableau de bord, la saisie, les comptes, les budgets et les paramètres restent disponibles quand le réseau ne l'est pas."
+        },
+        "services": {
+          "title": "Ajouter les services plus tard",
+          "body": "Les fournisseurs IA et la synchronisation cloud sont optionnels. L'app désactive clairement ces actions tant que les clés ou le backend edge ne sont pas configurés."
+        },
+        "install": {
+          "title": "L'installer comme PWA",
+          "body": "Après la configuration, installez WiseMoney depuis le menu du navigateur pour une expérience plein écran depuis l'écran d'accueil."
+        }
+      }
+    },
+    "install": {
+      "title": "Installer WiseMoney sur cet appareil",
+      "body": "Installez la PWA avant d'en avoir besoin hors ligne. Votre coffre et l'app restent disponibles depuis l'écran d'accueil.",
+      "installed": "WiseMoney est installé sur cet appareil.",
+      "button": "Installer l'app",
+      "manualTitle": "Si aucun bouton d'installation n'apparaît :",
+      "android": "Chrome Android : ouvrez le menu du navigateur et choisissez Installer l'application.",
+      "ios": "Safari iPhone : utilisez Partager, puis Ajouter à l'écran d'accueil."
+    },
+    "cloud": {
+      "title": "Synchronisation cloud (optionnelle)",
+      "linked": "Compte edge connecté",
+      "notConnected": "La synchronisation cloud n'est pas connectée",
+      "localOnly": "Vous pouvez utiliser WiseMoney localement et hors ligne maintenant. La synchronisation cloud sera disponible après le déploiement et la configuration du backend edge géré.",
+      "connecting": "Connexion…",
+      "createAccount": "Créer un compte edge",
+      "errors": {
+        "required": "L'e-mail et le mot de passe sont requis",
+        "failed": "Échec de l'inscription"
+      }
     }
   },
   "nav": {
