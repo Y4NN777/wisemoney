@@ -7,14 +7,14 @@
     "loading": "Loading…",
     "login": {
       "title": "Create Account",
-      "description": "Set up your device vault and edge account",
+      "description": "Set up your private space and optional online account",
       "titleSignIn": "Sign In",
-      "descriptionSignIn": "Sign in to access your vault",
+      "descriptionSignIn": "Sign in to access your private space",
       "email": "Email",
       "password": "Password",
       "confirmPassword": "Confirm password",
-      "passphraseTitle": "Encryption passphrase",
-      "passphraseDescription": "This passphrase encrypts all financial data on this device. It cannot be recovered if lost — save it securely.",
+      "passphraseTitle": "Private passphrase",
+      "passphraseDescription": "This passphrase protects all financial data on this device. It cannot be recovered if lost, so save it securely.",
       "register": "Register",
       "signIn": "Sign In",
       "submitting": "Submitting…",
@@ -28,9 +28,9 @@
       "toggleRegisterAction": "Register"
     },
     "unlock": {
-      "title": "Unlock Vault",
-      "descriptionPassphrase": "Enter your encryption passphrase to access your financial data",
-      "passphrase": "Encryption passphrase",
+      "title": "Open your private space",
+      "descriptionPassphrase": "Enter your private passphrase to access your financial records",
+      "passphrase": "Private passphrase",
       "unlocking": "Unlocking…",
       "unlock": "Unlock",
       "errors": {
@@ -38,62 +38,62 @@
         "incorrectPassphrase": "Incorrect passphrase",
         "unlockFailed": "Unlock failed"
       },
-      "webauthnDescription": "Use your biometric or security key to access your financial data",
-      "webauthnButton": "Use biometric / security key",
+      "webauthnDescription": "Use your face, fingerprint, or security key to access your financial records",
+      "webauthnButton": "Use face, fingerprint, or security key",
       "webauthnAuthenticating": "Authenticating…",
       "webauthnErrors": {
-        "notConfigured": "WebAuthn not configured",
-        "failed": "WebAuthn unlock failed"
+        "notConfigured": "Device unlock is not configured",
+        "failed": "Device unlock failed"
       }
     },
     "backToOverview": "Back to overview",
     "setup": {
-      "aria": "Setup vault",
-      "title": "Set Up Your Vault",
-      "description": "Create an encryption passphrase to secure your financial data on this device. No account required.",
-      "confirmPassphrase": "Confirm passphrase",
+      "aria": "Set up private space",
+      "title": "Create your private space",
+      "description": "Choose a private passphrase to protect your financial records on this device. No account required.",
+      "confirmPassphrase": "Confirm private passphrase",
       "submitting": "Setting up…",
-      "createVault": "Create Vault",
+      "createVault": "Create private space",
       "errors": {
         "failed": "Setup failed"
       }
     },
     "landing": {
       "aria": "WiseMoney introduction",
-      "kicker": "Local-first finance PWA",
+      "kicker": "A money app that works on your device",
       "title": "WiseMoney starts with your device, not a login wall.",
-      "body": "Build your private money workspace first: dashboard, capture, budgets, goals, recurring payments, exports, and settings all unlock from one encrypted vault.",
-      "existingVault": "A vault already exists in this browser. Open it to continue with your local data.",
-      "openVault": "Open vault",
-      "startOnboarding": "Start onboarding",
+      "body": "Build your private money workspace first: dashboard, quick expense entry, budgets, goals, recurring payments, exports, and settings all open from one protected space.",
+      "existingVault": "A private space already exists in this browser. Open it to continue with your saved records.",
+      "openVault": "Open my space",
+      "startOnboarding": "See how it works",
       "openApp": "Open app",
       "start": "Start",
-      "viewSteps": "View setup steps",
+      "viewSteps": "View setup guide",
       "afterSetup": "After setup",
       "workspaceTitle": "Your WiseMoney workspace",
       "steps": {
         "vault": {
-          "title": "Create an encrypted vault",
-          "body": "Your financial records are sealed on this device with a passphrase you control."
+          "title": "Create a private space",
+          "body": "Your financial records are protected on this device with a passphrase only you know."
         },
         "offline": {
           "title": "Use the app offline",
           "body": "Capture transactions, manage accounts, and review budgets without waiting for a server."
         },
         "ai": {
-          "title": "Add AI when ready",
-          "body": "Use personal provider keys now, then connect the managed edge when the backend is deployed."
+          "title": "Use the assistant when ready",
+          "body": "The assistant stays optional. WiseMoney will tell you what is needed before any smart feature is used."
         },
         "install": {
-          "title": "Install as a PWA",
-          "body": "After setup, install WiseMoney from your browser menu for a full-screen app experience."
+          "title": "Install the app",
+          "body": "After setup, add WiseMoney to your home screen from your browser menu for a full-screen app experience."
         }
       }
     },
     "preview": {
       "aria": "WiseMoney workspace preview",
       "kicker": "Sample workspace",
-      "title": "Dashboard, capture, and planning in one vault",
+      "title": "Dashboard, quick entry, and planning in one private space",
       "offlineReady": "Offline ready",
       "rows": {
         "cashFlow": "Cash flow",
@@ -112,43 +112,91 @@
         "settings": "Add services"
       },
       "status": {
-        "vault": "Vault",
+        "vault": "Space",
         "local": "Local",
         "network": "Network",
         "offline": "Offline",
         "services": "Services",
         "optional": "Optional"
       },
-      "deviceLabel": "Mobile PWA",
+      "deviceLabel": "Mobile app",
       "deviceBody": "Install once, then open WiseMoney from the home screen when your connection is weak or unavailable."
+    },
+    "help": {
+      "aria": "WiseMoney help center and FAQ",
+      "kicker": "Help center",
+      "title": "Plain answers before you create anything",
+      "body": "WiseMoney is designed for people who want to track money without learning technical terms first. This guide explains the important choices in everyday language.",
+      "faqKicker": "FAQ",
+      "faqTitle": "Common questions",
+      "guide": {
+        "private": {
+          "title": "Your private space",
+          "body": "This is where WiseMoney keeps your accounts, expenses, budgets, goals, and settings. You unlock it with your private passphrase."
+        },
+        "install": {
+          "title": "Install on your phone",
+          "body": "You can add WiseMoney to your home screen. It then opens like a normal app instead of a browser tab."
+        },
+        "offline": {
+          "title": "Works without internet",
+          "body": "You can open the app, add expenses, and review your money even when the connection is weak or unavailable."
+        },
+        "assistant": {
+          "title": "Assistant is optional",
+          "body": "Smart suggestions stay turned off until you choose to set them up. The app still works without them."
+        }
+      },
+      "faq": {
+        "data": {
+          "question": "Where is my data stored?",
+          "answer": "Your records are saved on this device first. They are protected by the private passphrase you create during setup."
+        },
+        "internet": {
+          "question": "Can I use WiseMoney without internet?",
+          "answer": "Yes. You can add expenses, manage accounts, review budgets, and open the app without an active connection after setup."
+        },
+        "install": {
+          "question": "How do I install the app?",
+          "answer": "On Android, open your browser menu and choose Install app. On iPhone, use Share, then Add to Home Screen."
+        },
+        "ai": {
+          "question": "Do I need the assistant?",
+          "answer": "No. The assistant is optional. If it is not set up, WiseMoney will hide or disable smart actions instead of asking you to use them."
+        },
+        "sync": {
+          "question": "What about online backup and sync?",
+          "answer": "WiseMoney works locally now. Online backup and sync can be added when the online service is connected."
+        }
+      }
     },
     "onboarding": {
       "aria": "WiseMoney onboarding",
       "kicker": "Setup preview",
-      "title": "What happens before the vault opens",
+      "title": "What happens before your private space opens",
       "stepLabel": "Step {{number}}",
       "steps": {
         "vault": {
-          "title": "Create a local vault",
-          "body": "WiseMoney starts by encrypting financial records on this device with a passphrase you control."
+          "title": "Create your private space",
+          "body": "WiseMoney protects your financial records on this device with a private passphrase you control."
         },
         "offline": {
           "title": "Use it offline",
-          "body": "The app shell, dashboard, capture, accounts, budgets, and settings stay available when the network is unavailable."
+          "body": "The app, dashboard, quick entry, accounts, budgets, and settings stay available when the network is unavailable."
         },
         "services": {
-          "title": "Add services later",
-          "body": "AI providers and cloud sync are optional. The app clearly disables those actions until keys or the edge backend are configured."
+          "title": "Add extras later",
+          "body": "The assistant and online backup are optional. WiseMoney clearly disables those actions until you choose to set them up."
         },
         "install": {
-          "title": "Install it as a PWA",
-          "body": "After setup, install WiseMoney from the browser menu for a full-screen home-screen experience."
+          "title": "Install the app",
+          "body": "After setup, add WiseMoney from the browser menu for a full-screen home-screen experience."
         }
       }
     },
     "install": {
       "title": "Install WiseMoney on this device",
-      "body": "Install the PWA before you need it offline. Your vault and app shell stay available from the home screen.",
+      "body": "Install the app before you need it offline. Your private space and main screens stay available from the home screen.",
       "installed": "WiseMoney is installed on this device.",
       "button": "Install app",
       "manualTitle": "If no install button appears:",
@@ -156,12 +204,12 @@
       "ios": "iPhone Safari: use Share, then Add to Home Screen."
     },
     "cloud": {
-      "title": "Cloud sync (optional)",
-      "linked": "Edge account linked",
-      "notConnected": "Cloud sync is not connected",
-      "localOnly": "You can use WiseMoney locally and offline now. Cloud sync will become available after the managed edge backend is deployed and configured.",
+      "title": "Online backup (optional)",
+      "linked": "Online account connected",
+      "notConnected": "Online backup is not connected",
+      "localOnly": "You can use WiseMoney locally and offline now. Online backup will become available after the online service is deployed and configured.",
       "connecting": "Connecting…",
-      "createAccount": "Create Edge Account",
+      "createAccount": "Create online account",
       "errors": {
         "required": "Email and password are required",
         "failed": "Registration failed"
@@ -177,6 +225,57 @@
     "budgets": "Budgets",
     "goals": "Goals",
     "recurring": "Recurring"
+  },
+  "helpCenter": {
+    "open": "Open help center",
+    "title": "Help Center",
+    "description": "Use this guide when you need help with accounts, expenses, planning, offline access, or optional services.",
+    "faqTitle": "Questions users often ask",
+    "installNote": "Install WiseMoney from the landing page or browser menu before relying on it without internet.",
+    "journey": {
+      "accounts": {
+        "title": "Create accounts",
+        "body": "Add cash, mobile money, bank, or card accounts from Capture > Manage."
+      },
+      "capture": {
+        "title": "Record money movement",
+        "body": "Add income, expenses, transfers, and goal contributions. You can do this without internet."
+      },
+      "planning": {
+        "title": "Plan the month",
+        "body": "Create budgets, goals, and recurring payments so the dashboard can show useful progress."
+      },
+      "dashboard": {
+        "title": "Review the dashboard",
+        "body": "Check cash flow, spending by category, alerts, goals, and upcoming payments."
+      },
+      "services": {
+        "title": "Add extras only if needed",
+        "body": "The assistant and online backup are optional. Set them up from Settings only when you want them."
+      }
+    },
+    "faq": {
+      "account": {
+        "question": "What should I create first?",
+        "answer": "Start with one account, such as cash, mobile money, a bank account, or a card. Then record your first expense or income."
+      },
+      "expense": {
+        "question": "Where do I add expenses?",
+        "answer": "Open Capture, choose Transaction, enter the amount, pick an account and category, then save it."
+      },
+      "offline": {
+        "question": "Can I use the app without internet?",
+        "answer": "Yes. WiseMoney keeps the main app available on this device, so you can add records and review your money without a connection."
+      },
+      "assistant": {
+        "question": "Do I have to use the assistant?",
+        "answer": "No. The assistant is optional. If it is not set up, WiseMoney keeps the normal money tools available."
+      },
+      "sync": {
+        "question": "Can I back up or sync online?",
+        "answer": "Online backup is optional and depends on the online service being connected. Until then, WiseMoney works on this device."
+      }
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -520,19 +619,19 @@
     }
   },
   "byoKey": {
-    "title": "BYO AI Provider Keys",
-    "description": "Configure your own API keys to use AI features directly.",
+    "title": "Assistant connection keys",
+    "description": "Connect your own assistant service if you want smart suggestions.",
     "configured": "configured",
-    "apiKey": "API Key",
+    "apiKey": "Access key",
     "save": "Save",
     "hideKey": "Hide key",
     "showKey": "Show key",
     "configuredBadge": "Configured",
     "placeholders": {
       "configured": "Key saved",
-      "enter": "Enter {{provider}} API key"
+      "enter": "Enter {{provider}} access key"
     },
-    "footnote": "Your API keys are encrypted at rest and decrypted in memory only during AI calls.",
+    "footnote": "Your keys are protected on this device and used only when you ask the assistant for help.",
     "errors": {
       "saveFailed": "Failed to save key"
     },

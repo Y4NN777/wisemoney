@@ -226,8 +226,99 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
             </div>
           </aside>
         </div>
+        <LandingHelpAndFaq />
       </section>
     </main>
+  );
+}
+
+function LandingHelpAndFaq() {
+  const { t } = useTranslation();
+  const guideItems = [
+    {
+      icon: <ShieldCheck className="h-5 w-5" />,
+      title: t("keyUnlock.help.guide.private.title"),
+      body: t("keyUnlock.help.guide.private.body"),
+    },
+    {
+      icon: <Smartphone className="h-5 w-5" />,
+      title: t("keyUnlock.help.guide.install.title"),
+      body: t("keyUnlock.help.guide.install.body"),
+    },
+    {
+      icon: <WifiOff className="h-5 w-5" />,
+      title: t("keyUnlock.help.guide.offline.title"),
+      body: t("keyUnlock.help.guide.offline.body"),
+    },
+    {
+      icon: <Bot className="h-5 w-5" />,
+      title: t("keyUnlock.help.guide.assistant.title"),
+      body: t("keyUnlock.help.guide.assistant.body"),
+    },
+  ];
+  const faqItems = [
+    {
+      question: t("keyUnlock.help.faq.data.question"),
+      answer: t("keyUnlock.help.faq.data.answer"),
+    },
+    {
+      question: t("keyUnlock.help.faq.internet.question"),
+      answer: t("keyUnlock.help.faq.internet.answer"),
+    },
+    {
+      question: t("keyUnlock.help.faq.install.question"),
+      answer: t("keyUnlock.help.faq.install.answer"),
+    },
+    {
+      question: t("keyUnlock.help.faq.ai.question"),
+      answer: t("keyUnlock.help.faq.ai.answer"),
+    },
+    {
+      question: t("keyUnlock.help.faq.sync.question"),
+      answer: t("keyUnlock.help.faq.sync.answer"),
+    },
+  ];
+
+  return (
+    <section id="help" aria-label={t("keyUnlock.help.aria")} className="border-b border-border py-10 lg:py-14">
+      <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
+        <div className="space-y-4">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-ocean-primary">{t("keyUnlock.help.kicker")}</p>
+          <h2 className="max-w-xl text-3xl font-bold leading-tight text-foreground sm:text-5xl">{t("keyUnlock.help.title")}</h2>
+          <p className="max-w-xl text-base leading-relaxed text-muted-foreground">{t("keyUnlock.help.body")}</p>
+        </div>
+        <div className="grid gap-4">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {guideItems.map((item) => (
+              <article key={item.title} className="landing-step border border-border bg-card p-4">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
+                  {item.icon}
+                </div>
+                <h3 className="text-lg font-bold leading-tight text-foreground">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+              </article>
+            ))}
+          </div>
+          <div className="border border-border bg-card">
+            <div className="border-b border-border bg-ocean-primary p-4 text-white">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em]">{t("keyUnlock.help.faqKicker")}</p>
+              <h3 className="mt-2 text-2xl font-bold leading-tight">{t("keyUnlock.help.faqTitle")}</h3>
+            </div>
+            <div className="divide-y divide-border">
+              {faqItems.map((item) => (
+                <details key={item.question} className="group p-4">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-base font-bold text-foreground">
+                    {item.question}
+                    <ChevronDown className="h-4 w-4 shrink-0 text-ocean-primary transition-transform group-open:rotate-180" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

@@ -3,25 +3,40 @@ import { BookOpenCheck, CheckCircle2, HelpCircle, LayoutDashboard, MessageSquare
 import Logo from "../components/Logo.tsx";
 import { Button } from "../components/ui/button.tsx";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../components/ui/sheet.tsx";
+import { useTranslation } from "react-i18next";
 
 const navItems = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/capture", label: "Capture", icon: PlusCircle, exact: false },
-  { to: "/assistant", label: "Assistant", icon: MessageSquare, exact: false },
-  { to: "/planning", label: "Planning", icon: ClipboardList, exact: false },
-  { to: "/settings", label: "Settings", icon: SettingsIcon, exact: false },
+  { to: "/", labelKey: "nav.dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/capture", labelKey: "nav.capture", icon: PlusCircle, exact: false },
+  { to: "/assistant", labelKey: "nav.assistant", icon: MessageSquare, exact: false },
+  { to: "/planning", labelKey: "nav.planning", icon: ClipboardList, exact: false },
+  { to: "/settings", labelKey: "nav.settings", icon: SettingsIcon, exact: false },
 ] as const;
 
 const journeySteps = [
-  { title: "Create accounts", body: "Add cash, mobile money, bank, or card accounts from Capture > Manage.", to: "/capture" },
-  { title: "Record money movement", body: "Capture income, expenses, transfers, and goal contributions offline.", to: "/capture" },
-  { title: "Plan the month", body: "Create budgets, goals, and recurring items to make the dashboard useful.", to: "/planning" },
-  { title: "Review the dashboard", body: "Track cash flow, spending mix, alerts, and upcoming recurring payments.", to: "/" },
-  { title: "Configure optional services", body: "Add AI provider keys or cloud sync only when you want those features.", to: "/settings" },
+  { titleKey: "helpCenter.journey.accounts.title", bodyKey: "helpCenter.journey.accounts.body", to: "/capture" },
+  { titleKey: "helpCenter.journey.capture.title", bodyKey: "helpCenter.journey.capture.body", to: "/capture" },
+  { titleKey: "helpCenter.journey.planning.title", bodyKey: "helpCenter.journey.planning.body", to: "/planning" },
+  { titleKey: "helpCenter.journey.dashboard.title", bodyKey: "helpCenter.journey.dashboard.body", to: "/" },
+  { titleKey: "helpCenter.journey.services.title", bodyKey: "helpCenter.journey.services.body", to: "/settings" },
+] as const;
+
+const faqItems = [
+  { questionKey: "helpCenter.faq.account.question", answerKey: "helpCenter.faq.account.answer" },
+  { questionKey: "helpCenter.faq.expense.question", answerKey: "helpCenter.faq.expense.answer" },
+  { questionKey: "helpCenter.faq.offline.question", answerKey: "helpCenter.faq.offline.answer" },
+  { questionKey: "helpCenter.faq.assistant.question", answerKey: "helpCenter.faq.assistant.answer" },
+  { questionKey: "helpCenter.faq.sync.question", answerKey: "helpCenter.faq.sync.answer" },
 ] as const;
 
 export const Route = createRootRoute({
-  component: () => (
+  component: RootLayout,
+});
+
+function RootLayout() {
+  const { t } = useTranslation();
+
+  return (
     <div className="flex min-h-dvh flex-col bg-background">
       <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-background/88 backdrop-blur-xl">
         <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 md:px-5">
@@ -38,7 +53,7 @@ export const Route = createRootRoute({
                 activeProps={{ className: "bg-ocean-wash text-ocean-dark shadow-sm" }}
               >
                 <item.icon className="h-4 w-4" />
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             ))}
           </nav>
@@ -71,17 +86,19 @@ export const Route = createRootRoute({
             >
               <item.icon className="h-5 w-5" />
               <span className="text-[10px] leading-tight font-medium">
-                {item.label}
+                {t(item.labelKey)}
               </span>
             </Link>
           ))}
         </div>
       </nav>
     </div>
-  ),
-});
+  );
+}
 
 function HelpCenter() {
+  const { t } = useTranslation();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -89,7 +106,7 @@ function HelpCenter() {
           type="button"
           size="icon"
           className="fixed bottom-20 right-4 z-40 h-11 w-11 rounded-full shadow-lg md:bottom-6"
-          aria-label="Open help center"
+          aria-label={t("helpCenter.open")}
         >
           <HelpCircle className="h-5 w-5" />
         </Button>
@@ -98,16 +115,16 @@ function HelpCenter() {
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <BookOpenCheck className="h-5 w-5 text-ocean-primary" />
-            Help Center
+            {t("helpCenter.title")}
           </SheetTitle>
           <SheetDescription>
-            Follow the setup journey at your pace. WiseMoney works locally first; AI and sync are optional.
+            {t("helpCenter.description")}
           </SheetDescription>
         </SheetHeader>
 
         <div className="mt-5 space-y-3">
           {journeySteps.map((step, index) => (
-            <SheetClose key={step.title} asChild>
+            <SheetClose key={step.titleKey} asChild>
               <Link
                 to={step.to}
                 className="interactive-surface block rounded-lg border border-border bg-card p-3"
@@ -117,8 +134,8 @@ function HelpCenter() {
                     {String(index + 1).padStart(2, "0")}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">{step.title}</p>
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{step.body}</p>
+                    <p className="text-sm font-semibold">{t(step.titleKey)}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t(step.bodyKey)}</p>
                   </div>
                 </div>
               </Link>
@@ -126,11 +143,28 @@ function HelpCenter() {
           ))}
         </div>
 
+        <div className="mt-5 rounded-lg border border-border bg-card">
+          <div className="border-b border-border p-3">
+            <p className="text-sm font-semibold">{t("helpCenter.faqTitle")}</p>
+          </div>
+          <div className="divide-y divide-border">
+            {faqItems.map((item) => (
+              <details key={item.questionKey} className="group p-3">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold">
+                  {t(item.questionKey)}
+                  <HelpCircle className="h-4 w-4 shrink-0 text-ocean-primary" />
+                </summary>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{t(item.answerKey)}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+
         <div className="mt-5 rounded-lg border border-border bg-accent/55 p-3">
           <div className="flex items-start gap-2">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-ocean-primary" />
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Install the PWA from the landing page or browser menu before relying on it offline.
+              {t("helpCenter.installNote")}
             </p>
           </div>
         </div>

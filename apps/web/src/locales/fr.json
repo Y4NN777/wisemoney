@@ -7,14 +7,14 @@
     "loading": "Chargement…",
     "login": {
       "title": "Créer un compte",
-      "description": "Configurez votre coffre-fort et votre compte",
+      "description": "Configurez votre espace privé et votre compte en ligne optionnel",
       "titleSignIn": "Connexion",
-      "descriptionSignIn": "Connectez-vous pour accéder à votre coffre-fort",
+      "descriptionSignIn": "Connectez-vous pour accéder à votre espace privé",
       "email": "E-mail",
       "password": "Mot de passe",
       "confirmPassword": "Confirmer le mot de passe",
-      "passphraseTitle": "Phrase de chiffrement",
-      "passphraseDescription": "Cette phrase chiffre toutes vos données financières sur cet appareil. Elle ne peut pas être récupérée si elle est perdue — conservez-la en lieu sûr.",
+      "passphraseTitle": "Phrase privée",
+      "passphraseDescription": "Cette phrase protège toutes vos données financières sur cet appareil. Elle ne peut pas être récupérée si elle est perdue, conservez-la donc en lieu sûr.",
       "register": "S'inscrire",
       "signIn": "Se connecter",
       "submitting": "Envoi…",
@@ -28,9 +28,9 @@
       "toggleRegisterAction": "S'inscrire"
     },
     "unlock": {
-      "title": "Déverrouiller le coffre",
-      "descriptionPassphrase": "Entrez votre phrase de chiffrement pour accéder à vos données financières",
-      "passphrase": "Phrase de chiffrement",
+      "title": "Ouvrir votre espace privé",
+      "descriptionPassphrase": "Entrez votre phrase privée pour accéder à vos données financières",
+      "passphrase": "Phrase privée",
       "unlocking": "Déverrouillage…",
       "unlock": "Déverrouiller",
       "errors": {
@@ -38,62 +38,62 @@
         "incorrectPassphrase": "Phrase de chiffrement incorrecte",
         "unlockFailed": "Échec du déverrouillage"
       },
-      "webauthnDescription": "Utilisez vos données biométriques ou votre clé de sécurité pour accéder à vos données financières",
-      "webauthnButton": "Utiliser les données biométriques / clé de sécurité",
+      "webauthnDescription": "Utilisez votre visage, votre empreinte ou une clé de sécurité pour accéder à vos données financières",
+      "webauthnButton": "Utiliser visage, empreinte ou clé de sécurité",
       "webauthnAuthenticating": "Authentification…",
       "webauthnErrors": {
-        "notConfigured": "WebAuthn non configuré",
-        "failed": "Échec du déverrouillage WebAuthn"
+        "notConfigured": "Le déverrouillage de l'appareil n'est pas configuré",
+        "failed": "Échec du déverrouillage de l'appareil"
       }
     },
     "backToOverview": "Retour à la présentation",
     "setup": {
-      "aria": "Configuration du coffre",
-      "title": "Configurer votre coffre",
-      "description": "Créez une phrase de chiffrement pour protéger vos données financières sur cet appareil. Aucun compte requis.",
-      "confirmPassphrase": "Confirmer la phrase de chiffrement",
+      "aria": "Configuration de l'espace privé",
+      "title": "Créer votre espace privé",
+      "description": "Choisissez une phrase privée pour protéger vos données financières sur cet appareil. Aucun compte requis.",
+      "confirmPassphrase": "Confirmer la phrase privée",
       "submitting": "Configuration…",
-      "createVault": "Créer le coffre",
+      "createVault": "Créer l'espace privé",
       "errors": {
         "failed": "Échec de la configuration"
       }
     },
     "landing": {
       "aria": "Présentation de WiseMoney",
-      "kicker": "PWA financière locale d'abord",
+      "kicker": "Une application d'argent qui fonctionne sur votre appareil",
       "title": "WiseMoney commence sur votre appareil, pas par un mur de connexion.",
-      "body": "Créez d'abord votre espace financier privé : tableau de bord, saisie, budgets, objectifs, paiements récurrents, exports et paramètres s'ouvrent depuis un seul coffre chiffré.",
-      "existingVault": "Un coffre existe déjà dans ce navigateur. Ouvrez-le pour continuer avec vos données locales.",
-      "openVault": "Ouvrir le coffre",
-      "startOnboarding": "Commencer l'accueil",
+      "body": "Créez d'abord votre espace financier privé : tableau de bord, saisie rapide des dépenses, budgets, objectifs, paiements récurrents, exports et paramètres s'ouvrent depuis un espace protégé.",
+      "existingVault": "Un espace privé existe déjà dans ce navigateur. Ouvrez-le pour continuer avec vos données enregistrées.",
+      "openVault": "Ouvrir mon espace",
+      "startOnboarding": "Voir comment ça marche",
       "openApp": "Ouvrir l'app",
       "start": "Commencer",
-      "viewSteps": "Voir les étapes",
+      "viewSteps": "Voir le guide",
       "afterSetup": "Après configuration",
       "workspaceTitle": "Votre espace WiseMoney",
       "steps": {
         "vault": {
-          "title": "Créer un coffre chiffré",
-          "body": "Vos données financières sont protégées sur cet appareil par une phrase de chiffrement que vous contrôlez."
+          "title": "Créer un espace privé",
+          "body": "Vos données financières sont protégées sur cet appareil par une phrase privée que vous seul connaissez."
         },
         "offline": {
           "title": "Utiliser l'app hors ligne",
           "body": "Saisissez des transactions, gérez les comptes et consultez les budgets sans attendre un serveur."
         },
         "ai": {
-          "title": "Ajouter l'IA quand vous êtes prêt",
-          "body": "Utilisez vos clés personnelles maintenant, puis connectez l'edge géré lorsque le backend sera déployé."
+          "title": "Utiliser l'assistant quand vous êtes prêt",
+          "body": "L'assistant reste optionnel. WiseMoney vous indique ce qui est nécessaire avant toute fonction intelligente."
         },
         "install": {
-          "title": "Installer comme PWA",
-          "body": "Après la configuration, installez WiseMoney depuis le menu du navigateur pour une expérience plein écran."
+          "title": "Installer l'application",
+          "body": "Après la configuration, ajoutez WiseMoney à votre écran d'accueil depuis le menu du navigateur pour une expérience plein écran."
         }
       }
     },
     "preview": {
       "aria": "Aperçu de l'espace WiseMoney",
       "kicker": "Espace d'exemple",
-      "title": "Tableau de bord, saisie et planification dans un seul coffre",
+      "title": "Tableau de bord, saisie rapide et planification dans un seul espace privé",
       "offlineReady": "Prêt hors ligne",
       "rows": {
         "cashFlow": "Flux de trésorerie",
@@ -112,43 +112,91 @@
         "settings": "Ajouter des services"
       },
       "status": {
-        "vault": "Coffre",
+        "vault": "Espace",
         "local": "Local",
         "network": "Réseau",
         "offline": "Hors ligne",
         "services": "Services",
         "optional": "Optionnels"
       },
-      "deviceLabel": "PWA mobile",
+      "deviceLabel": "Application mobile",
       "deviceBody": "Installez une fois, puis ouvrez WiseMoney depuis l'écran d'accueil quand la connexion est faible ou indisponible."
+    },
+    "help": {
+      "aria": "Centre d'aide et FAQ WiseMoney",
+      "kicker": "Centre d'aide",
+      "title": "Des réponses simples avant de créer quoi que ce soit",
+      "body": "WiseMoney est pensé pour les personnes qui veulent suivre leur argent sans apprendre des termes techniques. Ce guide explique les choix importants avec des mots simples.",
+      "faqKicker": "FAQ",
+      "faqTitle": "Questions fréquentes",
+      "guide": {
+        "private": {
+          "title": "Votre espace privé",
+          "body": "C'est l'endroit où WiseMoney garde vos comptes, dépenses, budgets, objectifs et paramètres. Vous l'ouvrez avec votre phrase privée."
+        },
+        "install": {
+          "title": "Installer sur votre téléphone",
+          "body": "Vous pouvez ajouter WiseMoney à votre écran d'accueil. L'application s'ouvre ensuite comme une app normale au lieu d'un onglet du navigateur."
+        },
+        "offline": {
+          "title": "Fonctionne sans internet",
+          "body": "Vous pouvez ouvrir l'app, ajouter des dépenses et consulter votre argent même quand la connexion est faible ou absente."
+        },
+        "assistant": {
+          "title": "L'assistant est optionnel",
+          "body": "Les suggestions intelligentes restent désactivées tant que vous ne choisissez pas de les configurer. L'app fonctionne sans elles."
+        }
+      },
+      "faq": {
+        "data": {
+          "question": "Où sont stockées mes données ?",
+          "answer": "Vos données sont d'abord enregistrées sur cet appareil. Elles sont protégées par la phrase privée que vous créez pendant la configuration."
+        },
+        "internet": {
+          "question": "Puis-je utiliser WiseMoney sans internet ?",
+          "answer": "Oui. Vous pouvez ajouter des dépenses, gérer les comptes, consulter les budgets et ouvrir l'app sans connexion active après la configuration."
+        },
+        "install": {
+          "question": "Comment installer l'application ?",
+          "answer": "Sur Android, ouvrez le menu du navigateur et choisissez Installer l'application. Sur iPhone, utilisez Partager, puis Ajouter à l'écran d'accueil."
+        },
+        "ai": {
+          "question": "Ai-je besoin de l'assistant ?",
+          "answer": "Non. L'assistant est optionnel. S'il n'est pas configuré, WiseMoney masque ou désactive les actions intelligentes au lieu de vous forcer à les utiliser."
+        },
+        "sync": {
+          "question": "Et la sauvegarde en ligne ?",
+          "answer": "WiseMoney fonctionne localement dès maintenant. La sauvegarde et la synchronisation en ligne peuvent être ajoutées quand le service en ligne est connecté."
+        }
+      }
     },
     "onboarding": {
       "aria": "Accueil WiseMoney",
       "kicker": "Aperçu de configuration",
-      "title": "Ce qui se passe avant l'ouverture du coffre",
+      "title": "Ce qui se passe avant l'ouverture de votre espace privé",
       "stepLabel": "Étape {{number}}",
       "steps": {
         "vault": {
-          "title": "Créer un coffre local",
-          "body": "WiseMoney commence par chiffrer vos données financières sur cet appareil avec une phrase que vous contrôlez."
+          "title": "Créer votre espace privé",
+          "body": "WiseMoney protège vos données financières sur cet appareil avec une phrase privée que vous contrôlez."
         },
         "offline": {
           "title": "L'utiliser hors ligne",
-          "body": "L'app, le tableau de bord, la saisie, les comptes, les budgets et les paramètres restent disponibles quand le réseau ne l'est pas."
+          "body": "L'app, le tableau de bord, la saisie rapide, les comptes, les budgets et les paramètres restent disponibles quand le réseau ne l'est pas."
         },
         "services": {
-          "title": "Ajouter les services plus tard",
-          "body": "Les fournisseurs IA et la synchronisation cloud sont optionnels. L'app désactive clairement ces actions tant que les clés ou le backend edge ne sont pas configurés."
+          "title": "Ajouter les extras plus tard",
+          "body": "L'assistant et la sauvegarde en ligne sont optionnels. WiseMoney désactive clairement ces actions tant que vous ne choisissez pas de les configurer."
         },
         "install": {
-          "title": "L'installer comme PWA",
-          "body": "Après la configuration, installez WiseMoney depuis le menu du navigateur pour une expérience plein écran depuis l'écran d'accueil."
+          "title": "Installer l'application",
+          "body": "Après la configuration, ajoutez WiseMoney depuis le menu du navigateur pour une expérience plein écran depuis l'écran d'accueil."
         }
       }
     },
     "install": {
       "title": "Installer WiseMoney sur cet appareil",
-      "body": "Installez la PWA avant d'en avoir besoin hors ligne. Votre coffre et l'app restent disponibles depuis l'écran d'accueil.",
+      "body": "Installez l'application avant d'en avoir besoin hors ligne. Votre espace privé et les écrans principaux restent disponibles depuis l'écran d'accueil.",
       "installed": "WiseMoney est installé sur cet appareil.",
       "button": "Installer l'app",
       "manualTitle": "Si aucun bouton d'installation n'apparaît :",
@@ -156,12 +204,12 @@
       "ios": "Safari iPhone : utilisez Partager, puis Ajouter à l'écran d'accueil."
     },
     "cloud": {
-      "title": "Synchronisation cloud (optionnelle)",
-      "linked": "Compte edge connecté",
-      "notConnected": "La synchronisation cloud n'est pas connectée",
-      "localOnly": "Vous pouvez utiliser WiseMoney localement et hors ligne maintenant. La synchronisation cloud sera disponible après le déploiement et la configuration du backend edge géré.",
+      "title": "Sauvegarde en ligne (optionnelle)",
+      "linked": "Compte en ligne connecté",
+      "notConnected": "La sauvegarde en ligne n'est pas connectée",
+      "localOnly": "Vous pouvez utiliser WiseMoney localement et hors ligne maintenant. La sauvegarde en ligne sera disponible après le déploiement et la configuration du service en ligne.",
       "connecting": "Connexion…",
-      "createAccount": "Créer un compte edge",
+      "createAccount": "Créer un compte en ligne",
       "errors": {
         "required": "L'e-mail et le mot de passe sont requis",
         "failed": "Échec de l'inscription"
@@ -177,6 +225,57 @@
     "budgets": "Budgets",
     "goals": "Objectifs",
     "recurring": "Récurrents"
+  },
+  "helpCenter": {
+    "open": "Ouvrir le centre d'aide",
+    "title": "Centre d'aide",
+    "description": "Utilisez ce guide quand vous avez besoin d'aide avec les comptes, les dépenses, la planification, l'accès hors ligne ou les services optionnels.",
+    "faqTitle": "Questions fréquentes",
+    "installNote": "Installez WiseMoney depuis la page d'accueil ou le menu du navigateur avant de compter dessus sans internet.",
+    "journey": {
+      "accounts": {
+        "title": "Créer des comptes",
+        "body": "Ajoutez des comptes espèces, mobile money, banque ou carte depuis Saisie > Gérer."
+      },
+      "capture": {
+        "title": "Enregistrer les mouvements d'argent",
+        "body": "Ajoutez revenus, dépenses, virements et contributions aux objectifs. Vous pouvez le faire sans internet."
+      },
+      "planning": {
+        "title": "Planifier le mois",
+        "body": "Créez des budgets, objectifs et paiements récurrents pour que le tableau de bord montre une progression utile."
+      },
+      "dashboard": {
+        "title": "Consulter le tableau de bord",
+        "body": "Vérifiez le flux d'argent, les dépenses par catégorie, les alertes, les objectifs et les paiements à venir."
+      },
+      "services": {
+        "title": "Ajouter les extras seulement si besoin",
+        "body": "L'assistant et la sauvegarde en ligne sont optionnels. Configurez-les depuis Paramètres uniquement quand vous les voulez."
+      }
+    },
+    "faq": {
+      "account": {
+        "question": "Que dois-je créer en premier ?",
+        "answer": "Commencez avec un compte, par exemple espèces, mobile money, banque ou carte. Enregistrez ensuite votre première dépense ou votre premier revenu."
+      },
+      "expense": {
+        "question": "Où ajouter mes dépenses ?",
+        "answer": "Ouvrez Saisie, choisissez Transaction, entrez le montant, sélectionnez un compte et une catégorie, puis enregistrez."
+      },
+      "offline": {
+        "question": "Puis-je utiliser l'app sans internet ?",
+        "answer": "Oui. WiseMoney garde l'application principale disponible sur cet appareil, pour ajouter des données et consulter votre argent sans connexion."
+      },
+      "assistant": {
+        "question": "Suis-je obligé d'utiliser l'assistant ?",
+        "answer": "Non. L'assistant est optionnel. S'il n'est pas configuré, WiseMoney garde les outils d'argent normaux disponibles."
+      },
+      "sync": {
+        "question": "Puis-je sauvegarder ou synchroniser en ligne ?",
+        "answer": "La sauvegarde en ligne est optionnelle et dépend du service en ligne connecté. En attendant, WiseMoney fonctionne sur cet appareil."
+      }
+    }
   },
   "dashboard": {
     "title": "Tableau de bord",
@@ -520,19 +619,19 @@
     }
   },
   "byoKey": {
-    "title": "Clés API IA personnelles",
-    "description": "Configurez vos propres clés API pour utiliser les fonctionnalités IA directement.",
+    "title": "Clés de connexion de l'assistant",
+    "description": "Connectez votre propre service d'assistant si vous voulez des suggestions intelligentes.",
     "configured": "configuré",
-    "apiKey": "Clé API",
+    "apiKey": "Clé d'accès",
     "save": "Enregistrer",
     "hideKey": "Masquer la clé",
     "showKey": "Afficher la clé",
     "configuredBadge": "Configurée",
     "placeholders": {
       "configured": "Clé sauvegardée",
-      "enter": "Entrez la clé API {{provider}}"
+      "enter": "Entrez la clé d'accès {{provider}}"
     },
-    "footnote": "Les clés sont chiffrées et stockées localement sur cet appareil. Elles ne sont jamais envoyées à nos serveurs (INV-KEY-02). Déchiffrées uniquement en mémoire lors des appels IA.",
+    "footnote": "Vos clés sont protégées sur cet appareil et utilisées seulement quand vous demandez de l'aide à l'assistant.",
     "errors": {
       "saveFailed": "Échec de l'enregistrement de la clé"
     },
