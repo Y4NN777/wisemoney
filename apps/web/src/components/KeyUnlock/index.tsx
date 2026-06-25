@@ -172,7 +172,7 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <a
-                href="#setup-guide"
+                href="#pwa-onboarding"
                 className="flex h-12 items-center justify-between rounded-md border border-border bg-card px-4 text-sm font-semibold transition-colors hover:bg-accent"
               >
                 {t("keyUnlock.landing.viewSteps")}
@@ -181,7 +181,7 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
             </div>
           </div>
 
-          <aside id="setup-guide" className="grid content-start gap-4 py-6 lg:py-12 lg:pl-8">
+          <aside id="pwa-onboarding" className="grid content-start gap-4 py-6 lg:py-12 lg:pl-8">
             <InstallPromptCard />
             <div className="border border-border bg-card">
               <div className="border-b border-border bg-ocean-primary p-4 text-white">

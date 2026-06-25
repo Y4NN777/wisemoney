@@ -2,7 +2,7 @@
   "name": "@wisemoney/web",
   "version": "0.0.0",
   "private": true,
-  "description": "WiseMoney web app — local-first personal finance with optional guidance",
+  "description": "WiseMoney PWA client — local-first personal finance with AI guidance",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -45,7 +45,7 @@ export async function getAICapability(masterKey: MasterKey): Promise<AICapabilit
     message: mode !== null
       ? ""
       : edgeConfigured
-        ? "The assistant is not enabled yet. Add an assistant connection key or connect online backup before using smart features."
-        : "The assistant is not enabled yet. Add an assistant connection key in Settings before using smart features.",
+        ? "AI is not enabled yet. Add a personal provider key or connect cloud sync before using AI features."
+        : "AI is not enabled yet. Add a personal provider key in Settings to use AI before the managed edge is deployed.",
   };
 }

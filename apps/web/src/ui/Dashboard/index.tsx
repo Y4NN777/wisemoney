@@ -535,7 +535,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
               <CardContent>
                 {aiCapability?.available !== true && (
                   <p className="mb-3 text-sm text-muted-foreground">
-                    Add an assistant connection key in Settings before requesting smart insight.
+                    Add a personal AI provider key in Settings before requesting AI insight.
                   </p>
                 )}
                 <Button
