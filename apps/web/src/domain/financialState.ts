@@ -172,6 +172,14 @@ type Accumulator = {
     startDate: number;
     lastRealised: number | null;
   }>;
+  /** Transfers: debit fromAccount, credit toAccount (internal) or external */
+  transfers: Array<{
+    id: string;
+    fromAccountId: string;
+    toAccountId: string | null;
+    externalDestination: string | null;
+    amount: MoneyDTO;
+  }>;
 };
 
 function createEmptyAccumulator(): Accumulator {
@@ -182,6 +190,7 @@ function createEmptyAccumulator(): Accumulator {
     budgets: new Map(),
     goals: new Map(),
     recurringItems: new Map(),
+    transfers: [],
   };
 }
 
@@ -209,6 +218,23 @@ function applyPayload(
         balance: { ...initial },
         initialBalance: { ...initial },
       });
+      break;
+    }
+    case "account_updated": {
+      const p = payload as unknown as { accountId: string; name: string; type: string };
+      const account = acc.accounts.get(p.accountId);
+      if (account) {
+        account.name = p.name;
+        account.type = p.type;
+      }
+      break;
+    }
+    case "account_archived": {
+      const p = payload as unknown as { accountId: string };
+      const account = acc.accounts.get(p.accountId);
+      if (account) {
+        account.isActive = false;
+      }
       break;
     }
     case "transaction_created": {
@@ -305,6 +331,11 @@ function applyPayload(
       }
       break;
     }
+    case "category_archived": {
+      const p = payload as unknown as { categoryId: string };
+      acc.categories.delete(p.categoryId);
+      break;
+    }
     case "budget_created": {
       const p = payload as unknown as {
         categoryId: string;
@@ -396,6 +427,33 @@ function applyPayload(
           item.amount = { minorUnits: p.amount.minorUnits, currency: p.amount.currency };
         }
       }
+      break;
+    }
+    case "transfer_created": {
+      const p = payload as unknown as {
+        fromAccountId: string;
+        toAccountId: string | null;
+        externalDestination: string | null;
+        amount: { minorUnits: number; currency: string };
+      };
+      const amount: MoneyDTO = { minorUnits: p.amount.minorUnits, currency: p.amount.currency };
+      const from = acc.accounts.get(p.fromAccountId);
+      if (from) {
+        from.balance = subMoney(from.balance, amount);
+      }
+      if (p.toAccountId != null) {
+        const to = acc.accounts.get(p.toAccountId);
+        if (to) {
+          to.balance = addMoney(to.balance, amount);
+        }
+      }
+      acc.transfers.push({
+        id: eventId,
+        fromAccountId: p.fromAccountId,
+        toAccountId: p.toAccountId,
+        externalDestination: p.externalDestination,
+        amount,
+      });
       break;
     }
   }
@@ -698,6 +756,8 @@ export async function applyEventToSnapshot(
   for (const r of current.recurringItems) {
     acc.recurringItems.set(r.id, { ...r });
   }
+  // Snapshot does not persist transfer details; incremental replay processes only
+  // new transfer_created events; acc.transfers starts empty here.
 
   applyPayload(acc, event.type as FinancialEventType, payload, event.id, event.timestamp);
 

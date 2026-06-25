@@ -172,7 +172,7 @@ export type AuthSessionRecord = {
 // ---------------------------------------------------------------------------
 
 /**
- * WiseMoneyDB — current schema version: 3.
+ * WiseMoneyDB — current schema version: 4.
  *
  * Version 1 → 2: added `wrappedIv` to keyMeta (WebAuthn wrap IV, parallel to
  * wrappedKey). data-model.md §A.3 records the migration rationale.
@@ -180,6 +180,9 @@ export type AuthSessionRecord = {
  *
  * Version 2 → 3: added `authSession` store (ADR-0012, INV-AUTH-06).
  * Additive only — no transform on existing records.
+ *
+ * Version 3 → 4: indexed `categories.isSystemDefault` for idempotent default
+ * category seeding.
  *
  * Version increments on every schema change per data-model.md §A.3 strategy.
  * Projection stores are clearable + replayable from financialEvents (INV-EVT-01/02).
@@ -343,6 +346,47 @@ export class WiseMoneyDB extends Dexie {
           "id",
       });
     // No .upgrade() needed — pure addition of a new store; Dexie creates it empty.
+    this.version(4)
+      .stores({
+        financialEvents:
+          "id, timestamp, type, entityId, [type+timestamp]",
+
+        accounts:
+          "id, currency, isActive",
+
+        transactions:
+          "id, timestamp, accountId, categoryId, [accountId+timestamp], [categoryId+timestamp]",
+
+        categories:
+          "id, parentId, isSystemDefault",
+
+        budgets:
+          "id, categoryId, periodMonth, [categoryId+periodMonth]",
+
+        goals:
+          "id",
+
+        goalContributions:
+          "id, goalId, [goalId+timestamp]",
+
+        recurringItems:
+          "id, categoryId",
+
+        financialStateSnapshot:
+          "id",
+
+        fxRates:
+          "id, baseCurrency, quoteCurrency, lastUpdated",
+
+        keyMeta:
+          "id",
+
+        byoProviderKeys:
+          "id, provider",
+
+        authSession:
+          "id",
+      });
   }
 }
 

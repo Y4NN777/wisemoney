@@ -82,6 +82,70 @@ export async function createAccount(params: CreateAccountParams): Promise<string
 }
 
 // ---------------------------------------------------------------------------
+// updateAccount
+// ---------------------------------------------------------------------------
+
+export type UpdateAccountParams = {
+  accountId: string;
+  name: string;
+  type: string;
+  masterKey: MasterKey;
+};
+
+export async function updateAccount(params: UpdateAccountParams): Promise<void> {
+  const errors: ValidationErrorDetail[] = [];
+  if (!params.accountId || params.accountId.trim().length === 0) {
+    errors.push({ field: "accountId", message: "Account id is required" });
+  }
+  if (!params.name || params.name.trim().length === 0) {
+    errors.push({ field: "name", message: "Account name is required" });
+  }
+  if (!params.type || params.type.trim().length === 0) {
+    errors.push({ field: "type", message: "Account type is required" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  await appendEvent({
+    id: uuid(),
+    timestamp: nowMs(),
+    type: "account_updated",
+    entityId: params.accountId,
+    payload: {
+      accountId: params.accountId,
+      name: params.name.trim(),
+      type: params.type.trim(),
+    },
+    masterKey: params.masterKey,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// archiveAccount
+// ---------------------------------------------------------------------------
+
+export type ArchiveAccountParams = {
+  accountId: string;
+  masterKey: MasterKey;
+};
+
+export async function archiveAccount(params: ArchiveAccountParams): Promise<void> {
+  if (!params.accountId || params.accountId.trim().length === 0) {
+    throw new ValidationError([{ field: "accountId", message: "Account id is required" }]);
+  }
+
+  await appendEvent({
+    id: uuid(),
+    timestamp: nowMs(),
+    type: "account_archived",
+    entityId: params.accountId,
+    payload: { accountId: params.accountId },
+    masterKey: params.masterKey,
+  });
+}
+
+// ---------------------------------------------------------------------------
 // recordTransaction
 // ---------------------------------------------------------------------------
 
@@ -221,6 +285,30 @@ export async function renameCategory(
       categoryId: params.categoryId,
       newName: params.newName.trim(),
     },
+    masterKey: params.masterKey,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// archiveCategory
+// ---------------------------------------------------------------------------
+
+export type ArchiveCategoryParams = {
+  categoryId: string;
+  masterKey: MasterKey;
+};
+
+export async function archiveCategory(params: ArchiveCategoryParams): Promise<void> {
+  if (!params.categoryId || params.categoryId.trim().length === 0) {
+    throw new ValidationError([{ field: "categoryId", message: "Category id is required" }]);
+  }
+
+  await appendEvent({
+    id: uuid(),
+    timestamp: nowMs(),
+    type: "category_archived",
+    entityId: params.categoryId,
+    payload: { categoryId: params.categoryId },
     masterKey: params.masterKey,
   });
 }
@@ -532,6 +620,71 @@ export async function realiseRecurringOccurrence(
 }
 
 // ---------------------------------------------------------------------------
+// recordTransfer
+// ---------------------------------------------------------------------------
+
+export type RecordTransferParams = {
+  fromAccountId: string;
+  toAccountId?: string;
+  externalDestination?: string;
+  amount: MoneyDTO;
+  note?: string;
+  masterKey: MasterKey;
+};
+
+export async function recordTransfer(
+  params: RecordTransferParams
+): Promise<string> {
+  const errors: ValidationErrorDetail[] = [];
+
+  const fromAccount = await db.accounts.get(params.fromAccountId);
+  if (!fromAccount) {
+    errors.push({ field: "fromAccountId", message: "Source account not found (INV-EVT-03)" });
+  }
+  if (params.toAccountId != null) {
+    const toAccount = await db.accounts.get(params.toAccountId);
+    if (!toAccount) {
+      errors.push({ field: "toAccountId", message: "Destination account not found (INV-EVT-03)" });
+    }
+    if (params.toAccountId === params.fromAccountId) {
+      errors.push({ field: "toAccountId", message: "Source and destination must differ" });
+    }
+  }
+  if (params.toAccountId == null && (params.externalDestination == null || params.externalDestination.trim().length === 0)) {
+    errors.push({ field: "externalDestination", message: "External destination is required when no internal account selected" });
+  }
+  if (!Number.isSafeInteger(params.amount.minorUnits)) {
+    errors.push({ field: "amount", message: "Must be a safe integer (INV-MON-01)" });
+  }
+  if (!/^[A-Z]{3}$/.test(params.amount.currency)) {
+    errors.push({ field: "amount.currency", message: "Must be ISO-4217" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  const id = uuid();
+  const now = nowMs();
+
+  await appendEvent({
+    id,
+    timestamp: now,
+    type: "transfer_created",
+    entityId: params.fromAccountId,
+    payload: {
+      fromAccountId: params.fromAccountId,
+      toAccountId: params.toAccountId ?? null,
+      externalDestination: params.externalDestination ?? null,
+      amount: params.amount,
+      note: params.note ?? null,
+    },
+    masterKey: params.masterKey,
+  });
+
+  return id;
+}
+
+// ---------------------------------------------------------------------------
 // updateTransaction
 // ---------------------------------------------------------------------------
 
@@ -599,4 +752,67 @@ export async function deleteTransaction(
     },
     masterKey: params.masterKey,
   });
+}
+
+// ---------------------------------------------------------------------------
+// seedDefaultCategories
+// ---------------------------------------------------------------------------
+
+const DEFAULT_EXPENSE_CATEGORIES = [
+  "Food & Dining",
+  "Transport",
+  "Housing",
+  "Utilities",
+  "Entertainment",
+  "Healthcare",
+  "Education",
+  "Shopping",
+  "Personal Care",
+  "Insurance",
+  "Subscriptions",
+  "Gifts & Donations",
+  "Travel",
+];
+
+const DEFAULT_INCOME_CATEGORIES = [
+  "Salary",
+  "Freelance",
+  "Investments",
+  "Refunds",
+  "Other Income",
+];
+
+const DEFAULT_CATEGORIES = [
+  ...DEFAULT_INCOME_CATEGORIES.map((name) => ({ name, parentId: undefined })),
+  ...DEFAULT_EXPENSE_CATEGORIES.map((name) => ({ name, parentId: undefined })),
+];
+
+/**
+ * Seed the default category set on first run.
+ * Checks if any `isSystemDefault` categories already exist; if not, creates
+ * the full set of income and expense defaults.
+ *
+ * Idempotent — safe to call on every app mount.
+ */
+export async function seedDefaultCategories(
+  masterKey: MasterKey,
+): Promise<void> {
+  const existing = await db.categories
+    .where("isSystemDefault")
+    .equals(1)
+    .count();
+
+  if (existing > 0) return;
+
+  for (const cat of DEFAULT_CATEGORIES) {
+    const args: { name: string; parentId?: string; isSystemDefault: true; masterKey: MasterKey } = {
+      name: cat.name,
+      isSystemDefault: true,
+      masterKey,
+    };
+    if (cat.parentId != null) {
+      args.parentId = cat.parentId;
+    }
+    await createCategory(args);
+  }
 }

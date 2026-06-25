@@ -6,18 +6,22 @@ import Dexie from "dexie";
 
 export type FinancialEventType =
   | "account_created"
+  | "account_updated"
+  | "account_archived"
   | "transaction_created"
   | "transaction_updated"
   | "transaction_deleted"
   | "category_created"
   | "category_renamed"
+  | "category_archived"
   | "budget_created"
   | "budget_archived"
   | "goal_created"
   | "goal_contribution"
   | "goal_archived"
   | "recurring_item_created"
-  | "recurring_item_realised";
+  | "recurring_item_realised"
+  | "transfer_created";
 
 export type FinancialEventPayload = Record<string, unknown>;
 
