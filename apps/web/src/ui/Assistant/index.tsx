@@ -331,7 +331,7 @@ export default function Assistant() {
 
           {insightFeed.length === 0 && insightLoading == null && (
             <p className="empty-state">
-              {aiAvailable ? "Tap a button above to generate insights from your financial data." : "AI features are paused until you configure a provider key or connect the managed edge."}
+              {aiAvailable ? "Tap a button above to generate insights from your financial data." : "The assistant is paused until you add an assistant connection key or connect online backup."}
             </p>
           )}
 
@@ -369,7 +369,7 @@ export default function Assistant() {
           <Card className="flex h-[60dvh] max-w-4xl flex-col">
             <CardHeader className="border-b pb-3">
               <CardTitle className="text-base">Financial Literacy Chat</CardTitle>
-              <CardDescription>{aiAvailable ? "Ask anything about personal finance" : "Add an AI provider key before starting chat"}</CardDescription>
+              <CardDescription>{aiAvailable ? "Ask anything about personal finance" : "Add an assistant connection key before starting chat"}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto space-y-3 py-4">
               {!aiAvailable ? (

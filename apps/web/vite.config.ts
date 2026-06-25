@@ -10,6 +10,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: "auto",
       includeAssets: ["icons/*.png", "icons/*.svg"],
       manifest: {
         name: "WiseMoney",
@@ -41,6 +42,9 @@ export default defineConfig({
         ],
       },
       workbox: {
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         // Offline-first: cache all navigation to index.html (INV-PERS-01).
         navigateFallback: "/index.html",
         globPatterns: ["**/*.{js,css,html,wasm}"],

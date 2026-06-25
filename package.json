@@ -2,7 +2,7 @@
   "name": "wisemoney",
   "version": "0.0.0",
   "private": true,
-  "description": "Local-first personal-finance PWA — AI guidance + financial literacy",
+  "description": "Local-first personal-finance app with optional guidance and financial literacy",
   "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=20 <21",
