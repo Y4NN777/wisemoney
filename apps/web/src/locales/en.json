@@ -1,0 +1,478 @@
+{
+  "app": {
+    "name": "WiseMoney",
+    "loading": "Loading…"
+  },
+  "keyUnlock": {
+    "loading": "Loading…",
+    "login": {
+      "title": "Create Account",
+      "description": "Set up your device vault and edge account",
+      "titleSignIn": "Sign In",
+      "descriptionSignIn": "Sign in to access your vault",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "passphraseTitle": "Encryption passphrase",
+      "passphraseDescription": "This passphrase encrypts all financial data on this device. It cannot be recovered if lost — save it securely.",
+      "register": "Register",
+      "signIn": "Sign In",
+      "submitting": "Submitting…",
+      "errors": {
+        "allFieldsRequired": "All fields are required",
+        "passwordsMismatch": "Passwords do not match",
+        "generic": "An error occurred"
+      },
+      "toggleSignIn": "Sign in",
+      "toggleRegister": "No account yet? ",
+      "toggleRegisterAction": "Register"
+    },
+    "unlock": {
+      "title": "Unlock Vault",
+      "descriptionPassphrase": "Enter your encryption passphrase to access your financial data",
+      "passphrase": "Encryption passphrase",
+      "unlocking": "Unlocking…",
+      "unlock": "Unlock",
+      "errors": {
+        "passphraseRequired": "Passphrase is required",
+        "incorrectPassphrase": "Incorrect passphrase",
+        "unlockFailed": "Unlock failed"
+      },
+      "webauthnDescription": "Use your biometric or security key to access your financial data",
+      "webauthnButton": "Use biometric / security key",
+      "webauthnAuthenticating": "Authenticating…",
+      "webauthnErrors": {
+        "notConfigured": "WebAuthn not configured",
+        "failed": "WebAuthn unlock failed"
+      }
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "capture": "Capture",
+    "assistant": "Assistant",
+    "planning": "Planning",
+    "settings": "Settings",
+    "budgets": "Budgets",
+    "goals": "Goals",
+    "recurring": "Recurring"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "alerts": "Alerts",
+    "netWorth": "Net Worth",
+    "periodRange": "Period",
+    "income": "Income",
+    "expenses": "Expenses",
+    "netCashFlow": "Net Cash Flow",
+    "accounts": "Accounts",
+    "budgetAlerts": "Budget Alerts",
+    "budgetAlertsNone": "No budget alerts",
+    "goalsOverview": "Goals Overview",
+    "noGoals": "No active goals",
+    "recurringOverview": "Upcoming Recurring",
+    "noRecurring": "No recurring items",
+    "categories": "Categories",
+    "categorySpending": "Category Spending",
+    "categoryNone": "No spending this period",
+    "recentTransactions": "Recent Transactions",
+    "noTransactions": "No transactions this period",
+    "viewAll": "View All",
+    "budgetStatus": "Budget Status",
+    "spent": "spent",
+    "limit": "limit",
+    "used": "used",
+    "complete": "complete",
+    "saved": "saved",
+    "target": "target",
+    "startingPeriod": "Start of month",
+    "periodToDate": "Period to date",
+    "emptyState": "Welcome! Start by adding an account and recording your first transaction.",
+    "tips": "Tips",
+    "netCashFlowNegative": "Your spending exceeds your income this period",
+    "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+  },
+  "capture": {
+    "title": "Capture",
+    "tabs": {
+      "transaction": "Transaction",
+      "transfer": "Transfer",
+      "goal": "Goal",
+      "manage": "Manage"
+    },
+    "transaction": {
+      "title": "Record Transaction",
+      "amount": "Amount",
+      "direction": "Direction",
+      "expense": "Expense",
+      "income": "Income",
+      "account": "Account",
+      "selectAccount": "Select account",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "note": "Note (optional)",
+      "notePlaceholder": "Transaction note",
+      "submit": "Record Transaction",
+      "submitting": "Recording…",
+      "errors": {
+        "validAmount": "Enter a valid amount",
+        "selectCategory": "Select a category",
+        "selectAccount": "Select an account",
+        "failed": "Failed to record transaction"
+      }
+    },
+    "transfer": {
+      "title": "Transfer Between Accounts",
+      "from": "From Account",
+      "fromPlaceholder": "Select source account",
+      "to": "To Account",
+      "toOptional": "(optional for external transfer)",
+      "toPlaceholder": "Select destination account",
+      "external": "Or external destination",
+      "externalPlaceholder": "e.g. External bank, PayPal, etc.",
+      "amount": "Amount",
+      "amountPlaceholder": "0.00",
+      "note": "Note (optional)",
+      "notePlaceholder": "Transfer note",
+      "submit": "Record Transfer",
+      "submitting": "Processing…",
+      "errors": {
+        "validAmount": "Enter a valid amount",
+        "selectFrom": "Select a source account",
+        "selectDestination": "Select a destination account or enter an external destination",
+        "failed": "Failed to record transfer"
+      }
+    },
+    "goal": {
+      "title": "Contribute to Goal",
+      "selectGoal": "Select goal",
+      "amount": "Amount",
+      "amountPlaceholder": "0.00",
+      "note": "Note (optional)",
+      "notePlaceholder": "Contribution note",
+      "submit": "Record Contribution",
+      "submitting": "Recording…",
+      "errors": {
+        "validAmount": "Enter a valid amount",
+        "selectGoal": "Select a goal",
+        "failed": "Failed to record contribution"
+      }
+    },
+    "manage": {
+      "createCategory": "Create Category",
+      "categoryName": "Category name",
+      "categoryNamePlaceholder": "e.g. Groceries",
+      "categoryParent": "Parent category (optional)",
+      "categoryParentNone": "None (top-level)",
+      "submit": "Create Category",
+      "submitting": "Creating…",
+      "errors": {
+        "nameRequired": "Category name is required",
+        "failed": "Failed to create category"
+      },
+      "createAccount": "Create Account",
+      "accountName": "Account name",
+      "accountNamePlaceholder": "e.g. Checking Account",
+      "accountType": "Account type",
+      "accountTypeChecking": "Checking",
+      "accountTypeSavings": "Savings",
+      "accountTypeCash": "Cash",
+      "accountTypeCredit": "Credit",
+      "accountTypeInvestment": "Investment",
+      "accountBalance": "Initial balance",
+      "submitAccount": "Create Account",
+      "submittingAccount": "Creating…",
+      "errorsAccount": {
+        "nameRequired": "Account name is required",
+        "validBalance": "Enter a valid balance",
+        "failed": "Failed to create account"
+      }
+    }
+  },
+  "assistant": {
+    "title": "Assistant",
+    "tabs": {
+      "insights": "Insights",
+      "learn": "Learn"
+    },
+    "features": {
+      "insight": {
+        "name": "Spending Insight",
+        "purpose": "Analyse your spending patterns and surface observations",
+        "provider": "Google Gemini (free tier)",
+        "description": "Finds anomalies, trends, and notable changes in your finances",
+        "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
+        "fullData": "Individual transaction amounts, dates, categories, and notes"
+      },
+      "recommendation": {
+        "name": "Recommendation",
+        "purpose": "Suggest concrete actions to improve your financial situation",
+        "provider": "Google Gemini (free tier)",
+        "description": "Generates budget adjustments, savings suggestions, and spending trade-offs",
+        "redactedData": "Period totals, budget progress, goal progress — no individual transactions",
+        "fullData": "Individual transaction amounts, dates, categories, and notes"
+      },
+      "prediction": {
+        "name": "Prediction",
+        "purpose": "Project end-of-month balance and budget exhaustion dates",
+        "provider": "Google Gemini (free tier)",
+        "description": "Forecasts your financial trajectory based on current data and recurring items",
+        "redactedData": "Period income/expenses, projected recurring items, budget limits — no individual transactions",
+        "fullData": "Individual transaction amounts, dates, categories, and notes"
+      },
+      "patternDetection": {
+        "name": "Pattern Detection",
+        "purpose": "Detect recurring spending habits and category dependencies",
+        "provider": "Google Gemini (free tier)",
+        "description": "Identifies behavioural patterns like frequent dining, subscription creep, or category concentration",
+        "redactedData": "Category-level aggregates, budget status, period comparisons — no individual transactions",
+        "fullData": "Individual transaction amounts, dates, categories, and notes"
+      },
+      "literacy": {
+        "name": "Learning Chat",
+        "purpose": "Explain personal finance concepts in plain language",
+        "provider": "Google Gemini (free tier)",
+        "description": "Answers questions about budgeting, saving, cash flow, and more — tied to your data",
+        "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
+        "fullData": "Individual transaction amounts, dates, categories, and notes"
+      }
+    },
+    "thinking": "Thinking…",
+    "unavailable": "Unavailable",
+    "dismiss": "Dismiss",
+    "emptyInsights": "Tap a button above to generate insights from your financial data.",
+    "conceptLibrary": {
+      "title": "Concept Library",
+      "description": "Learn at your own pace",
+      "budgeting101": "Budgeting 101",
+      "compoundInterest": "Compound Interest",
+      "emergencyFund": "Emergency Fund"
+    },
+    "chat": {
+      "title": "Financial Literacy Chat",
+      "description": "Ask anything about personal finance",
+      "emptyTitle": "Ask a question to start learning",
+      "emptyExample": "e.g. \"What is the 50/30/20 rule?\"",
+      "placeholder": "Ask a question…",
+      "thinking": "Thinking…",
+      "error": "Something went wrong."
+    },
+    "consent": {
+      "title": "Full Access Required",
+      "limited": "Limited mode (default)",
+      "full": "Full access",
+      "provider": "Provider",
+      "purpose": "Purpose",
+      "notNow": "Not now",
+      "useLimited": "Use limited mode",
+      "grantFull": "Grant full access",
+      "settingsTitle": "Data Sharing Settings",
+      "settingsDescription": "Each AI feature can send data to Google Gemini (free tier). You control how much.",
+      "statusFull": "Full access",
+      "statusNotPrompted": "Not prompted",
+      "statusLimited": "Limited",
+      "fullBtn": "Full",
+      "limitedBtn": "Limited",
+      "done": "Done"
+    },
+    "consentSettings": "Consent settings"
+  },
+  "budgets": {
+    "title": "Budgets",
+    "add": "Add Budget",
+    "create": "Create Budget",
+    "creating": "Creating…",
+    "category": "Category",
+    "categoryPlaceholder": "Select category",
+    "monthlyLimit": "Monthly Limit ($)",
+    "period": "Period (YYYY-MM)",
+    "active": "Active",
+    "archived": "Archived",
+    "empty": "No budgets yet. Create your first budget to track category spending.",
+    "unknown": "Unknown",
+    "spent": "spent",
+    "limit": "limit",
+    "used": "used",
+    "errors": {
+      "validAmount": "Enter a valid amount",
+      "selectCategory": "Select a category",
+      "failed": "Failed to create budget"
+    }
+  },
+  "goals": {
+    "title": "Savings Goals",
+    "add": "Add Goal",
+    "create": "Create Savings Goal",
+    "creating": "Creating…",
+    "name": "Goal Name",
+    "namePlaceholder": "e.g., Emergency Fund",
+    "targetAmount": "Target Amount ($)",
+    "targetDate": "Target Date (optional)",
+    "active": "Active",
+    "archived": "Archived",
+    "empty": "No goals yet. Create a savings goal to track your progress.",
+    "saved": "saved",
+    "target": "target",
+    "complete": "complete",
+    "targetLabel": "Target",
+    "errors": {
+      "nameRequired": "Goal name is required",
+      "validAmount": "Enter a valid target amount",
+      "failed": "Failed to create goal"
+    }
+  },
+  "recurring": {
+    "title": "Recurring",
+    "add": "Add Recurring",
+    "create": "Create Recurring Item",
+    "creating": "Creating…",
+    "label": "Label",
+    "labelPlaceholder": "e.g., Rent, Salary",
+    "category": "Category",
+    "categoryPlaceholder": "Select category",
+    "amount": "Amount ($)",
+    "direction": "Direction",
+    "expense": "Expense",
+    "income": "Income",
+    "frequency": "Frequency",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "startDate": "Start Date",
+    "empty": "No recurring items. Add rent, subscriptions, or salary to track predictable transactions.",
+    "unknown": "Unknown",
+    "started": "Started",
+    "last": "Last",
+    "realise": "Realise",
+    "realiseTitle": "Realise Occurrence",
+    "realiseDescription": "Record this {{direction}} for",
+    "account": "Account",
+    "accountPlaceholder": "Select account",
+    "recordOccurrence": "Record Occurrence",
+    "recording": "Recording…",
+    "errors": {
+      "labelRequired": "Label is required",
+      "selectCategory": "Select a category",
+      "validAmount": "Enter a valid amount",
+      "failed": "Failed to create recurring item"
+    }
+  },
+  "exportImport": {
+    "export": {
+      "title": "Export",
+      "description": "Download your financial data. JSON exports are lossless and can be re-imported.",
+      "json": "Export JSON",
+      "csv": "Export CSV",
+      "xlsx": "Export XLSX",
+      "encrypted": "Encrypted Export",
+      "errors": {
+        "failed": "Export failed",
+        "encryptedFailed": "Encrypted export failed"
+      },
+      "warning": "Plaintext JSON, CSV, and XLSX exports contain decrypted financial data. Store them securely and delete after use. Encrypted exports are protected by your passphrase."
+    },
+    "import": {
+      "title": "Import",
+      "description": "Restore data from a JSON export file. This replaces all existing data.",
+      "importing": "Importing data…",
+      "success": "Import successful! All data has been restored.",
+      "errors": {
+        "invalidFile": "Invalid file — unable to parse.",
+        "noFile": "No file selected",
+        "failed": "Import failed"
+      }
+    },
+    "passphrase": {
+      "exportTitle": "Encrypt Export",
+      "importTitle": "Decrypt Import",
+      "exportDescription": "Enter a passphrase to protect your export. You will need this passphrase to import the file later.",
+      "importDescription": "This file is passphrase-encrypted. Enter the passphrase to decrypt and import.",
+      "label": "Passphrase",
+      "cancel": "Cancel",
+      "encryptDownload": "Encrypt & Download",
+      "decryptImport": "Decrypt & Import",
+      "processing": "Processing…",
+      "errors": {
+        "tooShort": "Passphrase must be at least 4 characters",
+        "required": "Passphrase is required"
+      }
+    }
+  },
+  "byoKey": {
+    "title": "BYO AI Provider Keys",
+    "description": "Configure your own API keys to use AI features directly.",
+    "configured": "configured",
+    "apiKey": "API Key",
+    "save": "Save",
+    "hideKey": "Hide key",
+    "showKey": "Show key",
+    "configuredBadge": "Configured",
+    "placeholders": {
+      "configured": "Key saved",
+      "enter": "Enter {{provider}} API key"
+    },
+    "footnote": "Your API keys are encrypted at rest and decrypted in memory only during AI calls.",
+    "errors": {
+      "saveFailed": "Failed to save key"
+    },
+    "providers": {
+      "openai": "OpenAI",
+      "gemini": "Google Gemini",
+      "nvidia": "NVIDIA NIM"
+    }
+  },
+  "planning": {
+    "title": "Planning",
+    "cardTitle": "Budgets, Goals & Recurring",
+    "cardDescription": "Plan your spending, save toward goals, and track recurring transactions"
+  },
+  "settings": {
+    "title": "Settings",
+    "devices": {
+      "title": "Devices & Sessions",
+      "description": "Current device and active session information",
+      "active": "Active",
+      "offline": "Offline",
+      "language": "Language",
+      "session": "Session",
+      "signOut": "Sign out of all sessions",
+      "unknown": "Unknown"
+    },
+    "currency": {
+      "title": "Currency Management",
+      "description": "Manage your preferred currency settings",
+      "primary": "Primary Currency",
+      "supported": "Supported Currencies",
+      "save": "Save",
+      "saving": "Saving…",
+      "errors": {
+        "failed": "Failed to update currency settings"
+      }
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "done": "Done",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading…",
+    "error": "Error",
+    "success": "Success",
+    "noData": "No data",
+    "retry": "Retry",
+    "unknown": "Unknown",
+    "yes": "Yes",
+    "no": "No",
+    "optional": "optional"
+  },
+  "errors": {
+    "httpsRequired": "HTTPS is required in production for security. Set VITE_EDGE_BASE_URL to an https:// URL."
+  }
+}

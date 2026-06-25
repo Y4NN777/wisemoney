@@ -1,10 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     react(),
     VitePWA({
       registerType: "autoUpdate",
@@ -13,7 +15,7 @@ export default defineConfig({
         name: "WiseMoney",
         short_name: "WiseMoney",
         description: "Local-first personal finance with AI guidance",
-        theme_color: "#ffffff",
+        theme_color: "#0077b6",
         background_color: "#ffffff",
         display: "standalone",
         orientation: "portrait",

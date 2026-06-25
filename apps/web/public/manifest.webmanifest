@@ -2,13 +2,19 @@
   "name": "WiseMoney",
   "short_name": "WiseMoney",
   "description": "Local-first personal finance with AI guidance",
-  "theme_color": "#ffffff",
+  "theme_color": "#0077b6",
   "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
   "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",

@@ -1,0 +1,478 @@
+{
+  "app": {
+    "name": "WiseMoney",
+    "loading": "Chargement…"
+  },
+  "keyUnlock": {
+    "loading": "Chargement…",
+    "login": {
+      "title": "Créer un compte",
+      "description": "Configurez votre coffre-fort et votre compte",
+      "titleSignIn": "Connexion",
+      "descriptionSignIn": "Connectez-vous pour accéder à votre coffre-fort",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "passphraseTitle": "Phrase de chiffrement",
+      "passphraseDescription": "Cette phrase chiffre toutes vos données financières sur cet appareil. Elle ne peut pas être récupérée si elle est perdue — conservez-la en lieu sûr.",
+      "register": "S'inscrire",
+      "signIn": "Se connecter",
+      "submitting": "Envoi…",
+      "errors": {
+        "allFieldsRequired": "Tous les champs sont requis",
+        "passwordsMismatch": "Les mots de passe ne correspondent pas",
+        "generic": "Une erreur est survenue"
+      },
+      "toggleSignIn": "Se connecter",
+      "toggleRegister": "Pas encore de compte ? ",
+      "toggleRegisterAction": "S'inscrire"
+    },
+    "unlock": {
+      "title": "Déverrouiller le coffre",
+      "descriptionPassphrase": "Entrez votre phrase de chiffrement pour accéder à vos données financières",
+      "passphrase": "Phrase de chiffrement",
+      "unlocking": "Déverrouillage…",
+      "unlock": "Déverrouiller",
+      "errors": {
+        "passphraseRequired": "La phrase de chiffrement est requise",
+        "incorrectPassphrase": "Phrase de chiffrement incorrecte",
+        "unlockFailed": "Échec du déverrouillage"
+      },
+      "webauthnDescription": "Utilisez vos données biométriques ou votre clé de sécurité pour accéder à vos données financières",
+      "webauthnButton": "Utiliser les données biométriques / clé de sécurité",
+      "webauthnAuthenticating": "Authentification…",
+      "webauthnErrors": {
+        "notConfigured": "WebAuthn non configuré",
+        "failed": "Échec du déverrouillage WebAuthn"
+      }
+    }
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "capture": "Saisie",
+    "assistant": "Assistant",
+    "planning": "Planification",
+    "settings": "Paramètres",
+    "budgets": "Budgets",
+    "goals": "Objectifs",
+    "recurring": "Récurrents"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "alerts": "Alertes",
+    "netWorth": "Patrimoine net",
+    "periodRange": "Période",
+    "income": "Revenus",
+    "expenses": "Dépenses",
+    "netCashFlow": "Flux de trésorerie net",
+    "accounts": "Comptes",
+    "budgetAlerts": "Alertes budgétaires",
+    "budgetAlertsNone": "Aucune alerte budgétaire",
+    "goalsOverview": "Aperçu des objectifs",
+    "noGoals": "Aucun objectif actif",
+    "recurringOverview": "Récurrents à venir",
+    "noRecurring": "Aucun élément récurrent",
+    "categories": "Catégories",
+    "categorySpending": "Dépenses par catégorie",
+    "categoryNone": "Aucune dépense cette période",
+    "recentTransactions": "Transactions récentes",
+    "noTransactions": "Aucune transaction cette période",
+    "viewAll": "Tout voir",
+    "budgetStatus": "État des budgets",
+    "spent": "dépensé",
+    "limit": "limite",
+    "used": "utilisé",
+    "complete": "complété",
+    "saved": "économisé",
+    "target": "objectif",
+    "startingPeriod": "Début de mois",
+    "periodToDate": "Période en cours",
+    "emptyState": "Bienvenue ! Commencez par ajouter un compte et enregistrer votre première transaction.",
+    "tips": "Conseils",
+    "netCashFlowNegative": "Vos dépenses dépassent vos revenus cette période",
+    "months": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+  },
+  "capture": {
+    "title": "Saisie",
+    "tabs": {
+      "transaction": "Transaction",
+      "transfer": "Virement",
+      "goal": "Objectif",
+      "manage": "Gérer"
+    },
+    "transaction": {
+      "title": "Enregistrer une transaction",
+      "amount": "Montant",
+      "direction": "Sens",
+      "expense": "Dépense",
+      "income": "Revenu",
+      "account": "Compte",
+      "selectAccount": "Sélectionner un compte",
+      "category": "Catégorie",
+      "selectCategory": "Sélectionner une catégorie",
+      "note": "Note (optionnelle)",
+      "notePlaceholder": "Note de transaction",
+      "submit": "Enregistrer la transaction",
+      "submitting": "Enregistrement…",
+      "errors": {
+        "validAmount": "Entrez un montant valide",
+        "selectCategory": "Sélectionnez une catégorie",
+        "selectAccount": "Sélectionnez un compte",
+        "failed": "Échec de l'enregistrement de la transaction"
+      }
+    },
+    "transfer": {
+      "title": "Virement entre comptes",
+      "from": "Compte source",
+      "fromPlaceholder": "Sélectionner le compte source",
+      "to": "Compte destinataire",
+      "toOptional": "(optionnel pour un virement externe)",
+      "toPlaceholder": "Sélectionner le compte destinataire",
+      "external": "Ou destination externe",
+      "externalPlaceholder": "p. ex. Banque externe, PayPal, etc.",
+      "amount": "Montant",
+      "amountPlaceholder": "0,00",
+      "note": "Note (optionnelle)",
+      "notePlaceholder": "Note de virement",
+      "submit": "Enregistrer le virement",
+      "submitting": "Traitement…",
+      "errors": {
+        "validAmount": "Entrez un montant valide",
+        "selectFrom": "Sélectionnez un compte source",
+        "selectDestination": "Sélectionnez un compte destinataire ou saisissez une destination externe",
+        "failed": "Échec de l'enregistrement du virement"
+      }
+    },
+    "goal": {
+      "title": "Contribuer à un objectif",
+      "selectGoal": "Sélectionner un objectif",
+      "amount": "Montant",
+      "amountPlaceholder": "0,00",
+      "note": "Note (optionnelle)",
+      "notePlaceholder": "Note de contribution",
+      "submit": "Enregistrer la contribution",
+      "submitting": "Enregistrement…",
+      "errors": {
+        "validAmount": "Entrez un montant valide",
+        "selectGoal": "Sélectionnez un objectif",
+        "failed": "Échec de l'enregistrement de la contribution"
+      }
+    },
+    "manage": {
+      "createCategory": "Créer une catégorie",
+      "categoryName": "Nom de la catégorie",
+      "categoryNamePlaceholder": "p. ex. Courses",
+      "categoryParent": "Catégorie parente (optionnelle)",
+      "categoryParentNone": "Aucune (niveau racine)",
+      "submit": "Créer la catégorie",
+      "submitting": "Création…",
+      "errors": {
+        "nameRequired": "Le nom de la catégorie est requis",
+        "failed": "Échec de la création de la catégorie"
+      },
+      "createAccount": "Créer un compte",
+      "accountName": "Nom du compte",
+      "accountNamePlaceholder": "p. ex. Compte courant",
+      "accountType": "Type de compte",
+      "accountTypeChecking": "Courant",
+      "accountTypeSavings": "Épargne",
+      "accountTypeCash": "Espèces",
+      "accountTypeCredit": "Crédit",
+      "accountTypeInvestment": "Investissement",
+      "accountBalance": "Solde initial",
+      "submitAccount": "Créer le compte",
+      "submittingAccount": "Création…",
+      "errorsAccount": {
+        "nameRequired": "Le nom du compte est requis",
+        "validBalance": "Entrez un solde valide",
+        "failed": "Échec de la création du compte"
+      }
+    }
+  },
+  "assistant": {
+    "title": "Assistant",
+    "tabs": {
+      "insights": "Analyses",
+      "learn": "Apprendre"
+    },
+    "features": {
+      "insight": {
+        "name": "Analyse des dépenses",
+        "purpose": "Analyser vos habitudes de dépenses et identifier des tendances",
+        "provider": "Google Gemini (offre gratuite)",
+        "description": "Détecte les anomalies, tendances et changements notables dans vos finances",
+        "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
+        "fullData": "Montants, dates, catégories et notes des transactions individuelles"
+      },
+      "recommendation": {
+        "name": "Recommandation",
+        "purpose": "Suggérer des actions concrètes pour améliorer votre situation financière",
+        "provider": "Google Gemini (offre gratuite)",
+        "description": "Génère des ajustements budgétaires, des suggestions d'épargne et des compromis de dépenses",
+        "redactedData": "Totaux de période, progression des budgets et objectifs — aucune transaction individuelle",
+        "fullData": "Montants, dates, catégories et notes des transactions individuelles"
+      },
+      "prediction": {
+        "name": "Prévision",
+        "purpose": "Projeter le solde de fin de mois et les dates d'épuisement des budgets",
+        "provider": "Google Gemini (offre gratuite)",
+        "description": "Prévoit votre trajectoire financière basée sur les données actuelles et les éléments récurrents",
+        "redactedData": "Revenus/dépenses de période, récurrents projetés, limites budgétaires — aucune transaction individuelle",
+        "fullData": "Montants, dates, catégories et notes des transactions individuelles"
+      },
+      "patternDetection": {
+        "name": "Détection de schémas",
+        "purpose": "Détecter les habitudes de dépenses récurrentes et les dépendances entre catégories",
+        "provider": "Google Gemini (offre gratuite)",
+        "description": "Identifie les schémas comportementaux comme les restaurants fréquents, l'inflation d'abonnements ou la concentration par catégorie",
+        "redactedData": "Agrégats par catégorie, état des budgets, comparaisons de période — aucune transaction individuelle",
+        "fullData": "Montants, dates, catégories et notes des transactions individuelles"
+      },
+      "literacy": {
+        "name": "Chat pédagogique",
+        "purpose": "Expliquer les concepts de finances personnelles en langage simple",
+        "provider": "Google Gemini (offre gratuite)",
+        "description": "Répond à vos questions sur la budgétisation, l'épargne, les flux de trésorerie, etc. — en lien avec vos données",
+        "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
+        "fullData": "Montants, dates, catégories et notes des transactions individuelles"
+      }
+    },
+    "thinking": "Réflexion…",
+    "unavailable": "Indisponible",
+    "dismiss": "Ignorer",
+    "emptyInsights": "Appuyez sur un bouton ci-dessus pour générer des analyses à partir de vos données financières.",
+    "conceptLibrary": {
+      "title": "Bibliothèque de concepts",
+      "description": "Apprenez à votre rythme",
+      "budgeting101": "Budgétisation 101",
+      "compoundInterest": "Intérêts composés",
+      "emergencyFund": "Fonds d'urgence"
+    },
+    "chat": {
+      "title": "Chat d'éducation financière",
+      "description": "Posez des questions sur les finances personnelles",
+      "emptyTitle": "Posez une question pour commencer à apprendre",
+      "emptyExample": "p. ex. \"Qu'est-ce que la règle 50/30/20 ?\"",
+      "placeholder": "Posez une question…",
+      "thinking": "Réflexion…",
+      "error": "Une erreur est survenue."
+    },
+    "consent": {
+      "title": "Accès complet requis",
+      "limited": "Mode limité (par défaut)",
+      "full": "Accès complet",
+      "provider": "Fournisseur",
+      "purpose": "Finalité",
+      "notNow": "Pas maintenant",
+      "useLimited": "Utiliser le mode limité",
+      "grantFull": "Accorder l'accès complet",
+      "settingsTitle": "Paramètres de partage de données",
+      "settingsDescription": "Chaque fonctionnalité IA peut envoyer des données à Google Gemini (offre gratuite). Vous contrôlez la quantité.",
+      "statusFull": "Accès complet",
+      "statusNotPrompted": "Non sollicité",
+      "statusLimited": "Limité",
+      "fullBtn": "Complet",
+      "limitedBtn": "Limité",
+      "done": "Terminé"
+    },
+    "consentSettings": "Paramètres de consentement"
+  },
+  "budgets": {
+    "title": "Budgets",
+    "add": "Ajouter un budget",
+    "create": "Créer un budget",
+    "creating": "Création…",
+    "category": "Catégorie",
+    "categoryPlaceholder": "Sélectionner une catégorie",
+    "monthlyLimit": "Limite mensuelle ($)",
+    "period": "Période (AAAA-MM)",
+    "active": "Actifs",
+    "archived": "Archivés",
+    "empty": "Aucun budget pour le moment. Créez votre premier budget pour suivre vos dépenses par catégorie.",
+    "unknown": "Inconnu",
+    "spent": "dépensé",
+    "limit": "limite",
+    "used": "utilisé",
+    "errors": {
+      "validAmount": "Entrez un montant valide",
+      "selectCategory": "Sélectionnez une catégorie",
+      "failed": "Échec de la création du budget"
+    }
+  },
+  "goals": {
+    "title": "Objectifs d'épargne",
+    "add": "Ajouter un objectif",
+    "create": "Créer un objectif d'épargne",
+    "creating": "Création…",
+    "name": "Nom de l'objectif",
+    "namePlaceholder": "p. ex. Fonds d'urgence",
+    "targetAmount": "Montant cible ($)",
+    "targetDate": "Date cible (optionnelle)",
+    "active": "Actifs",
+    "archived": "Archivés",
+    "empty": "Aucun objectif pour le moment. Créez un objectif d'épargne pour suivre votre progression.",
+    "saved": "économisé",
+    "target": "objectif",
+    "complete": "complété",
+    "targetLabel": "Cible",
+    "errors": {
+      "nameRequired": "Le nom de l'objectif est requis",
+      "validAmount": "Entrez un montant cible valide",
+      "failed": "Échec de la création de l'objectif"
+    }
+  },
+  "recurring": {
+    "title": "Récurrents",
+    "add": "Ajouter un récurrent",
+    "create": "Créer un élément récurrent",
+    "creating": "Création…",
+    "label": "Libellé",
+    "labelPlaceholder": "p. ex. Loyer, Salaire",
+    "category": "Catégorie",
+    "categoryPlaceholder": "Sélectionner une catégorie",
+    "amount": "Montant ($)",
+    "direction": "Sens",
+    "expense": "Dépense",
+    "income": "Revenu",
+    "frequency": "Fréquence",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "startDate": "Date de début",
+    "empty": "Aucun élément récurrent. Ajoutez loyer, abonnements ou salaire pour suivre les transactions prévisibles.",
+    "unknown": "Inconnu",
+    "started": "Début",
+    "last": "Dernier",
+    "realise": "Réaliser",
+    "realiseTitle": "Réaliser une occurrence",
+    "realiseDescription": "Enregistrer ce {{direction}} pour",
+    "account": "Compte",
+    "accountPlaceholder": "Sélectionner un compte",
+    "recordOccurrence": "Enregistrer l'occurrence",
+    "recording": "Enregistrement…",
+    "errors": {
+      "labelRequired": "Le libellé est requis",
+      "selectCategory": "Sélectionnez une catégorie",
+      "validAmount": "Entrez un montant valide",
+      "failed": "Échec de la création de l'élément récurrent"
+    }
+  },
+  "exportImport": {
+    "export": {
+      "title": "Exporter",
+      "description": "Téléchargez vos données financières. Les exportations JSON sont sans perte et peuvent être réimportées.",
+      "json": "Exporter JSON",
+      "csv": "Exporter CSV",
+      "xlsx": "Exporter XLSX",
+      "encrypted": "Exportation chiffrée",
+      "errors": {
+        "failed": "Échec de l'exportation",
+        "encryptedFailed": "Échec de l'exportation chiffrée"
+      },
+      "warning": "Les exportations JSON, CSV et XLSX en clair contiennent des données financières déchiffrées. Stockez-les en lieu sûr et supprimez-les après utilisation. Les exportations chiffrées sont protégées par votre phrase de passe."
+    },
+    "import": {
+      "title": "Importer",
+      "description": "Restaurer les données à partir d'un fichier d'exportation JSON. Cela remplace toutes les données existantes.",
+      "importing": "Importation des données…",
+      "success": "Importation réussie ! Toutes les données ont été restaurées.",
+      "errors": {
+        "invalidFile": "Fichier invalide — impossible d'analyser.",
+        "noFile": "Aucun fichier sélectionné",
+        "failed": "Échec de l'importation"
+      }
+    },
+    "passphrase": {
+      "exportTitle": "Chiffrer l'exportation",
+      "importTitle": "Déchiffrer l'importation",
+      "exportDescription": "Entrez une phrase de passe pour protéger votre exportation. Vous aurez besoin de cette phrase pour importer le fichier plus tard.",
+      "importDescription": "Ce fichier est chiffré par phrase de passe. Entrez la phrase pour déchiffrer et importer.",
+      "label": "Phrase de passe",
+      "cancel": "Annuler",
+      "encryptDownload": "Chiffrer et télécharger",
+      "decryptImport": "Déchiffrer et importer",
+      "processing": "Traitement…",
+      "errors": {
+        "tooShort": "La phrase de passe doit contenir au moins 4 caractères",
+        "required": "La phrase de passe est requise"
+      }
+    }
+  },
+  "byoKey": {
+    "title": "Clés API IA personnelles",
+    "description": "Configurez vos propres clés API pour utiliser les fonctionnalités IA directement.",
+    "configured": "configuré",
+    "apiKey": "Clé API",
+    "save": "Enregistrer",
+    "hideKey": "Masquer la clé",
+    "showKey": "Afficher la clé",
+    "configuredBadge": "Configurée",
+    "placeholders": {
+      "configured": "Clé sauvegardée",
+      "enter": "Entrez la clé API {{provider}}"
+    },
+    "footnote": "Les clés sont chiffrées et stockées localement sur cet appareil. Elles ne sont jamais envoyées à nos serveurs (INV-KEY-02). Déchiffrées uniquement en mémoire lors des appels IA.",
+    "errors": {
+      "saveFailed": "Échec de l'enregistrement de la clé"
+    },
+    "providers": {
+      "openai": "OpenAI",
+      "gemini": "Google Gemini",
+      "nvidia": "NVIDIA NIM"
+    }
+  },
+  "planning": {
+    "title": "Planification",
+    "cardTitle": "Budgets, objectifs et récurrents",
+    "cardDescription": "Planifiez vos dépenses, épargnez vers des objectifs et suivez les transactions récurrentes"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "devices": {
+      "title": "Appareils et sessions",
+      "description": "Informations sur l'appareil actuel et la session active",
+      "active": "Actif",
+      "offline": "Hors ligne",
+      "language": "Langue",
+      "session": "Session",
+      "signOut": "Déconnexion de toutes les sessions",
+      "unknown": "Inconnu"
+    },
+    "currency": {
+      "title": "Gestion des devises",
+      "description": "Gérez vos paramètres de devise préférés",
+      "primary": "Devise principale",
+      "supported": "Devises prises en charge",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "errors": {
+        "failed": "Échec de la mise à jour des paramètres de devise"
+      }
+    }
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "done": "Terminé",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "confirm": "Confirmer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "loading": "Chargement…",
+    "error": "Erreur",
+    "success": "Succès",
+    "noData": "Aucune donnée",
+    "retry": "Réessayer",
+    "unknown": "Inconnu",
+    "yes": "Oui",
+    "no": "Non",
+    "optional": "optionnelle"
+  },
+  "errors": {
+    "httpsRequired": "HTTPS est requis en production pour la sécurité. Définissez VITE_EDGE_BASE_URL avec une URL https://."
+  }
+}
