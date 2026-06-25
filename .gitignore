@@ -31,3 +31,9 @@ coverage/
 
 # generated code-structure graph (Graphify)
 graphify-out/
+
+# generated local tooling and review artifacts
+.omo/
+.playwright-mcp/
+dashboard.png
+rem.md
