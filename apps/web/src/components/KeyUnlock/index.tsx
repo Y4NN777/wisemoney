@@ -32,16 +32,18 @@ export default function KeyUnlock() {
   const [flow, setFlow] = useState<Flow>("loading");
   const [error, setError] = useState<string | null>(null);
   const [masterKey, setMasterKey] = useState<MasterKey | null>(null);
+  const [vaultUnlockFlow, setVaultUnlockFlow] = useState<"setup" | "unlock-passphrase" | "unlock-webauthn">("setup");
 
   useEffect(() => {
     void db.keyMeta.get("primary").then((meta) => {
       if (meta == null) {
-        setFlow("landing");
+        setVaultUnlockFlow("setup");
       } else if (meta.webAuthnHandle != null) {
-        setFlow("unlock-webauthn");
+        setVaultUnlockFlow("unlock-webauthn");
       } else {
-        setFlow("unlock-passphrase");
+        setVaultUnlockFlow("unlock-passphrase");
       }
+      setFlow("landing");
     });
   }, []);
 
@@ -55,7 +57,7 @@ export default function KeyUnlock() {
       </div>
     );
   } else if (flow === "landing") {
-    content = <LandingOnboarding onStart={() => setFlow("setup")} />;
+    content = <LandingOnboarding onStart={() => setFlow(vaultUnlockFlow)} hasVault={vaultUnlockFlow !== "setup"} />;
   } else if (flow === "setup") {
     content = (
       <LocalSetup
@@ -106,16 +108,19 @@ export default function KeyUnlock() {
 
 type LandingOnboardingProps = {
   onStart: () => void;
+  hasVault: boolean;
 };
 
-function LandingOnboarding({ onStart }: LandingOnboardingProps) {
+function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
+  const primaryLabel = hasVault ? "Open vault" : "Create local vault";
+
   return (
     <main aria-label="WiseMoney introduction" className="landing-grid min-h-dvh bg-white text-[#111111]">
       <section className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
         <header className="flex items-center justify-between border-b border-[#111111] py-3">
           <Logo className="h-8 w-auto" />
           <Button type="button" onClick={onStart} className="h-9 rounded-none bg-[#002FA7] px-4 text-white hover:bg-[#002FA7]/90">
-            Start
+            {hasVault ? "Open app" : "Start"}
           </Button>
         </header>
 
@@ -126,11 +131,16 @@ function LandingOnboarding({ onStart }: LandingOnboardingProps) {
               <h1 className="max-w-4xl text-5xl font-bold leading-[0.94] tracking-normal text-[#111111] sm:text-7xl lg:text-8xl">
                 WiseMoney starts with your device, not a login wall.
               </h1>
+              {hasVault && (
+                <p className="max-w-2xl border-l-4 border-[#002FA7] pl-4 text-base font-medium leading-relaxed text-[#333333]">
+                  A vault already exists in this browser. Open it to continue with your local data.
+                </p>
+              )}
             </div>
 
             <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:max-w-3xl">
               <Button type="button" onClick={onStart} className="h-12 justify-between rounded-none bg-[#002FA7] px-4 text-white hover:bg-[#002FA7]/90">
-                Create local vault
+                {primaryLabel}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <a
