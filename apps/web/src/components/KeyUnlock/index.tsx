@@ -13,7 +13,7 @@ import { router } from "../../router.ts";
 import { MasterKeyContext } from "../../lib/masterKeyContext.ts";
 import { Toaster } from "../../components/ui/sonner.tsx";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
-import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, WalletCards, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, Smartphone, WalletCards, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -27,6 +27,11 @@ type Flow =
   | "unlock-passphrase"
   | "unlock-webauthn"
   | "app";
+
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
 
 export default function KeyUnlock() {
   const [flow, setFlow] = useState<Flow>("loading");
@@ -160,6 +165,7 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
           </div>
 
           <aside id="pwa-onboarding" className="grid content-start gap-4 py-6 lg:py-12 lg:pl-8">
+            <InstallPromptCard />
             <div className="border border-[#111111] bg-white">
               <div className="border-b border-[#111111] bg-[#002FA7] p-4 text-white">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em]">After setup</p>
@@ -205,6 +211,80 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
         </div>
       </section>
     </main>
+  );
+}
+
+function InstallPromptCard() {
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  useEffect(() => {
+    const standalone = window.matchMedia("(display-mode: standalone)").matches ||
+      (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    setIsInstalled(standalone);
+
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+    };
+
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setInstallPrompt(null);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstall = () => {
+    if (installPrompt == null) return;
+    void (async () => {
+      await installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === "accepted") {
+        setIsInstalled(true);
+      }
+      setInstallPrompt(null);
+    })();
+  };
+
+  return (
+    <div className="border border-[#111111] bg-white">
+      <div className="flex items-start gap-3 border-b border-[#111111] bg-[#F7F7F8] p-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#111111] bg-white text-[#002FA7]">
+          <Smartphone className="h-5 w-5" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold leading-tight text-[#111111]">Install WiseMoney on this device</h2>
+          <p className="mt-2 text-sm leading-relaxed text-[#333333]">
+            Install the PWA before you need it offline. Your vault and app shell stay available from the home screen.
+          </p>
+        </div>
+      </div>
+      <div className="grid gap-3 p-4">
+        {isInstalled ? (
+          <p className="border border-[#111111] bg-[#002FA7] px-3 py-2 text-sm font-semibold text-white">
+            WiseMoney is installed on this device.
+          </p>
+        ) : installPrompt != null ? (
+          <Button type="button" onClick={handleInstall} className="h-11 justify-between rounded-none bg-[#002FA7] px-4 text-white hover:bg-[#002FA7]/90">
+            Install app
+            <Download className="h-4 w-4" />
+          </Button>
+        ) : (
+          <div className="border border-[#111111] bg-[#F7F7F8] p-3 text-sm leading-relaxed text-[#333333]">
+            <p className="font-bold text-[#111111]">If no install button appears:</p>
+            <p className="mt-1">Android Chrome: open the browser menu and choose Install app.</p>
+            <p className="mt-1">iPhone Safari: use Share, then Add to Home Screen.</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
