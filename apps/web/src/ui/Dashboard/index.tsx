@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useFinancialState, useHistoricalState, useTransactionsInRange } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { FinancialStateSnapshot, TransactionDisplay } from "../../domain/financialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
+import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 import { requestInsight } from "../../pillars/intelligence/index.ts";
 import type { AIResult } from "../../pillars/intelligence/index.ts";
 
@@ -326,12 +327,17 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("month");
   const [aiInsight, setAiInsight] = useState<AIResult | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiCapability, setAiCapability] = useState<AICapability | null>(null);
 
   const { start: txStart, end: txEnd } = useMemo(
     () => getTimeFilterBounds(timeFilter, snapshot.asOfTimestamp, snapshot.periodStart, snapshot.periodEnd),
     [timeFilter, snapshot.asOfTimestamp, snapshot.periodStart, snapshot.periodEnd],
   );
   const { data: transactions, isLoading: txLoading } = useTransactionsInRange(txStart, txEnd);
+
+  useEffect(() => {
+    void getAICapability(masterKey).then(setAiCapability);
+  }, [masterKey]);
 
   const categories = snapshot.categories.filter((c) => !c.isSystemDefault);
   const activeBudgets = snapshot.budgets.filter((b) => !b.isArchived);
@@ -368,7 +374,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
 
   // load AI insight
   const handleAiInsight = async () => {
-    if (aiLoading) return;
+    if (aiLoading || aiCapability?.available !== true) return;
     setAiLoading(true);
     try {
       const result = await requestInsight("insight", snapshot, masterKey);
@@ -527,11 +533,16 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                 <CardTitle className="text-sm font-medium">AI Insight</CardTitle>
               </CardHeader>
               <CardContent>
-            <Button
+                {aiCapability?.available !== true && (
+                  <p className="mb-3 text-sm text-muted-foreground">
+                    Add a personal AI provider key in Settings before requesting AI insight.
+                  </p>
+                )}
+                <Button
                   variant="outline"
                   size="sm"
                   onClick={() => { void handleAiInsight(); }}
-                  disabled={aiLoading}
+                  disabled={aiLoading || aiCapability?.available !== true}
                   className="w-full"
                 >
                   {aiLoading ? "Analyzing…" : "Analyze this period"}

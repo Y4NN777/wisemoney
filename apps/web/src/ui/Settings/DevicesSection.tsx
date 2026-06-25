@@ -4,6 +4,7 @@ import { Badge } from "../../components/ui/badge.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { Monitor, Smartphone, Laptop, Globe, Clock, LogOut } from "lucide-react";
 import { getSessionStatus } from "../../auth/session.ts";
+import { isEdgeConfigured } from "../../lib/capabilities.ts";
 
 type DeviceInfo = {
   userAgent: string;
@@ -62,6 +63,7 @@ export default function DevicesSection() {
   }, []);
 
   const isAuthenticated = sessionStatus === "authenticated";
+  const edgeConfigured = isEdgeConfigured();
 
   return (
     <Card>
@@ -88,9 +90,15 @@ export default function DevicesSection() {
             </div>
           </div>
           <Badge variant={isAuthenticated ? "default" : "secondary"}>
-            {isAuthenticated ? "Active" : "Offline"}
+            {isAuthenticated ? "Cloud sync active" : edgeConfigured ? "Cloud sync disconnected" : "Local only"}
           </Badge>
         </div>
+
+        {!edgeConfigured && (
+          <div className="rounded-lg border border-border bg-accent/50 p-3 text-sm text-muted-foreground">
+            Cloud sync is not configured for this deployment. Your vault, accounts, budgets, and transactions remain available locally on this device.
+          </div>
+        )}
 
         <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
           <div className="flex items-center gap-1.5">
@@ -107,6 +115,7 @@ export default function DevicesSection() {
           variant="outline"
           size="sm"
           className="w-full gap-2 text-destructive hover:text-destructive"
+          disabled={!isAuthenticated}
           onClick={() => {
             void import("../../auth/session.ts").then((mod) =>
               mod.logout().then(() => {

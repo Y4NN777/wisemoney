@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, type FormEvent } from "react";
+import { useState, useCallback, useEffect, useRef, type FormEvent } from "react";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { requestInsight, requestRecommendation, requestPrediction, detectPatterns } from "../../pillars/intelligence/index.ts";
@@ -17,10 +17,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import {
   Lightbulb, Sparkles, TrendingUp, AlertCircle, BookOpen,
-  Send, Shield, X, Settings2,
+  Send, Shield, X, Settings2, Key,
 } from "lucide-react";
 import type { AIResult, IntelligenceFeatureId } from "../../pillars/intelligence/index.ts";
 import type { ProviderUnavailableSignal } from "../../ai/orchestration.ts";
+import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 
 type FeatureId = IntelligenceFeatureId | "literacy";
 
@@ -114,11 +115,19 @@ export default function Assistant() {
 
   const [consentDialog, setConsentDialog] = useState<FeatureId | null>(null);
   const [showConsentSettings, setShowConsentSettings] = useState(false);
+  const [aiCapability, setAiCapability] = useState<AICapability | null>(null);
   const pendingChatMsg = useRef<string | null>(null);
+
+  useEffect(() => {
+    void getAICapability(masterKey).then(setAiCapability);
+  }, [masterKey]);
+
+  const aiAvailable = aiCapability?.available === true;
+  const aiUnavailableMessage = aiCapability?.message ?? "Checking AI setup.";
 
   const handleChatSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!chatInput.trim() || snapshot == null) return;
+    if (!chatInput.trim() || snapshot == null || !aiAvailable) return;
     const userMsg = chatInput.trim();
     setChatInput("");
     setChatMessages((prev) => [...prev, { role: "user", text: userMsg }]);
@@ -133,7 +142,7 @@ export default function Assistant() {
   };
 
   const sendChatMessage = async (text: string) => {
-    if (snapshot == null) return;
+    if (snapshot == null || !aiAvailable) return;
     setChatSubmitting(true);
     try {
       const result = await sendConversationMessage("literacy", text, snapshot, masterKey);
@@ -159,7 +168,7 @@ export default function Assistant() {
   }, []);
 
   const handleFeatureRequest = (featureId: FeatureId) => {
-    if (snapshot == null) return;
+    if (snapshot == null || !aiAvailable) return;
     const consent = getConsentLevel(featureId);
     if (consent === "NotPrompted") {
       markNotPrompted(featureId);
@@ -170,7 +179,7 @@ export default function Assistant() {
   };
 
   const executeFeature = (featureId: FeatureId) => {
-    if (snapshot == null) return;
+    if (snapshot == null || !aiAvailable) return;
     setInsightLoading(featureId);
     void (async () => {
       try {
@@ -262,6 +271,9 @@ export default function Assistant() {
         </TabsList>
 
         <TabsContent value="insights" className="space-y-4">
+          {!aiAvailable && (
+            <AISetupNotice message={aiUnavailableMessage} />
+          )}
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {(["insight", "recommendation", "prediction", "pattern_detection"] as const).map((feat) => {
               const meta = FEATURE_META[feat];
@@ -272,7 +284,7 @@ export default function Assistant() {
                   variant="outline"
                   className="h-14 justify-start gap-2 px-3"
                   onClick={() => handleFeatureRequest(feat)}
-                  disabled={loading || insightLoading != null}
+                  disabled={!aiAvailable || loading || insightLoading != null}
                 >
                   {meta.icon}
                   <span className="truncate text-sm">{loading ? "Thinking…" : meta.name}</span>
@@ -319,7 +331,7 @@ export default function Assistant() {
 
           {insightFeed.length === 0 && insightLoading == null && (
             <p className="empty-state">
-              Tap a button above to generate insights from your financial data.
+              {aiAvailable ? "Tap a button above to generate insights from your financial data." : "AI features are paused until you configure a provider key or connect the managed edge."}
             </p>
           )}
 
@@ -357,10 +369,12 @@ export default function Assistant() {
           <Card className="flex h-[60dvh] max-w-4xl flex-col">
             <CardHeader className="border-b pb-3">
               <CardTitle className="text-base">Financial Literacy Chat</CardTitle>
-              <CardDescription>Ask anything about personal finance</CardDescription>
+              <CardDescription>{aiAvailable ? "Ask anything about personal finance" : "Add an AI provider key before starting chat"}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto space-y-3 py-4">
-              {chatMessages.length === 0 && (
+              {!aiAvailable ? (
+                <AISetupNotice message={aiUnavailableMessage} />
+              ) : chatMessages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground space-y-2">
                   <BookOpen className="h-8 w-8" />
                   <p className="text-sm">Ask a question to start learning</p>
@@ -394,10 +408,10 @@ export default function Assistant() {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder="Ask a question…"
-                  disabled={chatSubmitting || snapshot == null}
+                  disabled={!aiAvailable || chatSubmitting || snapshot == null}
                   className="flex-1"
                 />
-                <Button type="submit" disabled={chatSubmitting || chatInput.trim().length === 0 || snapshot == null} size="icon">
+                <Button type="submit" disabled={!aiAvailable || chatSubmitting || chatInput.trim().length === 0 || snapshot == null} size="icon">
                   <Send className="h-4 w-4" />
                 </Button>
               </form>
@@ -506,5 +520,24 @@ export default function Assistant() {
         </DialogContent>
       </Dialog>
     </main>
+  );
+}
+
+function AISetupNotice({ message }: { message: string }) {
+  return (
+    <Card className="border-ocean-primary/30 bg-ocean-wash/70">
+      <CardContent className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <Key className="mt-0.5 h-5 w-5 shrink-0 text-ocean-primary" />
+          <div>
+            <p className="text-sm font-semibold">AI is optional and not configured</p>
+            <p className="mt-1 text-sm text-muted-foreground">{message}</p>
+          </div>
+        </div>
+        <Button asChild size="sm" className="shrink-0">
+          <a href="/settings">Configure AI keys</a>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

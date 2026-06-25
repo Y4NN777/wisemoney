@@ -2,6 +2,7 @@ import type { FinancialStateSnapshot } from "@/domain/financialState.ts";
 import type { MasterKey } from "@/crypto/envelope.ts";
 import { buildContext } from "@/ai/contextBuilder.ts";
 import { shapeEgress, type EgressContext } from "@/consent/redaction.ts";
+import { getAICapability } from "@/lib/capabilities.ts";
 import { getConsentLevel, markNotPrompted } from "@/consent/consentStore.ts";
 import { submit, type AIResult } from "@/ai/orchestration.ts";
 
@@ -66,7 +67,16 @@ export async function sendConversationMessage(
     userMessage: message,
   } as unknown as EgressContext;
 
-  return submit(payload, "teaching", "managed", featureId, masterKey);
+  const capability = await getAICapability(masterKey);
+  if (capability.mode == null) {
+    return {
+      unavailable: true,
+      taskType: "teaching",
+      message: capability.message,
+    };
+  }
+
+  return submit(payload, "teaching", capability.mode, featureId, masterKey);
 }
 
 /**

@@ -1,6 +1,8 @@
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
-import { LayoutDashboard, PlusCircle, MessageSquare, ClipboardList, Settings as SettingsIcon } from "lucide-react";
+import { BookOpenCheck, CheckCircle2, HelpCircle, LayoutDashboard, MessageSquare, PlusCircle, ClipboardList, Settings as SettingsIcon } from "lucide-react";
 import Logo from "../components/Logo.tsx";
+import { Button } from "../components/ui/button.tsx";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../components/ui/sheet.tsx";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -8,6 +10,14 @@ const navItems = [
   { to: "/assistant", label: "Assistant", icon: MessageSquare, exact: false },
   { to: "/planning", label: "Planning", icon: ClipboardList, exact: false },
   { to: "/settings", label: "Settings", icon: SettingsIcon, exact: false },
+] as const;
+
+const journeySteps = [
+  { title: "Create accounts", body: "Add cash, mobile money, bank, or card accounts from Capture > Manage.", to: "/capture" },
+  { title: "Record money movement", body: "Capture income, expenses, transfers, and goal contributions offline.", to: "/capture" },
+  { title: "Plan the month", body: "Create budgets, goals, and recurring items to make the dashboard useful.", to: "/planning" },
+  { title: "Review the dashboard", body: "Track cash flow, spending mix, alerts, and upcoming recurring payments.", to: "/" },
+  { title: "Configure optional services", body: "Add AI provider keys or cloud sync only when you want those features.", to: "/settings" },
 ] as const;
 
 export const Route = createRootRoute({
@@ -42,6 +52,8 @@ export const Route = createRootRoute({
         </div>
       </main>
 
+      <HelpCenter />
+
       {/* Mobile bottom nav */}
       <nav
         aria-label="Primary navigation"
@@ -68,3 +80,61 @@ export const Route = createRootRoute({
     </div>
   ),
 });
+
+function HelpCenter() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button
+          type="button"
+          size="icon"
+          className="fixed bottom-20 right-4 z-40 h-11 w-11 rounded-full shadow-lg md:bottom-6"
+          aria-label="Open help center"
+        >
+          <HelpCircle className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="flex w-[92vw] max-w-md flex-col overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
+            <BookOpenCheck className="h-5 w-5 text-ocean-primary" />
+            Help Center
+          </SheetTitle>
+          <SheetDescription>
+            Follow the setup journey at your pace. WiseMoney works locally first; AI and sync are optional.
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="mt-5 space-y-3">
+          {journeySteps.map((step, index) => (
+            <SheetClose key={step.title} asChild>
+              <Link
+                to={step.to}
+                className="interactive-surface block rounded-lg border border-border bg-card p-3"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-sm font-semibold text-ocean-dark tabular-nums">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{step.title}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{step.body}</p>
+                  </div>
+                </div>
+              </Link>
+            </SheetClose>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-lg border border-border bg-accent/55 p-3">
+          <div className="flex items-start gap-2">
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-ocean-primary" />
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Install the PWA from the landing page or browser menu before relying on it offline.
+            </p>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}

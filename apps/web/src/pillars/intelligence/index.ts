@@ -2,6 +2,7 @@ import type { FinancialStateSnapshot } from "@/domain/financialState.ts";
 import type { MasterKey } from "@/crypto/envelope.ts";
 import { buildContext } from "@/ai/contextBuilder.ts";
 import { shapeEgress } from "@/consent/redaction.ts";
+import { getAICapability } from "@/lib/capabilities.ts";
 import {
   getConsentLevel,
   markNotPrompted,
@@ -77,7 +78,16 @@ async function requestAI(
 
   const egressContext = shapeEgress(featureId, rawContext, consentState);
 
-  return submit(egressContext, taskType, "managed", featureId, masterKey);
+  const capability = await getAICapability(masterKey);
+  if (capability.mode == null) {
+    return {
+      unavailable: true,
+      taskType,
+      message: capability.message,
+    };
+  }
+
+  return submit(egressContext, taskType, capability.mode, featureId, masterKey);
 }
 
 function buildConsentState(

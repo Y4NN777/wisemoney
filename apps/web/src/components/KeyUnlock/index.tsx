@@ -13,6 +13,7 @@ import { router } from "../../router.ts";
 import { MasterKeyContext } from "../../lib/masterKeyContext.ts";
 import { Toaster } from "../../components/ui/sonner.tsx";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
+import { isEdgeConfigured } from "../../lib/capabilities.ts";
 import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, Smartphone, WalletCards, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
@@ -123,40 +124,40 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
   const primaryLabel = hasVault ? "Open vault" : "Create local vault";
 
   return (
-    <main aria-label="WiseMoney introduction" className="landing-grid min-h-dvh bg-white text-[#111111]">
+    <main aria-label="WiseMoney introduction" className="landing-grid min-h-dvh bg-background text-foreground">
       <section className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between border-b border-[#111111] py-3">
+        <header className="flex items-center justify-between border-b border-border py-3">
           <Logo className="h-8 w-auto" />
-          <Button type="button" onClick={onStart} className="h-9 rounded-none bg-[#002FA7] px-4 text-white hover:bg-[#002FA7]/90">
+          <Button type="button" onClick={onStart} className="h-9 px-4">
             {hasVault ? "Open app" : "Start"}
           </Button>
         </header>
 
-        <div className="grid flex-1 gap-0 border-b border-[#111111] lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)]">
-          <div className="flex flex-col justify-between border-[#111111] py-8 lg:border-r lg:py-12 lg:pr-10">
+        <div className="grid flex-1 gap-0 border-b border-border lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)]">
+          <div className="flex flex-col justify-between border-border py-8 lg:border-r lg:py-12 lg:pr-10">
             <div className="space-y-6">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#002FA7]">Local-first finance PWA</p>
-              <h1 className="max-w-4xl text-5xl font-bold leading-[0.94] tracking-normal text-[#111111] sm:text-7xl lg:text-8xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-ocean-primary">Local-first finance PWA</p>
+              <h1 className="max-w-4xl text-5xl font-bold leading-[0.94] tracking-normal text-foreground sm:text-7xl lg:text-8xl">
                 WiseMoney starts with your device, not a login wall.
               </h1>
-              <p className="max-w-2xl text-base font-medium leading-relaxed text-[#333333] sm:text-lg">
+              <p className="max-w-2xl text-base font-medium leading-relaxed text-muted-foreground sm:text-lg">
                 Build your private money workspace first: dashboard, capture, budgets, goals, recurring payments, exports, and settings all unlock from one encrypted vault.
               </p>
               {hasVault && (
-                <p className="max-w-2xl border-l-4 border-[#002FA7] pl-4 text-base font-medium leading-relaxed text-[#333333]">
+                <p className="max-w-2xl border-l-4 border-ocean-primary pl-4 text-base font-medium leading-relaxed text-muted-foreground">
                   A vault already exists in this browser. Open it to continue with your local data.
                 </p>
               )}
             </div>
 
             <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:max-w-3xl">
-              <Button type="button" onClick={onStart} className="h-12 justify-between rounded-none bg-[#002FA7] px-4 text-white hover:bg-[#002FA7]/90">
+              <Button type="button" onClick={onStart} className="h-12 justify-between px-4">
                 {primaryLabel}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <a
                 href="#pwa-onboarding"
-                className="flex h-12 items-center justify-between border border-[#111111] px-4 text-sm font-semibold transition-colors hover:bg-[#F7F7F8]"
+                className="flex h-12 items-center justify-between rounded-md border border-border bg-card px-4 text-sm font-semibold transition-colors hover:bg-accent"
               >
                 View setup steps
                 <ArrowRight className="h-4 w-4" />
@@ -166,8 +167,8 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
 
           <aside id="pwa-onboarding" className="grid content-start gap-4 py-6 lg:py-12 lg:pl-8">
             <InstallPromptCard />
-            <div className="border border-[#111111] bg-white">
-              <div className="border-b border-[#111111] bg-[#002FA7] p-4 text-white">
+            <div className="border border-border bg-card">
+              <div className="border-b border-border bg-ocean-primary p-4 text-white">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em]">After setup</p>
                 <h2 className="mt-2 text-2xl font-bold leading-tight">Your WiseMoney workspace</h2>
               </div>
@@ -180,7 +181,7 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
                 <ProductTile icon={<Settings className="h-5 w-5" />} label="Settings" />
               </div>
             </div>
-            <div className="border border-[#111111] bg-[#F7F7F8]">
+            <div className="border border-border bg-card">
               <OnboardingRow
                 number="01"
                 icon={<ShieldCheck className="h-5 w-5" />}
@@ -254,31 +255,31 @@ function InstallPromptCard() {
   };
 
   return (
-    <div className="border border-[#111111] bg-white">
-      <div className="flex items-start gap-3 border-b border-[#111111] bg-[#F7F7F8] p-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#111111] bg-white text-[#002FA7]">
+    <div className="border border-border bg-card">
+      <div className="flex items-start gap-3 border-b border-border bg-accent/65 p-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-card text-ocean-primary">
           <Smartphone className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-xl font-bold leading-tight text-[#111111]">Install WiseMoney on this device</h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#333333]">
+          <h2 className="text-xl font-bold leading-tight text-foreground">Install WiseMoney on this device</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Install the PWA before you need it offline. Your vault and app shell stay available from the home screen.
           </p>
         </div>
       </div>
       <div className="grid gap-3 p-4">
         {isInstalled ? (
-          <p className="border border-[#111111] bg-[#002FA7] px-3 py-2 text-sm font-semibold text-white">
+          <p className="rounded-md border border-ocean-primary bg-ocean-primary px-3 py-2 text-sm font-semibold text-white">
             WiseMoney is installed on this device.
           </p>
         ) : installPrompt != null ? (
-          <Button type="button" onClick={handleInstall} className="h-11 justify-between rounded-none bg-[#002FA7] px-4 text-white hover:bg-[#002FA7]/90">
+          <Button type="button" onClick={handleInstall} className="h-11 justify-between px-4">
             Install app
             <Download className="h-4 w-4" />
           </Button>
         ) : (
-          <div className="border border-[#111111] bg-[#F7F7F8] p-3 text-sm leading-relaxed text-[#333333]">
-            <p className="font-bold text-[#111111]">If no install button appears:</p>
+          <div className="rounded-md border border-border bg-accent/60 p-3 text-sm leading-relaxed text-muted-foreground">
+            <p className="font-bold text-foreground">If no install button appears:</p>
             <p className="mt-1">Android Chrome: open the browser menu and choose Install app.</p>
             <p className="mt-1">iPhone Safari: use Share, then Add to Home Screen.</p>
           </div>
@@ -290,9 +291,9 @@ function InstallPromptCard() {
 
 function ProductTile({ icon, label }: { icon: ReactNode; label: string }) {
   return (
-    <div className="flex min-h-24 flex-col justify-between border-b border-r border-[#111111] p-3 last:border-r-0 even:border-r-0">
-      <span className="text-[#002FA7]">{icon}</span>
-      <span className="text-sm font-bold text-[#111111]">{label}</span>
+    <div className="flex min-h-24 flex-col justify-between border-b border-r border-border p-3 last:border-r-0 even:border-r-0">
+      <span className="text-ocean-primary">{icon}</span>
+      <span className="text-sm font-bold text-foreground">{label}</span>
     </div>
   );
 }
@@ -311,14 +312,14 @@ function OnboardingRow({
   isLast?: boolean;
 }) {
   return (
-    <article className={`landing-step grid grid-cols-[4rem_1fr] gap-0 ${isLast ? "" : "border-b border-[#111111]"}`}>
-      <div className="border-r border-[#111111] p-3 text-2xl font-bold tabular-nums text-[#002FA7]">{number}</div>
+    <article className={`landing-step grid grid-cols-[4rem_1fr] gap-0 ${isLast ? "" : "border-b border-border"}`}>
+      <div className="border-r border-border p-3 text-2xl font-bold tabular-nums text-ocean-primary">{number}</div>
       <div className="p-4">
-        <div className="mb-4 flex h-9 w-9 items-center justify-center border border-[#111111] bg-white text-[#002FA7]">
+        <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-ocean-primary">
           {icon}
         </div>
-        <h2 className="text-lg font-bold leading-tight text-[#111111]">{title}</h2>
-        <p className="mt-2 text-sm leading-relaxed text-[#333333]">{body}</p>
+        <h2 className="text-lg font-bold leading-tight text-foreground">{title}</h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
       </div>
     </article>
   );
@@ -446,6 +447,7 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
 }
 
 function CloudEdgeAuth() {
+  const edgeConfigured = isEdgeConfigured();
   const [expanded, setExpanded] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -460,6 +462,17 @@ function CloudEdgeAuth() {
       <p className="mt-4 text-center text-xs text-green-600 dark:text-green-400">
         Edge account linked
       </p>
+    );
+  }
+
+  if (!edgeConfigured) {
+    return (
+      <div className="mt-6 rounded-lg border border-border bg-accent/45 p-3">
+        <p className="text-sm font-medium">Cloud sync is not connected</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          You can use WiseMoney locally and offline now. Cloud sync will become available after the managed edge backend is deployed and configured.
+        </p>
+      </div>
     );
   }
 
