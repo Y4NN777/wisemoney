@@ -149,7 +149,7 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
       </button>
 
       {open && (
-        <div className="rounded-lg border border-border bg-background shadow-sm">
+        <div className="w-full min-w-0 rounded-lg border border-border bg-background shadow-sm max-sm:max-w-[calc(100vw-2rem)]">
           <div className="border-b border-border p-2">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -180,8 +180,8 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
                   }}
                 >
                   <span className="min-w-0">
-                    <span className="block font-semibold">{currency.code} - {currency.name}</span>
-                    {currency.countries.length > 0 && <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">{currency.countries}</span>}
+                    <span className="block truncate font-semibold">{currency.code} - {currency.name}</span>
+                    {currency.countries.length > 0 && <span className="mt-0.5 block truncate text-xs leading-snug text-muted-foreground">{currency.countries}</span>}
                   </span>
                   <span className="flex shrink-0 items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs">
                     {currency.code === value && <Check className="h-3 w-3" />}
@@ -467,9 +467,13 @@ export default function Capture() {
                   <Select value={accountId} onValueChange={setAccountId}>
                     <SelectTrigger id="account"><SelectValue placeholder="Select account" /></SelectTrigger>
                     <SelectContent>
-                      {accounts.map((a) => (
-                        <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
-                      ))}
+                      {accounts.length === 0 ? (
+                        <SelectItem value="__no_accounts__" disabled>No accounts yet. Create one in Manage.</SelectItem>
+                      ) : (
+                        accounts.map((a) => (
+                          <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -479,9 +483,13 @@ export default function Capture() {
                   <Select value={categoryId} onValueChange={setCategoryId}>
                     <SelectTrigger id="category"><SelectValue placeholder="Select category" /></SelectTrigger>
                     <SelectContent>
-                      {categories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                      ))}
+                      {categories.length === 0 ? (
+                        <SelectItem value="__no_categories__" disabled>No categories yet. Create one in Manage.</SelectItem>
+                      ) : (
+                        categories.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -520,9 +528,13 @@ export default function Capture() {
                   <Select value={transferFrom} onValueChange={setTransferFrom}>
                     <SelectTrigger id="transfer-from"><SelectValue placeholder="Select source account" /></SelectTrigger>
                     <SelectContent>
-                      {accounts.map((a) => (
-                        <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
-                      ))}
+                      {accounts.length === 0 ? (
+                        <SelectItem value="__no_accounts__" disabled>No accounts yet. Create one in Manage.</SelectItem>
+                      ) : (
+                        accounts.map((a) => (
+                          <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -532,9 +544,13 @@ export default function Capture() {
                   <Select value={transferTo} onValueChange={(v) => { setTransferTo(v); setTransferExternal(""); }}>
                     <SelectTrigger id="transfer-to"><SelectValue placeholder="Select destination account" /></SelectTrigger>
                     <SelectContent>
-                      {accounts.filter((a) => a.id !== transferFrom).map((a) => (
-                        <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
-                      ))}
+                      {accounts.filter((a) => a.id !== transferFrom).length === 0 ? (
+                        <SelectItem value="__no_accounts__" disabled>No other accounts available.</SelectItem>
+                      ) : (
+                        accounts.filter((a) => a.id !== transferFrom).map((a) => (
+                          <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -602,9 +618,13 @@ export default function Capture() {
                   <Select value={goalId} onValueChange={setGoalId}>
                     <SelectTrigger id="goal"><SelectValue placeholder="Select goal" /></SelectTrigger>
                     <SelectContent>
-                      {activeGoals.map((g) => (
-                        <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
-                      ))}
+                      {activeGoals.length === 0 ? (
+                        <SelectItem value="__no_goals__" disabled>No goals yet. Create one in Planning.</SelectItem>
+                      ) : (
+                        activeGoals.map((g) => (
+                          <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

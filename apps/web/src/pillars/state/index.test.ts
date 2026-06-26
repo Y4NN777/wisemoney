@@ -188,6 +188,7 @@ describe("createBudget", () => {
     fakeCategoriesTable.seed({ id: "cat-1" });
 
     const id = await createBudget({
+      name: "Groceries",
       categoryId: "cat-1",
       limit: { minorUnits: 50000, currency: "USD" },
       periodMonth: "2026-06",
@@ -201,6 +202,7 @@ describe("createBudget", () => {
   it("throws ValidationError when category does not exist (INV-EVT-03)", async () => {
     await expect(
       createBudget({
+        name: "Groceries",
         categoryId: "nonexistent",
         limit: { minorUnits: 50000, currency: "USD" },
         periodMonth: "2026-06",

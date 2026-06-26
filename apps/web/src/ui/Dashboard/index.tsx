@@ -423,7 +423,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                   <div>
                     <p className="text-sm font-medium text-red-800 dark:text-red-300">Budget exceeded</p>
                     <p className="text-xs text-red-700 dark:text-red-400">
-                      {a.categoryName} exceeded its budget of{" "}
+                      "{a.budget.name}" exceeded its budget of{" "}
                       {formatMoney(a.progress.limit.minorUnits, a.progress.limit.currency)}.
                     </p>
                   </div>
@@ -597,10 +597,13 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                 return (
                   <div key={budget.id} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-1">
-                        {cat?.name ?? "Unknown"}
-                        {nearingLimit && <Info className="h-3 w-3 text-amber-500" />}
-                        {overspent && <AlertTriangle className="h-3 w-3 text-destructive" />}
+                      <span className="flex items-center gap-1 min-w-0">
+                        <span className="truncate">{budget.name}</span>
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal shrink-0">
+                          {cat?.name ?? "Unknown"}
+                        </Badge>
+                        {nearingLimit && <Info className="h-3 w-3 text-amber-500 shrink-0" />}
+                        {overspent && <AlertTriangle className="h-3 w-3 text-destructive shrink-0" />}
                       </span>
                       <span className={overspent ? "text-destructive font-medium" : nearingLimit ? "text-amber-600 font-medium" : "text-muted-foreground"}>
                         {formatMoney(prog.spent.minorUnits, prog.spent.currency)} / {formatMoney(prog.limit.minorUnits, prog.limit.currency)}

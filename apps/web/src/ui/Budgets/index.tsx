@@ -4,6 +4,7 @@ import { Card, CardContent } from "../../components/ui/card.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
+import { Badge } from "../../components/ui/badge.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Progress } from "../../components/ui/progress.tsx";
@@ -28,6 +29,7 @@ export default function Budgets() {
   const archiveBudget = useArchiveBudget();
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [budgetName, setBudgetName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [limitStr, setLimitStr] = useState("");
   const [periodMonth, setPeriodMonth] = useState(currentMonth());
@@ -36,6 +38,10 @@ export default function Budgets() {
   const handleCreate = (e: FormEvent) => {
     e.preventDefault();
     setCreateError(null);
+    if (!budgetName.trim()) {
+      setCreateError("Enter a budget name");
+      return;
+    }
     const amount = parseFloat(limitStr);
     if (isNaN(amount) || amount <= 0) {
       setCreateError("Enter a valid amount");
@@ -48,6 +54,7 @@ export default function Budgets() {
     const minorUnits = Math.round(amount * 100);
     createBudget.mutate(
       {
+        name: budgetName.trim(),
         categoryId,
         limit: { minorUnits, currency: "USD" },
         periodMonth,
@@ -55,6 +62,7 @@ export default function Budgets() {
       {
         onSuccess: () => {
           setDialogOpen(false);
+          setBudgetName("");
           setCategoryId("");
           setLimitStr("");
           setCreateError(null);
@@ -104,15 +112,29 @@ export default function Budgets() {
                 <p role="alert" className="text-destructive text-sm">{createError}</p>
               )}
               <div className="space-y-2">
+                <Label htmlFor="budget-name">Name</Label>
+                <Input
+                  id="budget-name"
+                  placeholder="e.g. Monthly Groceries"
+                  value={budgetName}
+                  onChange={(e) => setBudgetName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="budget-category">Category</Label>
                 <Select value={categoryId} onValueChange={setCategoryId}>
                   <SelectTrigger id="budget-category">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
+                    {categories.length === 0 ? (
+                      <SelectItem value="__no_categories__" disabled>No categories yet. Create one in Manage.</SelectItem>
+                    ) : (
+                      categories.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -165,10 +187,15 @@ export default function Budgets() {
               <Card key={budget.id} className={`interactive-surface ${overspent ? "border-destructive bg-destructive/10" : nearing ? "border-amber bg-amber-wash" : ""}`}>
                 <CardContent className="pt-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{cat?.name ?? "Unknown"}</span>
-                      {overspent && <AlertTriangle className="h-4 w-4 text-destructive" />}
-                      {nearing && <Info className="h-4 w-4 text-amber-500" />}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="min-w-0">
+                        <span className="text-sm font-medium block truncate">{budget.name}</span>
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal mt-0.5">
+                          {cat?.name ?? "Unknown"}
+                        </Badge>
+                      </div>
+                      {overspent && <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />}
+                      {nearing && <Info className="h-4 w-4 text-amber-500 shrink-0" />}
                     </div>
                     <Button
                       variant="ghost"
@@ -215,9 +242,14 @@ export default function Budgets() {
               const cat = categories.find((c) => c.id === budget.categoryId);
               return (
                 <Card key={budget.id} className="opacity-60">
-                  <CardContent className="py-2 flex items-center justify-between">
-                    <span className="text-sm">{cat?.name ?? "Unknown"}</span>
-                    <span className="text-xs text-muted-foreground">{budget.periodMonth}</span>
+                  <CardContent className="py-2 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="text-sm block truncate">{budget.name}</span>
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal mt-0.5">
+                        {cat?.name ?? "Unknown"}
+                      </Badge>
+                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0">{budget.periodMonth}</span>
                   </CardContent>
                 </Card>
               );

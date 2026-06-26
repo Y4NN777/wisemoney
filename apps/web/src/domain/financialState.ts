@@ -28,6 +28,7 @@ export type CategoryState = {
 
 export type BudgetState = {
   id: string;
+  name: string;
   categoryId: string;
   limit: MoneyDTO;
   periodMonth: string;
@@ -149,6 +150,7 @@ type Accumulator = {
   }>;
   budgets: Map<string, {
     id: string;
+    name: string;
     categoryId: string;
     limit: MoneyDTO;
     periodMonth: string;
@@ -338,12 +340,14 @@ function applyPayload(
     }
     case "budget_created": {
       const p = payload as unknown as {
+        name: string;
         categoryId: string;
         limit: { minorUnits: number; currency: string };
         periodMonth: string;
       };
       acc.budgets.set(eventId, {
         id: eventId,
+        name: p.name,
         categoryId: p.categoryId,
         limit: { minorUnits: p.limit.minorUnits, currency: p.limit.currency },
         periodMonth: p.periodMonth,

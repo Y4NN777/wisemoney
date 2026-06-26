@@ -318,6 +318,7 @@ export async function archiveCategory(params: ArchiveCategoryParams): Promise<vo
 // ---------------------------------------------------------------------------
 
 export type CreateBudgetParams = {
+  name: string;
   categoryId: string;
   limit: MoneyDTO;
   periodMonth: string;
@@ -329,6 +330,9 @@ export async function createBudget(
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
 
+  if (!params.name || params.name.trim().length === 0) {
+    errors.push({ field: "name", message: "Budget name is required" });
+  }
   const category = await db.categories.get(params.categoryId);
   if (!category) {
     errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
@@ -355,6 +359,7 @@ export async function createBudget(
     type: "budget_created",
     entityId: params.categoryId,
     payload: {
+      name: params.name.trim(),
       categoryId: params.categoryId,
       limit: params.limit,
       periodMonth: params.periodMonth,

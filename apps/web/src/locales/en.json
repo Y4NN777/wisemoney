@@ -507,6 +507,7 @@
     "chat": {
       "title": "Financial Literacy Chat",
       "description": "Ask anything about personal finance",
+      "paused": "Chat is paused until you configure a provider key or connect the managed edge.",
       "emptyTitle": "Ask a question to start learning",
       "emptyExample": "e.g. \"What is the 50/30/20 rule?\"",
       "placeholder": "Ask a question…",

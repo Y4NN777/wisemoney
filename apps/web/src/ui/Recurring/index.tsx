@@ -161,9 +161,13 @@ export default function Recurring() {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
+                    {categories.length === 0 ? (
+                      <SelectItem value="__no_categories__" disabled>No categories yet. Create one in Manage.</SelectItem>
+                    ) : (
+                      categories.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -306,11 +310,15 @@ export default function Recurring() {
                       <SelectValue placeholder="Select account" />
                     </SelectTrigger>
                     <SelectContent>
-                      {accounts.map((a) => (
-                        <SelectItem key={a.id} value={a.id}>
-                          {a.name} ({formatMoney(a.balance.minorUnits, a.balance.currency)})
-                        </SelectItem>
-                      ))}
+                      {accounts.length === 0 ? (
+                        <SelectItem value="__no_accounts__" disabled>No accounts yet. Create one in Manage.</SelectItem>
+                      ) : (
+                        accounts.map((a) => (
+                          <SelectItem key={a.id} value={a.id}>
+                            {a.name} ({formatMoney(a.balance.minorUnits, a.balance.currency)})
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
