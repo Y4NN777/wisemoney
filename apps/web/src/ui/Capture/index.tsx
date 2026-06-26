@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
-import { Plus, ArrowUp, ArrowDown, Pencil, Wallet, Tags, Search, CreditCard, Trash2 } from "lucide-react";
+import { Plus, ArrowUp, ArrowDown, Pencil, Wallet, Tags, Search, CreditCard, Trash2, Check, ChevronsUpDown } from "lucide-react";
 
 function parseAmount(input: string): number | null {
   const cleaned = input.replace(/[^0-9.,]/g, "").replace(/,/g, ".");
@@ -115,7 +115,9 @@ const ACCOUNT_TYPES = [
 ] as const;
 
 function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValueChange: (value: string) => void }) {
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const selected = ACCOUNT_CURRENCIES.find((currency) => currency.code === value);
   const filteredCurrencies = ACCOUNT_CURRENCIES.filter((currency) => {
     const normalized = query.trim().toLowerCase();
     if (normalized.length === 0) return true;
@@ -129,41 +131,68 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
 
   return (
     <div className="space-y-2">
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          id="accCurrency"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={`Search currency (${value})`}
-          className="pl-9"
-        />
-      </div>
-      <div className="max-h-56 overflow-y-auto rounded-lg border border-border bg-background p-1" role="listbox" aria-label="Account currency">
-        {filteredCurrencies.length === 0 ? (
-          <p className="px-3 py-4 text-sm text-muted-foreground">No matching currency.</p>
-        ) : (
-          filteredCurrencies.map((currency) => (
-            <button
-              key={currency.code}
-              type="button"
-              role="option"
-              aria-selected={currency.code === value}
-              className={`flex w-full items-start justify-between gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${currency.code === value ? "bg-accent text-accent-foreground" : ""}`}
-              onClick={() => {
-                onValueChange(currency.code);
-                setQuery("");
-              }}
-            >
-              <span className="min-w-0">
-                <span className="block font-semibold">{currency.code} - {currency.name}</span>
-                {currency.countries.length > 0 && <span className="block truncate text-xs text-muted-foreground">{currency.countries}</span>}
-              </span>
-              <span className="shrink-0 rounded-md border border-border px-2 py-0.5 text-xs">{currency.region}</span>
-            </button>
-          ))
-        )}
-      </div>
+      <button
+        id="accCurrency"
+        type="button"
+        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-input bg-card px-3 py-2 text-left text-sm shadow-sm transition-colors hover:border-primary/30 focus-visible:border-primary"
+        onClick={() => setOpen((next) => !next)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        <span className="min-w-0">
+          <span className="block truncate font-semibold">{selected != null ? `${selected.code} - ${selected.name}` : value}</span>
+          {selected?.countries != null && selected.countries.length > 0 && (
+            <span className="mt-0.5 block truncate text-xs text-muted-foreground">{selected.countries}</span>
+          )}
+        </span>
+        <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+      </button>
+
+      {open && (
+        <div className="rounded-lg border border-border bg-background shadow-sm">
+          <div className="border-b border-border p-2">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={`Search currency (${value})`}
+                className="pl-9"
+                autoFocus
+              />
+            </div>
+          </div>
+          <div className="max-h-[min(18rem,42dvh)] overflow-y-auto p-1" role="listbox" aria-label="Account currency">
+            {filteredCurrencies.length === 0 ? (
+              <p className="px-3 py-4 text-sm text-muted-foreground">No matching currency.</p>
+            ) : (
+              filteredCurrencies.map((currency) => (
+                <button
+                  key={currency.code}
+                  type="button"
+                  role="option"
+                  aria-selected={currency.code === value}
+                  className={`flex w-full items-start justify-between gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${currency.code === value ? "bg-accent text-accent-foreground" : ""}`}
+                  onClick={() => {
+                    onValueChange(currency.code);
+                    setQuery("");
+                    setOpen(false);
+                  }}
+                >
+                  <span className="min-w-0">
+                    <span className="block font-semibold">{currency.code} - {currency.name}</span>
+                    {currency.countries.length > 0 && <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">{currency.countries}</span>}
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs">
+                    {currency.code === value && <Check className="h-3 w-3" />}
+                    {currency.region}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -376,7 +405,7 @@ export default function Capture() {
       </div>
 
       <Tabs defaultValue="transaction">
-        <TabsList className="grid w-full grid-cols-4 lg:w-[560px]">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 sm:grid-cols-4 lg:w-[560px]">
           <TabsTrigger value="transaction">Transaction</TabsTrigger>
           <TabsTrigger value="transfer">Transfer</TabsTrigger>
           <TabsTrigger value="goal">Goal</TabsTrigger>
@@ -629,7 +658,7 @@ export default function Capture() {
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />New</Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent className="sm:max-w-xl">
                         <DialogHeader>
                           <DialogTitle>Create Category</DialogTitle>
                         </DialogHeader>
@@ -708,7 +737,7 @@ export default function Capture() {
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />New</Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent className="sm:max-w-xl">
                         <DialogHeader>
                           <DialogTitle>Create Account</DialogTitle>
                         </DialogHeader>
@@ -718,7 +747,7 @@ export default function Capture() {
                             <Label htmlFor="accName">Account name</Label>
                             <Input id="accName" value={newAccName} onChange={(e) => setNewAccName(e.target.value)} placeholder="e.g. Orange Money, Checking, Cash" required />
                           </div>
-                          <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="grid gap-3 md:grid-cols-2">
                             <div className="space-y-2">
                               <Label htmlFor="accType">Type</Label>
                               <Select value={newAccType} onValueChange={setNewAccType}>
@@ -760,13 +789,14 @@ export default function Capture() {
                     <ul className="space-y-2">
                       {filteredAccounts.map((a) => (
                         <li key={a.id} className="rounded-lg border border-border bg-accent/35 p-3">
-                          <div className="flex items-start justify-between gap-3">
+                          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
                             <div className="min-w-0">
                               <p className="truncate text-sm font-semibold">{a.name}</p>
                               <p className="text-xs capitalize text-muted-foreground">{a.type.replace(/_/g, " ")} &middot; {a.currency}</p>
                             </div>
-                            <div className="flex shrink-0 items-start gap-1">
-                              <p className="mr-1 text-sm font-semibold tabular-nums">{formatMoney(a.balance.minorUnits, a.balance.currency)}</p>
+                            <div className="flex min-w-0 items-center justify-between gap-2 sm:justify-end">
+                              <p className="min-w-0 truncate text-sm font-semibold tabular-nums">{formatMoney(a.balance.minorUnits, a.balance.currency)}</p>
+                              <div className="flex shrink-0 items-center gap-1">
                               <Button
                                 type="button"
                                 variant="ghost"
@@ -792,6 +822,7 @@ export default function Capture() {
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
+                              </div>
                             </div>
                           </div>
                           <p className="mt-2 text-xs text-muted-foreground">Opening balance: {formatMoney(a.initialBalance.minorUnits, a.initialBalance.currency)}</p>
