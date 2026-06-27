@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, ArrowUp, ArrowDown, Pencil, Wallet, Tags, Search, CreditCard, Trash2, Check, ChevronsUpDown } from "lucide-react";
+import { toast } from "sonner";
 
 function parseAmount(input: string): number | null {
   const cleaned = input.replace(/[^0-9.,]/g, "").replace(/,/g, ".");
@@ -239,11 +240,13 @@ export default function Capture() {
   const [txError, setTxError] = useState<string | null>(null);
 
   const [newCatName, setNewCatName] = useState("");
+  const [createCategoryOpen, setCreateCategoryOpen] = useState(false);
   const [catSearch, setCatSearch] = useState("");
   const [renameDialog, setRenameDialog] = useState<{ id: string; name: string } | null>(null);
   const [renameName, setRenameName] = useState("");
   const [catError, setCatError] = useState<string | null>(null);
   const [newAccName, setNewAccName] = useState("");
+  const [createAccountOpen, setCreateAccountOpen] = useState(false);
   const [newAccType, setNewAccType] = useState("checking");
   const [newAccCurrency, setNewAccCurrency] = useState(() => localStorage.getItem("wisemoney_default_currency") ?? "XOF");
   const [newAccBalance, setNewAccBalance] = useState("");
@@ -291,8 +294,20 @@ export default function Capture() {
       amount: money,
       ...(transferNote ? { note: transferNote } : {}),
     }, {
-      onSuccess: () => { setTransferAmount(""); setTransferNote(""); setTransferFrom(""); setTransferTo(""); setTransferExternal(""); setTransferError(null); },
-      onError: (err) => { setTransferError(err instanceof Error ? err.message : "Failed to record transfer"); },
+      onSuccess: () => {
+        setTransferAmount("");
+        setTransferNote("");
+        setTransferFrom("");
+        setTransferTo("");
+        setTransferExternal("");
+        setTransferError(null);
+        toast.success("Transfer recorded");
+      },
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to record transfer";
+        setTransferError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -305,8 +320,17 @@ export default function Capture() {
     if (!accountId) { setTxError("Select an account"); return; }
     const money = { minorUnits: direction === "expense" ? -amount : amount, currency: snapshot?.totalBalance.currency ?? "USD" };
     recordTx.mutate({ accountId, categoryId, amount: money, direction, ...(note ? { note } : {}) }, {
-      onSuccess: () => { setAmountStr(""); setNote(""); setTxError(null); },
-      onError: (err) => { setTxError(err instanceof Error ? err.message : "Failed to record transaction"); },
+      onSuccess: () => {
+        setAmountStr("");
+        setNote("");
+        setTxError(null);
+        toast.success(direction === "income" ? "Income recorded" : "Expense recorded");
+      },
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to record transaction";
+        setTxError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -314,9 +338,18 @@ export default function Capture() {
     e.preventDefault();
     setCatError(null);
     if (!newCatName.trim()) return;
-    createCat.mutate({ name: newCatName.trim() }, {
-      onSuccess: () => setNewCatName(""),
-      onError: (err) => setCatError(err instanceof Error ? err.message : "Failed to create category"),
+    const categoryName = newCatName.trim();
+    createCat.mutate({ name: categoryName }, {
+      onSuccess: () => {
+        setNewCatName("");
+        setCreateCategoryOpen(false);
+        toast.success("Category created", { description: categoryName });
+      },
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to create category";
+        setCatError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -328,8 +361,13 @@ export default function Capture() {
       onSuccess: () => {
         setRenameDialog(null);
         setRenameName("");
+        toast.success("Category renamed");
       },
-      onError: (err) => setCatError(err instanceof Error ? err.message : "Failed to rename category"),
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to rename category";
+        setCatError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -337,7 +375,12 @@ export default function Capture() {
     setCatError(null);
     if (!window.confirm(`Archive category "${categoryName}"? Existing history stays intact.`)) return;
     archiveCat.mutate({ categoryId }, {
-      onError: (err) => setCatError(err instanceof Error ? err.message : "Failed to archive category"),
+      onSuccess: () => toast.success("Category archived", { description: categoryName }),
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to archive category";
+        setCatError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -351,12 +394,19 @@ export default function Capture() {
       return;
     }
     const money = { minorUnits: parsedBalance, currency: newAccCurrency };
-    createAccount.mutate({ name: newAccName.trim(), type: newAccType, initialBalance: money }, {
+    const accountName = newAccName.trim();
+    createAccount.mutate({ name: accountName, type: newAccType, initialBalance: money }, {
       onSuccess: () => {
         setNewAccName("");
         setNewAccBalance("");
+        setCreateAccountOpen(false);
+        toast.success("Account created", { description: accountName });
       },
-      onError: (err) => setAccountError(err instanceof Error ? err.message : "Failed to create account"),
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to create account";
+        setAccountError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -369,8 +419,13 @@ export default function Capture() {
         setEditAccountDialog(null);
         setEditAccName("");
         setEditAccType("checking");
+        toast.success("Account updated");
       },
-      onError: (err) => setAccountError(err instanceof Error ? err.message : "Failed to update account"),
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to update account";
+        setAccountError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -378,7 +433,12 @@ export default function Capture() {
     setAccountError(null);
     if (!window.confirm(`Archive account "${accountName}"? Existing history stays intact.`)) return;
     archiveAccount.mutate({ accountId }, {
-      onError: (err) => setAccountError(err instanceof Error ? err.message : "Failed to archive account"),
+      onSuccess: () => toast.success("Account archived", { description: accountName }),
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to archive account";
+        setAccountError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -390,8 +450,16 @@ export default function Capture() {
     if (!goalId) { setGoalError("Select a goal"); return; }
     const money = { minorUnits: amount, currency: "USD" };
     recordGoalContrib.mutate({ goalId, amount: money }, {
-      onSuccess: () => { setGoalAmountStr(""); setGoalError(null); },
-      onError: (err) => { setGoalError(err instanceof Error ? err.message : "Failed"); },
+      onSuccess: () => {
+        setGoalAmountStr("");
+        setGoalError(null);
+        toast.success("Goal contribution added");
+      },
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : "Failed to add contribution";
+        setGoalError(message);
+        toast.error(message);
+      },
     });
   };
 
@@ -696,7 +764,13 @@ export default function Capture() {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between text-base">
                     Categories
-                    <Dialog>
+                    <Dialog
+                      open={createCategoryOpen}
+                      onOpenChange={(open) => {
+                        setCreateCategoryOpen(open);
+                        if (open) setCatError(null);
+                      }}
+                    >
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />New</Button>
                       </DialogTrigger>
@@ -775,7 +849,13 @@ export default function Capture() {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between text-base">
                     Accounts
-                    <Dialog>
+                    <Dialog
+                      open={createAccountOpen}
+                      onOpenChange={(open) => {
+                        setCreateAccountOpen(open);
+                        if (open) setAccountError(null);
+                      }}
+                    >
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />New</Button>
                       </DialogTrigger>
