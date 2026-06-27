@@ -621,6 +621,8 @@
       "csv": "Exporter CSV",
       "xlsx": "Exporter XLSX",
       "encrypted": "Exportation chiffrée",
+      "success": "Exportation téléchargée",
+      "encryptedSuccess": "Exportation chiffrée téléchargée",
       "errors": {
         "failed": "Échec de l'exportation",
         "encryptedFailed": "Échec de l'exportation chiffrée"

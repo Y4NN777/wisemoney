@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, Sel
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Repeat, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 function formatMoney(minorUnits: number, currency: string): string {
   const symbol: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
@@ -60,11 +61,12 @@ export default function Recurring() {
       return;
     }
     const minorUnits = Math.round(parsed * 100);
+    const itemLabel = label.trim();
 
     createItem.mutate(
       {
         categoryId,
-        label: label.trim(),
+        label: itemLabel,
         amount: { minorUnits, currency: "USD" },
         direction,
         frequency,
@@ -77,9 +79,12 @@ export default function Recurring() {
           setLabel("");
           setAmountStr("");
           setCreateError(null);
+          toast.success("Recurring item created", { description: itemLabel });
         },
         onError: (err) => {
-          setCreateError(err instanceof Error ? err.message : "Failed to create recurring item");
+          const message = err instanceof Error ? err.message : "Failed to create recurring item";
+          setCreateError(message);
+          toast.error(message);
         },
       }
     );
@@ -102,6 +107,11 @@ export default function Recurring() {
         onSuccess: () => {
           setRealiseDialog(null);
           setRealiseAccountId("");
+          toast.success("Occurrence recorded", { description: realiseDialog.label });
+        },
+        onError: (err) => {
+          const message = err instanceof Error ? err.message : "Failed to record occurrence";
+          toast.error(message);
         },
       }
     );

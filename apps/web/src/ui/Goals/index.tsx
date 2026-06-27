@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Archive, Target } from "lucide-react";
+import { toast } from "sonner";
 
 function formatMoney(minorUnits: number, currency: string): string {
   const symbol: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
@@ -41,8 +42,9 @@ export default function Goals() {
       return;
     }
     const minorUnits = Math.round(amount * 100);
+    const goalName = name.trim();
     const goalArgs: Omit<CreateGoalParams, "masterKey"> = {
-      name: name.trim(),
+      name: goalName,
       targetAmount: { minorUnits, currency: "USD" },
     };
     if (targetDate) {
@@ -55,9 +57,12 @@ export default function Goals() {
           setTargetStr("");
           setTargetDate("");
           setCreateError(null);
+          toast.success("Goal created", { description: goalName });
         },
         onError: (err) => {
-          setCreateError(err instanceof Error ? err.message : "Failed to create goal");
+          const message = err instanceof Error ? err.message : "Failed to create goal";
+          setCreateError(message);
+          toast.error(message);
         },
       });
   };
@@ -157,7 +162,16 @@ export default function Goals() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => archiveGoal.mutate({ goalId: goal.id })}
+                      onClick={() => archiveGoal.mutate(
+                        { goalId: goal.id },
+                        {
+                          onSuccess: () => toast.success("Goal archived", { description: goal.name }),
+                          onError: (err) => {
+                            const message = err instanceof Error ? err.message : "Failed to archive goal";
+                            toast.error(message);
+                          },
+                        },
+                      )}
                       disabled={archiveGoal.isPending}
                     >
                       <Archive className="h-4 w-4" />

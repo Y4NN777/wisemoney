@@ -7,6 +7,7 @@ import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Key, Eye, EyeOff, Check, Loader2, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 
 type ProviderInfo = {
   id: string;
@@ -66,9 +67,12 @@ export default function BYOKeySettings() {
       }));
       setInputValues((prev) => ({ ...prev, [providerId]: "" }));
       setSaved(providerId);
+      toast.success("Key saved", { description: PROVIDERS.find((provider) => provider.id === providerId)?.name ?? providerId });
       setTimeout(() => setSaved(null), 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save key");
+      const message = err instanceof Error ? err.message : "Failed to save key";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(null);
     }

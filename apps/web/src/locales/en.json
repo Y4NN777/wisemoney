@@ -622,6 +622,8 @@
       "csv": "Export CSV",
       "xlsx": "Export XLSX",
       "encrypted": "Encrypted Export",
+      "success": "Export downloaded",
+      "encryptedSuccess": "Encrypted export downloaded",
       "errors": {
         "failed": "Export failed",
         "encryptedFailed": "Encrypted export failed"

@@ -8,6 +8,7 @@ import { Label } from "../../components/ui/label.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog.tsx";
 import { Download, Upload, AlertTriangle, Loader2, FileDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
@@ -34,6 +35,7 @@ export default function ExportImportSection() {
 
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [pendingEncryptedImportText, setPendingEncryptedImportText] = useState<string | null>(null);
 
   const handleExport = async (format: "json" | "csv" | "xlsx") => {
     setExportError(null);
@@ -59,8 +61,11 @@ export default function ExportImportSection() {
         }
       }
       downloadBlob(blob, filename);
+      toast.success(t("exportImport.export.success"), { description: filename });
     } catch {
-      setExportError(t("exportImport.export.errors.failed"));
+      const message = t("exportImport.export.errors.failed");
+      setExportError(message);
+      toast.error(message);
     } finally {
       setExporting(null);
     }
@@ -78,8 +83,11 @@ export default function ExportImportSection() {
       downloadBlob(blob, `wisemoney-encrypted-${Date.now()}.wmexport`);
       setShowPassphraseDialog(null);
       setPassphrase("");
+      toast.success(t("exportImport.export.encryptedSuccess"));
     } catch {
-      setExportError(t("exportImport.export.errors.encryptedFailed"));
+      const message = t("exportImport.export.errors.encryptedFailed");
+      setExportError(message);
+      toast.error(message);
     } finally {
       setExporting(null);
     }
@@ -99,6 +107,7 @@ export default function ExportImportSection() {
       const parsed = JSON.parse(text) as Record<string, unknown>;
       if (parsed != null && typeof parsed === "object" && "ciphertext" in parsed && "iv" in parsed) {
         // Encrypted export — need passphrase
+        setPendingEncryptedImportText(text);
         setPassphrase("");
         setPassphraseError(null);
         setShowPassphraseDialog("import");
@@ -107,7 +116,9 @@ export default function ExportImportSection() {
       // Plain JSON — import directly
       await doImport(text);
     } catch {
-      setImportResult({ ok: false, message: t("exportImport.import.errors.invalidFile") });
+      const message = t("exportImport.import.errors.invalidFile");
+      setImportResult({ ok: false, message });
+      toast.error(message);
     }
   };
 
@@ -117,8 +128,9 @@ export default function ExportImportSection() {
       return;
     }
     setPassphraseError(null);
-    await doImport(null, passphrase);
+    await doImport(pendingEncryptedImportText, passphrase);
     setShowPassphraseDialog(null);
+    setPendingEncryptedImportText(null);
     setPassphrase("");
   };
 
@@ -137,9 +149,15 @@ export default function ExportImportSection() {
         blob = file;
       }
       await importJSON(blob, masterKey, exportPassphrase);
-      setImportResult({ ok: true, message: t("exportImport.import.success") });
+      {
+        const message = t("exportImport.import.success");
+        setImportResult({ ok: true, message });
+        toast.success(message);
+      }
     } catch {
-      setImportError(t("exportImport.import.errors.failed"));
+      const message = t("exportImport.import.errors.failed");
+      setImportError(message);
+      toast.error(message);
     } finally {
       setImporting(false);
     }
@@ -260,6 +278,7 @@ export default function ExportImportSection() {
             setShowPassphraseDialog(null);
             setPassphrase("");
             setPassphraseError(null);
+            setPendingEncryptedImportText(null);
           }
         }}
       >
@@ -308,6 +327,7 @@ export default function ExportImportSection() {
                   setShowPassphraseDialog(null);
                   setPassphrase("");
                   setPassphraseError(null);
+                  setPendingEncryptedImportText(null);
                 }}
               >
                 {t("exportImport.passphrase.cancel")}

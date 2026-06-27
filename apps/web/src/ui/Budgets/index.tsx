@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Archive, AlertTriangle, Info } from "lucide-react";
+import { toast } from "sonner";
 
 function formatMoney(minorUnits: number, currency: string): string {
   const symbol: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
@@ -52,9 +53,10 @@ export default function Budgets() {
       return;
     }
     const minorUnits = Math.round(amount * 100);
+    const name = budgetName.trim();
     createBudget.mutate(
       {
-        name: budgetName.trim(),
+        name,
         categoryId,
         limit: { minorUnits, currency: "USD" },
         periodMonth,
@@ -66,9 +68,12 @@ export default function Budgets() {
           setCategoryId("");
           setLimitStr("");
           setCreateError(null);
+          toast.success("Budget created", { description: name });
         },
         onError: (err) => {
-          setCreateError(err instanceof Error ? err.message : "Failed to create budget");
+          const message = err instanceof Error ? err.message : "Failed to create budget";
+          setCreateError(message);
+          toast.error(message);
         },
       }
     );
@@ -200,7 +205,16 @@ export default function Budgets() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => archiveBudget.mutate({ budgetId: budget.id })}
+                      onClick={() => archiveBudget.mutate(
+                        { budgetId: budget.id },
+                        {
+                          onSuccess: () => toast.success("Budget archived", { description: budget.name }),
+                          onError: (err) => {
+                            const message = err instanceof Error ? err.message : "Failed to archive budget";
+                            toast.error(message);
+                          },
+                        },
+                      )}
                       disabled={archiveBudget.isPending}
                     >
                       <Archive className="h-4 w-4" />
