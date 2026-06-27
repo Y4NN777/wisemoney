@@ -152,6 +152,21 @@ describe("replayFromInception", () => {
     expect(snapshot.totalBalance).toEqual({ minorUnits: 97500, currency: "USD" });
   });
 
+  it("normalizes signed transaction amounts from older callers", async () => {
+    const e1 = makeEvent({
+      id: "acct-1", timestamp: 1000, type: "account_created",
+      payload: { name: "Checking", type: "checking", initialBalance: { minorUnits: 100000, currency: "USD" } },
+    });
+    const e2 = makeEvent({
+      id: "e2", timestamp: 2000, type: "transaction_created", entityId: "acct-1",
+      payload: { accountId: "acct-1", categoryId: "cat-1", amount: { minorUnits: -2500, currency: "USD" }, direction: "expense" },
+    });
+
+    const snapshot = await replayFromInception([e1, e2], mkKey);
+    expect(snapshot.accounts[0]!.balance).toEqual({ minorUnits: 97500, currency: "USD" });
+    expect(snapshot.periodExpenses).toEqual({ minorUnits: 2500, currency: "USD" });
+  });
+
   it("replays category archive event", async () => {
     const created = makeEvent({
       id: "cat-1", timestamp: 1000, type: "category_created",

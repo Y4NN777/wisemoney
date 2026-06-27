@@ -110,6 +110,10 @@ function subMoney(a: MoneyDTO, b: MoneyDTO): MoneyDTO {
   return { minorUnits: a.minorUnits - b.minorUnits, currency: a.currency };
 }
 
+function positiveMoney(amount: MoneyDTO): MoneyDTO {
+  return { minorUnits: Math.abs(amount.minorUnits), currency: amount.currency };
+}
+
 function percentage(part: number, total: number): number {
   if (total === 0) return 0;
   return Math.round((part / total) * 10000) / 100;
@@ -246,7 +250,7 @@ function applyPayload(
         amount: { minorUnits: number; currency: string };
         direction: "income" | "expense";
       };
-      const amount: MoneyDTO = { minorUnits: p.amount.minorUnits, currency: p.amount.currency };
+      const amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
       const account = acc.accounts.get(p.accountId);
       if (account) {
         if (p.direction === "income") {
@@ -285,7 +289,7 @@ function applyPayload(
         }
         oldTx.accountId = p.accountId;
         oldTx.categoryId = p.categoryId;
-        oldTx.amount = { minorUnits: p.amount.minorUnits, currency: p.amount.currency };
+        oldTx.amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
         oldTx.direction = p.direction;
         const newAccount = acc.accounts.get(p.accountId);
         if (newAccount) {
@@ -387,7 +391,7 @@ function applyPayload(
       const goal = acc.goals.get(p.goalId);
       if (goal) {
         goal.accumulated = addMoney(goal.accumulated, {
-          minorUnits: p.amount.minorUnits,
+          minorUnits: Math.abs(p.amount.minorUnits),
           currency: p.amount.currency,
         });
       }
@@ -414,7 +418,7 @@ function applyPayload(
         id: eventId,
         categoryId: p.categoryId,
         label: p.label,
-        amount: { minorUnits: p.amount.minorUnits, currency: p.amount.currency },
+        amount: positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency }),
         direction: p.direction,
         frequency: p.frequency,
         startDate: p.startDate,
@@ -428,7 +432,7 @@ function applyPayload(
       if (item) {
         item.lastRealised = p.date;
         if (p.amount) {
-          item.amount = { minorUnits: p.amount.minorUnits, currency: p.amount.currency };
+          item.amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
         }
       }
       break;
@@ -440,7 +444,7 @@ function applyPayload(
         externalDestination: string | null;
         amount: { minorUnits: number; currency: string };
       };
-      const amount: MoneyDTO = { minorUnits: p.amount.minorUnits, currency: p.amount.currency };
+      const amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
       const from = acc.accounts.get(p.fromAccountId);
       if (from) {
         from.balance = subMoney(from.balance, amount);

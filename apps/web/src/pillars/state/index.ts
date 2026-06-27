@@ -1,7 +1,7 @@
 import type { MasterKey } from "@/crypto/envelope.ts";
 import { appendEvent } from "@/domain/eventStore.ts";
 import type { MoneyDTO } from "@/domain/financialState.ts";
-import { db } from "@/db/schema.ts";
+import { getSnapshot } from "@/domain/financialState.ts";
 
 export type { MoneyDTO, AccountState, CategoryState, BudgetState, GoalState, RecurringItemState } from "@/domain/financialState.ts";
 
@@ -17,6 +17,27 @@ type ValidationErrorDetail = {
   field: string;
   message: string;
 };
+
+function validateCurrency(field: string, currency: string, errors: ValidationErrorDetail[]): void {
+  if (!/^[A-Z]{3}$/.test(currency)) {
+    errors.push({ field, message: "Must be ISO-4217" });
+  }
+}
+
+function validateMoney(
+  field: string,
+  amount: MoneyDTO,
+  errors: ValidationErrorDetail[],
+  options: { positive?: boolean } = {}
+): void {
+  if (!Number.isSafeInteger(amount.minorUnits)) {
+    errors.push({ field, message: "Must be a safe integer (INV-MON-01)" });
+  }
+  if (options.positive === true && amount.minorUnits <= 0) {
+    errors.push({ field, message: "Amount must be greater than zero" });
+  }
+  validateCurrency(`${field}.currency`, amount.currency, errors);
+}
 
 export class ValidationError extends Error {
   readonly details: ValidationErrorDetail[];
@@ -49,12 +70,7 @@ export async function createAccount(params: CreateAccountParams): Promise<string
   if (!params.type || params.type.trim().length === 0) {
     errors.push({ field: "type", message: "Account type is required" });
   }
-  if (!Number.isSafeInteger(params.initialBalance.minorUnits)) {
-    errors.push({ field: "initialBalance", message: "Must be a safe integer (INV-MON-01)" });
-  }
-  if (!/^[A-Z]{3}$/.test(params.initialBalance.currency)) {
-    errors.push({ field: "initialBalance.currency", message: "Must be ISO-4217" });
-  }
+  validateMoney("initialBalance", params.initialBalance, errors);
   if (errors.length > 0) {
     throw new ValidationError(errors);
   }
@@ -94,8 +110,13 @@ export type UpdateAccountParams = {
 
 export async function updateAccount(params: UpdateAccountParams): Promise<void> {
   const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
+  const account = snapshot.accounts.find((a) => a.id === params.accountId);
+
   if (!params.accountId || params.accountId.trim().length === 0) {
     errors.push({ field: "accountId", message: "Account id is required" });
+  } else if (account == null || !account.isActive) {
+    errors.push({ field: "accountId", message: "Account not found (INV-EVT-03)" });
   }
   if (!params.name || params.name.trim().length === 0) {
     errors.push({ field: "name", message: "Account name is required" });
@@ -131,8 +152,14 @@ export type ArchiveAccountParams = {
 };
 
 export async function archiveAccount(params: ArchiveAccountParams): Promise<void> {
+  const snapshot = await getSnapshot(params.masterKey);
+  const account = snapshot.accounts.find((a) => a.id === params.accountId);
+
   if (!params.accountId || params.accountId.trim().length === 0) {
     throw new ValidationError([{ field: "accountId", message: "Account id is required" }]);
+  }
+  if (account == null || !account.isActive) {
+    throw new ValidationError([{ field: "accountId", message: "Account not found (INV-EVT-03)" }]);
   }
 
   await appendEvent({
@@ -164,20 +191,19 @@ export async function recordTransaction(
   params: RecordTransactionParams
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
 
-  const account = await db.accounts.get(params.accountId);
-  if (!account) {
+  const account = snapshot.accounts.find((a) => a.id === params.accountId && a.isActive);
+  if (!params.accountId || account == null) {
     errors.push({ field: "accountId", message: "Account not found (INV-EVT-03)" });
   }
-  const category = await db.categories.get(params.categoryId);
-  if (!category) {
+  const category = snapshot.categories.find((c) => c.id === params.categoryId);
+  if (!params.categoryId || category == null) {
     errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
   }
-  if (!Number.isSafeInteger(params.amount.minorUnits)) {
-    errors.push({ field: "amount", message: "Must be a safe integer (INV-MON-01)" });
-  }
-  if (!/^[A-Z]{3}$/.test(params.amount.currency)) {
-    errors.push({ field: "amount.currency", message: "Must be ISO-4217" });
+  validateMoney("amount", params.amount, errors, { positive: true });
+  if (account != null && params.amount.currency !== account.currency) {
+    errors.push({ field: "amount.currency", message: "Must match account currency" });
   }
   if (params.direction !== "income" && params.direction !== "expense") {
     errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });
@@ -224,11 +250,13 @@ export async function createCategory(
   params: CreateCategoryParams
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
+
   if (!params.name || params.name.trim().length === 0) {
     errors.push({ field: "name", message: "Category name is required" });
   }
   if (params.parentId != null) {
-    const parent = await db.categories.get(params.parentId);
+    const parent = snapshot.categories.find((c) => c.id === params.parentId);
     if (parent == null) {
       errors.push({ field: "parentId", message: "Parent category not found" });
     }
@@ -269,8 +297,16 @@ export type RenameCategoryParams = {
 export async function renameCategory(
   params: RenameCategoryParams
 ): Promise<void> {
+  const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
+  if (!params.categoryId || snapshot.categories.find((c) => c.id === params.categoryId) == null) {
+    errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
+  }
   if (!params.newName || params.newName.trim().length === 0) {
-    throw new ValidationError([{ field: "newName", message: "New name is required" }]);
+    errors.push({ field: "newName", message: "New name is required" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
   }
 
   const id = uuid();
@@ -299,8 +335,13 @@ export type ArchiveCategoryParams = {
 };
 
 export async function archiveCategory(params: ArchiveCategoryParams): Promise<void> {
+  const snapshot = await getSnapshot(params.masterKey);
+
   if (!params.categoryId || params.categoryId.trim().length === 0) {
     throw new ValidationError([{ field: "categoryId", message: "Category id is required" }]);
+  }
+  if (snapshot.categories.find((c) => c.id === params.categoryId) == null) {
+    throw new ValidationError([{ field: "categoryId", message: "Category not found (INV-EVT-03)" }]);
   }
 
   await appendEvent({
@@ -329,20 +370,16 @@ export async function createBudget(
   params: CreateBudgetParams
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
 
   if (!params.name || params.name.trim().length === 0) {
     errors.push({ field: "name", message: "Budget name is required" });
   }
-  const category = await db.categories.get(params.categoryId);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId);
   if (!category) {
     errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
   }
-  if (!Number.isSafeInteger(params.limit.minorUnits)) {
-    errors.push({ field: "limit", message: "Must be a safe integer (INV-MON-01)" });
-  }
-  if (!/^[A-Z]{3}$/.test(params.limit.currency)) {
-    errors.push({ field: "limit.currency", message: "Must be ISO-4217" });
-  }
+  validateMoney("limit", params.limit, errors, { positive: true });
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(params.periodMonth)) {
     errors.push({ field: "periodMonth", message: "Must be YYYY-MM format" });
   }
@@ -382,6 +419,15 @@ export type ArchiveBudgetParams = {
 export async function archiveBudget(
   params: ArchiveBudgetParams
 ): Promise<void> {
+  const snapshot = await getSnapshot(params.masterKey);
+  const budget = snapshot.budgets.find((b) => b.id === params.budgetId);
+  if (!params.budgetId || params.budgetId.trim().length === 0) {
+    throw new ValidationError([{ field: "budgetId", message: "Budget id is required" }]);
+  }
+  if (budget == null || budget.isArchived) {
+    throw new ValidationError([{ field: "budgetId", message: "Budget not found (INV-EVT-03)" }]);
+  }
+
   const id = uuid();
   const now = nowMs();
 
@@ -413,11 +459,9 @@ export async function createGoal(
   if (!params.name || params.name.trim().length === 0) {
     errors.push({ field: "name", message: "Goal name is required" });
   }
-  if (!Number.isSafeInteger(params.targetAmount.minorUnits)) {
-    errors.push({ field: "targetAmount", message: "Must be a safe integer (INV-MON-01)" });
-  }
-  if (!/^[A-Z]{3}$/.test(params.targetAmount.currency)) {
-    errors.push({ field: "targetAmount.currency", message: "Must be ISO-4217" });
+  validateMoney("targetAmount", params.targetAmount, errors, { positive: true });
+  if (params.targetDate != null && !Number.isSafeInteger(params.targetDate)) {
+    errors.push({ field: "targetDate", message: "Must be a Unix timestamp in milliseconds" });
   }
   if (errors.length > 0) {
     throw new ValidationError(errors);
@@ -456,16 +500,15 @@ export async function recordGoalContribution(
   params: RecordGoalContributionParams
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
 
-  const goal = await db.goals.get(params.goalId);
+  const goal = snapshot.goals.find((g) => g.id === params.goalId && !g.isArchived);
   if (!goal) {
-    errors.push({ field: "goalId", message: "Goal not found" });
+    errors.push({ field: "goalId", message: "Goal not found (INV-EVT-03)" });
   }
-  if (!Number.isSafeInteger(params.amount.minorUnits)) {
-    errors.push({ field: "amount", message: "Must be a safe integer (INV-MON-01)" });
-  }
-  if (!/^[A-Z]{3}$/.test(params.amount.currency)) {
-    errors.push({ field: "amount.currency", message: "Must be ISO-4217" });
+  validateMoney("amount", params.amount, errors, { positive: true });
+  if (goal != null && params.amount.currency !== goal.targetAmount.currency) {
+    errors.push({ field: "amount.currency", message: "Must match goal currency" });
   }
   if (errors.length > 0) {
     throw new ValidationError(errors);
@@ -501,6 +544,15 @@ export type ArchiveGoalParams = {
 export async function archiveGoal(
   params: ArchiveGoalParams
 ): Promise<void> {
+  const snapshot = await getSnapshot(params.masterKey);
+  const goal = snapshot.goals.find((g) => g.id === params.goalId);
+  if (!params.goalId || params.goalId.trim().length === 0) {
+    throw new ValidationError([{ field: "goalId", message: "Goal id is required" }]);
+  }
+  if (goal == null || goal.isArchived) {
+    throw new ValidationError([{ field: "goalId", message: "Goal not found (INV-EVT-03)" }]);
+  }
+
   const id = uuid();
   const now = nowMs();
 
@@ -532,16 +584,24 @@ export async function createRecurringItem(
   params: CreateRecurringItemParams
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
 
-  const category = await db.categories.get(params.categoryId);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId);
   if (!category) {
     errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
   }
   if (!params.label || params.label.trim().length === 0) {
     errors.push({ field: "label", message: "Label is required" });
   }
-  if (!Number.isSafeInteger(params.amount.minorUnits)) {
-    errors.push({ field: "amount", message: "Must be a safe integer (INV-MON-01)" });
+  validateMoney("amount", params.amount, errors, { positive: true });
+  if (params.direction !== "income" && params.direction !== "expense") {
+    errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });
+  }
+  if (!["weekly", "monthly", "yearly"].includes(params.frequency)) {
+    errors.push({ field: "frequency", message: "Must be weekly, monthly, or yearly" });
+  }
+  if (!Number.isSafeInteger(params.startDate)) {
+    errors.push({ field: "startDate", message: "Must be a Unix timestamp in milliseconds" });
   }
   if (errors.length > 0) {
     throw new ValidationError(errors);
@@ -587,6 +647,41 @@ export type RealiseRecurringOccurrenceParams = {
 export async function realiseRecurringOccurrence(
   params: RealiseRecurringOccurrenceParams
 ): Promise<string> {
+  const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
+  const item = snapshot.recurringItems.find((r) => r.id === params.itemId);
+  const account = snapshot.accounts.find((a) => a.id === params.accountId && a.isActive);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId);
+
+  if (item == null) {
+    errors.push({ field: "itemId", message: "Recurring item not found (INV-EVT-03)" });
+  }
+  if (account == null) {
+    errors.push({ field: "accountId", message: "Account not found (INV-EVT-03)" });
+  }
+  if (category == null) {
+    errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
+  }
+  validateMoney("amount", params.amount, errors, { positive: true });
+  if (account != null && params.amount.currency !== account.currency) {
+    errors.push({ field: "amount.currency", message: "Must match account currency" });
+  }
+  if (item != null && params.categoryId !== item.categoryId) {
+    errors.push({ field: "categoryId", message: "Must match recurring item category" });
+  }
+  if (item != null && params.direction !== item.direction) {
+    errors.push({ field: "direction", message: "Must match recurring item direction" });
+  }
+  if (params.direction !== "income" && params.direction !== "expense") {
+    errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });
+  }
+  if (params.date != null && !Number.isSafeInteger(params.date)) {
+    errors.push({ field: "date", message: "Must be a Unix timestamp in milliseconds" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
   const realiseId = uuid();
   const txId = uuid();
   const now = params.date ?? nowMs();
@@ -641,28 +736,30 @@ export async function recordTransfer(
   params: RecordTransferParams
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
 
-  const fromAccount = await db.accounts.get(params.fromAccountId);
+  const fromAccount = snapshot.accounts.find((a) => a.id === params.fromAccountId && a.isActive);
   if (!fromAccount) {
     errors.push({ field: "fromAccountId", message: "Source account not found (INV-EVT-03)" });
   }
   if (params.toAccountId != null) {
-    const toAccount = await db.accounts.get(params.toAccountId);
+    const toAccount = snapshot.accounts.find((a) => a.id === params.toAccountId && a.isActive);
     if (!toAccount) {
       errors.push({ field: "toAccountId", message: "Destination account not found (INV-EVT-03)" });
     }
     if (params.toAccountId === params.fromAccountId) {
       errors.push({ field: "toAccountId", message: "Source and destination must differ" });
     }
+    if (fromAccount != null && toAccount != null && fromAccount.currency !== toAccount.currency) {
+      errors.push({ field: "toAccountId", message: "Destination account currency must match source account currency" });
+    }
   }
   if (params.toAccountId == null && (params.externalDestination == null || params.externalDestination.trim().length === 0)) {
     errors.push({ field: "externalDestination", message: "External destination is required when no internal account selected" });
   }
-  if (!Number.isSafeInteger(params.amount.minorUnits)) {
-    errors.push({ field: "amount", message: "Must be a safe integer (INV-MON-01)" });
-  }
-  if (!/^[A-Z]{3}$/.test(params.amount.currency)) {
-    errors.push({ field: "amount.currency", message: "Must be ISO-4217" });
+  validateMoney("amount", params.amount, errors, { positive: true });
+  if (fromAccount != null && params.amount.currency !== fromAccount.currency) {
+    errors.push({ field: "amount.currency", message: "Must match source account currency" });
   }
   if (errors.length > 0) {
     throw new ValidationError(errors);
@@ -708,6 +805,31 @@ export type UpdateTransactionParams = {
 export async function updateTransaction(
   params: UpdateTransactionParams
 ): Promise<string> {
+  const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
+  const account = snapshot.accounts.find((a) => a.id === params.accountId && a.isActive);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId);
+
+  if (!params.originalEventId || params.originalEventId.trim().length === 0) {
+    errors.push({ field: "originalEventId", message: "Transaction id is required" });
+  }
+  if (account == null) {
+    errors.push({ field: "accountId", message: "Account not found (INV-EVT-03)" });
+  }
+  if (category == null) {
+    errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
+  }
+  validateMoney("amount", params.amount, errors, { positive: true });
+  if (account != null && params.amount.currency !== account.currency) {
+    errors.push({ field: "amount.currency", message: "Must match account currency" });
+  }
+  if (params.direction !== "income" && params.direction !== "expense") {
+    errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
   const id = uuid();
   const now = nowMs();
 
@@ -744,6 +866,10 @@ export type DeleteTransactionParams = {
 export async function deleteTransaction(
   params: DeleteTransactionParams
 ): Promise<void> {
+  if (!params.originalEventId || params.originalEventId.trim().length === 0) {
+    throw new ValidationError([{ field: "originalEventId", message: "Transaction id is required" }]);
+  }
+
   const id = uuid();
   const now = nowMs();
 
@@ -802,14 +928,16 @@ const DEFAULT_CATEGORIES = [
 export async function seedDefaultCategories(
   masterKey: MasterKey,
 ): Promise<void> {
-  const existing = await db.categories
-    .where("isSystemDefault")
-    .equals(1)
-    .count();
-
-  if (existing > 0) return;
+  const snapshot = await getSnapshot(masterKey);
+  const existingDefaults = new Set(
+    snapshot.categories
+      .filter((category) => category.isSystemDefault)
+      .map((category) => category.name)
+  );
 
   for (const cat of DEFAULT_CATEGORIES) {
+    if (existingDefaults.has(cat.name)) continue;
+
     const args: { name: string; parentId?: string; isSystemDefault: true; masterKey: MasterKey } = {
       name: cat.name,
       isSystemDefault: true,

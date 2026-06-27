@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { fakeAppendEvent, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable } = vi.hoisted(() => {
+const { fakeAppendEvent, fakeGetSnapshot, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable } = vi.hoisted(() => {
   const fakeAppendEvent = vi.fn<(args: { type: string; payload: Record<string, unknown>; masterKey: unknown }) => Promise<void>>();
+  const fakeGetSnapshot = vi.fn<() => Promise<Record<string, unknown>>>();
   class FakeTable<T extends { id: string }> {
     private store = new Map<string, T>();
     get(id: string): Promise<T | undefined> { return Promise.resolve(this.store.get(id)); }
@@ -12,7 +13,7 @@ const { fakeAppendEvent, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable,
   const fakeCategoriesTable = new FakeTable();
   const fakeGoalsTable = new FakeTable();
   const fakeRecurringItemsTable = new FakeTable();
-  return { fakeAppendEvent, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable };
+  return { fakeAppendEvent, fakeGetSnapshot, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable };
 });
 
 vi.mock("@/domain/eventStore.ts", () => ({
@@ -26,6 +27,10 @@ vi.mock("@/db/schema.ts", () => ({
     goals: fakeGoalsTable,
     recurringItems: fakeRecurringItemsTable,
   },
+}));
+
+vi.mock("@/domain/financialState.ts", () => ({
+  getSnapshot: fakeGetSnapshot,
 }));
 
 import {
@@ -45,9 +50,22 @@ import {
 
 const mkKey = { _brand: "MasterKey" as const, key: null as unknown as CryptoKey };
 
+function snapshot(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    accounts: [],
+    categories: [],
+    budgets: [],
+    goals: [],
+    recurringItems: [],
+    ...overrides,
+  };
+}
+
 beforeEach(() => {
   fakeAppendEvent.mockReset();
+  fakeGetSnapshot.mockReset();
   fakeAppendEvent.mockResolvedValue(undefined);
+  fakeGetSnapshot.mockResolvedValue(snapshot());
   fakeAccountsTable.clear();
   fakeCategoriesTable.clear();
   fakeGoalsTable.clear();
@@ -82,7 +100,9 @@ describe("createAccount", () => {
 
 describe("updateAccount", () => {
   it("emits account_updated event when account exists", async () => {
-    fakeAccountsTable.seed({ id: "acct-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+    }));
 
     await updateAccount({
       accountId: "acct-1",
@@ -102,7 +122,9 @@ describe("updateAccount", () => {
 
 describe("archiveAccount", () => {
   it("emits account_archived event when account exists", async () => {
-    fakeAccountsTable.seed({ id: "acct-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+    }));
 
     await archiveAccount({ accountId: "acct-1", masterKey: mkKey });
 
@@ -113,8 +135,10 @@ describe("archiveAccount", () => {
 
 describe("recordTransaction", () => {
   it("emits transaction_created event when account and category exist", async () => {
-    fakeAccountsTable.seed({ id: "acct-1" });
-    fakeCategoriesTable.seed({ id: "cat-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+      categories: [{ id: "cat-1" }],
+    }));
 
     const id = await recordTransaction({
       accountId: "acct-1",
@@ -129,7 +153,9 @@ describe("recordTransaction", () => {
   });
 
   it("throws ValidationError when account does not exist (INV-EVT-03)", async () => {
-    fakeCategoriesTable.seed({ id: "cat-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      categories: [{ id: "cat-1" }],
+    }));
 
     await expect(
       recordTransaction({
@@ -143,7 +169,9 @@ describe("recordTransaction", () => {
   });
 
   it("throws ValidationError when category does not exist (INV-EVT-03)", async () => {
-    fakeAccountsTable.seed({ id: "acct-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+    }));
 
     await expect(
       recordTransaction({
@@ -174,7 +202,9 @@ describe("createCategory", () => {
 
 describe("archiveCategory", () => {
   it("emits category_archived event when category exists", async () => {
-    fakeCategoriesTable.seed({ id: "cat-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      categories: [{ id: "cat-1" }],
+    }));
 
     await archiveCategory({ categoryId: "cat-1", masterKey: mkKey });
 
@@ -185,7 +215,9 @@ describe("archiveCategory", () => {
 
 describe("createBudget", () => {
   it("emits budget_created event when category exists", async () => {
-    fakeCategoriesTable.seed({ id: "cat-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      categories: [{ id: "cat-1" }],
+    }));
 
     const id = await createBudget({
       name: "Groceries",
@@ -227,7 +259,13 @@ describe("createGoal", () => {
 
 describe("recordGoalContribution", () => {
   it("emits goal_contribution event when goal exists", async () => {
-    fakeGoalsTable.seed({ id: "goal-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      goals: [{
+        id: "goal-1",
+        targetAmount: { minorUnits: 1000000, currency: "USD" },
+        isArchived: false,
+      }],
+    }));
 
     const id = await recordGoalContribution({
       goalId: "goal-1",
@@ -252,7 +290,9 @@ describe("recordGoalContribution", () => {
 
 describe("createRecurringItem", () => {
   it("emits recurring_item_created event", async () => {
-    fakeCategoriesTable.seed({ id: "cat-1" });
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      categories: [{ id: "cat-1" }],
+    }));
 
     const id = await createRecurringItem({
       categoryId: "cat-1",
@@ -271,6 +311,17 @@ describe("createRecurringItem", () => {
 
 describe("realiseRecurringOccurrence", () => {
   it("emits recurring_item_realised and transaction_created events", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+      categories: [{ id: "cat-1" }],
+      recurringItems: [{
+        id: "recur-1",
+        categoryId: "cat-1",
+        amount: { minorUnits: 1599, currency: "USD" },
+        direction: "expense",
+      }],
+    }));
+
     const txId = await realiseRecurringOccurrence({
       itemId: "recur-1",
       accountId: "acct-1",

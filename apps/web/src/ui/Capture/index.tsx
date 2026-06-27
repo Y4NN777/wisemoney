@@ -286,7 +286,8 @@ export default function Capture() {
     if (amount == null || amount <= 0) { setTransferError("Enter a valid amount"); return; }
     if (!transferFrom) { setTransferError("Select a source account"); return; }
     if (!transferTo && !transferExternal.trim()) { setTransferError("Select a destination account or enter an external destination"); return; }
-    const money = { minorUnits: amount, currency: snapshot?.totalBalance.currency ?? "USD" };
+    const sourceAccount = accounts.find((account) => account.id === transferFrom);
+    const money = { minorUnits: amount, currency: sourceAccount?.currency ?? snapshot?.totalBalance.currency ?? "USD" };
     recordTransfer.mutate({
       fromAccountId: transferFrom,
       ...(transferTo ? { toAccountId: transferTo } : {}),
@@ -318,7 +319,8 @@ export default function Capture() {
     if (amount == null || amount <= 0) { setTxError("Enter a valid amount"); return; }
     if (!categoryId) { setTxError("Select a category"); return; }
     if (!accountId) { setTxError("Select an account"); return; }
-    const money = { minorUnits: direction === "expense" ? -amount : amount, currency: snapshot?.totalBalance.currency ?? "USD" };
+    const selectedAccount = accounts.find((account) => account.id === accountId);
+    const money = { minorUnits: amount, currency: selectedAccount?.currency ?? snapshot?.totalBalance.currency ?? "USD" };
     recordTx.mutate({ accountId, categoryId, amount: money, direction, ...(note ? { note } : {}) }, {
       onSuccess: () => {
         setAmountStr("");
@@ -448,7 +450,8 @@ export default function Capture() {
     const amount = parseAmount(goalAmountStr);
     if (amount == null || amount <= 0) { setGoalError("Enter a valid amount"); return; }
     if (!goalId) { setGoalError("Select a goal"); return; }
-    const money = { minorUnits: amount, currency: "USD" };
+    const selectedGoal = activeGoals.find((goal) => goal.id === goalId);
+    const money = { minorUnits: amount, currency: selectedGoal?.targetAmount.currency ?? snapshot?.totalBalance.currency ?? "USD" };
     recordGoalContrib.mutate({ goalId, amount: money }, {
       onSuccess: () => {
         setGoalAmountStr("");
