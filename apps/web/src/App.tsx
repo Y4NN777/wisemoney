@@ -11,12 +11,12 @@ function PwaUpdateHandler() {
 
   useEffect(() => {
     if (!needRefresh) return;
-    const id = toast("Update available", {
+    toast("Update available", {
       description: "A new version is ready. Reload to apply.",
       action: {
         label: "Reload",
         onClick: () => {
-          updateServiceWorker(true);
+          void updateServiceWorker(true);
           window.location.reload();
         },
       },
