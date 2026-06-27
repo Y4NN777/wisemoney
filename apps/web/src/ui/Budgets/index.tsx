@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
+import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
@@ -129,7 +129,7 @@ export default function Budgets() {
                   </SelectTrigger>
                   <SelectContent>
                     {categories.length === 0 ? (
-                      <SelectItem value="__no_categories__" disabled>No categories yet. Create one in Manage.</SelectItem>
+                      <SelectEmptyState>No categories yet. Create one in Manage.</SelectEmptyState>
                     ) : (
                       categories.map((c) => (
                         <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>

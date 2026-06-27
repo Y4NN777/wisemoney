@@ -131,6 +131,21 @@ const SelectItem = React.forwardRef<
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
+const SelectEmptyState = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "px-3 py-4 text-center text-sm text-muted-foreground",
+      className,
+    )}
+    role="presentation"
+    {...props}
+  />
+);
+SelectEmptyState.displayName = "SelectEmptyState";
+
 const SelectSeparator = React.forwardRef<
   React.ComponentRef<typeof SelectPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
@@ -151,6 +166,7 @@ export {
   SelectContent,
   SelectLabel,
   SelectItem,
+  SelectEmptyState,
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,

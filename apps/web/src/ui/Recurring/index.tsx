@@ -4,7 +4,7 @@ import { Card, CardContent } from "../../components/ui/card.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
+import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Repeat, CheckCircle2 } from "lucide-react";
@@ -162,7 +162,7 @@ export default function Recurring() {
                   </SelectTrigger>
                   <SelectContent>
                     {categories.length === 0 ? (
-                      <SelectItem value="__no_categories__" disabled>No categories yet. Create one in Manage.</SelectItem>
+                      <SelectEmptyState>No categories yet. Create one in Manage.</SelectEmptyState>
                     ) : (
                       categories.map((c) => (
                         <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -311,7 +311,7 @@ export default function Recurring() {
                     </SelectTrigger>
                     <SelectContent>
                       {accounts.length === 0 ? (
-                        <SelectItem value="__no_accounts__" disabled>No accounts yet. Create one in Manage.</SelectItem>
+                        <SelectEmptyState>No accounts yet. Create one in Manage.</SelectEmptyState>
                       ) : (
                         accounts.map((a) => (
                           <SelectItem key={a.id} value={a.id}>

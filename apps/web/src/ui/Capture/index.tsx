@@ -1,10 +1,10 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useFinancialState, useRecordTransaction, useCreateCategory, useRenameCategory, useArchiveCategory, useCreateAccount, useUpdateAccount, useArchiveAccount, useRecordGoalContribution, useRecordTransfer } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Button } from "../../components/ui/button.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
+import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
@@ -117,6 +117,7 @@ const ACCOUNT_TYPES = [
 function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValueChange: (value: string) => void }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const pickerRef = useRef<HTMLDivElement | null>(null);
   const selected = ACCOUNT_CURRENCIES.find((currency) => currency.code === value);
   const filteredCurrencies = ACCOUNT_CURRENCIES.filter((currency) => {
     const normalized = query.trim().toLowerCase();
@@ -129,13 +130,34 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
     );
   });
 
+  useEffect(() => {
+    if (!open) return;
+
+    const closeOnOutsidePointerDown = (event: PointerEvent) => {
+      const picker = pickerRef.current;
+      if (picker !== null && !picker.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePointerDown);
+    };
+  }, [open]);
+
   return (
-    <div className="min-w-0 space-y-2">
+    <div ref={pickerRef} className="min-w-0 space-y-2">
       <button
         id="accCurrency"
         type="button"
         className="flex min-h-12 w-full max-w-full items-center justify-between gap-3 overflow-hidden rounded-md border border-input bg-card px-3 py-2 text-left text-sm shadow-sm transition-colors hover:border-primary/30 focus-visible:border-primary"
         onClick={() => setOpen((next) => !next)}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            setOpen(false);
+          }
+        }}
         aria-expanded={open}
         aria-haspopup="listbox"
       >
@@ -468,7 +490,7 @@ export default function Capture() {
                     <SelectTrigger id="account"><SelectValue placeholder="Select account" /></SelectTrigger>
                     <SelectContent>
                       {accounts.length === 0 ? (
-                        <SelectItem value="__no_accounts__" disabled>No accounts yet. Create one in Manage.</SelectItem>
+                        <SelectEmptyState>No accounts yet. Create one in Manage.</SelectEmptyState>
                       ) : (
                         accounts.map((a) => (
                           <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
@@ -484,7 +506,7 @@ export default function Capture() {
                     <SelectTrigger id="category"><SelectValue placeholder="Select category" /></SelectTrigger>
                     <SelectContent>
                       {categories.length === 0 ? (
-                        <SelectItem value="__no_categories__" disabled>No categories yet. Create one in Manage.</SelectItem>
+                        <SelectEmptyState>No categories yet. Create one in Manage.</SelectEmptyState>
                       ) : (
                         categories.map((c) => (
                           <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -529,7 +551,7 @@ export default function Capture() {
                     <SelectTrigger id="transfer-from"><SelectValue placeholder="Select source account" /></SelectTrigger>
                     <SelectContent>
                       {accounts.length === 0 ? (
-                        <SelectItem value="__no_accounts__" disabled>No accounts yet. Create one in Manage.</SelectItem>
+                        <SelectEmptyState>No accounts yet. Create one in Manage.</SelectEmptyState>
                       ) : (
                         accounts.map((a) => (
                           <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
@@ -545,7 +567,7 @@ export default function Capture() {
                     <SelectTrigger id="transfer-to"><SelectValue placeholder="Select destination account" /></SelectTrigger>
                     <SelectContent>
                       {accounts.filter((a) => a.id !== transferFrom).length === 0 ? (
-                        <SelectItem value="__no_accounts__" disabled>No other accounts available.</SelectItem>
+                        <SelectEmptyState>No other accounts available.</SelectEmptyState>
                       ) : (
                         accounts.filter((a) => a.id !== transferFrom).map((a) => (
                           <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
@@ -619,7 +641,7 @@ export default function Capture() {
                     <SelectTrigger id="goal"><SelectValue placeholder="Select goal" /></SelectTrigger>
                     <SelectContent>
                       {activeGoals.length === 0 ? (
-                        <SelectItem value="__no_goals__" disabled>No goals yet. Create one in Planning.</SelectItem>
+                        <SelectEmptyState>No goals yet. Create one in Planning.</SelectEmptyState>
                       ) : (
                         activeGoals.map((g) => (
                           <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
