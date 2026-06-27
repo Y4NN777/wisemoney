@@ -130,16 +130,16 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
   });
 
   return (
-    <div className="space-y-2">
+    <div className="min-w-0 space-y-2">
       <button
         id="accCurrency"
         type="button"
-        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-input bg-card px-3 py-2 text-left text-sm shadow-sm transition-colors hover:border-primary/30 focus-visible:border-primary"
+        className="flex min-h-12 w-full max-w-full items-center justify-between gap-3 overflow-hidden rounded-md border border-input bg-card px-3 py-2 text-left text-sm shadow-sm transition-colors hover:border-primary/30 focus-visible:border-primary"
         onClick={() => setOpen((next) => !next)}
         aria-expanded={open}
         aria-haspopup="listbox"
       >
-        <span className="min-w-0">
+        <span className="min-w-0 flex-1">
           <span className="block truncate font-semibold">{selected != null ? `${selected.code} - ${selected.name}` : value}</span>
           {selected?.countries != null && selected.countries.length > 0 && (
             <span className="mt-0.5 block truncate text-xs text-muted-foreground">{selected.countries}</span>
@@ -149,7 +149,7 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
       </button>
 
       {open && (
-        <div className="w-full min-w-0 rounded-lg border border-border bg-background shadow-sm max-sm:max-w-[calc(100vw-2rem)]">
+        <div className="w-full min-w-0 max-w-full rounded-lg border border-border bg-background shadow-sm">
           <div className="border-b border-border p-2">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -179,7 +179,7 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
                     setOpen(false);
                   }}
                 >
-                  <span className="min-w-0">
+                  <span className="min-w-0 flex-1">
                     <span className="block truncate font-semibold">{currency.code} - {currency.name}</span>
                     {currency.countries.length > 0 && <span className="mt-0.5 block truncate text-xs leading-snug text-muted-foreground">{currency.countries}</span>}
                   </span>
@@ -678,7 +678,7 @@ export default function Capture() {
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />New</Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-xl">
+                      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-xl">
                         <DialogHeader>
                           <DialogTitle>Create Category</DialogTitle>
                         </DialogHeader>
@@ -761,14 +761,14 @@ export default function Capture() {
                         <DialogHeader>
                           <DialogTitle>Create Account</DialogTitle>
                         </DialogHeader>
-                        <form onSubmit={handleCreateAccount} className="space-y-4 pt-4">
+                        <form onSubmit={handleCreateAccount} className="min-w-0 space-y-4 pt-4">
                           {accountError != null && <p role="alert" className="text-sm text-destructive">{accountError}</p>}
                           <div className="space-y-2">
                             <Label htmlFor="accName">Account name</Label>
                             <Input id="accName" value={newAccName} onChange={(e) => setNewAccName(e.target.value)} placeholder="e.g. Orange Money, Checking, Cash" required />
                           </div>
-                          <div className="grid gap-3 md:grid-cols-2">
-                            <div className="space-y-2">
+                          <div className="grid min-w-0 gap-3 md:grid-cols-2">
+                            <div className="min-w-0 space-y-2">
                               <Label htmlFor="accType">Type</Label>
                               <Select value={newAccType} onValueChange={setNewAccType}>
                                 <SelectTrigger id="accType"><SelectValue /></SelectTrigger>
@@ -779,7 +779,7 @@ export default function Capture() {
                                 </SelectContent>
                               </Select>
                             </div>
-                            <div className="space-y-2">
+                            <div className="min-w-0 space-y-2">
                               <Label htmlFor="accCurrency">Currency</Label>
                               <AccountCurrencyPicker value={newAccCurrency} onValueChange={setNewAccCurrency} />
                             </div>
