@@ -12,7 +12,6 @@ import { importJSON } from "../../exportImport/index.ts";
 import { RouterProvider } from "@tanstack/react-router";
 import { router } from "../../router.ts";
 import { MasterKeyContext } from "../../lib/masterKeyContext.ts";
-import { Toaster } from "../../components/ui/sonner.tsx";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
 import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, Languages, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, Smartphone, Upload, WalletCards, WifiOff } from "lucide-react";
@@ -143,7 +142,6 @@ export default function KeyUnlock() {
 
   return (
     <>
-      <Toaster />
       {content}
     </>
   );

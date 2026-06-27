@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: "prompt",
       injectAutoRegister: false,
-      includeAssets: ["icons/*.png", "icons/*.svg"],
+      includeAssets: ["icon.svg", "logo.svg", "icons/*.png"],
       manifest: {
         name: "WiseMoney",
         short_name: "WiseMoney",
@@ -24,14 +24,28 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
+            src: "/icon.svg",
+            sizes: "any",
+            type: "image/svg+xml",
+            purpose: "any",
+          },
+          {
+            src: "/icons/icon-180.png",
+            sizes: "180x180",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
             src: "/icons/icon-192.png",
             sizes: "192x192",
             type: "image/png",
+            purpose: "any",
           },
           {
             src: "/icons/icon-512.png",
             sizes: "512x512",
             type: "image/png",
+            purpose: "any",
           },
           {
             src: "/icons/icon-maskable-512.png",
@@ -45,8 +59,6 @@ export default defineConfig({
         // Offline-first: cache all navigation to index.html (INV-PERS-01).
         navigateFallback: "/index.html",
         cleanupOutdatedCaches: true,
-        clientsClaim: true,
-        skipWaiting: true,
         globPatterns: ["**/*.{js,css,html,wasm}"],
         // hash-wasm Argon2id .wasm must be cached for offline unlock.
         runtimeCaching: [

@@ -2,12 +2,31 @@ import { useEffect } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { toast } from "sonner";
 import KeyUnlock from "./components/KeyUnlock/index.tsx";
+import { Toaster } from "./components/ui/sonner.tsx";
 
 function PwaUpdateHandler() {
   const {
     needRefresh: [needRefresh],
     updateServiceWorker,
-  } = useRegisterSW();
+  } = useRegisterSW({
+    immediate: true,
+    onRegisteredSW(_swScriptUrl, registration) {
+      if (registration === undefined) return;
+
+      const checkForUpdate = () => {
+        void registration.update();
+      };
+      const checkWhenVisible = () => {
+        if (document.visibilityState === "visible") {
+          checkForUpdate();
+        }
+      };
+
+      checkForUpdate();
+      window.setInterval(checkForUpdate, 60 * 60 * 1000);
+      document.addEventListener("visibilitychange", checkWhenVisible);
+    },
+  });
 
   useEffect(() => {
     if (!needRefresh) return;
@@ -30,6 +49,7 @@ function PwaUpdateHandler() {
 export default function App() {
   return (
     <>
+      <Toaster />
       <PwaUpdateHandler />
       <KeyUnlock />
     </>
