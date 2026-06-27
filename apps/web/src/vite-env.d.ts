@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="vite-plugin-pwa/client" />
 
 // Typed surface for environment variables consumed by the client.
 // Add each VITE_* variable here so unknown keys are caught at compile time.

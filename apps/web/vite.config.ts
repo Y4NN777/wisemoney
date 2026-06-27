@@ -9,8 +9,8 @@ export default defineConfig({
     tailwindcss(),
     react(),
     VitePWA({
-      registerType: "autoUpdate",
-      injectRegister: "auto",
+      registerType: "prompt",
+      injectAutoRegister: false,
       includeAssets: ["icons/*.png", "icons/*.svg"],
       manifest: {
         name: "WiseMoney",
