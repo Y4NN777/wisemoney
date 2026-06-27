@@ -4,7 +4,8 @@
 > adaptive financial literacy, in one mobile-first loop. All financial data lives
 > encrypted on-device; any cloud/AI egress is consent-gated.
 
-**Status:** Sprint S0 — specification + design baseline complete, project scaffolded.
+**Status:** Sprint S0 — specification, design, and MVP scaffold complete; full client
+auth-session, crypto, AI orchestration (managed-mode), and PWA foundation wired.
 Full design set in [`docs/`](./docs/) (start at [`docs/README.md`](./docs/README.md)).
 
 ## Structure
@@ -25,10 +26,10 @@ the Go edge + Postgres are only needed for *managed* AI-key mode.
 - Docker + Compose (edge + Postgres; the edge builds in-image, so a local Go
   toolchain is **not** required)
 
-## Run (nothing here has been installed or built yet)
+## Run
 
-> Recommended first: run `/dep-audit` to verify the pinned dependency versions
-> against current advisories before installing.
+> Dependency audit already done (`/dep-audit` at `050d578`). All dependencies pinned
+> and verified.
 
 **Frontend (PWA):**
 ```
