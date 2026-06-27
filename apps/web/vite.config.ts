@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: "prompt",
       injectAutoRegister: false,
-      includeAssets: ["icon.svg", "logo.svg", "icons/*.png"],
+      includeAssets: ["icon.svg", "wisemoney-icon.svg", "logo.svg", "icons/*.png"],
       manifest: {
         name: "WiseMoney",
         short_name: "WiseMoney",
@@ -24,31 +24,31 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/icon.svg",
+            src: "/wisemoney-icon.svg",
             sizes: "any",
             type: "image/svg+xml",
             purpose: "any",
           },
           {
-            src: "/icons/icon-180.png",
+            src: "/icons/wisemoney-icon-180.png",
             sizes: "180x180",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icons/icon-192.png",
+            src: "/icons/wisemoney-icon-192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icons/icon-512.png",
+            src: "/icons/wisemoney-icon-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icons/icon-maskable-512.png",
+            src: "/icons/wisemoney-icon-maskable-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
