@@ -26,6 +26,9 @@ function PwaUpdateHandler() {
       window.setInterval(checkForUpdate, 60 * 60 * 1000);
       document.addEventListener("visibilitychange", checkWhenVisible);
     },
+    onNeedReload() {
+      window.location.reload();
+    },
   });
 
   useEffect(() => {
@@ -36,7 +39,6 @@ function PwaUpdateHandler() {
         label: "Reload",
         onClick: () => {
           void updateServiceWorker(true);
-          window.location.reload();
         },
       },
       duration: Infinity,
