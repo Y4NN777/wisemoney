@@ -7,14 +7,15 @@
 | Scope   | Running the Go edge proxy + Postgres locally via Docker Compose |
 | Source  | ARCHITECTURE §11 (deployment topology)             |
 
-> The web app is currently hosted on Vercel. The Go edge is not deployed yet. This
-> runbook covers the local Docker Compose stack for managed-mode development:
-> Postgres plus the Go edge. BYO-key mode does not need this stack.
+> The web app is live at `https://wisemoney.y7labs.studio/` on Vercel. The Go edge
+> is not deployed yet. This runbook covers the local Docker Compose stack for
+> managed-mode development: Postgres plus the Go edge. BYO-key mode does not need
+> this stack.
 
 ## Scope
 
-- **Current hosting.** PWA is hosted on Vercel; Compose runs only the local Go edge
-  plus Postgres for managed-mode development.
+- **Current hosting.** PWA is live at `wisemoney.y7labs.studio`; Compose runs only
+  the local Go edge plus Postgres for managed-mode development.
 - **Images.** Go builder is pinned to `golang:1.25.11-bookworm`; runtime is
   `gcr.io/distroless/static-debian12:nonroot`; Postgres is `postgres:16.8`.
 

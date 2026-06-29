@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <strong>PWA deployed on Vercel</strong> · <strong>Go edge not deployed yet</strong> · <strong>BYO-key mode works without the backend</strong>
+  <strong>Live PWA: <a href="https://wisemoney.y7labs.studio/">wisemoney.y7labs.studio</a></strong> · <strong>Go edge not deployed yet</strong>
 </p>
 
 # WiseMoney
@@ -16,10 +16,11 @@ WiseMoney is a mobile-first personal finance PWA. It keeps financial data on the
 device by default, uses an encrypted local event log, and separates everyday money
 tracking from optional AI features.
 
-The app is already deployed as a PWA on Vercel. The managed Go edge exists in this
-repo for auth and managed AI proxying, but it is not deployed yet. Until that edge
-is online, managed-mode AI calls are local-development only; bring-your-own-key
-mode remains the backend-free path.
+The app is already live at
+[wisemoney.y7labs.studio](https://wisemoney.y7labs.studio/), served as a PWA via
+Vercel. The managed Go edge exists in this repo for auth and managed AI proxying,
+but it is not deployed yet. Until that edge is online, managed-mode AI calls are
+local-development only; bring-your-own-key mode remains the backend-free path.
 
 ## What is in the app
 
@@ -27,23 +28,17 @@ mode remains the backend-free path.
 - Dettes & Créances: debts and receivables with motive, amount, date, status, and
   reminders for unsettled receivables.
 - Local encrypted storage with Dexie / IndexedDB and Web Crypto.
-- PWA installability, service-worker update prompt, and Vercel-hosted web build.
+- PWA installability, service-worker update prompt, and live Vercel-hosted web build.
 - Optional managed edge in Go for auth, consent assertions, and AI proxy routing.
 
 ## Current deployment
 
 | Surface | Status |
 | --- | --- |
-| Web PWA | Deployed on Vercel |
+| Web PWA | Live at [wisemoney.y7labs.studio](https://wisemoney.y7labs.studio/) |
 | Go edge | Not deployed yet |
 | Postgres for edge auth | Local/dev only |
 | BYO-key AI mode | Does not need the edge |
-
-Add the public Vercel URL here once it is pinned in project metadata:
-
-```text
-Live PWA: <Vercel URL>
-```
 
 ## Run locally
 

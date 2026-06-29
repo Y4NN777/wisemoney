@@ -11,8 +11,9 @@
 - **What:** Local-first personal-finance PWA (mobile-first) on three equal pillars —
   Financial State (tracking), Financial Intelligence (multi-model AI guidance),
   Financial Literacy (conversational learning). Surfaces: Dashboard, Capture, Assistant.
-- **Current hosting:** Web app is hosted on Vercel. Go edge/Postgres are not deployed
-  yet; use local Docker Compose for managed-mode edge development.
+- **Current hosting:** Web app is live at `https://wisemoney.y7labs.studio/`
+  through Vercel. Go edge/Postgres are not deployed yet; use local Docker Compose
+  for managed-mode edge development.
 - **Stack:** React + TypeScript PWA (Vite · service worker · Dexie/IndexedDB · Web
   Crypto AES-GCM · client-side event-sourcing) — **all domain logic is client-side**.
   Thin **Go** managed edge (net/http+chi · golang-jwt · x/crypto/argon2) doing
@@ -63,8 +64,9 @@
   build/vet/test. `.github/workflows/security-scan.yml` runs pinned osv-scanner
   manifest scans; its binary scan activates when a compiled `dist/edge` artifact is
   present in that workflow.
-- **Hosting:** Web is on Vercel. Edge/Postgres deployment is pending; current
-  managed-mode backend operation is local/dev Docker Compose only.
+- **Hosting:** Web is live at `https://wisemoney.y7labs.studio/` on Vercel.
+  Edge/Postgres deployment is pending; current managed-mode backend operation is
+  local/dev Docker Compose only.
 
 ### Recently Closed
 

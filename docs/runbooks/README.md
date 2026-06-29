@@ -3,14 +3,15 @@
 | Field   | Value                                          |
 | ------- | ---------------------------------------------- |
 | Owner   | Project maintainers                              |
-| Status  | Mixed: Vercel-hosted web app + local edge runbooks + pre-production outlines |
+| Status  | Mixed: live Vercel PWA + local edge runbooks + pre-production outlines |
 | Date    | 2026-06-29                                      |
 
 > Runbooks are operational procedures for running and recovering the system. The
-> web app is currently hosted on Vercel. The Go edge and Postgres stack are not
-> deployed yet; their concrete procedure is local/dev Docker Compose until an edge
-> hosting target is chosen. Incident-response and production secrets guidance remain
-> pre-production outlines until deployment topology and alerting are chosen.
+> web app is live at `https://wisemoney.y7labs.studio/` on Vercel. The Go edge
+> and Postgres stack are not deployed yet; their concrete procedure is local/dev
+> Docker Compose until an edge hosting target is chosen. Incident-response and
+> production secrets guidance remain pre-production outlines until deployment
+> topology and alerting are chosen.
 
 ---
 

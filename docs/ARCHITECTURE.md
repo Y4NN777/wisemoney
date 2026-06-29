@@ -480,14 +480,14 @@ every request as redacted (fail-closed). Implemented by: `internal/consent`
 
 **Target topology: two units + a datastore.** Current deployment status:
 
-- The PWA is hosted on Vercel.
+- The PWA is live at `https://wisemoney.y7labs.studio/` on Vercel.
 - The Go edge and Postgres are not deployed yet; they run locally through Docker
   Compose for managed-mode development.
 
 ```
 ┌─────────────────────────┐        ┌──────────────────────────┐
 │  PWA static host        │        │  Go proxy (edge)         │
-│  current: Vercel        │        │  current: local only     │
+│  wisemoney.y7labs.studio│        │  current: local only     │
 │  (React/TS build,       │        │  net/http + chi, JWT,    │
 │   service worker)       │        │  Argon2id, rate-limit,   │
 │                         │        │  provider adapters       │
@@ -519,9 +519,9 @@ BYO-key bypass:  PWA ───────────────────�
 
 > **Detailed production hosting/ops remains separate from the logical architecture.**
 > The current repo includes a local Docker Compose stack for the Go edge and
-> Postgres, while the web app is hosted on Vercel. Edge production host sizing, TLS
-> termination, secrets delivery, backup/restore ops, and hardening overlays still
-> require deployment-specific runbooks.
+> Postgres, while the web app is live on Vercel at `wisemoney.y7labs.studio`.
+> Edge production host sizing, TLS termination, secrets delivery, backup/restore
+> ops, and hardening overlays still require deployment-specific runbooks.
 
 ---
 

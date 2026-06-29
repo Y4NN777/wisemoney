@@ -3,9 +3,9 @@
 React 18 + TypeScript 5 PWA client. All domain logic lives here; the Go edge is
 thin auth + AI proxy only (ARCHITECTURE §1).
 
-The web app is currently hosted on Vercel. Managed-mode calls require a deployed
-edge URL; until the edge is deployed, use `VITE_EDGE_BASE_URL=http://localhost:8080`
-for local managed-mode development.
+The web app is live at `https://wisemoney.y7labs.studio/`, hosted through Vercel.
+Managed-mode calls require a deployed edge URL; until the edge is deployed, use
+`VITE_EDGE_BASE_URL=http://localhost:8080` for local managed-mode development.
 
 ## Prerequisites
 
