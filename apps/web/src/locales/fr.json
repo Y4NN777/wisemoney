@@ -682,7 +682,70 @@
   "planning": {
     "title": "Planification",
     "cardTitle": "Budgets, objectifs et récurrents",
-    "cardDescription": "Planifiez vos dépenses, épargnez vers des objectifs et suivez les transactions récurrentes"
+    "cardDescription": "Planifiez vos dépenses, épargnez vers des objectifs et suivez les transactions récurrentes",
+    "links": {
+      "budgets": "Budgets",
+      "goals": "Objectifs",
+      "recurring": "Transactions récurrentes",
+      "debts": "Dettes & Créances"
+    }
+  },
+  "debts": {
+    "aria": "Dettes et créances",
+    "kicker": "Planification",
+    "title": "Dettes & Créances",
+    "add": "Ajouter",
+    "adding": "Ajout…",
+    "dialogTitle": "Ajouter une dette ou une créance",
+    "kind": {
+      "receivable": "Créance",
+      "debt": "Dette"
+    },
+    "fields": {
+      "type": "Type",
+      "debtorName": "Nom du débiteur",
+      "creditorName": "Nom du créancier",
+      "motive": "Motif",
+      "amount": "Montant ({{currency}})",
+      "amountShort": "Montant",
+      "date": "Date",
+      "status": "Statut"
+    },
+    "status": {
+      "pending": "En attente",
+      "partial": "Partiellement payé",
+      "settled": "Soldé"
+    },
+    "statusAria": "Mettre à jour le statut de {{partyName}}",
+    "metrics": {
+      "unsettledReceivables": "Créances non soldées",
+      "unsettledDebts": "Dettes non soldées",
+      "reminders": "Rappels"
+    },
+    "reminders": {
+      "title": "Rappels sur créances non soldées"
+    },
+    "sections": {
+      "receivables": "Créances",
+      "debts": "Dettes"
+    },
+    "empty": {
+      "receivables": "Aucune créance enregistrée.",
+      "debts": "Aucune dette enregistrée."
+    },
+    "toasts": {
+      "receivableCreated": "Créance ajoutée",
+      "debtCreated": "Dette ajoutée",
+      "statusUpdated": "Statut mis à jour"
+    },
+    "errors": {
+      "debtorRequired": "Nom du débiteur requis",
+      "creditorRequired": "Nom du créancier requis",
+      "motiveRequired": "Motif requis",
+      "invalidAmount": "Montant invalide",
+      "createFailed": "Échec de l'ajout",
+      "statusUpdateFailed": "Échec de la mise à jour du statut"
+    }
   },
   "settings": {
     "system": "Système",

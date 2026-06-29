@@ -683,7 +683,70 @@
   "planning": {
     "title": "Planning",
     "cardTitle": "Budgets, Goals & Recurring",
-    "cardDescription": "Plan your spending, save toward goals, and track recurring transactions"
+    "cardDescription": "Plan your spending, save toward goals, and track recurring transactions",
+    "links": {
+      "budgets": "Budgets",
+      "goals": "Goals",
+      "recurring": "Recurring Transactions",
+      "debts": "Debts & Receivables"
+    }
+  },
+  "debts": {
+    "aria": "Debts and receivables",
+    "kicker": "Planning",
+    "title": "Debts & Receivables",
+    "add": "Add",
+    "adding": "Adding…",
+    "dialogTitle": "Add a debt or receivable",
+    "kind": {
+      "receivable": "Receivable",
+      "debt": "Debt"
+    },
+    "fields": {
+      "type": "Type",
+      "debtorName": "Debtor name",
+      "creditorName": "Creditor name",
+      "motive": "Motive",
+      "amount": "Amount ({{currency}})",
+      "amountShort": "Amount",
+      "date": "Date",
+      "status": "Status"
+    },
+    "status": {
+      "pending": "Pending",
+      "partial": "Partially paid",
+      "settled": "Settled"
+    },
+    "statusAria": "Update status for {{partyName}}",
+    "metrics": {
+      "unsettledReceivables": "Unsettled receivables",
+      "unsettledDebts": "Unsettled debts",
+      "reminders": "Reminders"
+    },
+    "reminders": {
+      "title": "Reminders for unsettled receivables"
+    },
+    "sections": {
+      "receivables": "Receivables",
+      "debts": "Debts"
+    },
+    "empty": {
+      "receivables": "No receivables recorded.",
+      "debts": "No debts recorded."
+    },
+    "toasts": {
+      "receivableCreated": "Receivable added",
+      "debtCreated": "Debt added",
+      "statusUpdated": "Status updated"
+    },
+    "errors": {
+      "debtorRequired": "Debtor name is required",
+      "creditorRequired": "Creditor name is required",
+      "motiveRequired": "Motive is required",
+      "invalidAmount": "Invalid amount",
+      "createFailed": "Failed to add",
+      "statusUpdateFailed": "Failed to update status"
+    }
   },
   "settings": {
     "system": "System",

@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Bell, CheckCircle2, Clock3, HandCoins, Plus, RefreshCw } from "lucide-react";
 import { useCreateDebtCredit, useFinancialState, useUpdateDebtCreditStatus } from "../../hooks/useFinancialState.ts";
@@ -11,12 +12,6 @@ import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
-
-const STATUS_LABELS: Record<DebtCreditStatus, string> = {
-  pending: "En attente",
-  partial: "Partiellement payé",
-  settled: "Soldé",
-};
 
 const STATUS_BADGE_CLASS: Record<DebtCreditStatus, string> = {
   pending: "border-amber bg-amber-wash text-amber",
@@ -39,8 +34,8 @@ function toDateInputTimestamp(value: string): number {
   return new Date(`${value}T12:00:00`).getTime();
 }
 
-function displayDate(timestamp: number): string {
-  return new Date(timestamp).toLocaleDateString();
+function displayDate(timestamp: number, language: string): string {
+  return new Date(timestamp).toLocaleDateString(language);
 }
 
 function statusIcon(status: DebtCreditStatus) {
@@ -57,6 +52,11 @@ type DebtCreditColumnProps = {
   title: string;
   emptyText: string;
   partyLabel: string;
+  motiveLabel: string;
+  amountLabel: string;
+  dateLabel: string;
+  statusAriaLabel: string;
+  statusLabels: Record<DebtCreditStatus, string>;
   items: DebtCreditState[];
   onStatusChange: (id: string, status: DebtCreditStatus, label: string) => void;
   updating: boolean;
@@ -66,10 +66,17 @@ function DebtCreditColumn({
   title,
   emptyText,
   partyLabel,
+  motiveLabel,
+  amountLabel,
+  dateLabel,
+  statusAriaLabel,
+  statusLabels,
   items,
   onStatusChange,
   updating,
 }: DebtCreditColumnProps) {
+  const { i18n } = useTranslation();
+
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
@@ -92,23 +99,23 @@ function DebtCreditColumn({
                     <p className="truncate text-sm font-semibold">{item.partyName}</p>
                   </div>
                   <Badge variant="outline" className={`shrink-0 ${STATUS_BADGE_CLASS[item.status]}`}>
-                    {STATUS_LABELS[item.status]}
+                    {statusLabels[item.status]}
                   </Badge>
                 </div>
 
                 <div className="rounded-md border border-border bg-accent/45 p-3">
-                  <p className="text-xs text-muted-foreground">Motif</p>
+                  <p className="text-xs text-muted-foreground">{motiveLabel}</p>
                   <p className="mt-1 text-sm">{item.motive}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-xs text-muted-foreground">Montant</p>
+                    <p className="text-xs text-muted-foreground">{amountLabel}</p>
                     <p className="font-semibold">{formatMoney(item.amount.minorUnits, item.amount.currency)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Date</p>
-                    <p className="font-semibold">{displayDate(item.date)}</p>
+                    <p className="text-xs text-muted-foreground">{dateLabel}</p>
+                    <p className="font-semibold">{displayDate(item.date, i18n.language)}</p>
                   </div>
                 </div>
 
@@ -119,13 +126,13 @@ function DebtCreditColumn({
                     onValueChange={(value) => onStatusChange(item.id, value as DebtCreditStatus, item.partyName)}
                     disabled={updating}
                   >
-                    <SelectTrigger aria-label={`Mettre à jour le statut de ${item.partyName}`} className="h-9">
+                    <SelectTrigger aria-label={statusAriaLabel.replace("{{partyName}}", item.partyName)} className="h-9">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending">En attente</SelectItem>
-                      <SelectItem value="partial">Partiellement payé</SelectItem>
-                      <SelectItem value="settled">Soldé</SelectItem>
+                      <SelectItem value="pending">{statusLabels.pending}</SelectItem>
+                      <SelectItem value="partial">{statusLabels.partial}</SelectItem>
+                      <SelectItem value="settled">{statusLabels.settled}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -139,6 +146,7 @@ function DebtCreditColumn({
 }
 
 export default function Debts() {
+  const { t } = useTranslation();
   const { data: snapshot, isLoading } = useFinancialState();
   const createDebtCredit = useCreateDebtCredit();
   const updateStatus = useUpdateDebtCreditStatus();
@@ -163,6 +171,11 @@ export default function Debts() {
   const currency = debtCredits[0]?.amount.currency ?? snapshot?.accounts[0]?.currency ?? "USD";
   const receivableTotal = totalFor(receivables);
   const debtTotal = totalFor(debts);
+  const statusLabels: Record<DebtCreditStatus, string> = {
+    pending: t("debts.status.pending"),
+    partial: t("debts.status.partial"),
+    settled: t("debts.status.settled"),
+  };
 
   const resetForm = () => {
     setKind("receivable");
@@ -180,15 +193,15 @@ export default function Debts() {
 
     const amount = Number.parseFloat(amountStr);
     if (!partyName.trim()) {
-      setCreateError(kind === "debt" ? "Nom du créancier requis" : "Nom du débiteur requis");
+      setCreateError(kind === "debt" ? t("debts.errors.creditorRequired") : t("debts.errors.debtorRequired"));
       return;
     }
     if (!motive.trim()) {
-      setCreateError("Motif requis");
+      setCreateError(t("debts.errors.motiveRequired"));
       return;
     }
     if (Number.isNaN(amount) || amount <= 0) {
-      setCreateError("Montant invalide");
+      setCreateError(t("debts.errors.invalidAmount"));
       return;
     }
 
@@ -206,10 +219,10 @@ export default function Debts() {
         onSuccess: () => {
           setDialogOpen(false);
           resetForm();
-          toast.success(kind === "debt" ? "Dette ajoutée" : "Créance ajoutée", { description: label });
+          toast.success(kind === "debt" ? t("debts.toasts.debtCreated") : t("debts.toasts.receivableCreated"), { description: label });
         },
         onError: (err) => {
-          const message = err instanceof Error ? err.message : "Échec de l'ajout";
+          const message = err instanceof Error ? err.message : t("debts.errors.createFailed");
           setCreateError(message);
           toast.error(message);
         },
@@ -221,9 +234,9 @@ export default function Debts() {
     updateStatus.mutate(
       { debtCreditId: id, status: nextStatus },
       {
-        onSuccess: () => toast.success("Statut mis à jour", { description: label }),
+        onSuccess: () => toast.success(t("debts.toasts.statusUpdated"), { description: label }),
         onError: (err) => {
-          const message = err instanceof Error ? err.message : "Échec de la mise à jour du statut";
+          const message = err instanceof Error ? err.message : t("debts.errors.statusUpdateFailed");
           toast.error(message);
         },
       },
@@ -232,8 +245,8 @@ export default function Debts() {
 
   if (isLoading) {
     return (
-      <main aria-label="Dettes et créances" className="app-page">
-        <h1 className="page-title">Dettes &amp; Créances</h1>
+      <main aria-label={t("debts.aria")} className="app-page">
+        <h1 className="page-title">{t("debts.title")}</h1>
         {Array.from({ length: 4 }).map((_, index) => (
           <Skeleton key={index} className="h-24 w-full" />
         ))}
@@ -242,42 +255,42 @@ export default function Debts() {
   }
 
   return (
-    <main aria-label="Dettes et créances" className="app-page">
+    <main aria-label={t("debts.aria")} className="app-page">
       <div className="page-head">
         <div>
-          <p className="page-kicker">Planning</p>
-          <h1 className="page-title">Dettes &amp; Créances</h1>
+          <p className="page-kicker">{t("debts.kicker")}</p>
+          <h1 className="page-title">{t("debts.title")}</h1>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
               <Plus className="mr-1 h-4 w-4" />
-              Ajouter
+              {t("debts.add")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Ajouter une dette ou une créance</DialogTitle>
+              <DialogTitle>{t("debts.dialogTitle")}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               {createError != null && (
                 <p role="alert" className="text-sm text-destructive">{createError}</p>
               )}
               <div className="space-y-2">
-                <Label htmlFor="debt-credit-kind">Type</Label>
+                <Label htmlFor="debt-credit-kind">{t("debts.fields.type")}</Label>
                 <Select value={kind} onValueChange={(value) => setKind(value as DebtCreditKind)}>
                   <SelectTrigger id="debt-credit-kind">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="receivable">Créance</SelectItem>
-                    <SelectItem value="debt">Dette</SelectItem>
+                    <SelectItem value="receivable">{t("debts.kind.receivable")}</SelectItem>
+                    <SelectItem value="debt">{t("debts.kind.debt")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="debt-credit-party">
-                  {kind === "debt" ? "Nom du créancier" : "Nom du débiteur"}
+                  {kind === "debt" ? t("debts.fields.creditorName") : t("debts.fields.debtorName")}
                 </Label>
                 <Input
                   id="debt-credit-party"
@@ -287,7 +300,7 @@ export default function Debts() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="debt-credit-motive">Motif</Label>
+                <Label htmlFor="debt-credit-motive">{t("debts.fields.motive")}</Label>
                 <Input
                   id="debt-credit-motive"
                   value={motive}
@@ -297,7 +310,7 @@ export default function Debts() {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="debt-credit-amount">Montant ({currency})</Label>
+                  <Label htmlFor="debt-credit-amount">{t("debts.fields.amount", { currency })}</Label>
                   <Input
                     id="debt-credit-amount"
                     type="number"
@@ -309,7 +322,7 @@ export default function Debts() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="debt-credit-date">Date</Label>
+                  <Label htmlFor="debt-credit-date">{t("debts.fields.date")}</Label>
                   <Input
                     id="debt-credit-date"
                     type="date"
@@ -320,20 +333,20 @@ export default function Debts() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="debt-credit-status">Statut</Label>
+                <Label htmlFor="debt-credit-status">{t("debts.fields.status")}</Label>
                 <Select value={status} onValueChange={(value) => setStatus(value as DebtCreditStatus)}>
                   <SelectTrigger id="debt-credit-status">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pending">En attente</SelectItem>
-                    <SelectItem value="partial">Partiellement payé</SelectItem>
-                    <SelectItem value="settled">Soldé</SelectItem>
+                    <SelectItem value="pending">{statusLabels.pending}</SelectItem>
+                    <SelectItem value="partial">{statusLabels.partial}</SelectItem>
+                    <SelectItem value="settled">{statusLabels.settled}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <Button type="submit" disabled={createDebtCredit.isPending} className="w-full">
-                {createDebtCredit.isPending ? "Ajout…" : "Ajouter"}
+                {createDebtCredit.isPending ? t("debts.adding") : t("debts.add")}
               </Button>
             </form>
           </DialogContent>
@@ -345,7 +358,7 @@ export default function Debts() {
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm">
               <HandCoins className="h-4 w-4 text-ocean-primary" />
-              Créances non soldées
+              {t("debts.metrics.unsettledReceivables")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -354,7 +367,7 @@ export default function Debts() {
         </Card>
         <Card className="metric-surface">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Dettes non soldées</CardTitle>
+            <CardTitle className="text-sm">{t("debts.metrics.unsettledDebts")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold">{formatMoney(debtTotal, currency)}</p>
@@ -364,12 +377,12 @@ export default function Debts() {
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm">
               <Bell className="h-4 w-4 text-amber" />
-              Rappels
+              {t("debts.metrics.reminders")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold">{unsettledReceivables.length}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Créances non soldées</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t("debts.metrics.unsettledReceivables")}</p>
           </CardContent>
         </Card>
       </div>
@@ -378,7 +391,7 @@ export default function Debts() {
         <section className="rounded-lg border border-amber bg-amber-wash p-3">
           <div className="mb-3 flex items-center gap-2">
             <Bell className="h-4 w-4 text-amber" />
-            <h2 className="text-sm font-semibold">Rappels sur créances non soldées</h2>
+            <h2 className="text-sm font-semibold">{t("debts.reminders.title")}</h2>
           </div>
           <div className="grid gap-2 md:grid-cols-2">
             {unsettledReceivables.map((item) => (
@@ -400,17 +413,27 @@ export default function Debts() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <DebtCreditColumn
-          title="Créances"
-          emptyText="Aucune créance enregistrée."
-          partyLabel="Nom du débiteur"
+          title={t("debts.sections.receivables")}
+          emptyText={t("debts.empty.receivables")}
+          partyLabel={t("debts.fields.debtorName")}
+          motiveLabel={t("debts.fields.motive")}
+          amountLabel={t("debts.fields.amountShort")}
+          dateLabel={t("debts.fields.date")}
+          statusAriaLabel={t("debts.statusAria")}
+          statusLabels={statusLabels}
           items={receivables}
           onStatusChange={handleStatusChange}
           updating={updateStatus.isPending}
         />
         <DebtCreditColumn
-          title="Dettes"
-          emptyText="Aucune dette enregistrée."
-          partyLabel="Nom du créancier"
+          title={t("debts.sections.debts")}
+          emptyText={t("debts.empty.debts")}
+          partyLabel={t("debts.fields.creditorName")}
+          motiveLabel={t("debts.fields.motive")}
+          amountLabel={t("debts.fields.amountShort")}
+          dateLabel={t("debts.fields.date")}
+          statusAriaLabel={t("debts.statusAria")}
+          statusLabels={statusLabels}
           items={debts}
           onStatusChange={handleStatusChange}
           updating={updateStatus.isPending}
