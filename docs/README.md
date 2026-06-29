@@ -21,9 +21,9 @@ unifies three pillars usually kept separate: real-time **financial state trackin
 AI-driven **financial intelligence**, and adaptive **financial literacy** — delivered
 through a minimal, mobile-first interaction loop. Data is held on-device by default
 (encrypted IndexedDB), single-device for the MVP, with any cloud/AI egress gated
-behind explicit, per-feature user consent. Two AI-key modes coexist: a managed Go
-proxy that holds provider keys server-side, and a bring-your-own-key mode that runs
-fully local with no cloud dependency.
+behind explicit, per-feature user consent. Two AI-key modes coexist: a managed
+WiseMoney service for server-held provider keys, and a bring-your-own-key mode
+that runs without a WiseMoney server.
 
 The baseline documentation set was produced during Sprint **S0** on
 **2026-06-02**. Current implementation has advanced beyond that baseline; use this

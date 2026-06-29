@@ -3,56 +3,69 @@
 </p>
 
 <p align="center">
-  Finance personnelle locale-first. Suivez votre argent, planifiez, et utilisez l'IA seulement quand vous le décidez.
+  Personal finance that stays local first, with AI only when you choose it.
 </p>
 
 <p align="center">
-  <strong>PWA en ligne : <a href="https://wisemoney.y7labs.studio/">wisemoney.y7labs.studio</a></strong> · <strong>Edge Go pas encore déployé</strong>
+  <strong><a href="https://wisemoney.y7labs.studio/">Open WiseMoney</a></strong>
+  · PWA on Vercel
+  · Managed service not deployed yet
 </p>
 
 # WiseMoney
 
-WiseMoney est une PWA mobile-first pour la gestion des finances personnelles.
-Les données financières restent d'abord sur l'appareil, dans un journal local
-chiffré, et les fonctions d'IA restent séparées du suivi quotidien.
+WiseMoney is a mobile-first personal finance PWA built around local ownership of
+financial data. Your day-to-day money data starts on the device, is stored in an
+encrypted local event log, and stays usable without a WiseMoney server.
 
-L'application est déjà en ligne sur
-[wisemoney.y7labs.studio](https://wisemoney.y7labs.studio/), servie comme PWA via
-Vercel. L'edge Go managé existe dans ce repo pour l'authentification et le proxy
-IA managé, mais il n'est pas encore déployé. Tant que cet edge n'est pas en ligne,
-les appels IA en mode managé restent réservés au développement local; le mode avec
-clé personnelle reste le chemin sans backend.
+The hosted app is live at
+[wisemoney.y7labs.studio](https://wisemoney.y7labs.studio/). Managed AI features
+that depend on the WiseMoney server are still local/dev only; bring-your-own-key
+AI mode can run without that server.
 
-## Dans l'application
+## What You Can Track
 
-- Tableau de bord, saisie rapide, budgets, objectifs, transactions récurrentes et paramètres.
-- Dettes & Créances : suivi des dettes et créances avec motif, montant, date,
-  statut et rappels sur les créances non soldées.
-- Stockage local chiffré avec Dexie / IndexedDB et Web Crypto.
-- Installation PWA, notification de mise à jour service worker, et build web en ligne sur Vercel.
-- Edge Go optionnel pour l'authentification, les assertions de consentement et le routage IA.
+- Accounts, balances, transactions, budgets, savings goals, and recurring money
+  movements.
+- Debts and receivables with motive, amount, date, status, and reminders for
+  receivables that are not settled.
+- Optional AI guidance for insights, recommendations, forecasts, pattern
+  detection, and financial literacy.
+- PWA installation and service-worker update prompts for the hosted web app.
 
-## Déploiement actuel
+## Data And AI Posture
 
-| Surface | Statut |
-| --- | --- |
-| PWA web | En ligne sur [wisemoney.y7labs.studio](https://wisemoney.y7labs.studio/) |
-| Edge Go | Pas encore déployé |
-| Postgres pour l'auth edge | Local/dev uniquement |
-| Mode IA avec clé personnelle | Ne dépend pas de l'edge |
+- Financial data is stored locally in encrypted IndexedDB.
+- AI is optional and separated from the core finance tracker.
+- BYO-key mode sends requests directly from the browser to the selected provider.
+- Managed AI mode is present for local development, but the WiseMoney server is
+  not deployed yet.
 
-## Lancer en local
+## Project Structure
+
+```text
+WiseMoney/
+├── apps/
+│   └── web/              # React + TypeScript PWA
+├── services/
+│   └── edge/             # Local managed Go service
+├── docs/                 # Product, architecture, security, and runbooks
+├── docker-compose.yml    # Local Postgres + managed-service stack
+└── pnpm-workspace.yaml
+```
+
+## Run Locally
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-L'application web tourne sur `http://localhost:5173`.
+The web app runs at `http://localhost:5173`.
 
-## Edge managé en local
+## Managed Service For Local Development
 
-Nécessaire seulement pour le mode IA managé.
+Only needed when developing the managed AI path.
 
 ```bash
 cp .env.example .env
@@ -62,22 +75,4 @@ docker compose build edge
 docker compose up -d edge
 ```
 
-L'edge tourne sur `http://localhost:8080`.
-
-## Dépôt
-
-| Chemin | Rôle |
-| --- | --- |
-| `apps/web/` | PWA React + TypeScript. Logique métier et stockage local chiffré. |
-| `services/edge/` | Edge Go pour auth, consentement, rate limit et proxy IA. |
-| `docs/` | Produit, architecture, threat model, ADRs, diagrammes et runbooks. |
-| `docker-compose.yml` | Stack locale Postgres + edge pour le développement du mode managé. |
-
-## Documentation
-
-Commencez par [docs/README.md](./docs/README.md). La posture sécurité est
-documentée dans [SECURITY.md](./SECURITY.md) et [docs/THREAT_MODEL.md](./docs/THREAT_MODEL.md).
-
-La vérification des conditions de traitement des données par les fournisseurs IA
-reste un prérequis avant toute extension du mode managé :
-[runbook provider terms](./docs/runbooks/provider-terms-verification.md).
+The local managed service runs at `http://localhost:8080`.

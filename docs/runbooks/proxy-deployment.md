@@ -1,21 +1,21 @@
-# Runbook — Go edge proxy local deployment (Docker Compose)
+# Runbook — Managed Go Service Local Deployment (Docker Compose)
 
 | Field   | Value                                              |
 | ------- | -------------------------------------------------- |
-| Status  | Local/dev only; edge not deployed yet |
+| Status  | Local/dev only; managed service not deployed yet |
 | Date    | 2026-06-29                                          |
-| Scope   | Running the Go edge proxy + Postgres locally via Docker Compose |
+| Scope   | Running the managed Go service + Postgres locally via Docker Compose |
 | Source  | ARCHITECTURE §11 (deployment topology)             |
 
-> The web app is live at `https://wisemoney.y7labs.studio/` on Vercel. The Go edge
-> is not deployed yet. This runbook covers the local Docker Compose stack for
-> managed-mode development: Postgres plus the Go edge. BYO-key mode does not need
-> this stack.
+> The web app is live at `https://wisemoney.y7labs.studio/` on Vercel. The
+> managed WiseMoney service is not deployed yet. This runbook covers the local
+> Docker Compose stack for managed-mode development: Postgres plus the Go service.
+> BYO-key mode does not need this stack.
 
 ## Scope
 
 - **Current hosting.** PWA is live at `wisemoney.y7labs.studio`; Compose runs only
-  the local Go edge plus Postgres for managed-mode development.
+  the local Go service plus Postgres for managed-mode development.
 - **Images.** Go builder is pinned to `golang:1.25.11-bookworm`; runtime is
   `gcr.io/distroless/static-debian12:nonroot`; Postgres is `postgres:16.8`.
 
@@ -46,7 +46,7 @@ docker compose up -d edge
 
 ## Rollback
 
-- Stop the local edge with `docker compose stop edge`, rebuild from the
+- Stop the local service with `docker compose stop edge`, rebuild from the
   previous commit, and start it again.
 - Do not delete the `wisemoney_pgdata` volume unless intentionally resetting local
   auth data.
@@ -55,5 +55,5 @@ docker compose up -d edge
 
 - Postgres holds auth + rate-limit metadata only — never financial data.
 - The current Compose file publishes Postgres on host port `5432` for local
-  development. A future edge deployment must remove that host binding or restrict
-  it to a private network.
+  development. A future managed-service deployment must remove that host binding
+  or restrict it to a private network.
