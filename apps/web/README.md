@@ -3,12 +3,16 @@
 React 18 + TypeScript 5 PWA client. All domain logic lives here; the Go edge is
 thin auth + AI proxy only (ARCHITECTURE §1).
 
+The web app is currently hosted on Vercel. Managed-mode calls require a deployed
+edge URL; until the edge is deployed, use `VITE_EDGE_BASE_URL=http://localhost:8080`
+for local managed-mode development.
+
 ## Prerequisites
 
 - Node 20 (`.nvmrc` at repo root)
 - pnpm >= 9 (never npm or yarn)
 
-## Dev commands (Y4NN runs these — not executed by AI)
+## Dev commands
 
 ```sh
 # Install all workspace deps (run from repo root):
@@ -32,7 +36,8 @@ pnpm build
 
 ## Environment
 
-Copy `.env.example` (repo root) to `.env`. The only variable the PWA reads is:
+Copy `.env.example` (repo root) to `.env` when using managed mode. The only
+variable the PWA reads is:
 
 - `VITE_EDGE_BASE_URL` — base URL for the managed Go edge (managed mode only).
   BYO-key mode runs fully client-side and does not need this variable (INV-AUTH-05).

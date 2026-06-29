@@ -3,7 +3,18 @@ import { appendEvent } from "@/domain/eventStore.ts";
 import type { MoneyDTO } from "@/domain/financialState.ts";
 import { getSnapshot } from "@/domain/financialState.ts";
 
-export type { MoneyDTO, AccountState, CategoryState, BudgetState, GoalState, RecurringItemState } from "@/domain/financialState.ts";
+export type {
+  MoneyDTO,
+  AccountState,
+  CategoryState,
+  BudgetState,
+  GoalState,
+  RecurringItemState,
+  DebtCreditKind,
+  DebtCreditState,
+  DebtCreditStatus,
+} from "@/domain/financialState.ts";
+import type { DebtCreditKind, DebtCreditStatus } from "@/domain/financialState.ts";
 
 function uuid(): string {
   return crypto.randomUUID();
@@ -784,6 +795,111 @@ export async function recordTransfer(
   });
 
   return id;
+}
+
+// ---------------------------------------------------------------------------
+// createDebtCredit
+// ---------------------------------------------------------------------------
+
+export type CreateDebtCreditParams = {
+  kind: DebtCreditKind;
+  partyName: string;
+  motive: string;
+  amount: MoneyDTO;
+  date: number;
+  status: DebtCreditStatus;
+  masterKey: MasterKey;
+};
+
+const DEBT_CREDIT_STATUSES: DebtCreditStatus[] = ["pending", "partial", "settled"];
+
+export async function createDebtCredit(
+  params: CreateDebtCreditParams,
+): Promise<string> {
+  const errors: ValidationErrorDetail[] = [];
+  if (params.kind !== "receivable" && params.kind !== "debt") {
+    errors.push({ field: "kind", message: "Must be receivable or debt" });
+  }
+  if (!params.partyName || params.partyName.trim().length === 0) {
+    errors.push({
+      field: "partyName",
+      message: params.kind === "debt" ? "Creditor name is required" : "Debtor name is required",
+    });
+  }
+  if (!params.motive || params.motive.trim().length === 0) {
+    errors.push({ field: "motive", message: "Motive is required" });
+  }
+  validateMoney("amount", params.amount, errors, { positive: true });
+  if (!Number.isSafeInteger(params.date)) {
+    errors.push({ field: "date", message: "Must be a Unix timestamp in milliseconds" });
+  }
+  if (!DEBT_CREDIT_STATUSES.includes(params.status)) {
+    errors.push({ field: "status", message: "Must be pending, partial, or settled" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  const id = uuid();
+  await appendEvent({
+    id,
+    timestamp: nowMs(),
+    type: "debt_credit_created",
+    entityId: id,
+    payload: {
+      kind: params.kind,
+      partyName: params.partyName.trim(),
+      motive: params.motive.trim(),
+      amount: params.amount,
+      date: params.date,
+      status: params.status,
+    },
+    masterKey: params.masterKey,
+  });
+
+  return id;
+}
+
+// ---------------------------------------------------------------------------
+// updateDebtCreditStatus
+// ---------------------------------------------------------------------------
+
+export type UpdateDebtCreditStatusParams = {
+  debtCreditId: string;
+  status: DebtCreditStatus;
+  masterKey: MasterKey;
+};
+
+export async function updateDebtCreditStatus(
+  params: UpdateDebtCreditStatusParams,
+): Promise<void> {
+  const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
+  const item = snapshot.debtCredits.find((entry) => entry.id === params.debtCreditId);
+
+  if (!params.debtCreditId || params.debtCreditId.trim().length === 0) {
+    errors.push({ field: "debtCreditId", message: "Debt or receivable id is required" });
+  } else if (item == null) {
+    errors.push({ field: "debtCreditId", message: "Debt or receivable not found (INV-EVT-03)" });
+  }
+  if (!DEBT_CREDIT_STATUSES.includes(params.status)) {
+    errors.push({ field: "status", message: "Must be pending, partial, or settled" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  await appendEvent({
+    id: uuid(),
+    timestamp: nowMs(),
+    type: "debt_credit_status_updated",
+    entityId: params.debtCreditId,
+    payload: {
+      debtCreditId: params.debtCreditId,
+      status: params.status,
+    },
+    masterKey: params.masterKey,
+  });
 }
 
 // ---------------------------------------------------------------------------

@@ -75,7 +75,7 @@ function openReturnsCiphertext(): void {
 function emptySnapshot(asOfEventId = "none", asOfTimestamp = 0): FinancialStateSnapshot {
   return {
     asOfEventId, asOfTimestamp,
-    accounts: [], categories: [], budgets: [], goals: [], recurringItems: [],
+    accounts: [], categories: [], budgets: [], goals: [], recurringItems: [], debtCredits: [],
     periodStart: 0, periodEnd: 0,
     totalBalance: { minorUnits: 0, currency: "USD" },
     periodIncome: { minorUnits: 0, currency: "USD" },

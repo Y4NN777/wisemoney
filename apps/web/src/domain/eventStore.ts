@@ -21,7 +21,9 @@ export type FinancialEventType =
   | "goal_archived"
   | "recurring_item_created"
   | "recurring_item_realised"
-  | "transfer_created";
+  | "transfer_created"
+  | "debt_credit_created"
+  | "debt_credit_status_updated";
 
 export type FinancialEventPayload = Record<string, unknown>;
 

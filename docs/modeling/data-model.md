@@ -5,13 +5,14 @@
 | Title   | Data Model — IndexedDB (client) + PostgreSQL (edge)                     |
 | Date    | 2026-06-05                                                              |
 | Version | MODELING T-S0-01 v0.3                                                   |
-| Status  | Draft                                                                   |
-| Owner   | Shallum (databases)                                                     |
+| Status  | Design baseline; implementation now lives in `apps/web/src/db/` and `services/edge/migrations/` |
+| Owner   | Project maintainers                                                     |
 | Source  | CONTRACT v0.1; ARCHITECTURE v0.1; diagrams/UML/01-domain-er.md v0.1    |
 
-> Design artifact only. No DDL is executed here. Migration execution is owned
-> by Y4NN. The phrase "DESIGNED — to be applied by Y4NN" marks every runnable
-> statement in this document.
+> This is the S0 data-model design baseline. Treat runnable snippets here as
+> historical design notes; the current implementation source of truth is the
+> Dexie schema under `apps/web/src/db/` and SQL migrations under
+> `services/edge/migrations/`.
 
 ---
 
@@ -395,9 +396,8 @@ by replay. Replay correctness is guaranteed by the append-only, immutable log
 **Client-side execution model.** IndexedDB/Dexie migrations run automatically in
 the browser the first time a client opens a database whose declared version exceeds
 the stored version. No server-side operation is involved. The migration is
-DESIGNED here; it is executed by the running browser client. Y4NN does not
-manually apply these — the Dexie version declaration in `schema.ts` is the
-execution trigger (Oholiab owns `schema.ts`; Shallum owns this spec).
+described here; the Dexie version declaration in `schema.ts` is the execution
+trigger.
 
 **Encryption continuity across upgrades.** The master key derivation mechanism
 (`keyMeta`) must not change during an in-place upgrade. If the KDF parameters
@@ -458,7 +458,7 @@ Implications:
 #### `users`
 
 ```sql
--- DESIGNED — to be applied by Y4NN; never auto-executed
+	-- Design baseline; current executable SQL lives in services/edge/migrations
 CREATE TABLE users (
     id            UUID        NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     email         CITEXT      NOT NULL,
@@ -492,7 +492,7 @@ Column notes:
 #### `refresh_tokens`
 
 ```sql
--- DESIGNED — to be applied by Y4NN; never auto-executed
+	-- Design baseline; current executable SQL lives in services/edge/migrations
 CREATE TABLE refresh_tokens (
     id          UUID        NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id     UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -530,7 +530,7 @@ Column notes:
 ### B.3 Designed migration DDL
 
 ```sql
--- DESIGNED — to be applied by Y4NN; never auto-executed
+	-- Design baseline; current executable SQL lives in services/edge/migrations
 -- Migration: 0001_initial_auth_schema
 -- Tool: golang-migrate (see §B.4 for rationale)
 -- Forward (up):
@@ -567,7 +567,7 @@ CREATE INDEX refresh_tokens_token_hash_idx ON refresh_tokens (token_hash);
 ```
 
 ```sql
--- DESIGNED — to be applied by Y4NN; never auto-executed
+	-- Design baseline; current executable SQL lives in services/edge/migrations
 -- Migration: 0001_initial_auth_schema
 -- Rollback (down):
 
@@ -590,7 +590,8 @@ Goose is a valid alternative with similar characteristics; the deciding factor i
 that golang-migrate's library-mode startup integration is well-suited to the
 single-binary distroless deployment described in ARCHITECTURE §11.
 
-Neither tool is executed by this document. Y4NN runs migrations.
+Neither tool is executed by this document. Apply SQL migrations explicitly through
+the migration files under `services/edge/migrations/`.
 
 ### A.4 Dexie schema version history
 
@@ -624,11 +625,11 @@ a record written by v1 (no `wrappedIv` property) is read by v2 code as
 No data loss on rollback (removing the field from schema.ts and reverting to v1 is
 safe because `wrappedIv` is null on all existing records at the time of migration).
 
-**Designed Dexie migration (DESIGNED — client-side; executed by browser on first
-open after schema.ts version bump to 2):**
+**Dexie migration design (client-side; executed by browser on first open after
+schema.ts version bump to 2):**
 
 ```typescript
-// DESIGNED — not executed here; Oholiab wires this in schema.ts
+// Design baseline; current executable schema lives in apps/web/src/db/schema.ts
 db.version(2)
   .stores({
     // Store definitions unchanged from v1; listed here to satisfy Dexie's
@@ -691,11 +692,11 @@ v2 client opening a v3 database simply has no `authSession` records until first
 login — the application's session module handles the absent record as "no active
 session" and prompts login.
 
-**Designed Dexie migration (DESIGNED — client-side; executed by browser on first
-open after schema.ts version bump to 3):**
+**Dexie migration design (client-side; executed by browser on first open after
+schema.ts version bump to 3):**
 
 ```typescript
-// DESIGNED — not executed here; Oholiab wires this in schema.ts
+// Design baseline; current executable schema lives in apps/web/src/db/schema.ts
 db.version(3)
   .stores({
     // All stores from v2 re-declared; only authSession is new.

@@ -2,14 +2,13 @@
 
 | Field    | Value                                                                          |
 | -------- | ------------------------------------------------------------------------------ |
-| Status   | Active (Sprint S0, 2026-06-05)                                                 |
+| Status   | Active                                                                         |
 | Diátaxis | How-to                                                                         |
-| Date     | 2026-06-05                                                                     |
+| Date     | 2026-06-29                                                                     |
 | Scope    | Installing osv-scanner; scanning Go and pnpm surfaces; binary scan (authoritative Go gate); reading results; known pitfalls |
 | Source   | ADR-0010; `/dep-audit` run 2026-06-05; osv-scanner v2.3.8                      |
 
-> Stateful operations in this runbook are written out for the engineer to run.
-> No agent executes them. Copy-paste each command exactly.
+> Run commands from the repository root unless a section says otherwise.
 
 ---
 
@@ -61,7 +60,7 @@ in `go.mod`. It does **not** read the toolchain version embedded in a compiled
 binary. See section 4 for the authoritative binary scan.
 
 ```bash
-osv-scanner scan --lockfile go:/home/ogu/theY4NN/wisemoney/services/edge/go.mod
+osv-scanner scan --lockfile services/edge/go.mod
 ```
 
 A clean result looks like:
@@ -79,7 +78,7 @@ every CRITICAL or HIGH before proceeding.
 The lockfile is at the repo root (pnpm workspace).
 
 ```bash
-osv-scanner scan --lockfile /home/ogu/theY4NN/wisemoney/pnpm-lock.yaml
+osv-scanner scan --lockfile pnpm-lock.yaml
 ```
 
 A clean result looks like:
@@ -107,13 +106,13 @@ Dockerfile is out of sync. The binary encodes what actually compiled it.
 docker build \
   --target builder \
   -t wisemoney-edge-builder:scan \
-  /home/ogu/theY4NN/wisemoney/services/edge
+  services/edge
 ```
 
 **Step 2 — extract the binary:**
 ```bash
 docker create --name edge-scan-tmp wisemoney-edge-builder:scan
-docker cp edge-scan-tmp:/app/edge /tmp/wisemoney-edge-scan
+docker cp edge-scan-tmp:/edge /tmp/wisemoney-edge-scan
 docker rm edge-scan-tmp
 ```
 
@@ -133,11 +132,12 @@ rm /tmp/wisemoney-edge-scan
 docker rmi wisemoney-edge-builder:scan
 ```
 
-The binary scan is the gate used in the CI `security:scan` stage. A new CRITICAL
-or HIGH finding from the binary scan blocks merge. Manifest-only findings that
-are absent from the binary scan indicate a scanner reporting artefact, not a live
-vulnerability — document the discrepancy and confirm the binary scan before
-closing.
+The manifest scan runs in the GitHub Actions `security-scan` workflow (`osv-scan`
+job). The binary scan is authoritative for Go stdlib exposure; in CI it activates
+only when a compiled edge binary exists at `EDGE_BINARY_PATH` (`dist/edge` by
+default). Until that artifact is produced in the same workflow or downloaded from
+another workflow, run the binary scan locally with the steps above for release
+verification.
 
 ---
 
@@ -208,7 +208,7 @@ toolchain go1.25.11
 
 Then confirm the manifest scan is clean again:
 ```bash
-osv-scanner scan --lockfile go:/home/ogu/theY4NN/wisemoney/services/edge/go.mod
+osv-scanner scan --lockfile services/edge/go.mod
 ```
 
 Add a code review checklist item: any PR touching `go.mod` must confirm the
@@ -242,8 +242,8 @@ must report clean on both surfaces.
 After any upgrade or fresh install, run all three scans in order:
 
 ```bash
-osv-scanner scan --lockfile go:/home/ogu/theY4NN/wisemoney/services/edge/go.mod
-osv-scanner scan --lockfile /home/ogu/theY4NN/wisemoney/pnpm-lock.yaml
+osv-scanner scan --lockfile services/edge/go.mod
+osv-scanner scan --lockfile pnpm-lock.yaml
 osv-scanner scan binary /tmp/wisemoney-edge-scan
 ```
 
@@ -251,5 +251,5 @@ All three must report `No issues found` before the dep-audit is considered close
 
 ---
 
-*Maintained by Sefer (Jehoshaphat). Source: ADR-0010. Updated when osv-scanner
-is re-pinned or baseline versions change.*
+*Source: ADR-0010. Updated when osv-scanner is re-pinned or baseline versions
+change.*

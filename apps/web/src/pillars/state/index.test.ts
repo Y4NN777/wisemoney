@@ -44,6 +44,8 @@ import {
   createGoal,
   recordGoalContribution,
   createRecurringItem,
+  createDebtCredit,
+  updateDebtCreditStatus,
   realiseRecurringOccurrence,
   ValidationError,
 } from "./index.ts";
@@ -57,6 +59,7 @@ function snapshot(overrides: Record<string, unknown> = {}): Record<string, unkno
     budgets: [],
     goals: [],
     recurringItems: [],
+    debtCredits: [],
     ...overrides,
   };
 }
@@ -306,6 +309,63 @@ describe("createRecurringItem", () => {
 
     expect(id).toBeDefined();
     expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("recurring_item_created");
+  });
+});
+
+describe("createDebtCredit", () => {
+  it("emits debt_credit_created event with motive", async () => {
+    const id = await createDebtCredit({
+      kind: "receivable",
+      partyName: "Awa",
+      motive: "Avance transport",
+      amount: { minorUnits: 15000, currency: "USD" },
+      date: 1_720_000_000_000,
+      status: "pending",
+      masterKey: mkKey,
+    });
+
+    expect(id).toBeDefined();
+    expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("debt_credit_created");
+    expect(fakeAppendEvent.mock.calls[0]![0].payload).toMatchObject({
+      kind: "receivable",
+      partyName: "Awa",
+      motive: "Avance transport",
+      status: "pending",
+    });
+  });
+
+  it("throws ValidationError without motive", async () => {
+    await expect(
+      createDebtCredit({
+        kind: "debt",
+        partyName: "Koffi",
+        motive: "",
+        amount: { minorUnits: 20000, currency: "USD" },
+        date: 1_720_000_000_000,
+        status: "pending",
+        masterKey: mkKey,
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+});
+
+describe("updateDebtCreditStatus", () => {
+  it("emits debt_credit_status_updated event when record exists", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      debtCredits: [{ id: "dc-1", status: "pending" }],
+    }));
+
+    await updateDebtCreditStatus({
+      debtCreditId: "dc-1",
+      status: "settled",
+      masterKey: mkKey,
+    });
+
+    expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("debt_credit_status_updated");
+    expect(fakeAppendEvent.mock.calls[0]![0].payload).toMatchObject({
+      debtCreditId: "dc-1",
+      status: "settled",
+    });
   });
 });
 

@@ -4,8 +4,12 @@
 > adaptive financial literacy, in one mobile-first loop. All financial data lives
 > encrypted on-device; any cloud/AI egress is consent-gated.
 
-**Status:** Sprint S0 — specification, design, and MVP scaffold complete; full client
-auth-session, crypto, AI orchestration (managed-mode), and PWA foundation wired.
+**Status:** Active MVP implementation. The S0 specification baseline is complete,
+and the repo now contains a working React/TypeScript PWA scaffold with local
+financial-state flows, client crypto/session foundations, managed AI orchestration
+hooks, PWA update handling, and a Go managed edge for auth + AI proxying. The web
+app is currently hosted on Vercel; the Go edge is not deployed yet and is run
+locally for managed-mode development.
 Full design set in [`docs/`](./docs/) (start at [`docs/README.md`](./docs/README.md)).
 
 ## Structure
@@ -28,8 +32,8 @@ the Go edge + Postgres are only needed for *managed* AI-key mode.
 
 ## Run
 
-> Dependency audit already done (`/dep-audit` at `050d578`). All dependencies pinned
-> and verified.
+> Dependency audit baseline is recorded in [`CHANGELOG.md`](./CHANGELOG.md) and
+> [`docs/runbooks/dependency-scanning.md`](./docs/runbooks/dependency-scanning.md).
 
 **Frontend (PWA):**
 ```
@@ -41,7 +45,7 @@ pnpm dev                # WiseMoney web on http://localhost:5173
 ```
 cp .env.example .env    # then fill secrets (use SOPS/age for real secrets)
 docker compose up -d postgres
-# apply the DESIGNED migrations (you run these — never auto-run):
+# apply migrations explicitly:
 #   migrate -path services/edge/migrations -database "$DATABASE_URL" up
 docker compose build edge && docker compose up -d edge   # edge on http://localhost:8080
 ```

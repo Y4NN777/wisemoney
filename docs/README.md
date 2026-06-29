@@ -3,13 +3,14 @@
 | Field           | Value                                              |
 | --------------- | -------------------------------------------------- |
 | Project         | WiseMoney                                      |
-| Current sprint  | S0 (initialisation)                                |
-| Date            | 2026-06-02                                         |
-| Doc owner       | Jehoshaphat (Sefer — documentation)                |
+| Current phase   | Active MVP implementation                          |
+| Date            | 2026-06-29                                         |
+| Doc owner       | Project maintainers                                |
 | Provenance      | `docs/intake/intent-v0.1.md`                       |
 
-> This is the home of the WiseMoney documentation set. Every document below is
-> dated and sourced; nothing here is fabricated. Sefer writes to `docs/` only.
+> This is the home of the WiseMoney documentation set. S0 documents are retained
+> as the design baseline; live indexes and runbooks are updated as implementation
+> changes land.
 
 ---
 
@@ -24,8 +25,9 @@ behind explicit, per-feature user consent. Two AI-key modes coexist: a managed G
 proxy that holds provider keys server-side, and a bring-your-own-key mode that runs
 fully local with no cloud dependency.
 
-This documentation set was produced during `/mishkan-init`, Sprint **S0**, on
-**2026-06-02**.
+The baseline documentation set was produced during Sprint **S0** on
+**2026-06-02**. Current implementation has advanced beyond that baseline; use this
+index, the package READMEs, and `CHANGELOG.md` for live status.
 
 ---
 
@@ -56,7 +58,7 @@ The specs were produced in order; each constrains the next. Read them in sequenc
 
 | Document | What it owns | Link |
 | -------- | ------------ | ---- |
-| **Data model** | Persistence schema design: client IndexedDB/Dexie object stores + encryption boundary, edge Postgres tables, designed migrations (not executed). | [`modeling/data-model.md`](./modeling/data-model.md) |
+| **Data model** | Persistence schema design: client IndexedDB/Dexie object stores + encryption boundary, edge Postgres tables, and migration history. | [`modeling/data-model.md`](./modeling/data-model.md) |
 
 ---
 
@@ -76,7 +78,7 @@ The ADR log captures the consequential initialisation decisions (locked decision
 
 | Document | What it owns | Link |
 | -------- | ------------ | ---- |
-| **Runbooks** | Operational procedures (proxy deployment, incident response, secrets, provider-terms verification). Stubs at S0 — completed as the relevant systems exist. | [`runbooks/`](./runbooks/) |
+| **Runbooks** | Operational procedures for proxy deployment, incident response, secrets, provider-terms verification, and dependency scanning. Some are active, others remain pre-production outlines. | [`runbooks/`](./runbooks/) |
 
 ---
 
@@ -89,5 +91,5 @@ for the ADR log and is not itself a deliverable — it is source material captur
 
 ---
 
-*Maintained by Sefer (Jehoshaphat, the Recorder). Diátaxis quadrant on every doc;
-MADR for ADRs; Keep a Changelog where a changelog applies. No undated docs.*
+*MADR for ADRs; Keep a Changelog where a changelog applies. Historical S0 records
+remain dated to their original decision points.*

@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMasterKey } from "../lib/masterKeyContext.ts";
 import { getSnapshot, replayUpTo, readTransactionsInRange } from "../domain/financialState.ts";
 import type { TransactionDisplay } from "../domain/financialState.ts";
-import { recordTransaction, createAccount, updateAccount, archiveAccount, createCategory, renameCategory, archiveCategory, createGoal, recordGoalContribution, createBudget, archiveBudget, archiveGoal, createRecurringItem, realiseRecurringOccurrence, recordTransfer } from "../pillars/state/index.ts";
-import type { RecordTransactionParams, CreateAccountParams, UpdateAccountParams, ArchiveAccountParams, CreateCategoryParams, RenameCategoryParams, ArchiveCategoryParams, CreateGoalParams, RecordGoalContributionParams, CreateBudgetParams, ArchiveBudgetParams, ArchiveGoalParams, CreateRecurringItemParams, RealiseRecurringOccurrenceParams, RecordTransferParams } from "../pillars/state/index.ts";
+import { recordTransaction, createAccount, updateAccount, archiveAccount, createCategory, renameCategory, archiveCategory, createGoal, recordGoalContribution, createBudget, archiveBudget, archiveGoal, createRecurringItem, realiseRecurringOccurrence, recordTransfer, createDebtCredit, updateDebtCreditStatus } from "../pillars/state/index.ts";
+import type { RecordTransactionParams, CreateAccountParams, UpdateAccountParams, ArchiveAccountParams, CreateCategoryParams, RenameCategoryParams, ArchiveCategoryParams, CreateGoalParams, RecordGoalContributionParams, CreateBudgetParams, ArchiveBudgetParams, ArchiveGoalParams, CreateRecurringItemParams, RealiseRecurringOccurrenceParams, RecordTransferParams, CreateDebtCreditParams, UpdateDebtCreditStatusParams } from "../pillars/state/index.ts";
 import type { FinancialStateSnapshot } from "../domain/financialState.ts";
 
 const SNAPSHOT_KEY = ["financialState"] as const;
@@ -207,6 +207,32 @@ export function useRecordTransfer() {
   return useMutation({
     mutationFn: (params: Omit<RecordTransferParams, "masterKey">) =>
       recordTransfer({ ...params, masterKey }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: SNAPSHOT_KEY });
+    },
+  });
+}
+
+export function useCreateDebtCredit() {
+  const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: Omit<CreateDebtCreditParams, "masterKey">) =>
+      createDebtCredit({ ...params, masterKey }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: SNAPSHOT_KEY });
+    },
+  });
+}
+
+export function useUpdateDebtCreditStatus() {
+  const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: Omit<UpdateDebtCreditStatusParams, "masterKey">) =>
+      updateDebtCreditStatus({ ...params, masterKey }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: SNAPSHOT_KEY });
     },

@@ -1,16 +1,13 @@
 # WiseMoney — GitHub Actions Security Scan
 #
-# SCOPE: security gate only (manifest scan + binary scan).
+# SCOPE: security gate only (manifest scan + optional binary scan).
 # This is the foundational security gate produced by the dep-audit (T-S0-04).
-# Build, test, and deploy stages are a later Eliashib (Migdal Team Lead) decision;
-# adding them before the pipeline architecture is designed is scope expansion
-# (MISHKAN standard §4). This file will be extended in a dedicated pipeline-design
-# task.
+# Build-correctness gates live in verify.yml. Deployment is intentionally outside
+# this workflow.
 #
-# Merge gate: the osv-scan job must pass before any PR can merge. Configure under
-# Repository → Settings → Branches → Branch protection rules →
-# "Require status checks to pass before merging" → add "osv-scan". Ira owns this
-# gate per Migdal rules.
+# Merge gate: the osv-scan job must pass before any PR can merge. Configure it
+# with verify-web and verify-edge under Repository → Settings → Branches →
+# Branch protection rules → "Require status checks to pass before merging".
 #
 # Ported from .gitlab-ci.yml on 2026-06-05. The repo is GitHub-only (Y4NN777/
 # wisemoney); the GitLab file has been removed. Logic, comments, and intent are
@@ -45,9 +42,9 @@ env:
   # This value MUST be updated whenever OSV_VERSION changes.
   OSV_SHA256: "bc98e15319ed0d515e3f9235287ba53cdc5535d576d24fd573978ecfe9ab92dc"
 
-  # Path where the edge binary will land once the build stage exists.
-  # Assumption: the build stage will publish the binary as an artifact at this
-  # path. Y4NN must confirm this path when Eliashib wires in the build job.
+  # Path where the edge binary should be present if this workflow is extended to
+  # build or download the compiled edge artifact. verify.yml already proves the
+  # edge builds, but it does not currently publish dist/edge into this job.
   # The binary-scan step below is inert until this file exists in the workspace.
   EDGE_BINARY_PATH: "dist/edge"
 
@@ -131,20 +128,17 @@ jobs:
       # toolchain is older — the binary tells the truth. The manifest scan above
       # cannot catch this. See ADR-0010 for the full rationale.
       #
-      # INERT UNTIL BUILD STAGE LANDS: this step checks for the binary at
-      # EDGE_BINARY_PATH before running. When no binary is present it prints a
-      # clear notice and exits 0 — the step is a no-op. Once Eliashib wires the
-      # build job and publishes the artifact at dist/edge, this step activates
-      # automatically. No code change required here at that point.
-      # Y4NN must confirm EDGE_BINARY_PATH matches the artifact path chosen in
-      # the build job.
+      # This step checks for the binary at EDGE_BINARY_PATH before running. When
+      # no binary is present it prints a clear notice and exits 0. verify.yml
+      # already runs `go build ./...`; this scan becomes active once this workflow
+      # also builds or downloads the compiled edge binary at dist/edge.
       # -----------------------------------------------------------------------
       - name: "Binary scan: dist/edge (authoritative stdlib gate)"
         run: |
           if [ ! -f "${EDGE_BINARY_PATH}" ]; then
             echo "NOTICE: edge binary not found at ${EDGE_BINARY_PATH}."
-            echo "Binary scan is inert until the build job publishes the artifact."
-            echo "Activates automatically once Eliashib wires the build stage."
+            echo "Binary scan is inert until this workflow has a compiled edge artifact."
+            echo "verify.yml still runs the edge build/vet/test correctness gate."
             exit 0
           fi
           echo "=== Binary scan: ${EDGE_BINARY_PATH} (authoritative stdlib gate) ==="

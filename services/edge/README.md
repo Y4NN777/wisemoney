@@ -3,7 +3,7 @@
 Thin, stateless Go auth + AI-gateway proxy for managed mode.
 Holds no financial data (INV-PROXY-01). BYO-key mode bypasses this service entirely.
 
-## Commands for Y4NN to run
+## Commands
 
 ### Build and start
 
@@ -26,7 +26,7 @@ migrate -database "$DATABASE_URL" -path ./services/edge/migrations up
 migrate -database "$DATABASE_URL" -path ./services/edge/migrations down 1
 ```
 
-### Run locally (requires Go 1.23 and a running Postgres)
+### Run locally (requires Go 1.25.11 and a running Postgres)
 
 ```sh
 # Copy .env.example to .env, fill in values, then:

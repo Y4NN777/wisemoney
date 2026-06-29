@@ -2,22 +2,24 @@
 
 | Field   | Value                                              |
 | ------- | -------------------------------------------------- |
-| Status  | STUB — procedures not yet defined (Sprint S0)      |
-| Date    | 2026-06-02                                          |
-| Scope   | JWT signing key, managed provider keys, DB credentials (SOPS/age) |
+| Status  | Active local template; production SOPS/age process pending |
+| Date    | 2026-06-29                                          |
+| Scope   | JWT signing key, consent signing key, managed provider keys, DB credentials |
 | Source  | THREAT_MODEL §2.2, §2.8, §2.9; ARCHITECTURE §8, §11 |
 
-> **TODO: to be completed when the Go edge and its secrets delivery exist.** No
-> procedure is recorded yet — no steps are fabricated. Secrets handling is a stateful
-> operation: commands are prepared for the engineer to run, never agent-executed.
+> `.env.example` documents the local/dev shape. Production must inject equivalent
+> values from a secrets manager or SOPS/age-encrypted file; plaintext `.env` files
+> are for local development only and must never be committed.
 
-## Scope (to be completed)
+## Scope
 
-Secrets this runbook will cover, each TODO:
+Secrets this runbook covers:
 
 - **JWT signing key** — server-only, never transmitted to a client, never committed
   (INV-AUTH-03; THREAT_MODEL §2.2, S-AUTH-02). Sourced from a secrets manager /
   env-injected secret.
+- **Consent signing key** — dedicated HMAC key for consent assertions. It must be
+  different from `JWT_SIGNING_KEY`; `config.Load` enforces this at startup.
 - **Managed provider API keys** — held server-side only (INV-KEY-01); never logged or
   in error payloads (INV-PROXY-02).
 - **Postgres credentials** — least-privilege DB user; injected at runtime via SOPS/age
@@ -26,20 +28,42 @@ Secrets this runbook will cover, each TODO:
 > BYO provider keys are **not** in this runbook's scope: they are user-held, encrypted
 > on-device, and never reach the server (INV-KEY-02). They are a client concern.
 
-## Provisioning (to be completed)
+## Local provisioning
 
-- TODO: generate keys; encrypt with SOPS/age; never plaintext in version control.
+```bash
+cp .env.example .env
+```
 
-## Injection / delivery (to be completed)
+Fill at least:
 
-- TODO: runtime injection into the Go edge container (engineer-run).
+- `POSTGRES_PASSWORD`
+- `DATABASE_URL`
+- `JWT_SIGNING_KEY`
+- `CONSENT_SIGNING_KEY`
+- provider keys needed by the managed provider router
 
-## Rotation (to be completed)
+Use independent high-entropy values for `JWT_SIGNING_KEY` and
+`CONSENT_SIGNING_KEY`; do not reuse placeholders from `.env.example`.
 
-- TODO: signing-key rotation (token-invalidation impact), provider-key rotation,
-  DB-credential rotation. Stateful — prepared for the engineer.
+## Injection / delivery
 
-## Verification (to be completed)
+- Local/dev Compose reads `.env` through `env_file: .env`.
+- Vite reads `VITE_EDGE_BASE_URL` from the same local environment for managed mode.
+- Production should inject secrets through the deployment platform; do not bake
+  secrets into images.
 
-- TODO: confirm no secret is committed; confirm log sanitizer strips Authorization
-  and `api_key` fields (THREAT_MODEL M-KEY-04, M-PROXY-03).
+## Rotation
+
+- Rotating `JWT_SIGNING_KEY` invalidates active access JWTs.
+- Rotating `CONSENT_SIGNING_KEY` invalidates active consent assertions.
+- Rotating provider keys should require only an edge restart/redeploy with updated
+  environment.
+- Rotating DB credentials requires updating Postgres credentials and `DATABASE_URL`
+  together.
+
+## Verification
+
+- `git status --short` must not show `.env`.
+- Edge startup must fail if `JWT_SIGNING_KEY` and `CONSENT_SIGNING_KEY` match.
+- Confirm logs do not contain `Authorization`, `api_key`, provider keys, JWTs, or
+  consent assertions.

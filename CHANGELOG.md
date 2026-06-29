@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **PWA update prompt** — added a Sonner-powered update notification so refreshed
+  service-worker builds can prompt the user instead of silently racing a reload.
+- **Global action feedback** — added localized success/error feedback across BYO
+  key settings, budgets, export/import, goals, and recurring management flows.
+- **Event-sourced management actions** — wired state-management actions through the
+  financial-state event pipeline with tests for domain and pillar behavior.
+- **Dettes & Créances** — added an event-sourced planning surface for receivables
+  and debts with debtor/creditor name, motive, amount, date, status updates, and
+  reminders for unsettled receivables.
+
+### Fixed
+
+- **PWA assets and refresh flow** — refreshed app icons, added `workbox-window`, and
+  fixed the update-handler lint issue and reload race.
+- **Responsive web UI** — constrained the account form on small screens and
+  stabilized dropdown behavior inside dialogs.
+- **Capture flow** — added action feedback and fixed event-sourced state updates
+  from capture interactions.
+
+### Changed
+
+- **Public docs** — updated the root README status/run instructions and rewrote
+  `SECURITY.md` for public readability.
+
 ### Security
 
 - **Edge — pgx/v5 5.7.4 → 5.9.2** — fixes CVE-2026-33816 (GO-2026-4772, CVSS 9.8),

@@ -1,42 +1,58 @@
-# Runbook — Go edge proxy deployment (Docker Compose)
+# Runbook — Go edge proxy local deployment (Docker Compose)
 
 | Field   | Value                                              |
 | ------- | -------------------------------------------------- |
-| Status  | STUB — system does not yet exist (Sprint S0)       |
-| Date    | 2026-06-02                                          |
-| Scope   | Deploying the Go edge proxy + Postgres via Docker Compose |
+| Status  | Local/dev only; edge not deployed yet |
+| Date    | 2026-06-29                                          |
+| Scope   | Running the Go edge proxy + Postgres locally via Docker Compose |
 | Source  | ARCHITECTURE §11 (deployment topology)             |
 
-> **TODO: to be completed when the Go edge proxy and its Docker Compose deployment
-> exist.** No procedure is recorded yet — no steps are fabricated. The scope below
-> marks what this runbook will cover. Detailed hosting/ops is deferred to the Migdal
-> infra phase (ARCHITECTURE §11).
+> The web app is currently hosted on Vercel. The Go edge is not deployed yet. This
+> runbook covers the local Docker Compose stack for managed-mode development:
+> Postgres plus the Go edge. BYO-key mode does not need this stack.
 
-## Scope (to be completed)
+## Scope
 
-- **Topology.** Two units + datastore: PWA static host, Go proxy (edge), Postgres —
-  orchestrated by Docker Compose (ARCHITECTURE §11). BYO-key mode bypasses the proxy
-  entirely.
-- **Images.** Distroless, version-pinned Go image; no `:latest` tags anywhere.
+- **Current hosting.** PWA is hosted on Vercel; Compose runs only the local Go edge
+  plus Postgres for managed-mode development.
+- **Images.** Go builder is pinned to `golang:1.25.11-bookworm`; runtime is
+  `gcr.io/distroless/static-debian12:nonroot`; Postgres is `postgres:16.8`.
 
-## Preconditions (to be completed)
+## Preconditions
 
-- TODO: required environment, pinned image versions, network layout, secrets present.
+- Docker + Compose are installed.
+- `.env` exists at repo root, copied from `.env.example` and filled with real
+  local secrets.
+- `DATABASE_URL` points at the Compose service host `postgres`.
+- `JWT_SIGNING_KEY` and `CONSENT_SIGNING_KEY` are both strong and different.
 
-## Deployment steps (to be completed)
+## Deployment steps
 
-- TODO: Compose bring-up sequence (engineer-run — agents do not execute deploys).
+```bash
+cp .env.example .env
+docker compose up -d postgres
+migrate -database "$DATABASE_URL" -path ./services/edge/migrations up
+docker compose build edge
+docker compose up -d edge
+```
 
-## Verification (to be completed)
+## Verification
 
-- TODO: health checks; confirm Postgres reachable only from the edge on the Docker
-  network (no public port binding); confirm auth path rejects unauthenticated requests.
+- `docker compose ps` shows `postgres` healthy and `edge` running.
+- `curl -i http://localhost:8080/v1/ai/proxy` should reject unauthenticated access.
+- Confirm logs do not include provider keys, JWTs, consent assertions, or financial
+  payloads.
 
-## Rollback (to be completed)
+## Rollback
 
-- TODO: rollback to previous pinned image; data-safety notes.
+- Stop the local edge with `docker compose stop edge`, rebuild from the
+  previous commit, and start it again.
+- Do not delete the `wisemoney_pgdata` volume unless intentionally resetting local
+  auth data.
 
 ## Notes
 
 - Postgres holds auth + rate-limit metadata only — never financial data.
-- The hardening overlay is re-applied on every container recreate (not one-time).
+- The current Compose file publishes Postgres on host port `5432` for local
+  development. A future edge deployment must remove that host binding or restrict
+  it to a private network.

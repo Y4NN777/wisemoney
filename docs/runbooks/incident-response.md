@@ -2,18 +2,17 @@
 
 | Field   | Value                                              |
 | ------- | -------------------------------------------------- |
-| Status  | STUB — procedures not yet defined (Sprint S0)      |
-| Date    | 2026-06-02                                          |
+| Status  | Outline; production alerting and contacts pending   |
+| Date    | 2026-06-29                                          |
 | Scope   | Detecting, triaging, and responding to security/operational incidents |
 | Source  | THREAT_MODEL (threats, mitigations, residual risks) |
 
-> **TODO: to be completed when the system is operable and incident classes are
-> concrete.** No procedure is recorded yet — no steps are fabricated. The scope
-> below marks what this runbook will cover, anchored to the documented threats.
+> The main incident classes are concrete. Deployment-specific alerting, contacts,
+> and escalation paths still need to be filled in before production launch.
 
-## Scope (to be completed)
+## Scope
 
-Incident classes to cover (from THREAT_MODEL), each TODO:
+Incident classes to cover (from THREAT_MODEL):
 
 - **Auth incidents** — credential stuffing / brute-force, JWT signing-key
   compromise, account-enumeration abuse, password-reset token attack (THREAT_MODEL §2.2).
@@ -24,20 +23,35 @@ Incident classes to cover (from THREAT_MODEL), each TODO:
 - **Key/secret exposure** — provider key, BYO key, or DB credential leak
   (THREAT_MODEL §2.5, §2.6, §2.8).
 
-## Detection (to be completed)
+## Detection
 
-- TODO: signals, log sources (metadata-only logging per INV-PROXY-02), alerting.
+- Edge logs should remain metadata-only per INV-PROXY-02.
+- Watch for authentication spikes, repeated refresh-token reuse detection, provider
+  routing failures, unexpected full-egress attempts, and database connectivity
+  failures.
+- Production alerting and log sinks are still pending deployment design.
 
-## Triage & classification (to be completed)
+## Triage & classification
 
-- TODO: severity criteria; what is in scope of operator control vs. residual/accepted
-  risk (THREAT_MODEL §7).
+- Classify whether the incident affects local-only financial data, edge auth data,
+  provider keys, consent assertions, or third-party AI egress.
+- Separate operator-controlled failures from accepted residual risks documented in
+  THREAT_MODEL §7.
 
-## Response & containment (to be completed)
+## Response & containment
 
-- TODO: per-class containment. Stateful actions (key rotation, credential reset,
-  taking the edge offline) are prepared for the engineer to run — not agent-executed.
+- For suspected JWT signing-key compromise, rotate `JWT_SIGNING_KEY` and force
+  active sessions to reauthenticate.
+- For suspected consent signing-key compromise, rotate `CONSENT_SIGNING_KEY`; active
+  assertions expire quickly but should still be invalidated by rotation.
+- For provider-key exposure, revoke the provider key upstream, replace the local
+  secret, and redeploy/restart the edge.
+- For unintended full-egress, disable the affected managed provider route and review
+  consent/assertion logs without exposing payloads.
 
-## Recovery & post-incident (to be completed)
+## Recovery & post-incident
 
-- TODO: recovery steps; post-incident review; link to a postmortem record.
+- Restore service only after keys/configuration are rotated and logs show normal
+  auth and proxy behavior.
+- Record timeline, affected data classes, mitigations, and follow-up tasks in a
+  postmortem.

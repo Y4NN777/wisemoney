@@ -2,7 +2,7 @@
 
 | Field      | Value                                          |
 | ---------- | ---------------------------------------------- |
-| Owner      | Jehoshaphat (Sefer — documentation)            |
+| Owner      | Project maintainers                            |
 | Format     | MADR-style (lightweight)                        |
 | Started    | 2026-06-02 (Sprint S0, `/mishkan-init`)        |
 | Source     | `docs/intake/intent-v0.1.md` + spec set        |
@@ -53,5 +53,4 @@ the decisions and specs actually state.
 
 ---
 
-*Maintained by Sefer (Jehoshaphat). New consequential decisions land here as new,
-numbered, dated records.*
+*New consequential decisions land here as new, numbered, dated records.*

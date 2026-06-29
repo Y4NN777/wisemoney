@@ -6,7 +6,7 @@
 | Date       | 2026-06-05                                                                  |
 | Diátaxis   | Explanation                                                                 |
 | Source     | Sprint S0 `/dep-audit` (2026-06-05); THREAT_MODEL §2; ADR-0005             |
-| Binds      | `services/edge/go.mod`; `apps/web/package.json`; `Dockerfile` (edge builder); CI `security:scan` gate |
+| Binds      | `services/edge/go.mod`; `apps/web/package.json`; `Dockerfile` (edge builder); GitHub Actions `security-scan` / `verify` gates |
 
 ## Context
 
@@ -91,8 +91,10 @@ reduces cross-project drift while fully clearing the CVEs.
 - The **binary scan** (`osv-scanner scan binary ./edge-binary`) is designated
   **authoritative** for the Go surface. It reads the real Go version embedded in
   the compiled binary, bypassing the directive-vs-toolchain reporting gap that
-  a manifest-only scan suffers. The CI `security:scan` stage uses the binary
-  scan as the gate; a new critical or high finding blocks merge.
+  a manifest-only scan suffers. The GitHub Actions `security-scan` workflow runs
+  manifest scans on every push/PR and runs the binary scan when a compiled edge
+  artifact exists at `EDGE_BINARY_PATH`; release verification must include the
+  binary scan.
 - osv-scanner is pinned to **v2.3.8** in CI (GitHub release binary +
   SHA256 verification), not installed via a package manager with a floating range.
 
@@ -112,8 +114,8 @@ resolves 11 packages clean.
 - `GOTOOLCHAIN=local` in the Dockerfile builder ensures the toolchain baked into
   the pinned builder image is always the one used; auto-download cannot introduce
   a different version silently.
-- The binary-scan gate in CI is immune to the directive-vs-toolchain reporting
-  gap: it reads what was actually compiled in, not what the manifest asserts.
+- The binary-scan procedure is immune to the directive-vs-toolchain reporting gap:
+  it reads what was actually compiled in, not what the manifest asserts.
 - Vite 7 alignment with AïobiMeet reduces the total number of distinct dev-tooling
   versions across the portfolio, narrowing the future upgrade surface.
 - All frontend CVEs were dev/build-time; no production-runtime surface was
@@ -136,10 +138,10 @@ resolves 11 packages clean.
 
 ### Risks
 
-- **Binary-scan gate not yet wired.** The CI `security:scan` stage is designed
-  but not yet implemented (Sprint S0 is pre-pipeline). Until the gate is live,
-  the binary scan is a manual step run by the engineer (see runbook). Risk:
-  an advisory window exists between now and pipeline wiring.
+- **CI binary scan needs an artifact.** The GitHub Actions `security-scan` workflow
+  has the binary-scan step, but it is inert until `dist/edge` exists in that job.
+  `verify.yml` proves the edge builds; release verification must either wire that
+  artifact into `security-scan.yml` or run the binary scan locally (see runbook).
 - **Toolchain-line stripping.** If `go mod tidy` strips the `toolchain` line and
   the change is not caught in review, manifest-only scanners may silently
   under-report stdlib advisories. Mitigation: code review checklist; Dockerfile

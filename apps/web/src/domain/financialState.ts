@@ -56,6 +56,20 @@ export type RecurringItemState = {
   lastRealised: number | null;
 };
 
+export type DebtCreditStatus = "pending" | "partial" | "settled";
+
+export type DebtCreditKind = "receivable" | "debt";
+
+export type DebtCreditState = {
+  id: string;
+  kind: DebtCreditKind;
+  partyName: string;
+  motive: string;
+  amount: MoneyDTO;
+  date: number;
+  status: DebtCreditStatus;
+};
+
 export type FinancialStateSnapshot = {
   asOfEventId: string;
   asOfTimestamp: number;
@@ -65,6 +79,7 @@ export type FinancialStateSnapshot = {
   budgets: BudgetState[];
   goals: GoalState[];
   recurringItems: RecurringItemState[];
+  debtCredits: DebtCreditState[];
 
   periodStart: number;
   periodEnd: number;
@@ -178,6 +193,7 @@ type Accumulator = {
     startDate: number;
     lastRealised: number | null;
   }>;
+  debtCredits: Map<string, DebtCreditState>;
   /** Transfers: debit fromAccount, credit toAccount (internal) or external */
   transfers: Array<{
     id: string;
@@ -196,6 +212,7 @@ function createEmptyAccumulator(): Accumulator {
     budgets: new Map(),
     goals: new Map(),
     recurringItems: new Map(),
+    debtCredits: new Map(),
     transfers: [],
   };
 }
@@ -464,6 +481,37 @@ function applyPayload(
       });
       break;
     }
+    case "debt_credit_created": {
+      const p = payload as unknown as {
+        kind: DebtCreditKind;
+        partyName: string;
+        motive: string;
+        amount: { minorUnits: number; currency: string };
+        date: number;
+        status: DebtCreditStatus;
+      };
+      acc.debtCredits.set(eventId, {
+        id: eventId,
+        kind: p.kind,
+        partyName: p.partyName,
+        motive: p.motive,
+        amount: positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency }),
+        date: p.date,
+        status: p.status,
+      });
+      break;
+    }
+    case "debt_credit_status_updated": {
+      const p = payload as unknown as {
+        debtCreditId: string;
+        status: DebtCreditStatus;
+      };
+      const item = acc.debtCredits.get(p.debtCreditId);
+      if (item) {
+        item.status = p.status;
+      }
+      break;
+    }
   }
 }
 
@@ -475,6 +523,7 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
   const budgetsList: BudgetState[] = [];
   const goalsList: GoalState[] = [];
   const recurringList: RecurringItemState[] = [];
+  const debtCreditList: DebtCreditState[] = [];
 
   let defaultCurrency = "USD";
 
@@ -513,6 +562,10 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
 
   for (const r of acc.recurringItems.values()) {
     recurringList.push({ ...r });
+  }
+
+  for (const item of acc.debtCredits.values()) {
+    debtCreditList.push({ ...item, amount: { ...item.amount } });
   }
 
   const periodTxs = acc.transactions.filter(
@@ -598,6 +651,7 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
     budgets: budgetsList,
     goals: goalsList,
     recurringItems: recurringList,
+    debtCredits: debtCreditList,
 
     periodStart: start,
     periodEnd: end,

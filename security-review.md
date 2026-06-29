@@ -462,17 +462,19 @@ config or hardcoded for MVP.
 
 ---
 
-### [INFO-03] Supply-chain: binary scan gate is inert — authoritative stdlib check dormant
+### [INFO-03] Supply-chain: CI binary scan waits for compiled edge artifact
 
 **Severity:** Info
 **Category:** OWASP A06 — Vulnerable and Outdated Components
 **File:** `.github/workflows/security-scan.yml:142–151`
 
 The binary-scan step (the authoritative gate for Go stdlib CVEs, per ADR-0010)
-is intentionally inert until a build stage exists. This is correctly documented.
-The tracking note in `CLAUDE.md` (T-S0-04 carry-forward) flags it as a Migdal
-dependency. No action needed beyond ensuring the build stage wires `dist/edge`
-before any production deploy.
+is intentionally inert in `security-scan.yml` until a compiled edge artifact is
+present at `EDGE_BINARY_PATH` (`dist/edge` by default). `verify.yml` now runs the
+edge build/vet/test correctness gate, but it does not publish that binary into the
+security-scan job. Before release, either build/download `dist/edge` inside
+`security-scan.yml` or run the local binary scan in
+`docs/runbooks/dependency-scanning.md`.
 
 ---
 
@@ -519,9 +521,9 @@ before any production deploy.
 | 2 (before login wire-up)           | HIGH-02 — ErrNoRows contract | Zerubbabel |
 | 3 (before login wire-up)           | HIGH-03 — input validation | Zerubbabel |
 | 4 (before any load test)           | MED-01 — body size limit | Zerubbabel |
-| 5 (before staging deploy)          | MED-02 — CORS | Eliashib |
-| 6 (before staging deploy)          | MED-03 — security headers | Eliashib + Huram |
-| 7 (before production)              | MED-04 — sslmode=disable template | Eliashib |
+| 5 (before staging deploy)          | MED-02 — CORS | Platform/deployment |
+| 6 (before staging deploy)          | MED-03 — security headers | Platform/frontend |
+| 7 (before production)              | MED-04 — sslmode=disable template | Resolved |
 | 8 (ongoing)                        | MED-05 — structured logging | Zerubbabel |
 | 9 (before login wire-up)           | LOW-01 — auth rate limit | Zerubbabel |
 | 10 (before login wire-up)          | LOW-02 — PHC encoder | Zerubbabel |
@@ -540,7 +542,7 @@ materially changed. Status below is authoritative as of `eec2d6f`.
 | HIGH-02 | FindByEmail ErrNoRows | **RESOLVED** | Fixed across FindByEmail/FindByID/FindByTokenHash (`feat(auth)` eec2d6f). |
 | HIGH-03 | Input validation | **RESOLVED** | Email format + min-len(12) + **max-len password≤128 / email≤254** (quick-wins 2026-06-05). |
 | MED-01 | Body size limit | **RESOLVED** | `withBodyLimit` — 8 KiB auth/consent, 1 MiB proxy, 413 on exceed (quick-wins). |
-| MED-02 | CORS allowlist | **OPEN** | Gate: staging deploy (needs prod origin) — Eliashib. |
+| MED-02 | CORS allowlist | **OPEN** | Gate: staging deploy (needs prod origin). |
 | MED-03 | Security headers / CSP | **PARTIAL** | PWA CSP escalated to primary control (ADR-0012, documented); edge headers + CSP impl OPEN — gate: staging. |
 | MED-04 | `.env.example` sslmode | **RESOLVED** | Template → `sslmode=require` + comment (quick-wins). |
 | MED-05 | log.Printf vs LogSanitizer | **OPEN** | `slog` migration — pre-prod. |
@@ -548,6 +550,6 @@ materially changed. Status below is authoritative as of `eec2d6f`.
 | LOW-02 | hashPassword stub | **RESOLVED** | Real Argon2id PHC (`feat(auth)`). |
 | LOW-03 | WebAuthn throws | **RESOLVED** | Implemented (Gap-2 Option A, `feat(crypto)`). |
 | LOW-04 | http:// in prod | **RESOLVED** | `main.tsx` PROD https assertion (quick-wins). |
-| INFO-01/02/03 | Recoverer / feature allowlist / inert binary-scan | **OPEN / TRACKED** | INFO-03 tracked in T-S0-04. |
+| INFO-01/02/03 | Recoverer / feature allowlist / binary artifact scan | **OPEN / TRACKED** | INFO-03 narrowed: verify.yml builds edge; security-scan still needs artifact wiring for CI binary scan. |
 
 **Net at eec2d6f:** all 3 HIGH closed or neutralised (1 resolved, 1 resolved, 1 deferred-by-architecture); MED-01/04 resolved; LOW-02/03/04 resolved. Remaining (MED-02/03/05, LOW-01, INFO-*) are gated to staging / pre-login-launch and tracked in CLAUDE.md.

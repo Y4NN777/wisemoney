@@ -478,11 +478,16 @@ every request as redacted (fail-closed). Implemented by: `internal/consent`
 
 ## 11. Deployment topology
 
-**Two units + a datastore**, orchestrated by Docker Compose:
+**Target topology: two units + a datastore.** Current deployment status:
+
+- The PWA is hosted on Vercel.
+- The Go edge and Postgres are not deployed yet; they run locally through Docker
+  Compose for managed-mode development.
 
 ```
 ┌─────────────────────────┐        ┌──────────────────────────┐
 │  PWA static host        │        │  Go proxy (edge)         │
+│  current: Vercel        │        │  current: local only     │
 │  (React/TS build,       │        │  net/http + chi, JWT,    │
 │   service worker)       │        │  Argon2id, rate-limit,   │
 │                         │        │  provider adapters       │
@@ -512,10 +517,11 @@ BYO-key bypass:  PWA ───────────────────�
   Python worker is added **behind** the Go edge (a third internal unit) — never a
   rewrite of the edge (Gate-4 decision 17). Documented, **not built**.
 
-> **Detailed hosting/ops is deferred to the Migdal infra phase.** This document
-> fixes the logical topology and the unit boundaries; concrete host sizing,
-> networking, TLS termination, secrets delivery (SOPS/age), backup/restore ops, and
-> the hardening overlay applied on every container recreate are Migdal's to detail.
+> **Detailed production hosting/ops remains separate from the logical architecture.**
+> The current repo includes a local Docker Compose stack for the Go edge and
+> Postgres, while the web app is hosted on Vercel. Edge production host sizing, TLS
+> termination, secrets delivery, backup/restore ops, and hardening overlays still
+> require deployment-specific runbooks.
 
 ---
 
@@ -550,18 +556,13 @@ These rules enforce NFR-MOD and are binding on implementation:
 
 Genuine architecture-level questions only; nothing fabricated.
 
-- **AQ-01 — Managed-mode egress enforcement mechanism (→ THREAT_MODEL).** This
-  architecture provides the seam (the edge is the boundary, §10) but deliberately
-  does not pick the mechanism by which the edge enforces redacted-vs-full shape
-  without trusting the client's localStorage flag (re-derive shape at the edge?
-  validate a signed consent assertion? structural payload caps?). Benaiah owns the
-  choice. **Headline item.**
-- **AQ-02 — Residual client-trust in BYO-key egress (→ THREAT_MODEL).** BYO-key
-  mode has no server boundary, so egress shaping is necessarily client-side (§10).
-  The open question is whether that residual client-side trust is acceptable given
-  the user is both principal and key-holder using their own key and data — and if
-  not, what compensating control (if any) applies. Benaiah owns the verdict.
-- **AQ-03 — FX-rate refresh source (→ later build decision, swappable).** The
+- **AQ-01 — RESOLVED.** Managed-mode egress enforcement uses a signed consent
+  assertion (`X-Consent-Assertion`), `X-Feature`, `X-Egress-Level`, fail-closed
+  downgrade to redacted, and structural payload caps at the Go edge.
+- **AQ-02 — RESOLVED / accepted residual.** BYO-key mode has no server boundary;
+  egress shaping is client-side because the user is both principal and key-holder.
+  This remains an accepted residual in the threat model.
+- **AQ-03 — FX-rate refresh source (swappable build decision).** The
   refresh source behind the rate-table adapter (§5) is intentionally unspecified
   and swappable; the architecture binds only that refresh is best-effort and
   decoupled from conversion. A concrete source is a build-time choice, not an

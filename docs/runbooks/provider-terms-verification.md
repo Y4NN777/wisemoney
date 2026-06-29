@@ -194,12 +194,12 @@ at ship time; re-check if provider publishes a new version.
 
 | Item | Method | Owner |
 | ---- | ------ | ----- |
-| OpenAI ZDR — financial / non-HIPAA eligibility | Contact OpenAI enterprise; review ZDR agreement | Y4NN / legal |
-| NVIDIA production subscription terms | Review production subscription agreement (separate from Trial ToS) | Y4NN / legal |
-| OpenRouter free-model toggle label (UI) | Log in with authed account; locate training-enable toggle; record exact label | Y4NN |
-| OpenRouter ZDR-eligible free endpoints | `GET https://openrouter.ai/api/v1/endpoints/zdr` (authed); record which `:free` model IDs are listed | Y4NN |
-| Region / GDPR addenda | Review GDPR data-processing addenda for OpenAI, Google, OpenRouter where applicable | Y4NN / legal |
-| Gemini free-tier retention duration | Re-read Gemini API terms; locate specific deletion/retention period for API input on free tier | Y4NN |
+| OpenAI ZDR — financial / non-HIPAA eligibility | Contact OpenAI enterprise; review ZDR agreement | Operator / legal |
+| NVIDIA production subscription terms | Review production subscription agreement (separate from Trial ToS) | Operator / legal |
+| OpenRouter free-model toggle label (UI) | Log in with authed account; locate training-enable toggle; record exact label | Operator |
+| OpenRouter ZDR-eligible free endpoints | `GET https://openrouter.ai/api/v1/endpoints/zdr` (authed); record which `:free` model IDs are listed | Operator |
+| Region / GDPR addenda | Review GDPR data-processing addenda for OpenAI, Google, OpenRouter where applicable | Operator / legal |
+| Gemini free-tier retention duration | Re-read Gemini API terms; locate specific deletion/retention period for API input on free tier | Operator |
 
 **(e) Periodic re-verification.**
 Provider terms change without notice. Schedule re-verification of this document at
@@ -208,6 +208,5 @@ this document and update the status header.
 
 ---
 
-*Maintained by Sefer (Jehoshaphat). Stateful verification steps (legal review,
-account-authenticated API calls, sign-off recording) are prepared here for Y4NN to
-execute — not executed by an agent.*
+*Stateful verification steps include legal review, account-authenticated API calls,
+and sign-off recording.*
