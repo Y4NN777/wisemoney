@@ -1,59 +1,86 @@
+<p align="center">
+  <img src="./apps/web/public/logo.svg" alt="WiseMoney" width="260" />
+</p>
+
+<p align="center">
+  Personal finance, local-first. Track money, plan ahead, and use AI guidance only when you choose to.
+</p>
+
+<p align="center">
+  <strong>PWA deployed on Vercel</strong> · <strong>Go edge not deployed yet</strong> · <strong>BYO-key mode works without the backend</strong>
+</p>
+
 # WiseMoney
 
-> Local-first personal-finance PWA — real-time tracking, AI financial guidance, and
-> adaptive financial literacy, in one mobile-first loop. All financial data lives
-> encrypted on-device; any cloud/AI egress is consent-gated.
+WiseMoney is a mobile-first personal finance PWA. It keeps financial data on the
+device by default, uses an encrypted local event log, and separates everyday money
+tracking from optional AI features.
 
-**Status:** Active MVP implementation. The S0 specification baseline is complete,
-and the repo now contains a working React/TypeScript PWA scaffold with local
-financial-state flows, client crypto/session foundations, managed AI orchestration
-hooks, PWA update handling, and a Go managed edge for auth + AI proxying. The web
-app is currently hosted on Vercel; the Go edge is not deployed yet and is run
-locally for managed-mode development.
-Full design set in [`docs/`](./docs/) (start at [`docs/README.md`](./docs/README.md)).
+The app is already deployed as a PWA on Vercel. The managed Go edge exists in this
+repo for auth and managed AI proxying, but it is not deployed yet. Until that edge
+is online, managed-mode AI calls are local-development only; bring-your-own-key
+mode remains the backend-free path.
 
-## Structure
+## What is in the app
 
-```
-apps/web/        React + TypeScript PWA — ALL domain logic + encrypted IndexedDB
-services/edge/   Go managed edge — thin stateless auth + AI-gateway (no financial data)
-docs/            PRD · SRS · CONTRACT · ARCHITECTURE · THREAT_MODEL · C4 · UML · data model · ADRs
-docker-compose.yml   Postgres (auth only) + the Go edge
-```
+- Dashboard, capture flow, budgets, goals, recurring transactions, and settings.
+- Dettes & Créances: debts and receivables with motive, amount, date, status, and
+  reminders for unsettled receivables.
+- Local encrypted storage with Dexie / IndexedDB and Web Crypto.
+- PWA installability, service-worker update prompt, and Vercel-hosted web build.
+- Optional managed edge in Go for auth, consent assertions, and AI proxy routing.
 
-Bring-your-own-key mode runs the app fully client-side with **no** backend at all;
-the Go edge + Postgres are only needed for *managed* AI-key mode.
+## Current deployment
 
-## Prerequisites
+| Surface | Status |
+| --- | --- |
+| Web PWA | Deployed on Vercel |
+| Go edge | Not deployed yet |
+| Postgres for edge auth | Local/dev only |
+| BYO-key AI mode | Does not need the edge |
 
-- Node 20 + pnpm 9 (frontend)
-- Docker + Compose (edge + Postgres; the edge builds in-image, so a local Go
-  toolchain is **not** required)
+Add the public Vercel URL here once it is pinned in project metadata:
 
-## Run
-
-> Dependency audit baseline is recorded in [`CHANGELOG.md`](./CHANGELOG.md) and
-> [`docs/runbooks/dependency-scanning.md`](./docs/runbooks/dependency-scanning.md).
-
-**Frontend (PWA):**
-```
-pnpm install            # from repo root (pnpm workspace)
-pnpm dev                # WiseMoney web on http://localhost:5173
+```text
+Live PWA: <Vercel URL>
 ```
 
-**Managed edge (only for managed AI-key mode):**
+## Run locally
+
+```bash
+pnpm install
+pnpm dev
 ```
-cp .env.example .env    # then fill secrets (use SOPS/age for real secrets)
+
+The web app runs at `http://localhost:5173`.
+
+## Managed edge locally
+
+Only needed for managed AI-key mode.
+
+```bash
+cp .env.example .env
 docker compose up -d postgres
-# apply migrations explicitly:
-#   migrate -path services/edge/migrations -database "$DATABASE_URL" up
-docker compose build edge && docker compose up -d edge   # edge on http://localhost:8080
+migrate -path services/edge/migrations -database "$DATABASE_URL" up
+docker compose build edge
+docker compose up -d edge
 ```
 
-For local (non-Docker) edge dev only: `cd services/edge && go mod tidy` first.
+The edge runs at `http://localhost:8080`.
 
-## Security
+## Repository
 
-See [`SECURITY.md`](./SECURITY.md) and [`docs/THREAT_MODEL.md`](./docs/THREAT_MODEL.md).
-**Launch-blocker:** verify AI-provider data-handling terms before shipping managed
-mode ([`docs/runbooks/provider-terms-verification.md`](./docs/runbooks/provider-terms-verification.md)).
+| Path | Purpose |
+| --- | --- |
+| `apps/web/` | React + TypeScript PWA. Domain logic and encrypted local storage live here. |
+| `services/edge/` | Go managed edge for auth, consent, rate limiting, and AI proxying. |
+| `docs/` | Product, architecture, threat model, ADRs, diagrams, and runbooks. |
+| `docker-compose.yml` | Local Postgres + edge stack for managed-mode development. |
+
+## Documentation
+
+Start with [docs/README.md](./docs/README.md). Security posture is documented in
+[SECURITY.md](./SECURITY.md) and [docs/THREAT_MODEL.md](./docs/THREAT_MODEL.md).
+
+Provider data-handling verification remains a launch gate for any managed-mode
+provider expansion: [provider terms runbook](./docs/runbooks/provider-terms-verification.md).
