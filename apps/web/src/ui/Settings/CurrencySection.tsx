@@ -1,14 +1,19 @@
 import { useMemo, useState, useEffect } from "react";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
-import type { MasterKey } from "../../crypto/envelope.ts";
-import { seal, open } from "../../crypto/envelope.ts";
-import { db } from "../../db/schema.ts";
+import {
+  deleteFxRate,
+  loadCurrencyContext,
+  saveFxRate,
+  setStoredBaseCurrency,
+} from "../../domain/currencyStore.ts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { toast } from "sonner";
 import { DollarSign, Plus, Trash2, RefreshCw, Check, ChevronsUpDown, Search } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 type CurrencyOption = {
   code: string;
@@ -226,7 +231,14 @@ function buildCurrencyOptions(): CurrencyOption[] {
 }
 
 function CurrencyOptionLabel({ code, compact = false }: { code: string; compact?: boolean }) {
-  const name = getCurrencyName(code);
+  const { i18n } = useTranslation();
+  const name = useMemo(() => {
+    try {
+      return new Intl.DisplayNames([i18n.resolvedLanguage ?? i18n.language], { type: "currency" }).of(code) ?? getCurrencyName(code);
+    } catch {
+      return getCurrencyName(code);
+    }
+  }, [code, i18n.language, i18n.resolvedLanguage]);
   return (
     <span className="flex min-w-0 items-center gap-2">
       <span className="shrink-0 rounded-md bg-ocean-wash px-2 py-0.5 text-xs font-semibold text-ocean-dark">
@@ -238,6 +250,7 @@ function CurrencyOptionLabel({ code, compact = false }: { code: string; compact?
 }
 
 function CurrencySelect({ id, value, onValueChange, compact = false }: { id: string; value: string; onValueChange: (value: string) => void; compact?: boolean }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const selected = CURRENCY_OPTIONS.find((currency) => currency.code === value);
@@ -286,19 +299,19 @@ function CurrencySelect({ id, value, onValueChange, compact = false }: { id: str
               <Input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search code, currency, or country"
+                placeholder={t("settings.currency.search")}
                 className="pl-9"
                 autoFocus
               />
             </div>
           </div>
-          <div className="max-h-[min(360px,55dvh)] overflow-y-auto p-1" role="listbox" aria-label="Currencies">
+          <div className="max-h-[min(360px,55dvh)] overflow-y-auto p-1" role="listbox" aria-label={t("settings.currency.currenciesAria")}>
             {filtered.length === 0 ? (
-              <p className="px-3 py-6 text-center text-sm text-muted-foreground">No matching currency.</p>
+              <p className="px-3 py-6 text-center text-sm text-muted-foreground">{t("settings.currency.noMatch")}</p>
             ) : (
               (Object.entries(grouped) as Array<[CurrencyOption["region"], CurrencyOption[]]>).map(([region, currencies]) => currencies.length > 0 && (
                 <div key={region}>
-                  <p className="px-2 py-1.5 text-xs font-semibold uppercase text-muted-foreground">{region}</p>
+                  <p className="px-2 py-1.5 text-xs font-semibold uppercase text-muted-foreground">{t(`settings.currency.regions.${region}`)}</p>
                   {currencies.map((currency) => (
                     <button
                       key={currency.code}
@@ -335,73 +348,33 @@ type FxRateEntry = {
   updated: number;
 };
 
-async function loadRates(masterKey: MasterKey): Promise<FxRateEntry[]> {
-  const records = await db.fxRates.toArray();
-  const entries: FxRateEntry[] = [];
-  for (const record of records) {
-    try {
-      const plaintext = await open(
-        { ciphertext: record.ciphertext, iv: record.iv },
-        masterKey,
-      );
-      const text = new TextDecoder().decode(plaintext);
-      entries.push({
-        id: record.id,
-        base: record.baseCurrency,
-        quote: record.quoteCurrency,
-        rate: text,
-        updated: record.lastUpdated,
-      });
-    } catch {
-      // skip corrupted records silently
-    }
-  }
-  return entries.sort((a, b) => a.id.localeCompare(b.id));
-}
-
-async function saveRate(
-  baseCurrency: string,
-  quoteCurrency: string,
-  rateStr: string,
-  masterKey: MasterKey,
-): Promise<void> {
-  const id = `${baseCurrency}/${quoteCurrency}`;
-  const plaintext = new TextEncoder().encode(rateStr);
-  const envelope = await seal(plaintext, masterKey);
-  await db.fxRates.put({
-    id,
-    baseCurrency,
-    quoteCurrency,
-    lastUpdated: Date.now(),
-    ciphertext: envelope.ciphertext,
-    iv: envelope.iv,
-  });
-}
-
-async function deleteRate(id: string): Promise<void> {
-  await db.fxRates.delete(id);
-}
-
 export default function CurrencySection() {
+  const { t } = useTranslation();
   const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
   const [rates, setRates] = useState<FxRateEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [newBase, setNewBase] = useState("EUR");
   const [newQuote, setNewQuote] = useState("USD");
   const [newRate, setNewRate] = useState("");
-  const [defaultCurrency, setDefaultCurrency] = useState(() => {
-    return localStorage.getItem("wisemoney_default_currency") ?? "USD";
-  });
+  const [defaultCurrency, setDefaultCurrency] = useState("XOF");
   const [saving, setSaving] = useState(false);
 
   const refreshRates = async () => {
     setLoading(true);
     try {
-      const loaded = await loadRates(masterKey);
-      setRates(loaded);
+      const context = await loadCurrencyContext(masterKey, defaultCurrency);
+      setDefaultCurrency(context.baseCurrency);
+      setRates([...context.rates.values()].map((rate) => ({
+        id: rate.id,
+        base: rate.baseCurrency,
+        quote: rate.quoteCurrency,
+        rate: rate.rate,
+        updated: rate.lastUpdated,
+      })).sort((a, b) => a.id.localeCompare(b.id)));
     } catch (err) {
-      toast.error("Failed to load exchange rates", {
-        description: err instanceof Error ? err.message : "Unknown error",
+      toast.error(t("settings.currency.errors.loadFailed"), {
+        description: err instanceof Error ? err.message : t("common.unknown"),
       });
     } finally {
       setLoading(false);
@@ -413,34 +386,51 @@ export default function CurrencySection() {
   }, [masterKey]);
 
   const handleDefaultCurrencyChange = (value: string) => {
-    setDefaultCurrency(value);
-    localStorage.setItem("wisemoney_default_currency", value);
-    toast.success(`Default currency changed to ${value}`, {
-      description: "Your default currency has been updated",
-    });
+    void (async () => {
+      try {
+        await setStoredBaseCurrency(value, masterKey);
+        setDefaultCurrency(value);
+        await invalidateCurrencyQueries();
+        toast.success(t("settings.currency.defaultChanged", { currency: value }), {
+          description: t("settings.currency.defaultChangedBody"),
+        });
+      } catch (error) {
+        toast.error(t("settings.currency.errors.failed"), {
+          description: error instanceof Error ? error.message : t("common.unknown"),
+        });
+      }
+    })();
+  };
+
+  const invalidateCurrencyQueries = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["financialState"] }),
+      queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+    ]);
   };
 
   const handleAddRate = async () => {
     if (newBase === newQuote) {
-      toast.error("Base and quote currencies must differ");
+      toast.error(t("settings.currency.errors.mustDiffer"));
       return;
     }
     const parsed = parseFloat(newRate);
     if (!isFinite(parsed) || parsed <= 0) {
-      toast.error("Invalid rate", {
-        description: "Rate must be a positive number",
+      toast.error(t("settings.currency.errors.invalidRate"), {
+        description: t("settings.currency.errors.positiveRate"),
       });
       return;
     }
     setSaving(true);
     try {
-      await saveRate(newBase, newQuote, newRate, masterKey);
-      toast.success(`Rate added: ${newBase}/${newQuote} = ${newRate}`);
+      await saveFxRate(newBase, newQuote, newRate, masterKey);
+      toast.success(t("settings.currency.rateAdded", { pair: `${newBase}/${newQuote}`, rate: newRate }));
       setNewRate("");
       await refreshRates();
+      await invalidateCurrencyQueries();
     } catch (err) {
-      toast.error("Failed to save rate", {
-        description: err instanceof Error ? err.message : "Unknown error",
+      toast.error(t("settings.currency.errors.saveRateFailed"), {
+        description: err instanceof Error ? err.message : t("common.unknown"),
       });
     } finally {
       setSaving(false);
@@ -449,12 +439,13 @@ export default function CurrencySection() {
 
   const handleDeleteRate = async (id: string) => {
     try {
-      await deleteRate(id);
-      toast.success("Rate removed");
+      await deleteFxRate(id);
+      toast.success(t("settings.currency.rateRemoved"));
       await refreshRates();
+      await invalidateCurrencyQueries();
     } catch (err) {
-      toast.error("Failed to remove rate", {
-        description: err instanceof Error ? err.message : "Unknown error",
+      toast.error(t("settings.currency.errors.removeRateFailed"), {
+        description: err instanceof Error ? err.message : t("common.unknown"),
       });
     }
   };
@@ -464,26 +455,26 @@ export default function CurrencySection() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <DollarSign className="h-5 w-5" />
-          Currency Settings
+          {t("settings.currency.title")}
         </CardTitle>
         <CardDescription>
-          Set your default currency and manage foreign exchange rates
+          {t("settings.currency.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Default currency */}
         <div className="space-y-2 rounded-lg border border-border bg-accent/35 p-3">
-          <Label htmlFor="default-currency">Default Currency</Label>
+          <Label htmlFor="default-currency">{t("settings.currency.default")}</Label>
           <CurrencySelect id="default-currency" value={defaultCurrency} onValueChange={handleDefaultCurrencyChange} />
           <p className="text-xs text-muted-foreground">
-            African currencies are listed first. All new accounts will use this currency. Existing accounts are unaffected.
+            {t("settings.currency.defaultHelp")}
           </p>
         </div>
 
         {/* FX Rate table */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium">Exchange Rates</h3>
+            <h3 className="text-sm font-medium">{t("settings.currency.exchangeRates")}</h3>
             <Button variant="ghost" size="sm" onClick={() => void refreshRates()} disabled={loading}>
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
@@ -491,7 +482,7 @@ export default function CurrencySection() {
 
           {rates.length === 0 && !loading && (
             <p className="empty-state py-4">
-              No exchange rates configured. Add one below.
+              {t("settings.currency.emptyRates")}
             </p>
           )}
 
@@ -502,7 +493,7 @@ export default function CurrencySection() {
                   <div>
                     <p className="text-sm font-medium">{entry.id}</p>
                     <p className="text-xs text-muted-foreground">
-                      {getCurrencyName(entry.base)} to {getCurrencyName(entry.quote)} &middot; {new Date(entry.updated).toLocaleString()}
+                      {t("settings.currency.pairDescription", { base: entry.base, quote: entry.quote })} &middot; {new Date(entry.updated).toLocaleString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -512,6 +503,7 @@ export default function CurrencySection() {
                       size="icon"
                       className="h-7 w-7 text-muted-foreground hover:text-destructive"
                       onClick={() => { void handleDeleteRate(entry.id); }}
+                      aria-label={t("settings.currency.deleteRate", { pair: entry.id })}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -523,18 +515,18 @@ export default function CurrencySection() {
 
           {/* Add new rate */}
           <div className="rounded-lg border border-border bg-accent/45 p-3">
-            <p className="text-xs font-medium text-muted-foreground">Add Rate</p>
+            <p className="text-xs font-medium text-muted-foreground">{t("settings.currency.addRate")}</p>
             <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_120px_auto] sm:items-end">
               <div className="space-y-1">
-                <Label htmlFor="rate-base" className="text-xs">From</Label>
+                <Label htmlFor="rate-base" className="text-xs">{t("settings.currency.from")}</Label>
                 <CurrencySelect id="rate-base" value={newBase} onValueChange={setNewBase} compact />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="rate-quote" className="text-xs">To</Label>
+                <Label htmlFor="rate-quote" className="text-xs">{t("settings.currency.to")}</Label>
                 <CurrencySelect id="rate-quote" value={newQuote} onValueChange={setNewQuote} compact />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="rate-value" className="text-xs">Rate</Label>
+                <Label htmlFor="rate-value" className="text-xs">{t("settings.currency.rate")}</Label>
                 <Input
                   id="rate-value"
                   type="text"
@@ -561,9 +553,7 @@ export default function CurrencySection() {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Exchange rates are stored encrypted on this device (INV-MON-03). They
-          are never sent to the server. Conversions use banker&apos;s rounding
-          (half-even) applied to the decimal rate string.
+          {t("settings.currency.securityNote")}
         </p>
       </CardContent>
     </Card>

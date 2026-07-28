@@ -56,7 +56,7 @@ export default function ExportImportSection() {
         }
         case "xlsx": {
           blob = await exportXLSX(masterKey);
-          filename = `wisemoney-transactions-${Date.now()}.xls`;
+          filename = `wisemoney-transactions-${Date.now()}.xlsx`;
           break;
         }
       }
@@ -128,7 +128,8 @@ export default function ExportImportSection() {
       return;
     }
     setPassphraseError(null);
-    await doImport(pendingEncryptedImportText, passphrase);
+    const imported = await doImport(pendingEncryptedImportText, passphrase);
+    if (!imported) return;
     setShowPassphraseDialog(null);
     setPendingEncryptedImportText(null);
     setPassphrase("");
@@ -136,7 +137,7 @@ export default function ExportImportSection() {
 
   const [importError, setImportError] = useState<string | null>(null);
 
-  const doImport = async (text?: string | null, exportPassphrase?: string) => {
+  const doImport = async (text?: string | null, exportPassphrase?: string): Promise<boolean> => {
     setImporting(true);
     setImportError(null);
     try {
@@ -154,10 +155,12 @@ export default function ExportImportSection() {
         setImportResult({ ok: true, message });
         toast.success(message);
       }
+      return true;
     } catch {
       const message = t("exportImport.import.errors.failed");
       setImportError(message);
       toast.error(message);
+      return false;
     } finally {
       setImporting(false);
     }

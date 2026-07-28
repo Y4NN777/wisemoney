@@ -1,15 +1,18 @@
 import { useState, useMemo, useEffect } from "react";
-import { useFinancialState, useHistoricalState, useTransactionsInRange } from "../../hooks/useFinancialState.ts";
+import { useDeleteTransaction, useFinancialState, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Button } from "../../components/ui/button.tsx";
+import { Input } from "../../components/ui/input.tsx";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import {
   AlertTriangle, ArrowUp, ArrowDown, Wallet, TrendingUp, Target, Repeat,
   Info, ChevronLeft, ChevronRight, List, TrendingDown, BarChart3,
-  Lightbulb,
+  Lightbulb, ArrowRightLeft, Pencil, Trash2,
 } from "lucide-react";
 import type { FinancialStateSnapshot, TransactionDisplay } from "../../domain/financialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
@@ -17,17 +20,11 @@ import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 import { requestInsight } from "../../pillars/intelligence/index.ts";
 import type { AIResult } from "../../pillars/intelligence/index.ts";
 import { useTranslation } from "react-i18next";
-
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+import { currencyFractionDigits, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
+import { toast } from "sonner";
 
 function formatMoney(minorUnits: number, currency: string): string {
-  const symbol: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
-  const sym = symbol[currency] ?? currency + " ";
-  const abs = Math.abs(minorUnits);
-  const major = Math.floor(abs / 100);
-  const minor = abs % 100;
-  const sign = minorUnits < 0 ? "-" : "";
-  return `${sign}${sym}${major.toLocaleString()}.${minor.toString().padStart(2, "0")}`;
+  return formatMoneyValue({ minorUnits, currency });
 }
 
 function formatDate(ts: number): string {
@@ -119,7 +116,8 @@ function buildCashFlowSeries(transactions: TransactionDisplay[] | undefined, sta
     const index = Math.min(bucketCount - 1, Math.max(0, Math.floor((tx.timestamp - start) / bucketMs)));
     const bucket = buckets[index];
     if (bucket == null) continue;
-    const value = Math.abs(tx.amount.minorUnits);
+    if (tx.displayAmount == null) continue;
+    const value = Math.abs(tx.displayAmount.minorUnits);
     if (tx.direction === "income") {
       bucket.income += value;
       bucket.net += value;
@@ -133,6 +131,7 @@ function buildCashFlowSeries(transactions: TransactionDisplay[] | undefined, sta
 }
 
 function CashFlowTrendChart({ points, currency }: { points: CashFlowPoint[]; currency: string }) {
+  const { t } = useTranslation();
   const maxAmount = Math.max(1, ...points.flatMap((p) => [p.income, p.expenses, Math.abs(p.net)]));
   const width = 360;
   const height = 180;
@@ -149,7 +148,7 @@ function CashFlowTrendChart({ points, currency }: { points: CashFlowPoint[]; cur
   return (
     <div className="space-y-3">
       <div className="h-48 w-full overflow-hidden rounded-lg border border-border bg-card/70">
-        <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Cash flow trend" className="h-full w-full">
+        <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t("dashboard.cashFlowTrend")} className="h-full w-full">
           <defs>
             <linearGradient id="incomeGradient" x1="0" x2="0" y1="0" y2="1">
               <stop offset="0%" stopColor="var(--sage)" stopOpacity="0.92" />
@@ -183,9 +182,9 @@ function CashFlowTrendChart({ points, currency }: { points: CashFlowPoint[]; cur
         </svg>
       </div>
       <div className="grid grid-cols-3 gap-2 text-xs">
-        <ChartLegend label="Income" value={formatMoney(points.reduce((s, p) => s + p.income, 0), currency)} className="bg-sage" />
-        <ChartLegend label="Expenses" value={formatMoney(points.reduce((s, p) => s + p.expenses, 0), currency)} className="bg-amber" />
-        <ChartLegend label="Net" value={formatMoney(points.reduce((s, p) => s + p.net, 0), currency)} className="bg-ocean-primary" />
+        <ChartLegend label={t("dashboard.income")} value={formatMoney(points.reduce((s, p) => s + p.income, 0), currency)} className="bg-sage" />
+        <ChartLegend label={t("dashboard.expenses")} value={formatMoney(points.reduce((s, p) => s + p.expenses, 0), currency)} className="bg-amber" />
+        <ChartLegend label={t("dashboard.net")} value={formatMoney(points.reduce((s, p) => s + p.net, 0), currency)} className="bg-ocean-primary" />
       </div>
     </div>
   );
@@ -212,6 +211,7 @@ function SpendingMixChart({
   total: number;
   currency: string;
 }) {
+  const { t } = useTranslation();
   const palette = ["#006d8f", "#17a2a4", "#2f7d57", "#b76b16", "#7c3aed", "#c2410c"];
   let cursor = 0;
   const stops = items.slice(0, 6).map((item, index) => {
@@ -226,7 +226,7 @@ function SpendingMixChart({
     <div className="grid gap-4 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center">
       <div className="mx-auto grid h-36 w-36 place-items-center rounded-full shadow-inner" style={{ background }}>
         <div className="grid h-20 w-20 place-items-center rounded-full bg-card text-center shadow-sm">
-          <span className="text-[10px] font-medium uppercase text-muted-foreground">Total</span>
+          <span className="text-[10px] font-medium uppercase text-muted-foreground">{t("dashboard.total")}</span>
           <span className="text-sm font-semibold tabular-nums">{formatMoney(total, currency)}</span>
         </div>
       </div>
@@ -242,7 +242,7 @@ function SpendingMixChart({
             </span>
           </div>
         )) : (
-          <p className="empty-state py-5">No category spending yet.</p>
+          <p className="empty-state py-5">{t("dashboard.categoryNone")}</p>
         )}
       </div>
     </div>
@@ -325,24 +325,58 @@ function InsightCard({ insight }: { insight: AIResult }) {
 }
 
 // ── Main dashboard content ──────────────────────────────────────────────
-function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
+type TransactionEdit = {
+  transaction: TransactionDisplay;
+  categoryId: string;
+  direction: "income" | "expense";
+  amount: string;
+  note: string;
+};
+
+function amountInput(transaction: TransactionDisplay): string {
+  const digits = currencyFractionDigits(transaction.amount.currency);
+  return digits === 0
+    ? String(transaction.amount.minorUnits)
+    : (transaction.amount.minorUnits / 10 ** digits).toFixed(digits);
+}
+
+function DashboardContent({ snapshot, canMutate }: { snapshot: FinancialStateSnapshot; canMutate: boolean }) {
+  const { t } = useTranslation();
   const masterKey = useMasterKey();
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("month");
   const [aiInsight, setAiInsight] = useState<AIResult | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiCapability, setAiCapability] = useState<AICapability | null>(null);
+  const [transactionEdit, setTransactionEdit] = useState<TransactionEdit | null>(null);
+  const [transactionToDelete, setTransactionToDelete] = useState<TransactionDisplay | null>(null);
+  const updateTransaction = useUpdateTransaction();
+  const deleteTransaction = useDeleteTransaction();
 
   const { start: txStart, end: txEnd } = useMemo(
     () => getTimeFilterBounds(timeFilter, snapshot.asOfTimestamp, snapshot.periodStart, snapshot.periodEnd),
     [timeFilter, snapshot.asOfTimestamp, snapshot.periodStart, snapshot.periodEnd],
   );
   const { data: transactions, isLoading: txLoading } = useTransactionsInRange(txStart, txEnd);
+  const filteredTransfers = useMemo(
+    () => snapshot.transfers.filter((transfer) => transfer.timestamp >= txStart && transfer.timestamp <= txEnd),
+    [snapshot.transfers, txStart, txEnd],
+  );
 
   useEffect(() => {
-    void getAICapability(masterKey).then(setAiCapability);
+    let active = true;
+    void getAICapability()
+      .then((capability) => {
+        if (active) setAiCapability(capability);
+      })
+      .catch(() => {
+        if (active) setAiCapability(null);
+      });
+    return () => {
+      active = false;
+    };
   }, [masterKey]);
 
-  const categories = snapshot.categories.filter((c) => !c.isSystemDefault);
+  const categories = snapshot.categories;
   const activeBudgets = snapshot.budgets.filter((b) => !b.isArchived);
   const activeGoals = snapshot.goals.filter((g) => !g.isArchived);
 
@@ -356,8 +390,8 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
       .filter((c): c is typeof c & { total: NonNullable<typeof c.total> } => c.total != null && c.total.minorUnits > 0)
       .sort((a, b) => b.total.minorUnits - a.total.minorUnits);
     const totalExpenses = ex.reduce((s, c) => s + c.total.minorUnits, 0);
-    return { items: ex, total: totalExpenses, currency: ex[0]?.total.currency ?? "USD" };
-  }, [categories, snapshot.categoryTotals]);
+    return { items: ex, total: totalExpenses, currency: ex[0]?.total.currency ?? snapshot.baseCurrency };
+  }, [categories, snapshot.baseCurrency, snapshot.categoryTotals]);
 
   const cashFlowSeries = useMemo(
     () => buildCashFlowSeries(transactions, txStart, txEnd),
@@ -370,7 +404,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
       const prog = snapshot.budgetProgress[b.id];
       if (prog == null) return null;
       const cat = snapshot.categories.find((c) => c.id === b.categoryId);
-      return { budget: b, progress: prog, categoryName: cat?.name ?? "Unknown" };
+      return { budget: b, progress: prog, categoryName: cat?.name ?? t("common.unknown") };
     })
     .filter((x): x is NonNullable<typeof x> => x != null)
     .filter((x) => x.progress.percentage >= 80);
@@ -386,7 +420,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
       setAiInsight({
         unavailable: true,
         taskType: "reasoning",
-        message: "Could not load insight right now.",
+        message: t("dashboard.insightLoadFailed"),
       });
     } finally {
       setAiLoading(false);
@@ -395,20 +429,71 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
 
   const currency = snapshot.totalBalance.currency;
 
+  const saveTransaction = async () => {
+    if (transactionEdit == null) return;
+    const minorUnits = parseMajorUnits(transactionEdit.amount, transactionEdit.transaction.amount.currency);
+    if (minorUnits == null || minorUnits <= 0) {
+      toast.error(t("dashboard.transactionActions.invalidAmount"));
+      return;
+    }
+    try {
+      await updateTransaction.mutateAsync({
+        originalEventId: transactionEdit.transaction.id,
+        accountId: transactionEdit.transaction.accountId,
+        categoryId: transactionEdit.categoryId,
+        amount: { minorUnits, currency: transactionEdit.transaction.amount.currency },
+        direction: transactionEdit.direction,
+        note: transactionEdit.note,
+        tags: transactionEdit.transaction.tags,
+        merchant: transactionEdit.transaction.merchant,
+      });
+      setTransactionEdit(null);
+      toast.success(t("dashboard.transactionActions.updated"));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("dashboard.transactionActions.updateFailed"));
+    }
+  };
+
+  const confirmDeleteTransaction = async () => {
+    if (transactionToDelete == null) return;
+    try {
+      await deleteTransaction.mutateAsync({ originalEventId: transactionToDelete.id });
+      setTransactionToDelete(null);
+      toast.success(t("dashboard.transactionActions.deleted"));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("dashboard.transactionActions.deleteFailed"));
+    }
+  };
+
   return (
     <div className="space-y-4">
+      {snapshot.missingFxCurrencies.length > 0 && (
+        <Card className="border-amber bg-amber-wash">
+          <CardContent className="flex items-start gap-3 pt-4">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+            <div>
+              <p className="text-sm font-medium text-amber-800 dark:text-amber-300">{t("dashboard.missingFxTitle")}</p>
+              <p className="text-xs text-amber-700 dark:text-amber-400">
+                {t("dashboard.missingFxBody", {
+                  currencies: snapshot.missingFxCurrencies.join(", "),
+                  baseCurrency: snapshot.baseCurrency,
+                })}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       {/* ── Alerts ── */}
       {(snapshot.netCashFlow.minorUnits < 0 || budgetAlerts.some((a) => a.progress.percentage >= 100)) && (
-        <section aria-label="Alerts" className="space-y-2">
+        <section aria-label={t("dashboard.alerts")} className="space-y-2">
           {snapshot.netCashFlow.minorUnits < 0 && (
             <Card className="border-amber bg-amber-wash">
               <CardContent className="flex items-start gap-3 pt-4">
                 <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Negative cash flow</p>
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-300">{t("dashboard.negativeCashFlow")}</p>
                   <p className="text-xs text-amber-700 dark:text-amber-400">
-                    Expenses exceed income by{" "}
-                    {formatMoney(Math.abs(snapshot.netCashFlow.minorUnits), currency)}.
+                    {t("dashboard.negativeCashFlowBody", { amount: formatMoney(Math.abs(snapshot.netCashFlow.minorUnits), currency) })}
                   </p>
                 </div>
               </CardContent>
@@ -421,10 +506,9 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                 <CardContent className="flex items-start gap-3 pt-4">
                   <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-red-800 dark:text-red-300">Budget exceeded</p>
+                    <p className="text-sm font-medium text-red-800 dark:text-red-300">{t("dashboard.budgetExceeded")}</p>
                     <p className="text-xs text-red-700 dark:text-red-400">
-                      "{a.budget.name}" exceeded its budget of{" "}
-                      {formatMoney(a.progress.limit.minorUnits, a.progress.limit.currency)}.
+                      {t("dashboard.budgetExceededBody", { name: a.budget.name, amount: formatMoney(a.progress.limit.minorUnits, a.progress.limit.currency) })}
                     </p>
                   </div>
                 </CardContent>
@@ -433,12 +517,12 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
         </section>
       )}
 
-      <section aria-label="Analytics overview" className="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.9fr)]">
+      <section aria-label={t("dashboard.analyticsOverview")} className="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.9fr)]">
         <Card className="interactive-surface metric-surface">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div>
-              <CardTitle className="text-base">Cash Flow Trend</CardTitle>
-              <p className="mt-1 text-xs text-muted-foreground">Income, expenses, and net movement for the selected range</p>
+              <CardTitle className="text-base">{t("dashboard.cashFlowTrend")}</CardTitle>
+              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.cashFlowTrendBody")}</p>
             </div>
             <TrendingUp className="h-4 w-4 text-ocean-primary" />
           </CardHeader>
@@ -454,8 +538,8 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
         <Card className="interactive-surface">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div>
-              <CardTitle className="text-base">Spending Mix</CardTitle>
-              <p className="mt-1 text-xs text-muted-foreground">Top categories by share of outflow</p>
+              <CardTitle className="text-base">{t("dashboard.spendingMix")}</CardTitle>
+              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.spendingMixBody")}</p>
             </div>
             <BarChart3 className="h-4 w-4 text-ocean-primary" />
           </CardHeader>
@@ -473,27 +557,27 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
       />
 
       {/* ── Summary cards ── */}
-      <section aria-label="Balance summary" className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+      <section aria-label={t("dashboard.balanceSummary")} className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <SummaryCard
-          title="Total Balance"
+          title={t("dashboard.totalBalance")}
           value={formatMoney(snapshot.totalBalance.minorUnits, currency)}
           icon={<Wallet className="h-4 w-4 text-muted-foreground" />}
-          footer={`${snapshot.accounts.length} account${snapshot.accounts.length !== 1 ? "s" : ""}`}
+          footer={t("dashboard.accountCount", { count: snapshot.accounts.length })}
         />
         <SummaryCard
-          title="Income"
+          title={t("dashboard.income")}
           value={formatMoney(snapshot.periodIncome.minorUnits, currency)}
           icon={<ArrowUp className="h-4 w-4 text-green-600" />}
           valueClass="text-green-600"
         />
         <SummaryCard
-          title="Expenses"
+          title={t("dashboard.expenses")}
           value={formatMoney(snapshot.periodExpenses.minorUnits, currency)}
           icon={<ArrowDown className="h-4 w-4 text-red-500" />}
           valueClass="text-red-500"
         />
         <SummaryCard
-          title="Net Cash Flow"
+          title={t("dashboard.netCashFlow")}
           value={formatMoney(snapshot.netCashFlow.minorUnits, currency)}
           icon={<TrendingUp className={`h-4 w-4 ${snapshot.netCashFlow.minorUnits >= 0 ? "text-green-600" : "text-red-500"}`} />}
           valueClass={snapshot.netCashFlow.minorUnits >= 0 ? "text-green-600" : "text-red-500"}
@@ -505,7 +589,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
         {/* Spending breakdown */}
         <Card className="interactive-surface">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">Spending Breakdown</CardTitle>
+            <CardTitle className="text-base">{t("dashboard.spendingBreakdown")}</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="space-y-3">
@@ -520,7 +604,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                 />
               ))
             ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">No expenses this period.</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">{t("dashboard.categoryNone")}</p>
             )}
           </CardContent>
         </Card>
@@ -533,12 +617,12 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
             <Card>
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
                 <Lightbulb className="h-4 w-4 text-muted-foreground" />
-                <CardTitle className="text-sm font-medium">AI Insight</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("dashboard.aiInsight")}</CardTitle>
               </CardHeader>
               <CardContent>
                 {aiCapability?.available !== true && (
                   <p className="mb-3 text-sm text-muted-foreground">
-                    Add a personal AI provider key in Settings before requesting AI insight.
+                    {t("dashboard.aiUnavailable")}
                   </p>
                 )}
                 <Button
@@ -548,7 +632,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                   disabled={aiLoading || aiCapability?.available !== true}
                   className="w-full"
                 >
-                  {aiLoading ? "Analyzing…" : "Analyze this period"}
+                  {aiLoading ? t("dashboard.analyzing") : t("dashboard.analyzePeriod")}
                 </Button>
               </CardContent>
             </Card>
@@ -562,7 +646,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
         {snapshot.projectedRecurring.length > 0 && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-base">Upcoming</CardTitle>
+              <CardTitle className="text-base">{t("dashboard.upcoming")}</CardTitle>
               <Repeat className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -584,7 +668,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
         {activeBudgets.length > 0 && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-base">Budgets</CardTitle>
+              <CardTitle className="text-base">{t("budgets.title")}</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent className="space-y-4">
@@ -600,7 +684,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                       <span className="flex items-center gap-1 min-w-0">
                         <span className="truncate">{budget.name}</span>
                         <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal shrink-0">
-                          {cat?.name ?? "Unknown"}
+                          {cat?.name ?? t("common.unknown")}
                         </Badge>
                         {nearingLimit && <Info className="h-3 w-3 text-amber-500 shrink-0" />}
                         {overspent && <AlertTriangle className="h-3 w-3 text-destructive shrink-0" />}
@@ -614,7 +698,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                       className={overspent ? "bg-red-200 [&>div]:bg-destructive" : nearingLimit ? "bg-amber-200 [&>div]:bg-amber-500" : ""}
                     />
                     {nearingLimit && !overspent && (
-                      <p className="text-xs text-amber-600">{Math.round(100 - prog.percentage)}% remaining</p>
+                      <p className="text-xs text-amber-600">{t("dashboard.remaining", { percentage: Math.round(100 - prog.percentage) })}</p>
                     )}
                   </div>
                 );
@@ -628,7 +712,7 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
       {activeGoals.length > 0 && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">Goals</CardTitle>
+            <CardTitle className="text-base">{t("goals.title")}</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -654,16 +738,16 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
       {/* ── Transactions ── */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-base">Transactions</CardTitle>
+          <CardTitle className="text-base">{t("dashboard.transactions")}</CardTitle>
           <List className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent className="space-y-3">
           <Tabs value={timeFilter} onValueChange={(v) => setTimeFilter(v as TimeFilter)}>
             <TabsList className="grid w-full grid-cols-4 sm:w-[360px]">
-              <TabsTrigger value="day">Day</TabsTrigger>
-              <TabsTrigger value="week">Week</TabsTrigger>
-              <TabsTrigger value="month">Month</TabsTrigger>
-              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="day">{t("dashboard.filters.day")}</TabsTrigger>
+              <TabsTrigger value="week">{t("dashboard.filters.week")}</TabsTrigger>
+              <TabsTrigger value="month">{t("dashboard.filters.month")}</TabsTrigger>
+              <TabsTrigger value="all">{t("dashboard.filters.all")}</TabsTrigger>
             </TabsList>
           </Tabs>
           {txLoading ? (
@@ -680,19 +764,79 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
                     <div className="flex items-center gap-2 min-w-0">
                       <div className={`shrink-0 w-2 h-2 rounded-full ${isIncome ? "bg-green-500" : "bg-red-500"}`} />
                       <div className="min-w-0">
-                        <p className="text-sm truncate">{cat?.name ?? "Unknown"}</p>
-                        <p className="text-xs text-muted-foreground">{formatDate(tx.timestamp)}</p>
+                        <p className="text-sm truncate">{cat?.name ?? t("common.unknown")}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(tx.timestamp)}{tx.note ? ` · ${tx.note}` : ""}
+                        </p>
                       </div>
                     </div>
-                    <span className={`text-sm font-medium shrink-0 ml-2 ${isIncome ? "text-green-600" : "text-red-500"}`}>
-                      {isIncome ? "+" : "-"}{formatMoney(Math.abs(tx.amount.minorUnits), tx.amount.currency)}
-                    </span>
+                    <div className="ml-2 flex shrink-0 items-center gap-1">
+                      <span className={`text-sm font-medium ${isIncome ? "text-green-600" : "text-red-500"}`}>
+                        {isIncome ? "+" : "-"}{formatMoney(Math.abs(tx.amount.minorUnits), tx.amount.currency)}
+                      </span>
+                      {canMutate && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            aria-label={t("dashboard.transactionActions.editAria", { date: formatDate(tx.timestamp) })}
+                            title={t("dashboard.transactionActions.edit")}
+                            onClick={() => setTransactionEdit({
+                              transaction: tx,
+                              categoryId: tx.categoryId,
+                              direction: tx.direction,
+                              amount: amountInput(tx),
+                              note: tx.note,
+                            })}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            aria-label={t("dashboard.transactionActions.deleteAria", { date: formatDate(tx.timestamp) })}
+                            title={t("dashboard.transactionActions.delete")}
+                            onClick={() => setTransactionToDelete(tx)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </li>
                 );
               })}
             </ul>
-          ) : (
-            <p className="py-8 text-center text-sm text-muted-foreground">No transactions in this period.</p>
+          ) : filteredTransfers.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">{t("dashboard.noTransactions")}</p>
+          ) : null}
+          {filteredTransfers.length > 0 && (
+            <div className="border-t pt-3">
+              <p className="mb-1 text-xs font-medium text-muted-foreground">{t("dashboard.transfers")}</p>
+              <ul className="space-y-1 max-h-56 overflow-y-auto">
+                {filteredTransfers.map((transfer) => {
+                  const from = snapshot.accounts.find((account) => account.id === transfer.fromAccountId);
+                  const to = snapshot.accounts.find((account) => account.id === transfer.toAccountId);
+                  const destination = to?.name ?? transfer.externalDestination ?? t("dashboard.externalAccount");
+                  return (
+                    <li key={transfer.id} className="flex items-center justify-between gap-3 border-b py-2 last:border-0">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <ArrowRightLeft className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <div className="min-w-0">
+                          <p className="truncate text-sm">{from?.name ?? t("dashboard.unknownAccount")} → {destination}</p>
+                          <p className="text-xs text-muted-foreground">{formatDate(transfer.timestamp)}{transfer.note ? ` · ${transfer.note}` : ""}</p>
+                        </div>
+                      </div>
+                      <span className="shrink-0 text-sm font-medium">
+                        {formatMoney(transfer.amount.minorUnits, transfer.amount.currency)}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -701,15 +845,74 @@ function DashboardContent({ snapshot }: { snapshot: FinancialStateSnapshot }) {
       {snapshot.accounts.length === 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Welcome to WiseMoney</CardTitle>
+            <CardTitle className="text-base">{t("dashboard.welcome")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Get started by adding an account and recording your first transaction.
+              {t("dashboard.emptyState")}
             </p>
           </CardContent>
         </Card>
       )}
+
+      <Dialog open={transactionEdit != null} onOpenChange={(open) => { if (!open) setTransactionEdit(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("dashboard.transactionActions.editTitle")}</DialogTitle>
+            <DialogDescription>{t("dashboard.transactionActions.editDescription")}</DialogDescription>
+          </DialogHeader>
+          {transactionEdit != null && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="edit-transaction-category" className="text-sm font-medium">{t("dashboard.transactionActions.category")}</label>
+                <Select value={transactionEdit.categoryId} onValueChange={(categoryId) => setTransactionEdit((value) => value == null ? null : { ...value, categoryId })}>
+                  <SelectTrigger id="edit-transaction-category"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {snapshot.categories.filter((category) => !category.isArchived).map((category) => (
+                      <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="edit-transaction-direction" className="text-sm font-medium">{t("dashboard.transactionActions.type")}</label>
+                <Select value={transactionEdit.direction} onValueChange={(direction) => setTransactionEdit((value) => value == null ? null : { ...value, direction: direction as "income" | "expense" })}>
+                  <SelectTrigger id="edit-transaction-direction"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="expense">{t("dashboard.transactionActions.expense")}</SelectItem>
+                    <SelectItem value="income">{t("dashboard.transactionActions.income")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="edit-transaction-amount" className="text-sm font-medium">{t("dashboard.transactionActions.amount", { currency: transactionEdit.transaction.amount.currency })}</label>
+                <Input id="edit-transaction-amount" inputMode="decimal" value={transactionEdit.amount} onChange={(event) => setTransactionEdit((value) => value == null ? null : { ...value, amount: event.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="edit-transaction-note" className="text-sm font-medium">{t("dashboard.transactionActions.note")}</label>
+                <Input id="edit-transaction-note" value={transactionEdit.note} onChange={(event) => setTransactionEdit((value) => value == null ? null : { ...value, note: event.target.value })} />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTransactionEdit(null)}>{t("dashboard.transactionActions.cancel")}</Button>
+            <Button onClick={() => { void saveTransaction(); }} disabled={updateTransaction.isPending}>{t("dashboard.transactionActions.save")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={transactionToDelete != null} onOpenChange={(open) => { if (!open) setTransactionToDelete(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("dashboard.transactionActions.deleteTitle")}</DialogTitle>
+            <DialogDescription>{t("dashboard.transactionActions.deleteDescription")}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTransactionToDelete(null)}>{t("dashboard.transactionActions.cancel")}</Button>
+            <Button variant="destructive" onClick={() => { void confirmDeleteTransaction(); }} disabled={deleteTransaction.isPending}>{t("dashboard.transactionActions.confirmDelete")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -740,6 +943,7 @@ function SummaryCard({
 
 // ── Export default ────────────────────────────────────────────────────────
 export default function Dashboard() {
+  const { t } = useTranslation();
   const now = new Date();
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
@@ -787,7 +991,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <main aria-label="Dashboard" className="app-page">
+      <main aria-label={t("dashboard.title")} className="app-page">
         <Skeleton className="h-8 w-48" />
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -809,46 +1013,46 @@ export default function Dashboard() {
 
   if (error != null || snapshot == null) {
     return (
-      <main aria-label="Dashboard" className="flex min-h-[50vh] flex-col items-center justify-center space-y-2 text-center">
-        <p className="text-destructive text-lg font-medium">Failed to load financial data</p>
-        <p className="text-muted-foreground text-sm">{error?.message ?? "Unknown error"}</p>
+      <main aria-label={t("dashboard.title")} className="flex min-h-[50vh] flex-col items-center justify-center space-y-2 text-center">
+        <p className="text-destructive text-lg font-medium">{t("dashboard.loadFailed")}</p>
+        <p className="text-muted-foreground text-sm">{error?.message ?? t("common.unknown")}</p>
       </main>
     );
   }
 
   return (
-    <main aria-label="Dashboard" className="app-page">
+    <main aria-label={t("dashboard.title")} className="app-page">
       {/* ── Period header ── */}
       <div className="page-head">
         <div>
-          <p className="page-kicker">Dashboard</p>
+          <p className="page-kicker">{t("dashboard.title")}</p>
           <h1 className="page-title">
-            {MONTHS[selectedMonth - 1]} {selectedYear}
+            {t(`dashboard.months.${selectedMonth - 1}`)} {selectedYear}
           </h1>
           {periodComparison != null && (
             <div className="flex flex-wrap items-center gap-3 mt-1">
-              <PeriodBadge label="Income" pct={periodComparison.incomeChange} invert={false} />
-              <PeriodBadge label="Expenses" pct={periodComparison.expenseChange} invert={true} />
-              <PeriodBadge label="Cash Flow" pct={periodComparison.cashflowChange} invert={false} />
+              <PeriodBadge label={t("dashboard.income")} pct={periodComparison.incomeChange} invert={false} />
+              <PeriodBadge label={t("dashboard.expenses")} pct={periodComparison.expenseChange} invert={true} />
+              <PeriodBadge label={t("dashboard.netCashFlow")} pct={periodComparison.cashflowChange} invert={false} />
             </div>
           )}
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" onClick={goPrev} aria-label="Previous month">
+          <Button variant="ghost" size="icon" onClick={goPrev} aria-label={t("dashboard.previousMonth")}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           {!isCurrent && (
             <Button variant="ghost" size="sm" className="text-xs" onClick={goCurrent}>
-              Today
+              {t("dashboard.today")}
             </Button>
           )}
-          <Button variant="ghost" size="icon" onClick={goNext} aria-label="Next month" disabled={isCurrent}>
+          <Button variant="ghost" size="icon" onClick={goNext} aria-label={t("dashboard.nextMonth")} disabled={isCurrent}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      <DashboardContent snapshot={snapshot} />
+      <DashboardContent snapshot={snapshot} canMutate={isCurrent} />
     </main>
   );
 }

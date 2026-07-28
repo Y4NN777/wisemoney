@@ -12,6 +12,8 @@ import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
+import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
+import { formatLocalDateInput, parseLocalDateInput } from "../../lib/localDate.ts";
 
 const STATUS_BADGE_CLASS: Record<DebtCreditStatus, string> = {
   pending: "border-amber bg-amber-wash text-amber",
@@ -20,18 +22,11 @@ const STATUS_BADGE_CLASS: Record<DebtCreditStatus, string> = {
 };
 
 function formatMoney(minorUnits: number, currency: string): string {
-  const symbol: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
-  const sym = symbol[currency] ?? currency + " ";
-  const abs = Math.abs(minorUnits);
-  return `${minorUnits < 0 ? "-" : ""}${sym}${Math.floor(abs / 100).toLocaleString()}.${(abs % 100).toString().padStart(2, "0")}`;
+  return formatMoneyValue({ minorUnits, currency });
 }
 
 function todayInputValue(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function toDateInputTimestamp(value: string): number {
-  return new Date(`${value}T12:00:00`).getTime();
+  return formatLocalDateInput();
 }
 
 function displayDate(timestamp: number, language: string): string {
@@ -44,8 +39,15 @@ function statusIcon(status: DebtCreditStatus) {
   return <Clock3 className="h-4 w-4 text-amber" />;
 }
 
-function totalFor(items: DebtCreditState[]): number {
-  return items.reduce((sum, item) => item.status === "settled" ? sum : sum + item.amount.minorUnits, 0);
+function totalsByCurrency(items: DebtCreditState[]): Array<{ minorUnits: number; currency: string }> {
+  const totals = new Map<string, number>();
+  for (const item of items) {
+    if (item.status === "settled") continue;
+    totals.set(item.amount.currency, (totals.get(item.amount.currency) ?? 0) + item.amount.minorUnits);
+  }
+  return [...totals.entries()]
+    .map(([currency, minorUnits]) => ({ minorUnits, currency }))
+    .sort((a, b) => a.currency.localeCompare(b.currency));
 }
 
 type DebtCreditColumnProps = {
@@ -168,9 +170,9 @@ export default function Debts() {
   const debts = debtCredits.filter((item) => item.kind === "debt");
   const unsettledReceivables = receivables.filter((item) => item.status !== "settled");
 
-  const currency = debtCredits[0]?.amount.currency ?? snapshot?.accounts[0]?.currency ?? "USD";
-  const receivableTotal = totalFor(receivables);
-  const debtTotal = totalFor(debts);
+  const currency = snapshot?.baseCurrency ?? "XOF";
+  const receivableTotals = totalsByCurrency(receivables);
+  const debtTotals = totalsByCurrency(debts);
   const statusLabels: Record<DebtCreditStatus, string> = {
     pending: t("debts.status.pending"),
     partial: t("debts.status.partial"),
@@ -191,7 +193,7 @@ export default function Debts() {
     event.preventDefault();
     setCreateError(null);
 
-    const amount = Number.parseFloat(amountStr);
+    const minorUnits = parseMajorUnits(amountStr, currency);
     if (!partyName.trim()) {
       setCreateError(kind === "debt" ? t("debts.errors.creditorRequired") : t("debts.errors.debtorRequired"));
       return;
@@ -200,8 +202,13 @@ export default function Debts() {
       setCreateError(t("debts.errors.motiveRequired"));
       return;
     }
-    if (Number.isNaN(amount) || amount <= 0) {
+    if (minorUnits == null || minorUnits <= 0) {
       setCreateError(t("debts.errors.invalidAmount"));
+      return;
+    }
+    const date = parseLocalDateInput(dateValue);
+    if (date == null) {
+      setCreateError(t("debts.errors.invalidDate"));
       return;
     }
 
@@ -211,8 +218,8 @@ export default function Debts() {
         kind,
         partyName: label,
         motive: motive.trim(),
-        amount: { minorUnits: Math.round(amount * 100), currency },
-        date: toDateInputTimestamp(dateValue),
+        amount: { minorUnits, currency },
+        date,
         status,
       },
       {
@@ -314,8 +321,8 @@ export default function Debts() {
                   <Input
                     id="debt-credit-amount"
                     type="number"
-                    min="0.01"
-                    step="0.01"
+                    min={currencyInputStep(currency)}
+                    step={currencyInputStep(currency)}
                     value={amountStr}
                     onChange={(event) => setAmountStr(event.target.value)}
                     required
@@ -362,7 +369,11 @@ export default function Debts() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{formatMoney(receivableTotal, currency)}</p>
+            {receivableTotals.length === 0 ? (
+              <p className="text-2xl font-semibold">{formatMoney(0, currency)}</p>
+            ) : receivableTotals.map((total) => (
+              <p key={total.currency} className="text-2xl font-semibold">{formatMoney(total.minorUnits, total.currency)}</p>
+            ))}
           </CardContent>
         </Card>
         <Card className="metric-surface">
@@ -370,7 +381,11 @@ export default function Debts() {
             <CardTitle className="text-sm">{t("debts.metrics.unsettledDebts")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{formatMoney(debtTotal, currency)}</p>
+            {debtTotals.length === 0 ? (
+              <p className="text-2xl font-semibold">{formatMoney(0, currency)}</p>
+            ) : debtTotals.map((total) => (
+              <p key={total.currency} className="text-2xl font-semibold">{formatMoney(total.minorUnits, total.currency)}</p>
+            ))}
           </CardContent>
         </Card>
         <Card className={unsettledReceivables.length > 0 ? "border-amber bg-amber-wash" : ""}>

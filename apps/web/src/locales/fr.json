@@ -5,6 +5,9 @@
   },
   "keyUnlock": {
     "loading": "Chargement…",
+    "errors": {
+      "categoryInitialization": "Échec de l’initialisation des catégories"
+    },
     "login": {
       "title": "Créer un compte",
       "description": "Configurez votre espace privé et votre compte en ligne optionnel",
@@ -54,6 +57,9 @@
       "confirmPassphrase": "Confirmer la phrase privée",
       "submitting": "Configuration…",
       "createVault": "Créer l'espace privé",
+      "deviceUnlock": "Activer le déverrouillage de l’appareil",
+      "deviceUnlockDescription": "Utilisez un visage, une empreinte, un code PIN ou une clé de sécurité compatible pour les prochaines ouvertures. La phrase privée reste la clé de récupération.",
+      "deviceUnlockUnavailable": "Le déverrouillage de l’appareil n’est pas disponible avec ce navigateur ou cet authentificateur. L’espace a été créé avec la phrase privée uniquement.",
       "errors": {
         "failed": "Échec de la configuration"
       }
@@ -225,6 +231,7 @@
       "body": "Installez l'application avant d'en avoir besoin hors ligne. Votre espace privé et les écrans principaux restent disponibles depuis l'écran d'accueil.",
       "installed": "WiseMoney est installé sur cet appareil.",
       "button": "Installer l'app",
+      "failed": "La demande d'installation n'a pas pu être ouverte.",
       "manualTitle": "Si aucun bouton d'installation n'apparaît :",
       "android": "Chrome Android : ouvrez le menu du navigateur et choisissez Installer l'application.",
       "ios": "Safari iPhone : utilisez Partager, puis Ajouter à l'écran d'accueil."
@@ -341,10 +348,81 @@
     "emptyState": "Bienvenue ! Commencez par ajouter un compte et enregistrer votre première transaction.",
     "tips": "Conseils",
     "netCashFlowNegative": "Vos dépenses dépassent vos revenus cette période",
+    "missingFxTitle": "Certains totaux sont incomplets",
+    "missingFxBody": "Ajoutez un taux de change de {{currencies}} vers {{baseCurrency}} dans les paramètres pour inclure ces montants.",
+    "negativeCashFlow": "Flux de trésorerie négatif",
+    "negativeCashFlowBody": "Les dépenses dépassent les revenus de {{amount}}.",
+    "budgetExceeded": "Budget dépassé",
+    "budgetExceededBody": "« {{name}} » a dépassé son budget de {{amount}}.",
+    "analyticsOverview": "Aperçu analytique",
+    "cashFlowTrend": "Évolution de la trésorerie",
+    "cashFlowTrendBody": "Revenus, dépenses et mouvement net sur la période sélectionnée",
+    "spendingMix": "Répartition des dépenses",
+    "spendingMixBody": "Principales catégories selon leur part des sorties",
+    "balanceSummary": "Résumé des soldes",
+    "totalBalance": "Solde total",
+    "accountCount_one": "{{count}} compte",
+    "accountCount_other": "{{count}} comptes",
+    "spendingBreakdown": "Détail des dépenses",
+    "aiUnavailable": "Ajoutez une clé personnelle de fournisseur IA dans les paramètres avant de demander une analyse.",
+    "analyzing": "Analyse…",
+    "analyzePeriod": "Analyser cette période",
+    "insightLoadFailed": "Impossible de charger l’analyse pour le moment.",
+    "upcoming": "À venir",
+    "remaining": "{{percentage}} % restant",
+    "transactions": "Transactions",
+    "transfers": "Transferts",
+    "externalAccount": "Compte externe",
+    "unknownAccount": "Compte inconnu",
+    "welcome": "Bienvenue dans WiseMoney",
+    "total": "Total",
+    "net": "Net",
+    "loadFailed": "Échec du chargement des données financières",
+    "previousMonth": "Mois précédent",
+    "nextMonth": "Mois suivant",
+    "today": "Aujourd’hui",
+    "filters": {
+      "day": "Jour",
+      "week": "Semaine",
+      "month": "Mois",
+      "all": "Tout"
+    },
+    "transactionActions": {
+      "edit": "Modifier la transaction",
+      "editAria": "Modifier la transaction du {{date}}",
+      "delete": "Supprimer la transaction",
+      "deleteAria": "Supprimer la transaction du {{date}}",
+      "editTitle": "Modifier la transaction",
+      "editDescription": "Le compte et la date d’origine restent inchangés.",
+      "deleteTitle": "Supprimer la transaction ?",
+      "deleteDescription": "Cette action retire la transaction des soldes et rapports. L’historique chiffré des événements reste auditable.",
+      "category": "Catégorie",
+      "type": "Type",
+      "expense": "Dépense",
+      "income": "Revenu",
+      "amount": "Montant ({{currency}})",
+      "note": "Note",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "confirmDelete": "Supprimer",
+      "invalidAmount": "Saisissez un montant positif valide.",
+      "updated": "Transaction modifiée.",
+      "deleted": "Transaction supprimée.",
+      "updateFailed": "Impossible de modifier la transaction.",
+      "deleteFailed": "Impossible de supprimer la transaction."
+    },
     "months": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
   },
   "capture": {
     "title": "Saisie",
+    "heading": "Enregistrer un mouvement d’argent",
+    "ariaLabel": "Saisie d’une transaction",
+    "empty": {
+      "accountsManage": "Aucun compte. Créez-en un dans Gérer.",
+      "categoriesManage": "Aucune catégorie. Créez-en une dans Gérer.",
+      "noOtherAccounts": "Aucun autre compte disponible.",
+      "goalsPlanning": "Aucun objectif. Créez-en un dans Planification."
+    },
     "tabs": {
       "transaction": "Transaction",
       "transfer": "Virement",
@@ -365,6 +443,8 @@
       "notePlaceholder": "Note de transaction",
       "submit": "Enregistrer la transaction",
       "submitting": "Enregistrement…",
+      "incomeRecorded": "Revenu enregistré",
+      "expenseRecorded": "Dépense enregistrée",
       "errors": {
         "validAmount": "Entrez un montant valide",
         "selectCategory": "Sélectionnez une catégorie",
@@ -387,6 +467,7 @@
       "notePlaceholder": "Note de virement",
       "submit": "Enregistrer le virement",
       "submitting": "Traitement…",
+      "recorded": "Virement enregistré",
       "errors": {
         "validAmount": "Entrez un montant valide",
         "selectFrom": "Sélectionnez un compte source",
@@ -401,8 +482,9 @@
       "amountPlaceholder": "0,00",
       "note": "Note (optionnelle)",
       "notePlaceholder": "Note de contribution",
-      "submit": "Enregistrer la contribution",
-      "submitting": "Enregistrement…",
+      "submit": "Ajouter la contribution",
+      "submitting": "Ajout…",
+      "recorded": "Contribution ajoutée à l’objectif",
       "errors": {
         "validAmount": "Entrez un montant valide",
         "selectGoal": "Sélectionnez un objectif",
@@ -410,6 +492,12 @@
       }
     },
     "manage": {
+      "summary": "Résumé de la gestion",
+      "accounts": "Comptes",
+      "managedBalance": "Solde géré",
+      "customCategories": "Catégories personnalisées",
+      "categories": "Catégories",
+      "new": "Nouveau",
       "createCategory": "Créer une catégorie",
       "categoryName": "Nom de la catégorie",
       "categoryNamePlaceholder": "p. ex. Courses",
@@ -417,9 +505,23 @@
       "categoryParentNone": "Aucune (niveau racine)",
       "submit": "Créer la catégorie",
       "submitting": "Création…",
+      "categoryCreated": "Catégorie créée",
+      "categoryRenamed": "Catégorie renommée",
+      "categoryArchived": "Catégorie archivée",
+      "confirmArchiveCategory": "Archiver la catégorie « {{name}} » ? L’historique existant sera conservé.",
+      "renameCategory": "Renommer la catégorie",
+      "saveRename": "Enregistrer le nouveau nom",
+      "saving": "Enregistrement…",
+      "searchCategories": "Rechercher des catégories",
+      "noCategories": "Aucune catégorie personnalisée. Créez-en une pour organiser les transactions.",
+      "noCategoryMatch": "Aucune catégorie ne correspond à la recherche.",
+      "renameCategoryAria": "Renommer {{name}}",
+      "archiveCategoryAria": "Archiver {{name}}",
       "errors": {
         "nameRequired": "Le nom de la catégorie est requis",
-        "failed": "Échec de la création de la catégorie"
+        "failed": "Échec de la création de la catégorie",
+        "renameCategoryFailed": "Échec du renommage de la catégorie",
+        "archiveCategoryFailed": "Échec de l’archivage de la catégorie"
       },
       "createAccount": "Créer un compte",
       "accountName": "Nom du compte",
@@ -431,12 +533,38 @@
       "accountTypeCredit": "Crédit",
       "accountTypeInvestment": "Investissement",
       "accountBalance": "Solde initial",
+      "accountCurrency": "Devise du compte",
+      "currencySearch": "Rechercher une devise ({{currency}})",
+      "noCurrency": "Aucune devise correspondante.",
+      "regions": { "africa": "Afrique", "global": "Monde" },
+      "accountTypes": {
+        "checking": "Compte courant",
+        "savings": "Épargne",
+        "credit": "Carte de crédit",
+        "cash": "Espèces",
+        "mobile_money": "Mobile money",
+        "investment": "Investissement"
+      },
       "submitAccount": "Créer le compte",
       "submittingAccount": "Création…",
+      "accountCreated": "Compte créé",
+      "accountUpdated": "Compte mis à jour",
+      "accountArchived": "Compte archivé",
+      "confirmArchiveAccount": "Archiver le compte « {{name}} » ? L’historique existant sera conservé.",
+      "editAccount": "Modifier le compte",
+      "saveAccount": "Enregistrer le compte",
+      "searchAccounts": "Rechercher des comptes",
+      "noAccounts": "Aucun compte. Créez un compte d’espèces, de mobile money, bancaire ou de carte.",
+      "noAccountMatch": "Aucun compte ne correspond à la recherche.",
+      "editAccountAria": "Modifier {{name}}",
+      "archiveAccountAria": "Archiver {{name}}",
+      "openingBalance": "Solde initial : {{amount}}",
       "errorsAccount": {
         "nameRequired": "Le nom du compte est requis",
         "validBalance": "Entrez un solde valide",
-        "failed": "Échec de la création du compte"
+        "failed": "Échec de la création du compte",
+        "updateFailed": "Échec de la mise à jour du compte",
+        "archiveFailed": "Échec de l’archivage du compte"
       }
     }
   },
@@ -444,6 +572,8 @@
     "title": "Assistant",
     "heading": "Analyses et apprentissage",
     "checkingSetup": "Vérification de la configuration de l'IA.",
+    "setupRequiredByo": "Ajoutez une clé personnelle de fournisseur dans les paramètres pour utiliser l’assistant.",
+    "setupRequiredEdge": "Ajoutez une clé personnelle de fournisseur ou connectez votre compte en ligne pour utiliser l’assistant.",
     "emptyPaused": "Les fonctions d'IA sont en pause tant que vous n'avez pas configuré une clé de fournisseur ou connecté la passerelle gérée.",
     "aiNoticeTitle": "L'IA est facultative et non configurée",
     "aiNoticeAction": "Configurer les clés IA",
@@ -455,7 +585,7 @@
       "insight": {
         "name": "Analyse des dépenses",
         "purpose": "Analyser vos habitudes de dépenses et identifier des tendances",
-        "provider": "Google Gemini (offre gratuite)",
+        "provider": "Votre routage de fournisseurs configuré",
         "description": "Détecte les anomalies, tendances et changements notables dans vos finances",
         "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -463,7 +593,7 @@
       "recommendation": {
         "name": "Recommandation",
         "purpose": "Suggérer des actions concrètes pour améliorer votre situation financière",
-        "provider": "Google Gemini (offre gratuite)",
+        "provider": "Votre routage de fournisseurs configuré",
         "description": "Génère des ajustements budgétaires, des suggestions d'épargne et des compromis de dépenses",
         "redactedData": "Totaux de période, progression des budgets et objectifs — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -471,7 +601,7 @@
       "prediction": {
         "name": "Prévision",
         "purpose": "Projeter le solde de fin de mois et les dates d'épuisement des budgets",
-        "provider": "Google Gemini (offre gratuite)",
+        "provider": "Votre routage de fournisseurs configuré",
         "description": "Prévoit votre trajectoire financière basée sur les données actuelles et les éléments récurrents",
         "redactedData": "Revenus/dépenses de période, récurrents projetés, limites budgétaires — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -479,7 +609,7 @@
       "patternDetection": {
         "name": "Détection de schémas",
         "purpose": "Détecter les habitudes de dépenses récurrentes et les dépendances entre catégories",
-        "provider": "Google Gemini (offre gratuite)",
+        "provider": "Votre routage de fournisseurs configuré",
         "description": "Identifie les schémas comportementaux comme les restaurants fréquents, l'inflation d'abonnements ou la concentration par catégorie",
         "redactedData": "Agrégats par catégorie, état des budgets, comparaisons de période — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -487,7 +617,7 @@
       "literacy": {
         "name": "Chat pédagogique",
         "purpose": "Expliquer les concepts de finances personnelles en langage simple",
-        "provider": "Google Gemini (offre gratuite)",
+        "provider": "Votre routage de fournisseurs configuré",
         "description": "Répond à vos questions sur la budgétisation, l'épargne, les flux de trésorerie, etc. — en lien avec vos données",
         "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -523,7 +653,7 @@
       "useLimited": "Utiliser le mode limité",
       "grantFull": "Accorder l'accès complet",
       "settingsTitle": "Paramètres de partage de données",
-      "settingsDescription": "Chaque fonctionnalité IA peut envoyer des données à Google Gemini (offre gratuite). Vous contrôlez la quantité.",
+      "settingsDescription": "Chaque fonctionnalité IA peut utiliser votre routage de fournisseurs configuré. Vous contrôlez la quantité de données partagées.",
       "statusFull": "Accès complet",
       "statusNotPrompted": "Non sollicité",
       "statusLimited": "Limité",
@@ -540,7 +670,9 @@
     "creating": "Création…",
     "category": "Catégorie",
     "categoryPlaceholder": "Sélectionner une catégorie",
-    "monthlyLimit": "Limite mensuelle ($)",
+    "name": "Nom",
+    "namePlaceholder": "Ex. Courses mensuelles",
+    "monthlyLimit": "Limite mensuelle ({{currency}})",
     "period": "Période (AAAA-MM)",
     "active": "Actifs",
     "archived": "Archivés",
@@ -549,10 +681,14 @@
     "spent": "dépensé",
     "limit": "limite",
     "used": "utilisé",
+    "created": "Budget créé",
+    "archivedSuccess": "Budget archivé",
     "errors": {
+      "nameRequired": "Entrez un nom de budget",
       "validAmount": "Entrez un montant valide",
       "selectCategory": "Sélectionnez une catégorie",
-      "failed": "Échec de la création du budget"
+      "failed": "Échec de la création du budget",
+      "archiveFailed": "Échec de l’archivage du budget"
     }
   },
   "goals": {
@@ -562,7 +698,7 @@
     "creating": "Création…",
     "name": "Nom de l'objectif",
     "namePlaceholder": "p. ex. Fonds d'urgence",
-    "targetAmount": "Montant cible ($)",
+    "targetAmount": "Montant cible ({{currency}})",
     "targetDate": "Date cible (optionnelle)",
     "active": "Actifs",
     "archived": "Archivés",
@@ -571,10 +707,14 @@
     "target": "objectif",
     "complete": "complété",
     "targetLabel": "Cible",
+    "created": "Objectif créé",
+    "archivedSuccess": "Objectif archivé",
     "errors": {
       "nameRequired": "Le nom de l'objectif est requis",
       "validAmount": "Entrez un montant cible valide",
-      "failed": "Échec de la création de l'objectif"
+      "validDate": "Entrez une date cible valide",
+      "failed": "Échec de la création de l'objectif",
+      "archiveFailed": "Échec de l’archivage de l’objectif"
     }
   },
   "recurring": {
@@ -586,7 +726,7 @@
     "labelPlaceholder": "p. ex. Loyer, Salaire",
     "category": "Catégorie",
     "categoryPlaceholder": "Sélectionner une catégorie",
-    "amount": "Montant ($)",
+    "amount": "Montant ({{currency}})",
     "direction": "Sens",
     "expense": "Dépense",
     "income": "Revenu",
@@ -606,11 +746,19 @@
     "accountPlaceholder": "Sélectionner un compte",
     "recordOccurrence": "Enregistrer l'occurrence",
     "recording": "Enregistrement…",
+    "created": "Élément récurrent créé",
+    "recorded": "Occurrence enregistrée",
+    "archivedSuccess": "Élément récurrent archivé",
+    "archiveAria": "Archiver {{label}}",
+    "noCompatibleAccount": "Aucun compte actif n’utilise {{currency}}.",
     "errors": {
       "labelRequired": "Le libellé est requis",
       "selectCategory": "Sélectionnez une catégorie",
       "validAmount": "Entrez un montant valide",
-      "failed": "Échec de la création de l'élément récurrent"
+      "validStartDate": "Entrez une date de début valide",
+      "failed": "Échec de la création de l'élément récurrent",
+      "recordFailed": "Échec de l’enregistrement de l’occurrence",
+      "archiveFailed": "Échec de l’archivage de l’élément récurrent"
     }
   },
   "exportImport": {
@@ -665,18 +813,21 @@
     "hideKey": "Masquer la clé",
     "showKey": "Afficher la clé",
     "configuredBadge": "Configurée",
+    "openrouterModels": "Tout modèle disponible",
     "placeholders": {
       "configured": "Clé sauvegardée",
       "enter": "Entrez la clé d'accès {{provider}}"
     },
     "footnote": "Vos clés sont protégées sur cet appareil et utilisées seulement quand vous demandez de l'aide à l'assistant.",
     "errors": {
-      "saveFailed": "Échec de l'enregistrement de la clé"
+      "saveFailed": "Échec de l'enregistrement de la clé",
+      "loadFailed": "Échec du chargement des clés configurées"
     },
     "providers": {
       "openai": "OpenAI",
       "gemini": "Google Gemini",
-      "nvidia": "NVIDIA NIM"
+      "deepseek": "DeepSeek",
+      "openrouter": "OpenRouter"
     }
   },
   "planning": {
@@ -743,6 +894,7 @@
       "creditorRequired": "Nom du créancier requis",
       "motiveRequired": "Motif requis",
       "invalidAmount": "Montant invalide",
+      "invalidDate": "Date invalide",
       "createFailed": "Échec de l'ajout",
       "statusUpdateFailed": "Échec de la mise à jour du statut"
     }
@@ -760,18 +912,49 @@
       "localOnlyMessage": "La sauvegarde en ligne n'est pas connectée dans ce déploiement. Votre espace, vos comptes, vos budgets et vos transactions restent sur cet appareil.",
       "language": "Langue",
       "session": "Session",
+      "lock": "Verrouiller l’espace privé",
       "signOut": "Déconnexion de toutes les sessions",
+      "signOutFailed": "Impossible de se déconnecter",
       "unknown": "Inconnu"
     },
     "currency": {
-      "title": "Gestion des devises",
-      "description": "Gérez vos paramètres de devise préférés",
+      "title": "Paramètres de devise",
+      "description": "Définissez votre devise par défaut et gérez les taux de change",
       "primary": "Devise principale",
       "supported": "Devises prises en charge",
+      "default": "Devise par défaut",
+      "defaultHelp": "Les devises africaines sont affichées en premier. Les nouveaux comptes utilisent cette devise ; les comptes existants restent inchangés.",
+      "search": "Rechercher un code, une devise ou un pays",
+      "currenciesAria": "Devises",
+      "noMatch": "Aucune devise correspondante.",
+      "regions": {
+        "Africa": "Afrique",
+        "Global": "Monde",
+        "Precious metals": "Métaux précieux"
+      },
+      "exchangeRates": "Taux de change",
+      "emptyRates": "Aucun taux de change configuré. Ajoutez-en un ci-dessous.",
+      "pairDescription": "{{base}} vers {{quote}}",
+      "addRate": "Ajouter un taux",
+      "from": "De",
+      "to": "Vers",
+      "rate": "Taux",
+      "deleteRate": "Supprimer le taux {{pair}}",
+      "defaultChanged": "Devise par défaut définie sur {{currency}}",
+      "defaultChangedBody": "Votre devise par défaut a été mise à jour.",
+      "rateAdded": "Taux ajouté : {{pair}} = {{rate}}",
+      "rateRemoved": "Taux supprimé",
+      "securityNote": "Les taux de change sont chiffrés sur cet appareil et ne sont jamais envoyés au serveur. Les conversions utilisent l’arrondi au pair avec le taux décimal exact.",
       "save": "Enregistrer",
       "saving": "Enregistrement…",
       "errors": {
-        "failed": "Échec de la mise à jour des paramètres de devise"
+        "failed": "Échec de la mise à jour des paramètres de devise",
+        "loadFailed": "Échec du chargement des taux de change",
+        "mustDiffer": "Les devises de base et de cotation doivent être différentes",
+        "invalidRate": "Taux invalide",
+        "positiveRate": "Le taux doit être un nombre positif",
+        "saveRateFailed": "Échec de l’enregistrement du taux",
+        "removeRateFailed": "Échec de la suppression du taux"
       }
     }
   },
@@ -795,7 +978,8 @@
     "unknown": "Inconnu",
     "yes": "Oui",
     "no": "Non",
-    "optional": "optionnelle"
+    "optional": "optionnelle",
+    "noCategories": "Aucune catégorie. Créez-en une dans Gérer."
   },
   "errors": {
     "httpsRequired": "HTTPS est requis en production pour la sécurité. Définissez VITE_EDGE_BASE_URL avec une URL https://."

@@ -5,6 +5,9 @@
   },
   "keyUnlock": {
     "loading": "Loading…",
+    "errors": {
+      "categoryInitialization": "Failed to initialize categories"
+    },
     "login": {
       "title": "Create Account",
       "description": "Set up your private space and optional online account",
@@ -54,6 +57,9 @@
       "confirmPassphrase": "Confirm private passphrase",
       "submitting": "Setting up…",
       "createVault": "Create private space",
+      "deviceUnlock": "Enable device unlock",
+      "deviceUnlockDescription": "Use a compatible face, fingerprint, PIN, or security key for future unlocks. Your passphrase remains the recovery key.",
+      "deviceUnlockUnavailable": "Device unlock is unavailable on this browser or authenticator. The space was created with passphrase unlock only.",
       "errors": {
         "failed": "Setup failed"
       }
@@ -225,6 +231,7 @@
       "body": "Install the app before you need it offline. Your private space and main screens stay available from the home screen.",
       "installed": "WiseMoney is installed on this device.",
       "button": "Install app",
+      "failed": "The installation prompt could not be opened.",
       "manualTitle": "If no install button appears:",
       "android": "Android Chrome: open the browser menu and choose Install app.",
       "ios": "iPhone Safari: use Share, then Add to Home Screen."
@@ -341,10 +348,81 @@
     "emptyState": "Welcome! Start by adding an account and recording your first transaction.",
     "tips": "Tips",
     "netCashFlowNegative": "Your spending exceeds your income this period",
+    "missingFxTitle": "Some totals are incomplete",
+    "missingFxBody": "Add an exchange rate from {{currencies}} to {{baseCurrency}} in Settings to include those amounts.",
+    "negativeCashFlow": "Negative cash flow",
+    "negativeCashFlowBody": "Expenses exceed income by {{amount}}.",
+    "budgetExceeded": "Budget exceeded",
+    "budgetExceededBody": "\"{{name}}\" exceeded its budget of {{amount}}.",
+    "analyticsOverview": "Analytics overview",
+    "cashFlowTrend": "Cash flow trend",
+    "cashFlowTrendBody": "Income, expenses, and net movement for the selected range",
+    "spendingMix": "Spending mix",
+    "spendingMixBody": "Top categories by share of outflow",
+    "balanceSummary": "Balance summary",
+    "totalBalance": "Total balance",
+    "accountCount_one": "{{count}} account",
+    "accountCount_other": "{{count}} accounts",
+    "spendingBreakdown": "Spending breakdown",
+    "aiUnavailable": "Add a personal AI provider key in Settings before requesting an AI insight.",
+    "analyzing": "Analyzing…",
+    "analyzePeriod": "Analyze this period",
+    "insightLoadFailed": "Could not load insight right now.",
+    "upcoming": "Upcoming",
+    "remaining": "{{percentage}}% remaining",
+    "transactions": "Transactions",
+    "transfers": "Transfers",
+    "externalAccount": "External account",
+    "unknownAccount": "Unknown account",
+    "welcome": "Welcome to WiseMoney",
+    "total": "Total",
+    "net": "Net",
+    "loadFailed": "Failed to load financial data",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "filters": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "all": "All"
+    },
+    "transactionActions": {
+      "edit": "Edit transaction",
+      "editAria": "Edit transaction from {{date}}",
+      "delete": "Delete transaction",
+      "deleteAria": "Delete transaction from {{date}}",
+      "editTitle": "Edit transaction",
+      "editDescription": "The account and original date remain unchanged.",
+      "deleteTitle": "Delete transaction?",
+      "deleteDescription": "This removes the transaction from balances and reports. The encrypted event history remains auditable.",
+      "category": "Category",
+      "type": "Type",
+      "expense": "Expense",
+      "income": "Income",
+      "amount": "Amount ({{currency}})",
+      "note": "Note",
+      "cancel": "Cancel",
+      "save": "Save",
+      "confirmDelete": "Delete",
+      "invalidAmount": "Enter a valid positive amount.",
+      "updated": "Transaction updated.",
+      "deleted": "Transaction deleted.",
+      "updateFailed": "Could not update transaction.",
+      "deleteFailed": "Could not delete transaction."
+    },
     "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
   },
   "capture": {
     "title": "Capture",
+    "heading": "Record money movement",
+    "ariaLabel": "Capture transaction",
+    "empty": {
+      "accountsManage": "No accounts yet. Create one in Manage.",
+      "categoriesManage": "No categories yet. Create one in Manage.",
+      "noOtherAccounts": "No other accounts available.",
+      "goalsPlanning": "No goals yet. Create one in Planning."
+    },
     "tabs": {
       "transaction": "Transaction",
       "transfer": "Transfer",
@@ -365,6 +443,8 @@
       "notePlaceholder": "Transaction note",
       "submit": "Record Transaction",
       "submitting": "Recording…",
+      "incomeRecorded": "Income recorded",
+      "expenseRecorded": "Expense recorded",
       "errors": {
         "validAmount": "Enter a valid amount",
         "selectCategory": "Select a category",
@@ -387,6 +467,7 @@
       "notePlaceholder": "Transfer note",
       "submit": "Record Transfer",
       "submitting": "Processing…",
+      "recorded": "Transfer recorded",
       "errors": {
         "validAmount": "Enter a valid amount",
         "selectFrom": "Select a source account",
@@ -401,8 +482,9 @@
       "amountPlaceholder": "0.00",
       "note": "Note (optional)",
       "notePlaceholder": "Contribution note",
-      "submit": "Record Contribution",
-      "submitting": "Recording…",
+      "submit": "Add Contribution",
+      "submitting": "Adding…",
+      "recorded": "Goal contribution added",
       "errors": {
         "validAmount": "Enter a valid amount",
         "selectGoal": "Select a goal",
@@ -410,6 +492,12 @@
       }
     },
     "manage": {
+      "summary": "Management summary",
+      "accounts": "Accounts",
+      "managedBalance": "Managed balance",
+      "customCategories": "Custom categories",
+      "categories": "Categories",
+      "new": "New",
       "createCategory": "Create Category",
       "categoryName": "Category name",
       "categoryNamePlaceholder": "e.g. Groceries",
@@ -417,9 +505,23 @@
       "categoryParentNone": "None (top-level)",
       "submit": "Create Category",
       "submitting": "Creating…",
+      "categoryCreated": "Category created",
+      "categoryRenamed": "Category renamed",
+      "categoryArchived": "Category archived",
+      "confirmArchiveCategory": "Archive category \"{{name}}\"? Existing history stays intact.",
+      "renameCategory": "Rename Category",
+      "saveRename": "Save Rename",
+      "saving": "Saving…",
+      "searchCategories": "Search categories",
+      "noCategories": "No custom categories yet. Create one to organize transactions.",
+      "noCategoryMatch": "No categories match your search.",
+      "renameCategoryAria": "Rename {{name}}",
+      "archiveCategoryAria": "Archive {{name}}",
       "errors": {
         "nameRequired": "Category name is required",
-        "failed": "Failed to create category"
+        "failed": "Failed to create category",
+        "renameCategoryFailed": "Failed to rename category",
+        "archiveCategoryFailed": "Failed to archive category"
       },
       "createAccount": "Create Account",
       "accountName": "Account name",
@@ -430,13 +532,39 @@
       "accountTypeCash": "Cash",
       "accountTypeCredit": "Credit",
       "accountTypeInvestment": "Investment",
-      "accountBalance": "Initial balance",
+      "accountBalance": "Opening balance",
+      "accountCurrency": "Account currency",
+      "currencySearch": "Search currency ({{currency}})",
+      "noCurrency": "No matching currency.",
+      "regions": { "africa": "Africa", "global": "Global" },
+      "accountTypes": {
+        "checking": "Checking",
+        "savings": "Savings",
+        "credit": "Credit Card",
+        "cash": "Cash",
+        "mobile_money": "Mobile Money",
+        "investment": "Investment"
+      },
       "submitAccount": "Create Account",
       "submittingAccount": "Creating…",
+      "accountCreated": "Account created",
+      "accountUpdated": "Account updated",
+      "accountArchived": "Account archived",
+      "confirmArchiveAccount": "Archive account \"{{name}}\"? Existing history stays intact.",
+      "editAccount": "Edit Account",
+      "saveAccount": "Save Account",
+      "searchAccounts": "Search accounts",
+      "noAccounts": "No accounts yet. Create cash, mobile money, bank, or card accounts.",
+      "noAccountMatch": "No accounts match your search.",
+      "editAccountAria": "Edit {{name}}",
+      "archiveAccountAria": "Archive {{name}}",
+      "openingBalance": "Opening balance: {{amount}}",
       "errorsAccount": {
         "nameRequired": "Account name is required",
         "validBalance": "Enter a valid balance",
-        "failed": "Failed to create account"
+        "failed": "Failed to create account",
+        "updateFailed": "Failed to update account",
+        "archiveFailed": "Failed to archive account"
       }
     }
   },
@@ -444,6 +572,8 @@
     "title": "Assistant",
     "heading": "Insights and learning",
     "checkingSetup": "Checking AI setup.",
+    "setupRequiredByo": "Add a personal provider key in Settings to use the assistant.",
+    "setupRequiredEdge": "Add a personal provider key or connect your online account to use the assistant.",
     "emptyPaused": "AI features are paused until you configure a provider key or connect the managed service.",
     "aiNoticeTitle": "AI is optional and not configured",
     "aiNoticeAction": "Configure AI keys",
@@ -455,7 +585,7 @@
       "insight": {
         "name": "Spending Insight",
         "purpose": "Analyse your spending patterns and surface observations",
-        "provider": "Google Gemini (free tier)",
+        "provider": "Your configured provider routing",
         "description": "Finds anomalies, trends, and notable changes in your finances",
         "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -463,7 +593,7 @@
       "recommendation": {
         "name": "Recommendation",
         "purpose": "Suggest concrete actions to improve your financial situation",
-        "provider": "Google Gemini (free tier)",
+        "provider": "Your configured provider routing",
         "description": "Generates budget adjustments, savings suggestions, and spending trade-offs",
         "redactedData": "Period totals, budget progress, goal progress — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -471,7 +601,7 @@
       "prediction": {
         "name": "Prediction",
         "purpose": "Project end-of-month balance and budget exhaustion dates",
-        "provider": "Google Gemini (free tier)",
+        "provider": "Your configured provider routing",
         "description": "Forecasts your financial trajectory based on current data and recurring items",
         "redactedData": "Period income/expenses, projected recurring items, budget limits — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -479,7 +609,7 @@
       "patternDetection": {
         "name": "Pattern Detection",
         "purpose": "Detect recurring spending habits and category dependencies",
-        "provider": "Google Gemini (free tier)",
+        "provider": "Your configured provider routing",
         "description": "Identifies behavioural patterns like frequent dining, subscription creep, or category concentration",
         "redactedData": "Category-level aggregates, budget status, period comparisons — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -487,7 +617,7 @@
       "literacy": {
         "name": "Learning Chat",
         "purpose": "Explain personal finance concepts in plain language",
-        "provider": "Google Gemini (free tier)",
+        "provider": "Your configured provider routing",
         "description": "Answers questions about budgeting, saving, cash flow, and more — tied to your data",
         "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -524,7 +654,7 @@
       "useLimited": "Use limited mode",
       "grantFull": "Grant full access",
       "settingsTitle": "Data Sharing Settings",
-      "settingsDescription": "Each AI feature can send data to Google Gemini (free tier). You control how much.",
+      "settingsDescription": "Each AI feature can use your configured provider routing. You control how much data is shared.",
       "statusFull": "Full access",
       "statusNotPrompted": "Not prompted",
       "statusLimited": "Limited",
@@ -541,7 +671,9 @@
     "creating": "Creating…",
     "category": "Category",
     "categoryPlaceholder": "Select category",
-    "monthlyLimit": "Monthly Limit ($)",
+    "name": "Name",
+    "namePlaceholder": "e.g. Monthly groceries",
+    "monthlyLimit": "Monthly limit ({{currency}})",
     "period": "Period (YYYY-MM)",
     "active": "Active",
     "archived": "Archived",
@@ -550,10 +682,14 @@
     "spent": "spent",
     "limit": "limit",
     "used": "used",
+    "created": "Budget created",
+    "archivedSuccess": "Budget archived",
     "errors": {
+      "nameRequired": "Enter a budget name",
       "validAmount": "Enter a valid amount",
       "selectCategory": "Select a category",
-      "failed": "Failed to create budget"
+      "failed": "Failed to create budget",
+      "archiveFailed": "Failed to archive budget"
     }
   },
   "goals": {
@@ -563,7 +699,7 @@
     "creating": "Creating…",
     "name": "Goal Name",
     "namePlaceholder": "e.g., Emergency Fund",
-    "targetAmount": "Target Amount ($)",
+    "targetAmount": "Target amount ({{currency}})",
     "targetDate": "Target Date (optional)",
     "active": "Active",
     "archived": "Archived",
@@ -572,10 +708,14 @@
     "target": "target",
     "complete": "complete",
     "targetLabel": "Target",
+    "created": "Goal created",
+    "archivedSuccess": "Goal archived",
     "errors": {
       "nameRequired": "Goal name is required",
       "validAmount": "Enter a valid target amount",
-      "failed": "Failed to create goal"
+      "validDate": "Enter a valid target date",
+      "failed": "Failed to create goal",
+      "archiveFailed": "Failed to archive goal"
     }
   },
   "recurring": {
@@ -587,7 +727,7 @@
     "labelPlaceholder": "e.g., Rent, Salary",
     "category": "Category",
     "categoryPlaceholder": "Select category",
-    "amount": "Amount ($)",
+    "amount": "Amount ({{currency}})",
     "direction": "Direction",
     "expense": "Expense",
     "income": "Income",
@@ -607,11 +747,19 @@
     "accountPlaceholder": "Select account",
     "recordOccurrence": "Record Occurrence",
     "recording": "Recording…",
+    "created": "Recurring item created",
+    "recorded": "Occurrence recorded",
+    "archivedSuccess": "Recurring item archived",
+    "archiveAria": "Archive {{label}}",
+    "noCompatibleAccount": "No active account uses {{currency}}.",
     "errors": {
       "labelRequired": "Label is required",
       "selectCategory": "Select a category",
       "validAmount": "Enter a valid amount",
-      "failed": "Failed to create recurring item"
+      "validStartDate": "Enter a valid start date",
+      "failed": "Failed to create recurring item",
+      "recordFailed": "Failed to record occurrence",
+      "archiveFailed": "Failed to archive recurring item"
     }
   },
   "exportImport": {
@@ -666,18 +814,21 @@
     "hideKey": "Hide key",
     "showKey": "Show key",
     "configuredBadge": "Configured",
+    "openrouterModels": "Any available model",
     "placeholders": {
       "configured": "Key saved",
       "enter": "Enter {{provider}} access key"
     },
     "footnote": "Your keys are protected on this device and used only when you ask the assistant for help.",
     "errors": {
-      "saveFailed": "Failed to save key"
+      "saveFailed": "Failed to save key",
+      "loadFailed": "Failed to load configured keys"
     },
     "providers": {
       "openai": "OpenAI",
       "gemini": "Google Gemini",
-      "nvidia": "NVIDIA NIM"
+      "deepseek": "DeepSeek",
+      "openrouter": "OpenRouter"
     }
   },
   "planning": {
@@ -744,6 +895,7 @@
       "creditorRequired": "Creditor name is required",
       "motiveRequired": "Motive is required",
       "invalidAmount": "Invalid amount",
+      "invalidDate": "Invalid date",
       "createFailed": "Failed to add",
       "statusUpdateFailed": "Failed to update status"
     }
@@ -761,18 +913,49 @@
       "localOnlyMessage": "Online backup is not connected in this deployment. Your space, accounts, budgets, and transactions stay on this device.",
       "language": "Language",
       "session": "Session",
+      "lock": "Lock private space",
       "signOut": "Sign out of all sessions",
+      "signOutFailed": "Could not sign out",
       "unknown": "Unknown"
     },
     "currency": {
-      "title": "Currency Management",
-      "description": "Manage your preferred currency settings",
+      "title": "Currency settings",
+      "description": "Set your default currency and manage exchange rates",
       "primary": "Primary Currency",
       "supported": "Supported Currencies",
+      "default": "Default currency",
+      "defaultHelp": "African currencies are listed first. New accounts use this currency; existing accounts are unchanged.",
+      "search": "Search code, currency, or country",
+      "currenciesAria": "Currencies",
+      "noMatch": "No matching currency.",
+      "regions": {
+        "Africa": "Africa",
+        "Global": "Global",
+        "Precious metals": "Precious metals"
+      },
+      "exchangeRates": "Exchange rates",
+      "emptyRates": "No exchange rates configured. Add one below.",
+      "pairDescription": "{{base}} to {{quote}}",
+      "addRate": "Add rate",
+      "from": "From",
+      "to": "To",
+      "rate": "Rate",
+      "deleteRate": "Delete rate {{pair}}",
+      "defaultChanged": "Default currency changed to {{currency}}",
+      "defaultChangedBody": "Your default currency has been updated.",
+      "rateAdded": "Rate added: {{pair}} = {{rate}}",
+      "rateRemoved": "Rate removed",
+      "securityNote": "Exchange rates are encrypted on this device and never sent to the server. Conversions use half-even rounding with the exact decimal rate.",
       "save": "Save",
       "saving": "Saving…",
       "errors": {
-        "failed": "Failed to update currency settings"
+        "failed": "Failed to update currency settings",
+        "loadFailed": "Failed to load exchange rates",
+        "mustDiffer": "Base and quote currencies must differ",
+        "invalidRate": "Invalid rate",
+        "positiveRate": "Rate must be a positive number",
+        "saveRateFailed": "Failed to save rate",
+        "removeRateFailed": "Failed to remove rate"
       }
     }
   },
@@ -796,7 +979,8 @@
     "unknown": "Unknown",
     "yes": "Yes",
     "no": "No",
-    "optional": "optional"
+    "optional": "optional",
+    "noCategories": "No categories yet. Create one in Manage."
   },
   "errors": {
     "httpsRequired": "HTTPS is required in production for security. Set VITE_EDGE_BASE_URL to an https:// URL."

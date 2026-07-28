@@ -10,15 +10,16 @@ import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Archive, Target } from "lucide-react";
 import { toast } from "sonner";
+import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
+import { parseLocalDateInput } from "../../lib/localDate.ts";
+import { useTranslation } from "react-i18next";
 
 function formatMoney(minorUnits: number, currency: string): string {
-  const symbol: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
-  const sym = symbol[currency] ?? currency + " ";
-  const abs = Math.abs(minorUnits);
-  return `${minorUnits < 0 ? "-" : ""}${sym}${Math.floor(abs / 100).toLocaleString()}.${(abs % 100).toString().padStart(2, "0")}`;
+  return formatMoneyValue({ minorUnits, currency });
 }
 
 export default function Goals() {
+  const { t } = useTranslation();
   const { data: snapshot, isLoading } = useFinancialState();
   const createGoal = useCreateGoal();
   const archiveGoal = useArchiveGoal();
@@ -33,22 +34,27 @@ export default function Goals() {
     e.preventDefault();
     setCreateError(null);
     if (!name.trim()) {
-      setCreateError("Goal name is required");
+      setCreateError(t("goals.errors.nameRequired"));
       return;
     }
-    const amount = parseFloat(targetStr);
-    if (isNaN(amount) || amount <= 0) {
-      setCreateError("Enter a valid target amount");
+    const currency = snapshot?.baseCurrency ?? "XOF";
+    const minorUnits = parseMajorUnits(targetStr, currency);
+    if (minorUnits == null || minorUnits <= 0) {
+      setCreateError(t("goals.errors.validAmount"));
       return;
     }
-    const minorUnits = Math.round(amount * 100);
     const goalName = name.trim();
     const goalArgs: Omit<CreateGoalParams, "masterKey"> = {
       name: goalName,
-      targetAmount: { minorUnits, currency: "USD" },
+      targetAmount: { minorUnits, currency },
     };
     if (targetDate) {
-      goalArgs.targetDate = new Date(targetDate).getTime();
+      const targetTimestamp = parseLocalDateInput(targetDate);
+      if (targetTimestamp == null) {
+        setCreateError(t("goals.errors.validDate"));
+        return;
+      }
+      goalArgs.targetDate = targetTimestamp;
     }
     createGoal.mutate(goalArgs, {
         onSuccess: () => {
@@ -57,10 +63,10 @@ export default function Goals() {
           setTargetStr("");
           setTargetDate("");
           setCreateError(null);
-          toast.success("Goal created", { description: goalName });
+          toast.success(t("goals.created"), { description: goalName });
         },
         onError: (err) => {
-          const message = err instanceof Error ? err.message : "Failed to create goal";
+          const message = err instanceof Error ? err.message : t("goals.errors.failed");
           setCreateError(message);
           toast.error(message);
         },
@@ -69,8 +75,8 @@ export default function Goals() {
 
   if (isLoading) {
     return (
-      <main aria-label="Goals" className="app-page">
-        <h1 className="page-title">Goals</h1>
+      <main aria-label={t("goals.title")} className="app-page">
+        <h1 className="page-title">{t("goals.title")}</h1>
         {Array.from({ length: 3 }).map((_, i) => (
           <Skeleton key={i} className="h-24 w-full" />
         ))}
@@ -82,51 +88,51 @@ export default function Goals() {
   const archivedGoals = snapshot?.goals.filter((g) => g.isArchived) ?? [];
 
   return (
-    <main aria-label="Goals" className="app-page">
+    <main aria-label={t("goals.title")} className="app-page">
       <div className="page-head">
         <div>
-          <p className="page-kicker">Planning</p>
-          <h1 className="page-title">Savings Goals</h1>
+          <p className="page-kicker">{t("planning.title")}</p>
+          <h1 className="page-title">{t("goals.title")}</h1>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
               <Plus className="h-4 w-4 mr-1" />
-              Add Goal
+              {t("goals.add")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create Savings Goal</DialogTitle>
+              <DialogTitle>{t("goals.create")}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               {createError != null && (
                 <p role="alert" className="text-destructive text-sm">{createError}</p>
               )}
               <div className="space-y-2">
-                <Label htmlFor="goal-name">Goal Name</Label>
+                <Label htmlFor="goal-name">{t("goals.name")}</Label>
                 <Input
                   id="goal-name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Emergency Fund"
+                  placeholder={t("goals.namePlaceholder")}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="goal-target">Target Amount ($)</Label>
+                <Label htmlFor="goal-target">{t("goals.targetAmount", { currency: snapshot?.baseCurrency ?? "XOF" })}</Label>
                 <Input
                   id="goal-target"
                   type="number"
-                  step="0.01"
-                  min="0.01"
+                  step={currencyInputStep(snapshot?.baseCurrency ?? "XOF")}
+                  min={currencyInputStep(snapshot?.baseCurrency ?? "XOF")}
                   value={targetStr}
                   onChange={(e) => setTargetStr(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="goal-date">Target Date (optional)</Label>
+                <Label htmlFor="goal-date">{t("goals.targetDate")}</Label>
                 <Input
                   id="goal-date"
                   type="date"
@@ -135,7 +141,7 @@ export default function Goals() {
                 />
               </div>
               <Button type="submit" disabled={createGoal.isPending} className="w-full">
-                {createGoal.isPending ? "Creating…" : "Create Goal"}
+                {createGoal.isPending ? t("goals.creating") : t("goals.create")}
               </Button>
             </form>
           </DialogContent>
@@ -145,13 +151,13 @@ export default function Goals() {
       {activeGoals.length === 0 && archivedGoals.length === 0 && (
         <div className="empty-state">
           <Target className="h-12 w-12 mx-auto mb-3 opacity-40" />
-          <p>No goals yet. Create a savings goal to track your progress.</p>
+          <p>{t("goals.empty")}</p>
         </div>
       )}
 
       {activeGoals.length > 0 && (
         <div className="panel-grid">
-          <h2 className="text-sm font-medium text-muted-foreground">Active</h2>
+          <h2 className="text-sm font-medium text-muted-foreground">{t("goals.active")}</h2>
           {activeGoals.map((goal) => {
             const prog = snapshot?.goalProgress[goal.id];
             return (
@@ -165,9 +171,9 @@ export default function Goals() {
                       onClick={() => archiveGoal.mutate(
                         { goalId: goal.id },
                         {
-                          onSuccess: () => toast.success("Goal archived", { description: goal.name }),
+                          onSuccess: () => toast.success(t("goals.archivedSuccess"), { description: goal.name }),
                           onError: (err) => {
-                            const message = err instanceof Error ? err.message : "Failed to archive goal";
+                            const message = err instanceof Error ? err.message : t("goals.errors.archiveFailed");
                             toast.error(message);
                           },
                         },
@@ -182,16 +188,16 @@ export default function Goals() {
                       <Progress value={Math.min(prog.percentage, 100)} />
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>
-                          {formatMoney(prog.accumulated.minorUnits, prog.accumulated.currency)} saved
+                          {formatMoney(prog.accumulated.minorUnits, prog.accumulated.currency)} {t("goals.saved")}
                         </span>
                         <span>
-                          {formatMoney(prog.target.minorUnits, prog.target.currency)} target
+                          {formatMoney(prog.target.minorUnits, prog.target.currency)} {t("goals.target")}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {Math.round(prog.percentage)}% complete
+                        {Math.round(prog.percentage)}% {t("goals.complete")}
                         {goal.targetDate != null && (
-                          <span> &middot; Target: {new Date(goal.targetDate).toLocaleDateString()}</span>
+                          <span> &middot; {t("goals.targetLabel")}: {new Date(goal.targetDate).toLocaleDateString()}</span>
                         )}
                       </p>
                     </>
@@ -206,7 +212,7 @@ export default function Goals() {
       {archivedGoals.length > 0 && (
         <details className="group">
           <summary className="text-sm text-muted-foreground cursor-pointer py-2 hover:text-foreground">
-            Archived ({archivedGoals.length})
+            {t("goals.archived")} ({archivedGoals.length})
           </summary>
           <div className="space-y-2 mt-2">
             {archivedGoals.map((goal) => (

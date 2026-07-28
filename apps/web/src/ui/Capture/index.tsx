@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { useFinancialState, useRecordTransaction, useCreateCategory, useRenameCategory, useArchiveCategory, useCreateAccount, useUpdateAccount, useArchiveAccount, useRecordGoalContribution, useRecordTransfer } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Input } from "../../components/ui/input.tsx";
@@ -10,24 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, ArrowUp, ArrowDown, Pencil, Wallet, Tags, Search, CreditCard, Trash2, Check, ChevronsUpDown } from "lucide-react";
 import { toast } from "sonner";
-
-function parseAmount(input: string): number | null {
-  const cleaned = input.replace(/[^0-9.,]/g, "").replace(/,/g, ".");
-  const parts = cleaned.split(".");
-  if (parts.length > 2) return null;
-  const major = parts[0] ?? "0";
-  const minor = parts[1] ?? "";
-  if (minor.length > 2) return null;
-  const majorInt = parseInt(major, 10);
-  if (isNaN(majorInt)) return null;
-  return majorInt * 100 + parseInt(minor.padEnd(2, "0"), 10);
-}
+import { formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
 
 function formatMoney(minorUnits: number, currency: string): string {
-  const symbol: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", XOF: "CFA ", XAF: "FCFA ", NGN: "₦", GHS: "₵", KES: "KSh ", ZAR: "R" };
-  const sym = symbol[currency] ?? currency + " ";
-  const abs = Math.abs(minorUnits);
-  return `${minorUnits < 0 ? "-" : ""}${sym}${Math.floor(abs / 100).toLocaleString()}.${(abs % 100).toString().padStart(2, "0")}`;
+  return formatMoneyValue({ minorUnits, currency });
 }
 
 type AccountCurrencyOption = {
@@ -82,8 +69,8 @@ const AFRICAN_ACCOUNT_CURRENCY_DETAILS: AccountCurrencyOption[] = [
   { code: "ZWL", name: "Zimbabwean Dollar", region: "Africa", countries: "Zimbabwe" },
 ];
 
-function buildAccountCurrencyOptions(): AccountCurrencyOption[] {
-  const displayNames = typeof Intl.DisplayNames === "function" ? new Intl.DisplayNames(["en"], { type: "currency" }) : null;
+function buildAccountCurrencyOptions(locale: string): AccountCurrencyOption[] {
+  const displayNames = typeof Intl.DisplayNames === "function" ? new Intl.DisplayNames([locale], { type: "currency" }) : null;
   const intlCodes = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("currency") : [];
   const detailsByCode = new Map(AFRICAN_ACCOUNT_CURRENCY_DETAILS.map((currency) => [currency.code, currency]));
   const codes = Array.from(new Set([...intlCodes, ...AFRICAN_ACCOUNT_CURRENCY_DETAILS.map((currency) => currency.code), "USD", "EUR", "GBP"]));
@@ -91,11 +78,11 @@ function buildAccountCurrencyOptions(): AccountCurrencyOption[] {
   return codes
     .map((code) => {
       const details = detailsByCode.get(code);
-      return details ?? {
+      return {
         code,
-        name: displayNames?.of(code) ?? code,
-        region: "Global" as const,
-        countries: "",
+        name: displayNames?.of(code) ?? details?.name ?? code,
+        region: details?.region ?? "Global" as const,
+        countries: details?.countries ?? "",
       };
     })
     .sort((a, b) => {
@@ -104,23 +91,18 @@ function buildAccountCurrencyOptions(): AccountCurrencyOption[] {
     });
 }
 
-const ACCOUNT_CURRENCIES = buildAccountCurrencyOptions();
-
 const ACCOUNT_TYPES = [
-  { value: "checking", label: "Checking" },
-  { value: "savings", label: "Savings" },
-  { value: "credit", label: "Credit Card" },
-  { value: "cash", label: "Cash" },
-  { value: "mobile_money", label: "Mobile Money" },
-  { value: "investment", label: "Investment" },
+  "checking", "savings", "credit", "cash", "mobile_money", "investment",
 ] as const;
 
 function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValueChange: (value: string) => void }) {
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const pickerRef = useRef<HTMLDivElement | null>(null);
-  const selected = ACCOUNT_CURRENCIES.find((currency) => currency.code === value);
-  const filteredCurrencies = ACCOUNT_CURRENCIES.filter((currency) => {
+  const currencies = useMemo(() => buildAccountCurrencyOptions(i18n.resolvedLanguage ?? i18n.language), [i18n.language, i18n.resolvedLanguage]);
+  const selected = currencies.find((currency) => currency.code === value);
+  const filteredCurrencies = currencies.filter((currency) => {
     const normalized = query.trim().toLowerCase();
     if (normalized.length === 0) return true;
     return (
@@ -179,15 +161,15 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={`Search currency (${value})`}
+                placeholder={t("capture.manage.currencySearch", { currency: value })}
                 className="pl-9"
                 autoFocus
               />
             </div>
           </div>
-          <div className="max-h-[min(18rem,42dvh)] overflow-y-auto p-1" role="listbox" aria-label="Account currency">
+          <div className="max-h-[min(18rem,42dvh)] overflow-y-auto p-1" role="listbox" aria-label={t("capture.manage.accountCurrency")}>
             {filteredCurrencies.length === 0 ? (
-              <p className="px-3 py-4 text-sm text-muted-foreground">No matching currency.</p>
+              <p className="px-3 py-4 text-sm text-muted-foreground">{t("capture.manage.noCurrency")}</p>
             ) : (
               filteredCurrencies.map((currency) => (
                 <button
@@ -208,7 +190,7 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
                   </span>
                   <span className="flex shrink-0 items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs">
                     {currency.code === value && <Check className="h-3 w-3" />}
-                    {currency.region}
+                    {t(`capture.manage.regions.${currency.region.toLowerCase()}`)}
                   </span>
                 </button>
               ))
@@ -221,6 +203,7 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
 }
 
 export default function Capture() {
+  const { t } = useTranslation();
   const { data: snapshot, isLoading } = useFinancialState();
   const recordTx = useRecordTransaction();
   const createCat = useCreateCategory();
@@ -248,7 +231,8 @@ export default function Capture() {
   const [newAccName, setNewAccName] = useState("");
   const [createAccountOpen, setCreateAccountOpen] = useState(false);
   const [newAccType, setNewAccType] = useState("checking");
-  const [newAccCurrency, setNewAccCurrency] = useState(() => localStorage.getItem("wisemoney_default_currency") ?? "XOF");
+  const [newAccCurrency, setNewAccCurrency] = useState("XOF");
+  const accountCurrencyInitialized = useRef(false);
   const [newAccBalance, setNewAccBalance] = useState("");
   const [editAccountDialog, setEditAccountDialog] = useState<{ id: string; name: string; type: string } | null>(null);
   const [editAccName, setEditAccName] = useState("");
@@ -267,27 +251,23 @@ export default function Capture() {
   const [transferNote, setTransferNote] = useState("");
   const [transferError, setTransferError] = useState<string | null>(null);
 
-  const parseTransferAmount = (input: string): number | null => {
-    const cleaned = input.replace(/[^0-9.,]/g, "").replace(/,/g, ".");
-    const parts = cleaned.split(".");
-    if (parts.length > 2) return null;
-    const major = parts[0] ?? "0";
-    const minor = parts[1] ?? "";
-    if (minor.length > 2) return null;
-    const majorInt = parseInt(major, 10);
-    if (isNaN(majorInt)) return null;
-    return majorInt * 100 + parseInt(minor.padEnd(2, "0"), 10);
-  };
+  useEffect(() => {
+    if (!accountCurrencyInitialized.current && snapshot != null) {
+      accountCurrencyInitialized.current = true;
+      setNewAccCurrency(snapshot.baseCurrency);
+    }
+  }, [snapshot]);
 
   const handleTransferSubmit = (e: FormEvent) => {
     e.preventDefault();
     setTransferError(null);
-    const amount = parseTransferAmount(transferAmount);
-    if (amount == null || amount <= 0) { setTransferError("Enter a valid amount"); return; }
-    if (!transferFrom) { setTransferError("Select a source account"); return; }
-    if (!transferTo && !transferExternal.trim()) { setTransferError("Select a destination account or enter an external destination"); return; }
+    if (!transferFrom) { setTransferError(t("capture.transfer.errors.selectFrom")); return; }
+    if (!transferTo && !transferExternal.trim()) { setTransferError(t("capture.transfer.errors.selectDestination")); return; }
     const sourceAccount = accounts.find((account) => account.id === transferFrom);
-    const money = { minorUnits: amount, currency: sourceAccount?.currency ?? snapshot?.totalBalance.currency ?? "USD" };
+    const currency = sourceAccount?.currency ?? snapshot?.baseCurrency ?? "XOF";
+    const amount = parseMajorUnits(transferAmount, currency);
+    if (amount == null || amount <= 0) { setTransferError(t("capture.transfer.errors.validAmount")); return; }
+    const money = { minorUnits: amount, currency };
     recordTransfer.mutate({
       fromAccountId: transferFrom,
       ...(transferTo ? { toAccountId: transferTo } : {}),
@@ -302,10 +282,10 @@ export default function Capture() {
         setTransferTo("");
         setTransferExternal("");
         setTransferError(null);
-        toast.success("Transfer recorded");
+        toast.success(t("capture.transfer.recorded"));
       },
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to record transfer";
+        const message = err instanceof Error ? err.message : t("capture.transfer.errors.failed");
         setTransferError(message);
         toast.error(message);
       },
@@ -315,21 +295,22 @@ export default function Capture() {
   const handleTransactionSubmit = (e: FormEvent) => {
     e.preventDefault();
     setTxError(null);
-    const amount = parseAmount(amountStr);
-    if (amount == null || amount <= 0) { setTxError("Enter a valid amount"); return; }
-    if (!categoryId) { setTxError("Select a category"); return; }
-    if (!accountId) { setTxError("Select an account"); return; }
+    if (!categoryId) { setTxError(t("capture.transaction.errors.selectCategory")); return; }
+    if (!accountId) { setTxError(t("capture.transaction.errors.selectAccount")); return; }
     const selectedAccount = accounts.find((account) => account.id === accountId);
-    const money = { minorUnits: amount, currency: selectedAccount?.currency ?? snapshot?.totalBalance.currency ?? "USD" };
+    const currency = selectedAccount?.currency ?? snapshot?.baseCurrency ?? "XOF";
+    const amount = parseMajorUnits(amountStr, currency);
+    if (amount == null || amount <= 0) { setTxError(t("capture.transaction.errors.validAmount")); return; }
+    const money = { minorUnits: amount, currency };
     recordTx.mutate({ accountId, categoryId, amount: money, direction, ...(note ? { note } : {}) }, {
       onSuccess: () => {
         setAmountStr("");
         setNote("");
         setTxError(null);
-        toast.success(direction === "income" ? "Income recorded" : "Expense recorded");
+        toast.success(t(direction === "income" ? "capture.transaction.incomeRecorded" : "capture.transaction.expenseRecorded"));
       },
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to record transaction";
+        const message = err instanceof Error ? err.message : t("capture.transaction.errors.failed");
         setTxError(message);
         toast.error(message);
       },
@@ -345,10 +326,10 @@ export default function Capture() {
       onSuccess: () => {
         setNewCatName("");
         setCreateCategoryOpen(false);
-        toast.success("Category created", { description: categoryName });
+        toast.success(t("capture.manage.categoryCreated"), { description: categoryName });
       },
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to create category";
+        const message = err instanceof Error ? err.message : t("capture.manage.errors.failed");
         setCatError(message);
         toast.error(message);
       },
@@ -363,10 +344,10 @@ export default function Capture() {
       onSuccess: () => {
         setRenameDialog(null);
         setRenameName("");
-        toast.success("Category renamed");
+        toast.success(t("capture.manage.categoryRenamed"));
       },
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to rename category";
+        const message = err instanceof Error ? err.message : t("capture.manage.errors.renameCategoryFailed");
         setCatError(message);
         toast.error(message);
       },
@@ -375,11 +356,11 @@ export default function Capture() {
 
   const handleArchiveCategory = (categoryId: string, categoryName: string) => {
     setCatError(null);
-    if (!window.confirm(`Archive category "${categoryName}"? Existing history stays intact.`)) return;
+    if (!window.confirm(t("capture.manage.confirmArchiveCategory", { name: categoryName }))) return;
     archiveCat.mutate({ categoryId }, {
-      onSuccess: () => toast.success("Category archived", { description: categoryName }),
+      onSuccess: () => toast.success(t("capture.manage.categoryArchived"), { description: categoryName }),
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to archive category";
+        const message = err instanceof Error ? err.message : t("capture.manage.errors.archiveCategoryFailed");
         setCatError(message);
         toast.error(message);
       },
@@ -390,9 +371,9 @@ export default function Capture() {
     e.preventDefault();
     setAccountError(null);
     if (!newAccName.trim()) return;
-    const parsedBalance = newAccBalance.trim().length > 0 ? parseAmount(newAccBalance) : 0;
+    const parsedBalance = newAccBalance.trim().length > 0 ? parseMajorUnits(newAccBalance, newAccCurrency) : 0;
     if (parsedBalance == null) {
-      setAccountError("Enter a valid opening balance");
+      setAccountError(t("capture.manage.errorsAccount.validBalance"));
       return;
     }
     const money = { minorUnits: parsedBalance, currency: newAccCurrency };
@@ -402,10 +383,10 @@ export default function Capture() {
         setNewAccName("");
         setNewAccBalance("");
         setCreateAccountOpen(false);
-        toast.success("Account created", { description: accountName });
+        toast.success(t("capture.manage.accountCreated"), { description: accountName });
       },
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to create account";
+        const message = err instanceof Error ? err.message : t("capture.manage.errorsAccount.failed");
         setAccountError(message);
         toast.error(message);
       },
@@ -421,10 +402,10 @@ export default function Capture() {
         setEditAccountDialog(null);
         setEditAccName("");
         setEditAccType("checking");
-        toast.success("Account updated");
+        toast.success(t("capture.manage.accountUpdated"));
       },
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to update account";
+        const message = err instanceof Error ? err.message : t("capture.manage.errorsAccount.updateFailed");
         setAccountError(message);
         toast.error(message);
       },
@@ -433,11 +414,11 @@ export default function Capture() {
 
   const handleArchiveAccount = (accountId: string, accountName: string) => {
     setAccountError(null);
-    if (!window.confirm(`Archive account "${accountName}"? Existing history stays intact.`)) return;
+    if (!window.confirm(t("capture.manage.confirmArchiveAccount", { name: accountName }))) return;
     archiveAccount.mutate({ accountId }, {
-      onSuccess: () => toast.success("Account archived", { description: accountName }),
+      onSuccess: () => toast.success(t("capture.manage.accountArchived"), { description: accountName }),
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to archive account";
+        const message = err instanceof Error ? err.message : t("capture.manage.errorsAccount.archiveFailed");
         setAccountError(message);
         toast.error(message);
       },
@@ -447,19 +428,20 @@ export default function Capture() {
   const handleGoalContribution = (e: FormEvent) => {
     e.preventDefault();
     setGoalError(null);
-    const amount = parseAmount(goalAmountStr);
-    if (amount == null || amount <= 0) { setGoalError("Enter a valid amount"); return; }
-    if (!goalId) { setGoalError("Select a goal"); return; }
+    if (!goalId) { setGoalError(t("capture.goal.errors.selectGoal")); return; }
     const selectedGoal = activeGoals.find((goal) => goal.id === goalId);
-    const money = { minorUnits: amount, currency: selectedGoal?.targetAmount.currency ?? snapshot?.totalBalance.currency ?? "USD" };
+    const currency = selectedGoal?.targetAmount.currency ?? snapshot?.baseCurrency ?? "XOF";
+    const amount = parseMajorUnits(goalAmountStr, currency);
+    if (amount == null || amount <= 0) { setGoalError(t("capture.goal.errors.validAmount")); return; }
+    const money = { minorUnits: amount, currency };
     recordGoalContrib.mutate({ goalId, amount: money }, {
       onSuccess: () => {
         setGoalAmountStr("");
         setGoalError(null);
-        toast.success("Goal contribution added");
+        toast.success(t("capture.goal.recorded"));
       },
       onError: (err) => {
-        const message = err instanceof Error ? err.message : "Failed to add contribution";
+        const message = err instanceof Error ? err.message : t("capture.goal.errors.failed");
         setGoalError(message);
         toast.error(message);
       },
@@ -468,47 +450,46 @@ export default function Capture() {
 
   if (isLoading) {
     return (
-    <main aria-label="Capture transaction" className="app-page">
-        <h1 className="page-title">Capture</h1>
+    <main aria-label={t("capture.ariaLabel")} className="app-page">
+        <h1 className="page-title">{t("capture.title")}</h1>
         {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24 w-full" />)}
       </main>
     );
   }
 
-  const categories = snapshot?.categories.filter((c) => !c.isSystemDefault) ?? [];
+  const categories = snapshot?.categories.filter((category) => !category.isArchived) ?? [];
   const accounts = snapshot?.accounts.filter((a) => a.isActive) ?? [];
   const activeGoals = snapshot?.goals.filter((g) => !g.isArchived) ?? [];
   const filteredCategories = categories.filter((category) => category.name.toLowerCase().includes(catSearch.trim().toLowerCase()));
   const filteredAccounts = accounts.filter((account) =>
     `${account.name} ${account.type} ${account.currency}`.toLowerCase().includes(accountSearch.trim().toLowerCase())
   );
-  const totalManagedBalance = accounts.reduce((sum, account) => {
-    if (account.balance.currency !== (accounts[0]?.balance.currency ?? account.balance.currency)) return sum;
-    return sum + account.balance.minorUnits;
-  }, 0);
-  const balanceCurrency = accounts[0]?.balance.currency ?? newAccCurrency;
+  const managedBalance = snapshot?.totalBalance ?? { minorUnits: 0, currency: snapshot?.baseCurrency ?? newAccCurrency };
+  const transactionCurrency = accounts.find((account) => account.id === accountId)?.currency ?? snapshot?.baseCurrency ?? "XOF";
+  const transferCurrency = accounts.find((account) => account.id === transferFrom)?.currency ?? snapshot?.baseCurrency ?? "XOF";
+  const goalCurrency = activeGoals.find((goal) => goal.id === goalId)?.targetAmount.currency ?? snapshot?.baseCurrency ?? "XOF";
 
   return (
-    <main aria-label="Capture transaction" className="app-page">
+    <main aria-label={t("capture.ariaLabel")} className="app-page">
       <div className="page-head">
         <div>
-          <p className="page-kicker">Capture</p>
-          <h1 className="page-title">Record Money Movement</h1>
+          <p className="page-kicker">{t("capture.title")}</p>
+          <h1 className="page-title">{t("capture.heading")}</h1>
         </div>
       </div>
 
       <Tabs defaultValue="transaction">
         <TabsList className="grid h-auto w-full grid-cols-2 gap-1 sm:grid-cols-4 lg:w-[560px]">
-          <TabsTrigger value="transaction">Transaction</TabsTrigger>
-          <TabsTrigger value="transfer">Transfer</TabsTrigger>
-          <TabsTrigger value="goal">Goal</TabsTrigger>
-          <TabsTrigger value="manage">Manage</TabsTrigger>
+          <TabsTrigger value="transaction">{t("capture.tabs.transaction")}</TabsTrigger>
+          <TabsTrigger value="transfer">{t("capture.tabs.transfer")}</TabsTrigger>
+          <TabsTrigger value="goal">{t("capture.tabs.goal")}</TabsTrigger>
+          <TabsTrigger value="manage">{t("capture.tabs.manage")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="transaction">
           <Card className="max-w-4xl">
             <CardHeader>
-              <CardTitle className="text-base">Record Transaction</CardTitle>
+              <CardTitle className="text-base">{t("capture.transaction.title")}</CardTitle>
             </CardHeader>
             <CardContent>
               {txError != null && (
@@ -523,7 +504,7 @@ export default function Capture() {
                     onClick={() => setDirection("expense")}
                   >
                     <ArrowUp className="h-4 w-4 mr-1 rotate-180" />
-                    Expense
+                    {t("capture.transaction.expense")}
                   </Button>
                   <Button
                     type="button"
@@ -532,15 +513,15 @@ export default function Capture() {
                     onClick={() => setDirection("income")}
                   >
                     <ArrowDown className="h-4 w-4 mr-1" />
-                    Income
+                    {t("capture.transaction.income")}
                   </Button>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="amount">Amount</Label>
+                  <Label htmlFor="amount">{t("capture.transaction.amount")}</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-                      $
+                      {transactionCurrency}
                     </span>
                     <Input
                       id="amount"
@@ -549,19 +530,19 @@ export default function Capture() {
                       placeholder="0.00"
                       value={amountStr}
                       onChange={(e) => setAmountStr(e.target.value)}
-                      className="pl-7"
+                      className="pl-14"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="account">Account</Label>
+                  <Label htmlFor="account">{t("capture.transaction.account")}</Label>
                   <Select value={accountId} onValueChange={setAccountId}>
-                    <SelectTrigger id="account"><SelectValue placeholder="Select account" /></SelectTrigger>
+                    <SelectTrigger id="account"><SelectValue placeholder={t("capture.transaction.selectAccount")} /></SelectTrigger>
                     <SelectContent>
                       {accounts.length === 0 ? (
-                        <SelectEmptyState>No accounts yet. Create one in Manage.</SelectEmptyState>
+                        <SelectEmptyState>{t("capture.empty.accountsManage")}</SelectEmptyState>
                       ) : (
                         accounts.map((a) => (
                           <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
@@ -572,12 +553,12 @@ export default function Capture() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category">{t("capture.transaction.category")}</Label>
                   <Select value={categoryId} onValueChange={setCategoryId}>
-                    <SelectTrigger id="category"><SelectValue placeholder="Select category" /></SelectTrigger>
+                    <SelectTrigger id="category"><SelectValue placeholder={t("capture.transaction.selectCategory")} /></SelectTrigger>
                     <SelectContent>
                       {categories.length === 0 ? (
-                        <SelectEmptyState>No categories yet. Create one in Manage.</SelectEmptyState>
+                        <SelectEmptyState>{t("capture.empty.categoriesManage")}</SelectEmptyState>
                       ) : (
                         categories.map((c) => (
                           <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -588,18 +569,18 @@ export default function Capture() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="note">Note (optional)</Label>
+                  <Label htmlFor="note">{t("capture.transaction.note")}</Label>
                   <Input
                     id="note"
                     type="text"
-                    placeholder="Groceries, rent, etc."
+                    placeholder={t("capture.transaction.notePlaceholder")}
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                   />
                 </div>
 
                 <Button type="submit" disabled={recordTx.isPending} className="w-full sm:w-auto">
-                  {recordTx.isPending ? "Recording…" : "Record Transaction"}
+                  {recordTx.isPending ? t("capture.transaction.submitting") : t("capture.transaction.submit")}
                 </Button>
               </form>
             </CardContent>
@@ -609,7 +590,7 @@ export default function Capture() {
         <TabsContent value="transfer">
           <Card className="max-w-4xl">
             <CardHeader>
-              <CardTitle className="text-base">Transfer Between Accounts</CardTitle>
+              <CardTitle className="text-base">{t("capture.transfer.title")}</CardTitle>
             </CardHeader>
             <CardContent>
               {transferError != null && (
@@ -617,12 +598,12 @@ export default function Capture() {
               )}
               <form onSubmit={handleTransferSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="transfer-from">From Account</Label>
+                  <Label htmlFor="transfer-from">{t("capture.transfer.from")}</Label>
                   <Select value={transferFrom} onValueChange={setTransferFrom}>
-                    <SelectTrigger id="transfer-from"><SelectValue placeholder="Select source account" /></SelectTrigger>
+                    <SelectTrigger id="transfer-from"><SelectValue placeholder={t("capture.transfer.fromPlaceholder")} /></SelectTrigger>
                     <SelectContent>
                       {accounts.length === 0 ? (
-                        <SelectEmptyState>No accounts yet. Create one in Manage.</SelectEmptyState>
+                        <SelectEmptyState>{t("capture.empty.accountsManage")}</SelectEmptyState>
                       ) : (
                         accounts.map((a) => (
                           <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
@@ -633,12 +614,12 @@ export default function Capture() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="transfer-to">To Account <span className="text-xs text-muted-foreground">(optional for external transfer)</span></Label>
+                  <Label htmlFor="transfer-to">{t("capture.transfer.to")} <span className="text-xs text-muted-foreground">{t("capture.transfer.toOptional")}</span></Label>
                   <Select value={transferTo} onValueChange={(v) => { setTransferTo(v); setTransferExternal(""); }}>
-                    <SelectTrigger id="transfer-to"><SelectValue placeholder="Select destination account" /></SelectTrigger>
+                    <SelectTrigger id="transfer-to"><SelectValue placeholder={t("capture.transfer.toPlaceholder")} /></SelectTrigger>
                     <SelectContent>
                       {accounts.filter((a) => a.id !== transferFrom).length === 0 ? (
-                        <SelectEmptyState>No other accounts available.</SelectEmptyState>
+                        <SelectEmptyState>{t("capture.empty.noOtherAccounts")}</SelectEmptyState>
                       ) : (
                         accounts.filter((a) => a.id !== transferFrom).map((a) => (
                           <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
@@ -649,11 +630,11 @@ export default function Capture() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="transfer-external">Or external destination</Label>
+                  <Label htmlFor="transfer-external">{t("capture.transfer.external")}</Label>
                   <Input
                     id="transfer-external"
                     type="text"
-                    placeholder="e.g. External bank, PayPal, etc."
+                    placeholder={t("capture.transfer.externalPlaceholder")}
                     value={transferExternal}
                     onChange={(e) => { setTransferExternal(e.target.value); if (e.target.value) setTransferTo(""); }}
                     disabled={transferTo !== ""}
@@ -661,9 +642,9 @@ export default function Capture() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="transfer-amount">Amount</Label>
+                  <Label htmlFor="transfer-amount">{t("capture.transfer.amount")}</Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">{transferCurrency}</span>
                     <Input
                       id="transfer-amount"
                       type="text"
@@ -671,25 +652,25 @@ export default function Capture() {
                       placeholder="0.00"
                       value={transferAmount}
                       onChange={(e) => setTransferAmount(e.target.value)}
-                      className="pl-7"
+                      className="pl-14"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="transfer-note">Note (optional)</Label>
+                  <Label htmlFor="transfer-note">{t("capture.transfer.note")}</Label>
                   <Input
                     id="transfer-note"
                     type="text"
-                    placeholder="Transfer note"
+                    placeholder={t("capture.transfer.notePlaceholder")}
                     value={transferNote}
                     onChange={(e) => setTransferNote(e.target.value)}
                   />
                 </div>
 
                 <Button type="submit" disabled={recordTransfer.isPending} className="w-full sm:w-auto">
-                  {recordTransfer.isPending ? "Processing…" : "Record Transfer"}
+                  {recordTransfer.isPending ? t("capture.transfer.submitting") : t("capture.transfer.submit")}
                 </Button>
               </form>
             </CardContent>
@@ -699,7 +680,7 @@ export default function Capture() {
         <TabsContent value="goal">
           <Card className="max-w-4xl">
             <CardHeader>
-              <CardTitle className="text-base">Contribute to Goal</CardTitle>
+              <CardTitle className="text-base">{t("capture.goal.title")}</CardTitle>
             </CardHeader>
             <CardContent>
               {goalError != null && (
@@ -707,12 +688,12 @@ export default function Capture() {
               )}
               <form onSubmit={handleGoalContribution} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="goal">Goal</Label>
+                  <Label htmlFor="goal">{t("capture.tabs.goal")}</Label>
                   <Select value={goalId} onValueChange={setGoalId}>
-                    <SelectTrigger id="goal"><SelectValue placeholder="Select goal" /></SelectTrigger>
+                    <SelectTrigger id="goal"><SelectValue placeholder={t("capture.goal.selectGoal")} /></SelectTrigger>
                     <SelectContent>
                       {activeGoals.length === 0 ? (
-                        <SelectEmptyState>No goals yet. Create one in Planning.</SelectEmptyState>
+                        <SelectEmptyState>{t("capture.empty.goalsPlanning")}</SelectEmptyState>
                       ) : (
                         activeGoals.map((g) => (
                           <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
@@ -722,9 +703,9 @@ export default function Capture() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="goalAmount">Amount</Label>
+                  <Label htmlFor="goalAmount">{t("capture.goal.amount")}</Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">{goalCurrency}</span>
                     <Input
                       id="goalAmount"
                       type="text"
@@ -732,13 +713,13 @@ export default function Capture() {
                       placeholder="0.00"
                       value={goalAmountStr}
                       onChange={(e) => setGoalAmountStr(e.target.value)}
-                      className="pl-7"
+                      className="pl-14"
                       required
                     />
                   </div>
                 </div>
                 <Button type="submit" disabled={recordGoalContrib.isPending} className="w-full sm:w-auto">
-                  {recordGoalContrib.isPending ? "Adding…" : "Add Contribution"}
+                  {recordGoalContrib.isPending ? t("capture.goal.submitting") : t("capture.goal.submit")}
                 </Button>
               </form>
             </CardContent>
@@ -747,17 +728,17 @@ export default function Capture() {
 
         <TabsContent value="manage">
           <div className="max-w-6xl space-y-3">
-            <section className="grid gap-3 sm:grid-cols-3" aria-label="Management summary">
+            <section className="grid gap-3 sm:grid-cols-3" aria-label={t("capture.manage.summary")}>
               <div className="rounded-lg border border-border bg-card p-3">
-                <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><Wallet className="h-4 w-4" />Accounts</p>
+                <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><Wallet className="h-4 w-4" />{t("capture.manage.accounts")}</p>
                 <p className="mt-2 text-2xl font-semibold tabular-nums">{accounts.length}</p>
               </div>
               <div className="rounded-lg border border-border bg-card p-3">
-                <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><CreditCard className="h-4 w-4" />Managed balance</p>
-                <p className="mt-2 text-2xl font-semibold tabular-nums">{formatMoney(totalManagedBalance, balanceCurrency)}</p>
+                <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><CreditCard className="h-4 w-4" />{t("capture.manage.managedBalance")}</p>
+                <p className="mt-2 text-2xl font-semibold tabular-nums">{formatMoney(managedBalance.minorUnits, managedBalance.currency)}</p>
               </div>
               <div className="rounded-lg border border-border bg-card p-3">
-                <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><Tags className="h-4 w-4" />Custom categories</p>
+                <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><Tags className="h-4 w-4" />{t("capture.manage.customCategories")}</p>
                 <p className="mt-2 text-2xl font-semibold tabular-nums">{categories.length}</p>
               </div>
             </section>
@@ -766,7 +747,7 @@ export default function Capture() {
               <Card className="interactive-surface">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between text-base">
-                    Categories
+                    {t("capture.manage.categories")}
                     <Dialog
                       open={createCategoryOpen}
                       onOpenChange={(open) => {
@@ -775,26 +756,26 @@ export default function Capture() {
                       }}
                     >
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />New</Button>
+                        <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />{t("capture.manage.new")}</Button>
                       </DialogTrigger>
                       <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-xl">
                         <DialogHeader>
-                          <DialogTitle>Create Category</DialogTitle>
+                          <DialogTitle>{t("capture.manage.createCategory")}</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleCreateCategory} className="space-y-4 pt-4">
                           {catError != null && <p role="alert" className="text-sm text-destructive">{catError}</p>}
                           <div className="space-y-2">
-                            <Label htmlFor="catName">Category name</Label>
+                            <Label htmlFor="catName">{t("capture.manage.categoryName")}</Label>
                             <Input
                               id="catName"
                               value={newCatName}
                               onChange={(e) => setNewCatName(e.target.value)}
-                              placeholder="e.g. Dining Out"
+                              placeholder={t("capture.manage.categoryNamePlaceholder")}
                               required
                             />
                           </div>
                           <Button type="submit" disabled={createCat.isPending} className="w-full sm:w-auto">
-                            {createCat.isPending ? "Creating…" : "Create Category"}
+                            {createCat.isPending ? t("capture.manage.submitting") : t("capture.manage.submit")}
                           </Button>
                         </form>
                       </DialogContent>
@@ -804,12 +785,12 @@ export default function Capture() {
                 <CardContent className="space-y-3">
                   <div className="relative">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input value={catSearch} onChange={(e) => setCatSearch(e.target.value)} placeholder="Search categories" className="pl-9" />
+                    <Input value={catSearch} onChange={(e) => setCatSearch(e.target.value)} placeholder={t("capture.manage.searchCategories")} className="pl-9" />
                   </div>
                   {categories.length === 0 ? (
-                    <p className="empty-state">No custom categories yet. Create one to organize transactions.</p>
+                    <p className="empty-state">{t("capture.manage.noCategories")}</p>
                   ) : filteredCategories.length === 0 ? (
-                    <p className="empty-state">No categories match your search.</p>
+                    <p className="empty-state">{t("capture.manage.noCategoryMatch")}</p>
                   ) : (
                     <ul className="grid gap-2 sm:grid-cols-2">
                       {filteredCategories.map((c) => (
@@ -821,7 +802,7 @@ export default function Capture() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
-                              aria-label={`Rename ${c.name}`}
+                              aria-label={t("capture.manage.renameCategoryAria", { name: c.name })}
                               onClick={() => {
                                 setRenameDialog({ id: c.id, name: c.name });
                                 setRenameName(c.name);
@@ -834,7 +815,7 @@ export default function Capture() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-destructive hover:text-destructive"
-                              aria-label={`Archive ${c.name}`}
+                              aria-label={t("capture.manage.archiveCategoryAria", { name: c.name })}
                               disabled={archiveCat.isPending}
                               onClick={() => handleArchiveCategory(c.id, c.name)}
                             >
@@ -851,7 +832,7 @@ export default function Capture() {
               <Card className="interactive-surface">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between text-base">
-                    Accounts
+                    {t("capture.manage.accounts")}
                     <Dialog
                       open={createAccountOpen}
                       onOpenChange={(open) => {
@@ -860,41 +841,41 @@ export default function Capture() {
                       }}
                     >
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />New</Button>
+                        <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" />{t("capture.manage.new")}</Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-xl">
                         <DialogHeader>
-                          <DialogTitle>Create Account</DialogTitle>
+                          <DialogTitle>{t("capture.manage.createAccount")}</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleCreateAccount} className="min-w-0 space-y-4 pt-4">
                           {accountError != null && <p role="alert" className="text-sm text-destructive">{accountError}</p>}
                           <div className="space-y-2">
-                            <Label htmlFor="accName">Account name</Label>
-                            <Input id="accName" value={newAccName} onChange={(e) => setNewAccName(e.target.value)} placeholder="e.g. Orange Money, Checking, Cash" required />
+                            <Label htmlFor="accName">{t("capture.manage.accountName")}</Label>
+                            <Input id="accName" value={newAccName} onChange={(e) => setNewAccName(e.target.value)} placeholder={t("capture.manage.accountNamePlaceholder")} required />
                           </div>
                           <div className="grid min-w-0 gap-3 md:grid-cols-2">
                             <div className="min-w-0 space-y-2">
-                              <Label htmlFor="accType">Type</Label>
+                              <Label htmlFor="accType">{t("capture.manage.accountType")}</Label>
                               <Select value={newAccType} onValueChange={setNewAccType}>
                                 <SelectTrigger id="accType"><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                   {ACCOUNT_TYPES.map((type) => (
-                                    <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                                    <SelectItem key={type} value={type}>{t(`capture.manage.accountTypes.${type}`)}</SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
                             </div>
                             <div className="min-w-0 space-y-2">
-                              <Label htmlFor="accCurrency">Currency</Label>
+                              <Label htmlFor="accCurrency">{t("capture.manage.accountCurrency")}</Label>
                               <AccountCurrencyPicker value={newAccCurrency} onValueChange={setNewAccCurrency} />
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="accBalance">Opening balance</Label>
+                            <Label htmlFor="accBalance">{t("capture.manage.accountBalance")}</Label>
                             <Input id="accBalance" type="text" inputMode="decimal" value={newAccBalance} onChange={(e) => setNewAccBalance(e.target.value)} placeholder="0.00" />
                           </div>
                           <Button type="submit" disabled={createAccount.isPending} className="w-full sm:w-auto">
-                            {createAccount.isPending ? "Creating…" : "Create Account"}
+                            {createAccount.isPending ? t("capture.manage.submittingAccount") : t("capture.manage.submitAccount")}
                           </Button>
                         </form>
                       </DialogContent>
@@ -904,12 +885,12 @@ export default function Capture() {
                 <CardContent className="space-y-3">
                   <div className="relative">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input value={accountSearch} onChange={(e) => setAccountSearch(e.target.value)} placeholder="Search accounts" className="pl-9" />
+                    <Input value={accountSearch} onChange={(e) => setAccountSearch(e.target.value)} placeholder={t("capture.manage.searchAccounts")} className="pl-9" />
                   </div>
                   {accounts.length === 0 ? (
-                    <p className="empty-state">No accounts yet. Create cash, mobile money, bank, or card accounts.</p>
+                    <p className="empty-state">{t("capture.manage.noAccounts")}</p>
                   ) : filteredAccounts.length === 0 ? (
-                    <p className="empty-state">No accounts match your search.</p>
+                    <p className="empty-state">{t("capture.manage.noAccountMatch")}</p>
                   ) : (
                     <ul className="space-y-2">
                       {filteredAccounts.map((a) => (
@@ -917,7 +898,7 @@ export default function Capture() {
                           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
                             <div className="min-w-0">
                               <p className="truncate text-sm font-semibold">{a.name}</p>
-                              <p className="text-xs capitalize text-muted-foreground">{a.type.replace(/_/g, " ")} &middot; {a.currency}</p>
+                              <p className="text-xs text-muted-foreground">{t(`capture.manage.accountTypes.${a.type}`, { defaultValue: a.type.replace(/_/g, " ") })} &middot; {a.currency}</p>
                             </div>
                             <div className="flex min-w-0 items-center justify-between gap-2 sm:justify-end">
                               <p className="min-w-0 truncate text-sm font-semibold tabular-nums">{formatMoney(a.balance.minorUnits, a.balance.currency)}</p>
@@ -927,7 +908,7 @@ export default function Capture() {
                                 variant="ghost"
                                 size="icon"
                                 className="h-8 w-8"
-                                aria-label={`Edit ${a.name}`}
+                                aria-label={t("capture.manage.editAccountAria", { name: a.name })}
                                 onClick={() => {
                                   setEditAccountDialog({ id: a.id, name: a.name, type: a.type });
                                   setEditAccName(a.name);
@@ -941,7 +922,7 @@ export default function Capture() {
                                 variant="ghost"
                                 size="icon"
                                 className="h-8 w-8 text-destructive hover:text-destructive"
-                                aria-label={`Archive ${a.name}`}
+                                aria-label={t("capture.manage.archiveAccountAria", { name: a.name })}
                                 disabled={archiveAccount.isPending}
                                 onClick={() => handleArchiveAccount(a.id, a.name)}
                               >
@@ -950,7 +931,7 @@ export default function Capture() {
                               </div>
                             </div>
                           </div>
-                          <p className="mt-2 text-xs text-muted-foreground">Opening balance: {formatMoney(a.initialBalance.minorUnits, a.initialBalance.currency)}</p>
+                          <p className="mt-2 text-xs text-muted-foreground">{t("capture.manage.openingBalance", { amount: formatMoney(a.initialBalance.minorUnits, a.initialBalance.currency) })}</p>
                         </li>
                       ))}
                     </ul>
@@ -967,16 +948,16 @@ export default function Capture() {
             }}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Rename Category</DialogTitle>
+                  <DialogTitle>{t("capture.manage.renameCategory")}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleRenameCategory} className="space-y-4 pt-4">
                   {catError != null && <p role="alert" className="text-sm text-destructive">{catError}</p>}
                   <div className="space-y-2">
-                    <Label htmlFor="renameCategoryName">Category name</Label>
-                    <Input id="renameCategoryName" value={renameName} onChange={(e) => setRenameName(e.target.value)} placeholder={renameDialog?.name ?? "Category name"} required autoFocus />
+                    <Label htmlFor="renameCategoryName">{t("capture.manage.categoryName")}</Label>
+                    <Input id="renameCategoryName" value={renameName} onChange={(e) => setRenameName(e.target.value)} placeholder={renameDialog?.name ?? t("capture.manage.categoryName")} required autoFocus />
                   </div>
                   <Button type="submit" disabled={renameCat.isPending || renameName.trim().length === 0} className="w-full sm:w-auto">
-                    {renameCat.isPending ? "Saving…" : "Save Rename"}
+                    {renameCat.isPending ? t("capture.manage.saving") : t("capture.manage.saveRename")}
                   </Button>
                 </form>
               </DialogContent>
@@ -991,27 +972,27 @@ export default function Capture() {
             }}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Edit Account</DialogTitle>
+                  <DialogTitle>{t("capture.manage.editAccount")}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleUpdateAccount} className="space-y-4 pt-4">
                   {accountError != null && <p role="alert" className="text-sm text-destructive">{accountError}</p>}
                   <div className="space-y-2">
-                    <Label htmlFor="editAccountName">Account name</Label>
+                    <Label htmlFor="editAccountName">{t("capture.manage.accountName")}</Label>
                     <Input id="editAccountName" value={editAccName} onChange={(e) => setEditAccName(e.target.value)} required autoFocus />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="editAccountType">Type</Label>
+                    <Label htmlFor="editAccountType">{t("capture.manage.accountType")}</Label>
                     <Select value={editAccType} onValueChange={setEditAccType}>
                       <SelectTrigger id="editAccountType"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {ACCOUNT_TYPES.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                          <SelectItem key={type} value={type}>{t(`capture.manage.accountTypes.${type}`)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <Button type="submit" disabled={updateAccount.isPending || editAccName.trim().length === 0} className="w-full sm:w-auto">
-                    {updateAccount.isPending ? "Saving…" : "Save Account"}
+                    {updateAccount.isPending ? t("capture.manage.saving") : t("capture.manage.saveAccount")}
                   </Button>
                 </form>
               </DialogContent>
