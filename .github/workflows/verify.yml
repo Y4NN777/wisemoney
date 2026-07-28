@@ -38,7 +38,7 @@ jobs:
   # verify-web — typecheck + lint + test for apps/web (React/TS PWA)
   #
   # Runs against the pnpm workspace root (pnpm-lock.yaml committed at root).
-  # All three gates must pass; any non-zero exit fails the job and blocks merge.
+  # All four gates must pass; any non-zero exit fails the job and blocks merge.
   # -------------------------------------------------------------------------
   verify-web:
     name: verify-web
@@ -84,10 +84,14 @@ jobs:
         run: pnpm --filter @wisemoney/web lint
 
       - name: Test
-        # vitest run (non-watch, exits after one pass). 2 tests are intentionally
-        # skipped (WebAuthn round-trips; browser-only API unavailable in CI) — this
-        # is expected and does not fail the job. All other tests must pass.
+        # vitest run (non-watch, exits after one pass). Browser-level PWA and
+        # WebAuthn PRF round trips have separate Playwright smoke scripts.
         run: pnpm --filter @wisemoney/web test
+
+      - name: Build PWA
+        # Exercises Vite bundling, dynamic chunks, manifest generation, and the
+        # service-worker precache graph. Unit/type checks cannot prove these.
+        run: pnpm --filter @wisemoney/web build
 
   # -------------------------------------------------------------------------
   # verify-edge — build + vet + test for services/edge (Go managed edge)
