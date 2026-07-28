@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Web dependency security** — patched transitive tooling dependencies to
+  `brace-expansion` 1.1.16/2.1.2/5.0.8, `fast-uri` 3.1.4, and `js-yaml` 4.3.0.
+  A time-bounded OSV exception covers only the dev-only brace-expansion branches
+  that have no compatible fix for GHSA-mh99-v99m-4gvg; forcing major 5 breaks
+  ESLint, and the exception expires on 2026-10-31.
 - **Edge dependency security** — upgraded the pinned Go toolchain and builder to
   1.25.12 for GO-2026-5856, and `golang.org/x/text` to v0.39.0 for
   GO-2026-5970. The related `x/sync` indirect dependency moves to v0.21.0.
