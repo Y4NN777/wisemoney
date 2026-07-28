@@ -15,64 +15,32 @@
  */
 
 /** Per-feature consent level. Redacted is the default and the fallback. */
-export type ConsentLevel = "NotPrompted" | "Redacted" | "FullGranted";
+type ConsentLevel = "NotPrompted" | "Redacted" | "FullGranted";
 
 const STORAGE_KEY_PREFIX = "wisemoney:consent:";
 
 /**
  * Get the current consent level for a feature.
  *
- * Returns "Redacted" for any absent, unknown, or ambiguous state (safe fallback,
- * INV-EGR-01; state machine: absent → Redacted).
+ * Returns "NotPrompted" when no choice has been stored so the UI can obtain an
+ * explicit first-use choice. Unknown values fall back to "Redacted".
  */
 export function getConsentLevel(featureId: string): ConsentLevel {
   const raw = localStorage.getItem(`${STORAGE_KEY_PREFIX}${featureId}`);
   if (raw === "FullGranted") return "FullGranted";
   if (raw === "NotPrompted") return "NotPrompted";
-  return "Redacted"; // safe fallback for all other values including null
-}
-
-/**
- * Record that the user has been prompted but has not yet granted or declined.
- * This sets state to NotPrompted (the initial state on first feature access).
- */
-export function markNotPrompted(featureId: string): void {
-  localStorage.setItem(`${STORAGE_KEY_PREFIX}${featureId}`, "NotPrompted");
-}
-
-/**
- * Store a consent assertion + transition to FullGranted.
- *
- * The assertion is an OPAQUE, server-signed permission slip from the Go edge
- * (HMAC-SHA256; pinned contract: ARCHITECTURE §10a). The client treats it as an
- * opaque string — it CANNOT and MUST NOT validate the signature (it does not hold
- * `CONSENT_SIGNING_KEY`). Only the edge verifies it, on every full-egress request.
- *
- * The client's job is to: cache the blob per feature, attach it as the
- * `X-Consent-Assertion` header on full-egress AI calls (in `ai/orchestration.ts`),
- * and re-request a fresh assertion from `POST /v1/consent/assert` when the edge
- * rejects it as expired (~5 min TTL).
- *
- * TODO (egress-subsystem): on edge "assertion expired" response, transparently
- * re-fetch and retry once; surface only persistent failures to the user.
- */
-export function storeConsentAssertion(
-  featureId: string,
-  assertion: string // opaque server-signed assertion (ARCHITECTURE §10a)
-): void {
-  localStorage.setItem(`${STORAGE_KEY_PREFIX}${featureId}:assertion`, assertion);
-  localStorage.setItem(`${STORAGE_KEY_PREFIX}${featureId}`, "FullGranted");
+  if (raw === null) return "NotPrompted";
+  return "Redacted";
 }
 
 /**
  * Set the consent level for a feature directly.
  *
  * Use this to record the user's intent (e.g. "Grant full access" button click).
- * For FullGranted this expresses user willingness; the signed assertion is
- * obtained later by orchestration.ts → resolveFullEgress() → postConsentAssert().
- * If assertion acquisition fails, submit() gracefully downgrades to redacted.
+ * FullGranted applies only to direct BYO-key transport. Managed mode remains
+ * redacted-only.
  *
- * For Redacted, prefer revokeConsent() which also clears any stored assertion.
+ * For Redacted, prefer revokeConsent().
  */
 export function setConsentLevel(featureId: string, level: ConsentLevel): void {
   localStorage.setItem(`${STORAGE_KEY_PREFIX}${featureId}`, level);
@@ -81,7 +49,7 @@ export function setConsentLevel(featureId: string, level: ConsentLevel): void {
 /**
  * Revoke consent for a feature — transition FullGranted → Redacted.
  *
- * Also clears any stored consent assertion for the feature.
+ * Also clears legacy assertion data left by earlier application versions.
  */
 export function revokeConsent(featureId: string): void {
   localStorage.setItem(`${STORAGE_KEY_PREFIX}${featureId}`, "Redacted");
@@ -89,26 +57,10 @@ export function revokeConsent(featureId: string): void {
 }
 
 /**
- * Get the stored consent assertion for a feature, or null if none is present.
- *
- * The assertion is an opaque server-signed blob (ARCHITECTURE §10a). The client
- * treats it as an opaque string — it does NOT validate the signature. The edge
- * verifies it on every full-egress request.
- *
- * Returns null when:
- *   - no assertion has been stored (feature never granted full consent), or
- *   - revokeConsent() has cleared it.
- *
- * NFR-MOD-03: callers MUST NOT access localStorage consent keys directly.
- */
-export function getConsentAssertion(featureId: string): string | null {
-  return localStorage.getItem(`${STORAGE_KEY_PREFIX}${featureId}:assertion`);
-}
-
-/**
  * Clear all consent state (e.g. on sign-out or local data clear).
  *
- * After clearing, all features revert to Redacted (safe fallback, INV-EGR-01).
+ * After clearing, all features return to NotPrompted; egress remains redacted
+ * until the user makes a choice.
  */
 export function clearAllConsent(): void {
   const keys = Object.keys(localStorage).filter((k) =>

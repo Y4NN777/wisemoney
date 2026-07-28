@@ -20,8 +20,6 @@
  */
 
 import { getConsentLevel } from "./consentStore.ts";
-import { isAssertionExpired } from "./consentMachine.ts";
-import type { ConsentState } from "./consentMachine.ts";
 
 /**
  * Aggregated-only context — the redacted egress ceiling (INV-EGR-01).
@@ -42,7 +40,7 @@ export type RedactedEgressContext = {
 
 /**
  * Full-egress context — includes raw transaction detail.
- * Only emitted when consent is FullGranted AND the assertion is not expired.
+ * Only emitted for direct BYO transport when consent is FullGranted.
  */
 export type FullEgressContext = RedactedEgressContext & {
   transactions: Array<{
@@ -58,17 +56,16 @@ export type EgressContext = RedactedEgressContext | FullEgressContext;
 
 /**
  * Downgrade a FullEgressContext to a RedactedEgressContext by stripping all
- * full-only fields.
+ * full-only fields before managed transport.
  *
  * FullEgressContext extends RedactedEgressContext by adding `transactions`.
  * This function returns a new object that contains only the RedactedEgressContext
- * keys, guaranteeing no full-only data crosses the egress boundary when the
- * assertion re-acquisition fails and the path falls back to redacted.
+ * keys, guaranteeing no full-only data crosses the managed egress boundary.
  *
  * Pure function — does not mutate the input. No `any`.
  *
  * INV-EGR-01 defence-in-depth: even if the caller already shaped a Full context,
- * a failed assertion re-acquire must not send that data under X-Egress-Level: redacted.
+ * managed transport must not send those details.
  */
 export function toRedacted(ctx: EgressContext): RedactedEgressContext {
   // Destructure to an explicit set of RedactedEgressContext keys.
@@ -102,42 +99,63 @@ export function toRedacted(ctx: EgressContext): RedactedEgressContext {
  * The AIContextBuilder calls this before any transport dispatch.
  *
  * - If consent is Redacted or NotPrompted → return redacted context (ceiling: INV-EGR-01).
- * - If consent is FullGranted but assertion has expired → return redacted context.
- * - If consent is FullGranted and assertion is valid → return full context.
- *
- * TODO (INV-EGR-01/02): implement redaction logic. The "raw" context type is
- * defined by AIContextBuilder (FR-DE-06/07) — implement once that module is
- * fleshed out in a follow-up task.
+ * - If consent is FullGranted → return a strictly reconstructed full context.
  *
  * @param featureId    - the feature requesting egress (per-feature consent gate)
- * @param _rawContext  - full context from AIContextBuilder (not typed yet — TODO)
- * @param consentState - current consent state from consentMachine
+ * @param rawContext   - context produced by AIContextBuilder; every nested value is revalidated
  */
 export function shapeEgress(
   featureId: string,
-  rawContext: unknown,
-  consentState: ConsentState
+  rawContext: unknown
 ): EgressContext {
   const level = getConsentLevel(featureId);
 
-  const isFullGranted =
-    level === "FullGranted" &&
-    consentState.status === "FullGranted" &&
-    !isAssertionExpired(consentState);
-
-  if (isFullGranted && isFullEgressShape(rawContext)) {
-    return rawContext;
+  if (level === "FullGranted") {
+    const full = extractFull(rawContext);
+    if (full !== null) return full;
   }
 
   return extractRedacted(rawContext);
 }
 
-function isFullEgressShape(ctx: unknown): ctx is FullEgressContext {
-  return (
-    typeof ctx === "object" &&
-    ctx !== null &&
-    "transactions" in ctx
-  );
+function extractFull(ctx: unknown): FullEgressContext | null {
+  if (typeof ctx !== "object" || ctx === null) return null;
+  const raw = ctx as Record<string, unknown>;
+  if (!Array.isArray(raw.transactions)) return null;
+
+  const transactions: FullEgressContext["transactions"] = [];
+  for (const value of raw.transactions) {
+    if (typeof value !== "object" || value === null) return null;
+    const transaction = value as Record<string, unknown>;
+    if (
+      typeof transaction.id !== "string" || transaction.id.length === 0 ||
+      typeof transaction.timestamp !== "number" || !Number.isSafeInteger(transaction.timestamp) ||
+      typeof transaction.categoryId !== "string" ||
+      typeof transaction.note !== "string"
+    ) return null;
+
+    const amount = sanitizeRequiredMoney(transaction.amount);
+    if (amount === null) return null;
+    transactions.push({
+      id: transaction.id,
+      timestamp: transaction.timestamp,
+      amount,
+      categoryId: transaction.categoryId,
+      note: transaction.note,
+    });
+  }
+
+  return { ...extractRedacted(raw), transactions };
+}
+
+function sanitizeRequiredMoney(value: unknown): { minorUnits: number; currency: string } | null {
+  if (typeof value !== "object" || value === null) return null;
+  const money = value as Record<string, unknown>;
+  if (
+    typeof money.minorUnits !== "number" || !Number.isSafeInteger(money.minorUnits) ||
+    typeof money.currency !== "string" || !/^[A-Z]{3}$/.test(money.currency)
+  ) return null;
+  return { minorUnits: money.minorUnits, currency: money.currency };
 }
 
 function extractRedacted(ctx: unknown): RedactedEgressContext {
@@ -146,23 +164,76 @@ function extractRedacted(ctx: unknown): RedactedEgressContext {
   }
 
   const r = ctx as Record<string, unknown>;
+  const fallbackCurrency = readCurrency(r.totalIncome) ??
+    readCurrency(r.totalExpenses) ??
+    readCurrency(r.netCashFlow) ??
+    "XOF";
   return {
-    periodTotalsPerCategory: (r.periodTotalsPerCategory as Record<string, { minorUnits: number; currency: string }>) ?? {},
-    totalIncome: (r.totalIncome as { minorUnits: number; currency: string }) ?? { minorUnits: 0, currency: "EUR" },
-    totalExpenses: (r.totalExpenses as { minorUnits: number; currency: string }) ?? { minorUnits: 0, currency: "EUR" },
-    netCashFlow: (r.netCashFlow as { minorUnits: number; currency: string }) ?? { minorUnits: 0, currency: "EUR" },
-    budgetStatusPercent: (r.budgetStatusPercent as Record<string, number>) ?? {},
-    goalProgressPercent: (r.goalProgressPercent as Record<string, number>) ?? {},
-    trendDirection: (r.trendDirection as Record<string, "up" | "down" | "stable">) ?? {},
+    periodTotalsPerCategory: sanitizeMoneyRecord(r.periodTotalsPerCategory),
+    totalIncome: sanitizeMoney(r.totalIncome, fallbackCurrency),
+    totalExpenses: sanitizeMoney(r.totalExpenses, fallbackCurrency),
+    netCashFlow: sanitizeMoney(r.netCashFlow, fallbackCurrency),
+    budgetStatusPercent: sanitizeNumberRecord(r.budgetStatusPercent),
+    goalProgressPercent: sanitizeNumberRecord(r.goalProgressPercent),
+    trendDirection: sanitizeTrendRecord(r.trendDirection),
   };
+}
+
+function readCurrency(value: unknown): string | null {
+  if (typeof value !== "object" || value == null || !("currency" in value)) return null;
+  const currency = (value as { currency?: unknown }).currency;
+  return typeof currency === "string" && /^[A-Z]{3}$/.test(currency) ? currency : null;
+}
+
+function sanitizeMoney(value: unknown, fallbackCurrency: string): { minorUnits: number; currency: string } {
+  if (typeof value !== "object" || value == null) {
+    return { minorUnits: 0, currency: fallbackCurrency };
+  }
+  const candidate = value as { minorUnits?: unknown; currency?: unknown };
+  return {
+    minorUnits: typeof candidate.minorUnits === "number" && Number.isSafeInteger(candidate.minorUnits)
+      ? candidate.minorUnits
+      : 0,
+    currency: typeof candidate.currency === "string" && /^[A-Z]{3}$/.test(candidate.currency)
+      ? candidate.currency
+      : fallbackCurrency,
+  };
+}
+
+function sanitizeMoneyRecord(value: unknown): Record<string, { minorUnits: number; currency: string }> {
+  if (typeof value !== "object" || value == null || Array.isArray(value)) return {};
+  const result: Record<string, { minorUnits: number; currency: string }> = {};
+  for (const [key, amount] of Object.entries(value)) {
+    const currency = readCurrency(amount);
+    if (currency != null) result[key] = sanitizeMoney(amount, currency);
+  }
+  return result;
+}
+
+function sanitizeNumberRecord(value: unknown): Record<string, number> {
+  if (typeof value !== "object" || value == null || Array.isArray(value)) return {};
+  const result: Record<string, number> = {};
+  for (const [key, number] of Object.entries(value)) {
+    if (typeof number === "number" && Number.isFinite(number)) result[key] = number;
+  }
+  return result;
+}
+
+function sanitizeTrendRecord(value: unknown): Record<string, "up" | "down" | "stable"> {
+  if (typeof value !== "object" || value == null || Array.isArray(value)) return {};
+  const result: Record<string, "up" | "down" | "stable"> = {};
+  for (const [key, trend] of Object.entries(value as Record<string, unknown>)) {
+    if (trend === "up" || trend === "down" || trend === "stable") result[key] = trend;
+  }
+  return result;
 }
 
 function emptyRedacted(): RedactedEgressContext {
   return {
     periodTotalsPerCategory: {},
-    totalIncome: { minorUnits: 0, currency: "EUR" },
-    totalExpenses: { minorUnits: 0, currency: "EUR" },
-    netCashFlow: { minorUnits: 0, currency: "EUR" },
+    totalIncome: { minorUnits: 0, currency: "XOF" },
+    totalExpenses: { minorUnits: 0, currency: "XOF" },
+    netCashFlow: { minorUnits: 0, currency: "XOF" },
     budgetStatusPercent: {},
     goalProgressPercent: {},
     trendDirection: {},

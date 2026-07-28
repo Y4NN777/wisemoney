@@ -1,10 +1,6 @@
-import type { FinancialStateSnapshot } from "@/domain/financialState.ts";
+import { readTransactionsInRange, replayUpTo, type FinancialStateSnapshot } from "@/domain/financialState.ts";
 import type { FullEgressContext } from "@/consent/redaction.ts";
-import { db } from "@/db/schema.ts";
-import { open } from "@/crypto/envelope.ts";
 import type { MasterKey } from "@/crypto/envelope.ts";
-
-export type { EgressContext } from "@/consent/redaction.ts";
 
 /**
  * Build a full egress context from the current financial state snapshot.
@@ -34,6 +30,9 @@ export async function buildContext(
   }
 
   const transactions = await loadRecentTransactions(snapshot, masterKey);
+  const previousSnapshot = snapshot.periodStart > 0
+    ? await replayUpTo(snapshot.periodStart - 1, masterKey)
+    : null;
 
   return {
     periodTotalsPerCategory,
@@ -42,7 +41,10 @@ export async function buildContext(
     netCashFlow: snapshot.netCashFlow,
     budgetStatusPercent,
     goalProgressPercent,
-    trendDirection: computeTrends(snapshot, periodTotalsPerCategory),
+    trendDirection: computeTrends(
+      periodTotalsPerCategory,
+      previousSnapshot?.categoryTotals ?? {}
+    ),
     transactions,
   };
 }
@@ -63,69 +65,35 @@ async function loadRecentTransactions(
     note: string;
   }>
 > {
-  const events = await db.financialEvents
-    .where("timestamp")
-    .between(snapshot.periodStart, snapshot.periodEnd)
-    .toArray();
-
-  const results: Array<{
-    id: string;
-    timestamp: number;
-    amount: { minorUnits: number; currency: string };
-    categoryId: string;
-    note: string;
-  }> = [];
-
-  for (const event of events) {
-    if (event.type !== "transaction_created") continue;
-
-    try {
-      const plaintext = await open(
-        { ciphertext: event.ciphertext, iv: event.iv },
-        masterKey
-      );
-      const payload = JSON.parse(
-        new TextDecoder().decode(plaintext)
-      ) as {
-        accountId: string;
-        categoryId: string;
-        amount: { minorUnits: number; currency: string };
-        direction: string;
-        note?: string;
-      };
-
-      results.push({
-        id: event.id,
-        timestamp: event.timestamp,
-        amount: payload.amount,
-        categoryId: payload.categoryId,
-        note: payload.note ?? "",
-      });
-    } catch {
-      // Skip events that fail to decrypt — may be a key rotation in progress.
-    }
-  }
-
-  results.sort((a, b) => b.timestamp - a.timestamp);
-  return results.slice(0, 100);
+  const transactions = await readTransactionsInRange(
+    snapshot.periodStart,
+    snapshot.periodEnd,
+    masterKey
+  );
+  return transactions.slice(0, 100).map((transaction) => ({
+    id: transaction.id,
+    timestamp: transaction.timestamp,
+    amount: transaction.amount,
+    categoryId: transaction.categoryId,
+    note: transaction.note,
+  }));
 }
 
 /**
- * Compute trend direction per category by comparing the current period against
- * a simple heuristic: any non-zero total trends "up" if it exceeds a threshold.
- *
- * TODO (FR-AI-01): replace with real period-over-period comparison once we
- * have historical snapshot persistence.
+ * Compute trend direction per category against the immediately preceding month.
  */
-function computeTrends(
-  _snapshot: FinancialStateSnapshot,
-  totals: Record<string, { minorUnits: number; currency: string }>
+export function computeTrends(
+  current: Record<string, { minorUnits: number; currency: string }>,
+  previous: Record<string, { minorUnits: number; currency: string }>
 ): Record<string, "up" | "down" | "stable"> {
   const trends: Record<string, "up" | "down" | "stable"> = {};
-  for (const [catId, total] of Object.entries(totals)) {
-    if (total.minorUnits > 0) {
+  const categoryIds = new Set([...Object.keys(current), ...Object.keys(previous)]);
+  for (const catId of categoryIds) {
+    const currentAmount = current[catId]?.minorUnits ?? 0;
+    const previousAmount = previous[catId]?.minorUnits ?? 0;
+    if (currentAmount > previousAmount) {
       trends[catId] = "up";
-    } else if (total.minorUnits < 0) {
+    } else if (currentAmount < previousAmount) {
       trends[catId] = "down";
     } else {
       trends[catId] = "stable";

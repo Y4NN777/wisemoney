@@ -1,18 +1,15 @@
 import type { FinancialStateSnapshot } from "@/domain/financialState.ts";
 import type { MasterKey } from "@/crypto/envelope.ts";
 import { buildContext } from "@/ai/contextBuilder.ts";
-import { shapeEgress, type EgressContext } from "@/consent/redaction.ts";
+import { shapeEgress } from "@/consent/redaction.ts";
 import { getAICapability } from "@/lib/capabilities.ts";
-import { getConsentLevel, markNotPrompted } from "@/consent/consentStore.ts";
 import { submit, type AIResult } from "@/ai/orchestration.ts";
 
-export type ConceptEntry = {
+type ConceptEntry = {
   conceptId: string;
   title: string;
   body: string;
 };
-
-export type { AIResult } from "@/ai/orchestration.ts";
 
 const CONCEPT_LIBRARY: Record<string, ConceptEntry> = {
   "budgeting-101": {
@@ -47,27 +44,11 @@ export async function sendConversationMessage(
   snapshot: FinancialStateSnapshot,
   masterKey: MasterKey
 ): Promise<AIResult> {
-  const currentLevel = getConsentLevel(featureId);
-  if (currentLevel === "NotPrompted") {
-    markNotPrompted(featureId);
-  }
-
   const rawContext = await buildContext(snapshot, masterKey);
 
-  const consentState = buildConsentState(featureId);
+  const egressContext = shapeEgress(featureId, rawContext);
 
-  const egressContext = shapeEgress(featureId, rawContext, consentState);
-
-  // Embed the user's question alongside the financial context so the AI
-  // provider receives both the data snapshot and what the user asked.
-  // The structured field is JSON-stringified by the adapters on the far
-  // side — the extra property flows through without schema changes.
-  const payload = {
-    ...egressContext,
-    userMessage: message,
-  } as unknown as EgressContext;
-
-  const capability = await getAICapability(masterKey);
+  const capability = await getAICapability();
   if (capability.mode == null) {
     return {
       unavailable: true,
@@ -76,7 +57,7 @@ export async function sendConversationMessage(
     };
   }
 
-  return submit(payload, "teaching", capability.mode, featureId, masterKey);
+  return submit(egressContext, "teaching", capability.mode, featureId, masterKey, message);
 }
 
 /**
@@ -93,18 +74,4 @@ export function loadConceptEntry(
     throw new Error(`loadConceptEntry: concept "${conceptId}" not found`);
   }
   return entry;
-}
-
-function buildConsentState(
-  featureId: string
-): { status: "NotPrompted" } | { status: "Redacted" } | { status: "FullGranted"; assertionExpiresAt: number } {
-  const level = getConsentLevel(featureId);
-  switch (level) {
-    case "FullGranted":
-      return { status: "FullGranted", assertionExpiresAt: Number.MAX_SAFE_INTEGER };
-    case "NotPrompted":
-      return { status: "NotPrompted" };
-    default:
-      return { status: "Redacted" };
-  }
 }

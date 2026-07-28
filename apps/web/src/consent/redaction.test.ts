@@ -11,9 +11,9 @@
  *         (all required keys present, no extra keys).
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import type { FullEgressContext, RedactedEgressContext } from "./redaction.ts";
-import { toRedacted } from "./redaction.ts";
+import { shapeEgress, toRedacted } from "./redaction.ts";
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -123,5 +123,62 @@ describe("toRedacted — structural contract", () => {
         "trendDirection",
       ].sort()
     );
+  });
+
+  it("sanitizes nested values instead of forwarding hidden raw fields", () => {
+    vi.stubGlobal("localStorage", {
+      getItem: () => "Redacted",
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    });
+    const shaped = shapeEgress("insight", {
+      ...FULL_CTX,
+      totalIncome: { ...FULL_CTX.totalIncome, merchant: "must-not-leak" },
+      budgetStatusPercent: { groceries: 72, invalid: "secret" },
+      trendDirection: { food: "up", invalid: "secret" },
+    });
+
+    expect(shaped.totalIncome).toEqual({ minorUnits: 200_000, currency: "EUR" });
+    expect(shaped.budgetStatusPercent).toEqual({ groceries: 72 });
+    expect(shaped.trendDirection).toEqual({ food: "up" });
+    expect(JSON.stringify(shaped)).not.toContain("must-not-leak");
+    expect(JSON.stringify(shaped)).not.toContain("secret");
+    vi.unstubAllGlobals();
+  });
+
+  it("reconstructs full egress from an allowlist and strips unknown fields", () => {
+    vi.stubGlobal("localStorage", {
+      getItem: () => "FullGranted",
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    });
+    const shaped = shapeEgress("insight", {
+      ...FULL_CTX,
+      hidden: "must-not-leak",
+      transactions: FULL_CTX.transactions.map((transaction) => ({
+        ...transaction,
+        merchant: "must-not-leak",
+      })),
+    });
+
+    expect(shaped).toEqual(FULL_CTX);
+    expect(JSON.stringify(shaped)).not.toContain("hidden");
+    expect(JSON.stringify(shaped)).not.toContain("merchant");
+    vi.unstubAllGlobals();
+  });
+
+  it("downgrades malformed full transactions to redacted aggregates", () => {
+    vi.stubGlobal("localStorage", {
+      getItem: () => "FullGranted",
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    });
+    const shaped = shapeEgress("insight", {
+      ...FULL_CTX,
+      transactions: [{ ...FULL_CTX.transactions[0], timestamp: "invalid" }],
+    });
+
+    expect("transactions" in shaped).toBe(false);
+    vi.unstubAllGlobals();
   });
 });

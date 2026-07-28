@@ -1,9 +1,8 @@
-import type { MasterKey } from "../crypto/envelope.ts";
-import { decryptBYOKey } from "../crypto/keyManagement.ts";
 import { getSessionStatus } from "../auth/session.ts";
 import type { AIMode } from "../ai/orchestration.ts";
+import { db } from "../db/schema.ts";
 
-export const AI_PROVIDER_IDS = ["gemini", "openai", "openrouter", "nvidia_nim"] as const;
+export const AI_PROVIDER_IDS = ["gemini", "openai", "openrouter", "deepseek"] as const;
 
 export type AICapability = {
   byoConfigured: boolean;
@@ -11,6 +10,7 @@ export type AICapability = {
   edgeAuthenticated: boolean;
   available: boolean;
   mode: AIMode | null;
+  reason: "byo-required" | "edge-auth-required" | null;
   message: string;
 };
 
@@ -18,20 +18,13 @@ export function isEdgeConfigured(): boolean {
   return (import.meta.env.VITE_EDGE_BASE_URL ?? "").trim().length > 0;
 }
 
-export async function hasConfiguredAIProvider(masterKey: MasterKey): Promise<boolean> {
-  for (const providerId of AI_PROVIDER_IDS) {
-    try {
-      await decryptBYOKey(providerId, masterKey);
-      return true;
-    } catch {
-      // Try the next provider. Missing keys are expected until the user configures AI.
-    }
-  }
-  return false;
+export async function hasConfiguredAIProvider(): Promise<boolean> {
+  const records = await db.byoProviderKeys.bulkGet([...AI_PROVIDER_IDS]);
+  return records.some((record) => record != null);
 }
 
-export async function getAICapability(masterKey: MasterKey): Promise<AICapability> {
-  const byoConfigured = await hasConfiguredAIProvider(masterKey);
+export async function getAICapability(): Promise<AICapability> {
+  const byoConfigured = await hasConfiguredAIProvider();
   const edgeConfigured = isEdgeConfigured();
   const edgeAuthenticated = getSessionStatus() === "authenticated";
   const mode: AIMode | null = byoConfigured ? "byo" : edgeConfigured && edgeAuthenticated ? "managed" : null;
@@ -42,6 +35,7 @@ export async function getAICapability(masterKey: MasterKey): Promise<AICapabilit
     edgeAuthenticated,
     available: mode !== null,
     mode,
+    reason: mode !== null ? null : edgeConfigured ? "edge-auth-required" : "byo-required",
     message: mode !== null
       ? ""
       : edgeConfigured

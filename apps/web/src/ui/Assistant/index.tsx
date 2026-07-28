@@ -3,7 +3,7 @@ import { useFinancialState } from "../../hooks/useFinancialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { requestInsight, requestRecommendation, requestPrediction, detectPatterns } from "../../pillars/intelligence/index.ts";
 import { sendConversationMessage, loadConceptEntry } from "../../pillars/literacy/index.ts";
-import { getConsentLevel, setConsentLevel, markNotPrompted, revokeConsent } from "../../consent/consentStore.ts";
+import { getConsentLevel, setConsentLevel, revokeConsent } from "../../consent/consentStore.ts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
@@ -20,7 +20,7 @@ import {
   Send, Shield, X, Settings2, Key,
 } from "lucide-react";
 import type { AIResult, IntelligenceFeatureId } from "../../pillars/intelligence/index.ts";
-import type { ProviderUnavailableSignal } from "../../ai/orchestration.ts";
+import { MAX_AI_PROMPT_LENGTH, type ProviderUnavailableSignal } from "../../ai/orchestration.ts";
 import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 import { useTranslation } from "react-i18next";
 
@@ -65,7 +65,25 @@ export default function Assistant() {
   const pendingChatMsg = useRef<string | null>(null);
 
   useEffect(() => {
-    void getAICapability(masterKey).then(setAiCapability);
+    let active = true;
+    void getAICapability()
+      .then((capability) => {
+        if (active) setAiCapability(capability);
+      })
+      .catch(() => {
+        if (active) setAiCapability({
+          byoConfigured: false,
+          edgeConfigured: false,
+          edgeAuthenticated: false,
+          available: false,
+          mode: null,
+          reason: "byo-required",
+          message: "",
+        });
+      });
+    return () => {
+      active = false;
+    };
   }, [masterKey]);
 
   const FEATURE_META: Record<FeatureId, {
@@ -125,7 +143,12 @@ export default function Assistant() {
   };
 
   const aiAvailable = aiCapability?.available === true;
-  const aiUnavailableMessage = aiCapability?.message ?? t("assistant.checkingSetup");
+  const managedMode = aiCapability?.mode === "managed";
+  const aiUnavailableMessage = aiCapability == null
+    ? t("assistant.checkingSetup")
+    : aiCapability.reason === "edge-auth-required"
+      ? t("assistant.setupRequiredEdge")
+      : t("assistant.setupRequiredByo");
 
   const handleChatSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -136,7 +159,6 @@ export default function Assistant() {
     const consent = getConsentLevel("literacy");
     if (consent === "NotPrompted") {
       pendingChatMsg.current = userMsg;
-      markNotPrompted("literacy");
       setConsentDialog("literacy");
       return;
     }
@@ -173,7 +195,6 @@ export default function Assistant() {
     if (snapshot == null || !aiAvailable) return;
     const consent = getConsentLevel(featureId);
     if (consent === "NotPrompted") {
-      markNotPrompted(featureId);
       setConsentDialog(featureId);
       return;
     }
@@ -203,6 +224,18 @@ export default function Assistant() {
             return;
         }
         addToFeed(featureId, result);
+      } catch (error) {
+        addToFeed(featureId, {
+          unavailable: true,
+          taskType: featureId === "prediction"
+            ? "classification"
+            : featureId === "pattern_detection"
+              ? "summarization"
+              : featureId === "literacy"
+                ? "teaching"
+                : "reasoning",
+          message: error instanceof Error ? error.message : t("assistant.chat.error"),
+        });
       } finally {
         setInsightLoading(null);
       }
@@ -212,6 +245,10 @@ export default function Assistant() {
   const handleConsentFull = () => {
     if (consentDialog == null) return;
     const fid = consentDialog;
+    if (managedMode) {
+      handleConsentRedacted();
+      return;
+    }
     setConsentLevel(fid, "FullGranted");
     setConsentDialog(null);
     if (fid === "literacy") {
@@ -408,6 +445,7 @@ export default function Assistant() {
               <form onSubmit={handleChatSubmit} className="flex gap-2">
                 <Input
                   value={chatInput}
+                  maxLength={MAX_AI_PROMPT_LENGTH}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder={t("assistant.chat.placeholder")}
                   disabled={!aiAvailable || chatSubmitting || snapshot == null}
@@ -446,20 +484,24 @@ export default function Assistant() {
                   <Badge variant="secondary" className="mb-1">{t("assistant.consent.limited")}</Badge>
                   <p className="text-xs text-muted-foreground">{consentFeature?.redactedData}</p>
                 </div>
-                <Separator />
-                <div>
-                  <Badge className="mb-1">{t("assistant.consent.full")}</Badge>
-                  <p className="text-xs text-muted-foreground">{consentFeature?.fullData}</p>
-                </div>
+                {!managedMode && (
+                  <>
+                    <Separator />
+                    <div>
+                      <Badge className="mb-1">{t("assistant.consent.full")}</Badge>
+                      <p className="text-xs text-muted-foreground">{consentFeature?.fullData}</p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
           <DialogFooter className="gap-2">
             <Button variant="ghost" onClick={handleConsentDeny}>{t("assistant.consent.notNow")}</Button>
-            {consentDialog !== "literacy" && (
+            {(managedMode || consentDialog !== "literacy") && (
               <Button variant="outline" onClick={handleConsentRedacted}>{t("assistant.consent.useLimited")}</Button>
             )}
-            <Button onClick={handleConsentFull}>{t("assistant.consent.grantFull")}</Button>
+            {!managedMode && <Button onClick={handleConsentFull}>{t("assistant.consent.grantFull")}</Button>}
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -478,6 +520,7 @@ export default function Assistant() {
           <div className="space-y-4 max-h-[50vh] overflow-y-auto">
             {CONSENT_FEATURES.map((fid) => {
               const level = getConsentLevel(fid);
+              const effectiveLevel = managedMode ? "Redacted" : level;
               const meta = FEATURE_META[fid];
               return (
                 <div key={fid} className="rounded-lg border p-3">
@@ -486,22 +529,24 @@ export default function Assistant() {
                       <p className="text-sm font-medium">{meta.name}</p>
                       <p className="text-xs text-muted-foreground">{meta.provider}</p>
                     </div>
-                    <Badge variant={level === "FullGranted" ? "default" : "secondary"} className="text-xs">
-                      {level === "FullGranted" ? t("assistant.consent.statusFull") : level === "NotPrompted" ? t("assistant.consent.statusNotPrompted") : t("assistant.consent.statusLimited")}
+                    <Badge variant={effectiveLevel === "FullGranted" ? "default" : "secondary"} className="text-xs">
+                      {effectiveLevel === "FullGranted" ? t("assistant.consent.statusFull") : effectiveLevel === "NotPrompted" ? t("assistant.consent.statusNotPrompted") : t("assistant.consent.statusLimited")}
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mb-2">{meta.description}</p>
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant={level === "FullGranted" ? "default" : "outline"}
-                      onClick={() => {
-                        setConsentLevel(fid, "FullGranted");
-                        setShowConsentSettings(false);
-                      }}
-                    >
-                      {t("assistant.consent.fullBtn")}
-                    </Button>
+                    {!managedMode && (
+                      <Button
+                        size="sm"
+                        variant={level === "FullGranted" ? "default" : "outline"}
+                        onClick={() => {
+                          setConsentLevel(fid, "FullGranted");
+                          setShowConsentSettings(false);
+                        }}
+                      >
+                        {t("assistant.consent.fullBtn")}
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant={level === "Redacted" ? "default" : "outline"}

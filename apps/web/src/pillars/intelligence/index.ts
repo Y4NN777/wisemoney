@@ -3,10 +3,6 @@ import type { MasterKey } from "@/crypto/envelope.ts";
 import { buildContext } from "@/ai/contextBuilder.ts";
 import { shapeEgress } from "@/consent/redaction.ts";
 import { getAICapability } from "@/lib/capabilities.ts";
-import {
-  getConsentLevel,
-  markNotPrompted,
-} from "@/consent/consentStore.ts";
 import { submit, type AIResult, type TaskType } from "@/ai/orchestration.ts";
 
 export type IntelligenceFeatureId =
@@ -67,18 +63,11 @@ async function requestAI(
   snapshot: FinancialStateSnapshot,
   masterKey: MasterKey
 ): Promise<AIResult> {
-  const currentLevel = getConsentLevel(featureId);
-  if (currentLevel === "NotPrompted") {
-    markNotPrompted(featureId);
-  }
-
   const rawContext = await buildContext(snapshot, masterKey);
 
-  const consentState = buildConsentState(featureId);
+  const egressContext = shapeEgress(featureId, rawContext);
 
-  const egressContext = shapeEgress(featureId, rawContext, consentState);
-
-  const capability = await getAICapability(masterKey);
+  const capability = await getAICapability();
   if (capability.mode == null) {
     return {
       unavailable: true,
@@ -88,18 +77,4 @@ async function requestAI(
   }
 
   return submit(egressContext, taskType, capability.mode, featureId, masterKey);
-}
-
-function buildConsentState(
-  featureId: string
-): { status: "NotPrompted" } | { status: "Redacted" } | { status: "FullGranted"; assertionExpiresAt: number } {
-  const level = getConsentLevel(featureId);
-  switch (level) {
-    case "FullGranted":
-      return { status: "FullGranted", assertionExpiresAt: Number.MAX_SAFE_INTEGER };
-    case "NotPrompted":
-      return { status: "NotPrompted" };
-    default:
-      return { status: "Redacted" };
-  }
 }

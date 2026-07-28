@@ -7,21 +7,20 @@
  * or Literacy pillars.
  *
  * Two paths (ARCHITECTURE §3 flows c and d):
- *   - Managed mode: client → Go edge (JWT + consent assertion) → provider
+ *   - Managed mode: client → Go edge (JWT, redacted aggregates only) → provider
  *   - BYO-key mode: client → provider directly (INV-AUTH-05)
  *
  * INV-PROXY-04: if all providers fail, return a ProviderUnavailableSignal — never
  * fabricate a response.
  *
  * INV-KEY-02 (BYO-key): decryptBYOKey is called in-memory; the key is passed to
- * the provider and then ZEROED from memory. Never sent to the edge. Never logged.
+ * the provider only for the direct request. Never sent to the edge or logged.
  */
 
-import type { EgressContext, FullEgressContext } from "@/consent/redaction.ts";
+import type { EgressContext } from "@/consent/redaction.ts";
 import { toRedacted } from "@/consent/redaction.ts";
-import { getConsentLevel, getConsentAssertion, storeConsentAssertion } from "@/consent/consentStore.ts";
 import { getAccessToken, refresh } from "@/auth/session.ts";
-import { postAiProxy, postConsentAssert, EdgeAuthError } from "@/api/edgeClient.ts";
+import { postAiProxy, EdgeAuthError } from "@/api/edgeClient.ts";
 import type { MasterKey } from "@/crypto/envelope.ts";
 import { decryptBYOKey } from "@/crypto/keyManagement.ts";
 
@@ -49,96 +48,12 @@ export type ProviderUnavailableSignal = {
 
 export type AIResult = NormalizedAIResponse | ProviderUnavailableSignal;
 
+export const MAX_AI_PROMPT_LENGTH = 4000;
+const DIRECT_PROVIDER_TIMEOUT_MS = 30_000;
+
 // ---------------------------------------------------------------------------
 // Internal helpers
 // ---------------------------------------------------------------------------
-
-/**
- * Type-guard: is the egress context the Full variant?
- *
- * FullEgressContext is a superset of RedactedEgressContext (it adds
- * `transactions`). We narrow on the presence of that field.
- */
-function isFullEgressContext(ctx: EgressContext): ctx is FullEgressContext {
-  return "transactions" in ctx;
-}
-
-/**
- * Determine the effective egress level and the assertion to attach.
- *
- * Full egress requires ALL three conditions to be true:
- *   1. consentStore reports FullGranted for this feature.
- *   2. A stored assertion is present (the edge signed it; client holds it opaquely).
- *   3. The egressContext is the Full variant (i.e. the caller shaped full data).
- *
- * Conditions 1 and 3 are evaluated synchronously here. Condition 2 — whether
- * the assertion is present (and not expired) — may require a network call to
- * re-acquire the assertion from POST /v1/consent/assert when it is absent or
- * expired. That re-acquisition is handled in resolveFullEgress (async).
- *
- * If conditions 1 or 3 are false the call is immediately downgraded to
- * "redacted" — no async work needed.
- */
-function needsFullEgressCheck(
-  featureId: string,
-  egressContext: EgressContext
-): boolean {
-  return (
-    getConsentLevel(featureId) === "FullGranted" &&
-    isFullEgressContext(egressContext)
-  );
-}
-
-/**
- * Attempt to resolve a valid assertion for full-egress.
- *
- * - If a stored assertion is present, return it immediately.
- * - If no assertion is stored, request one from POST /v1/consent/assert using
- *   the current access token, store it, and return it.
- * - If re-acquisition fails for any reason other than a 401 (or fails after a
- *   single 401→refresh retry), return null so the caller can downgrade.
- *
- * The 401→refresh path uses the same `masterKey` already materialised by the
- * caller so no extra key derivation is needed.
- */
-async function resolveFullEgress(
-  featureId: string,
-  accessToken: string,
-  masterKey: MasterKey
-): Promise<{ assertion: string } | null> {
-  // Fast path: assertion already cached.
-  const stored = getConsentAssertion(featureId);
-  if (stored !== null) {
-    return { assertion: stored };
-  }
-
-  // Slow path: re-acquire from the edge.
-  const acquire = async (token: string): Promise<string> => {
-    return postConsentAssert({ accessToken: token, feature: featureId });
-  };
-
-  try {
-    const assertion = await acquire(accessToken);
-    storeConsentAssertion(featureId, assertion);
-    return { assertion };
-  } catch (err) {
-    if (err instanceof EdgeAuthError && err.status === 401) {
-      // Single token-refresh attempt, then retry the assertion call once.
-      try {
-        await refresh(masterKey);
-        const freshToken = await getAccessToken(masterKey);
-        const assertion = await acquire(freshToken);
-        storeConsentAssertion(featureId, assertion);
-        return { assertion };
-      } catch {
-        // Refresh or second assertion attempt failed — downgrade to redacted.
-        return null;
-      }
-    }
-    // Network error, 4xx (non-401), 5xx — downgrade to redacted.
-    return null;
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -150,9 +65,7 @@ async function resolveFullEgress(
  * Two paths (selected via `mode`):
  *
  * MANAGED MODE:
- * 1. Determine egress level:
- *    - "full" iff consentStore reports FullGranted AND a stored assertion exists
- *      AND the egressContext is the Full variant. Any condition false → "redacted".
+ * 1. Reduce the context to redacted aggregates. Managed full egress is disabled.
  * 2. Obtain a valid access token via getAccessToken(masterKey) (refreshes near-expiry).
  * 3. POST to /v1/ai/proxy with the correct headers (ARCHITECTURE §10a, T-S0-05).
  * 4. On 401: refresh once, retry with the fresh token. If 401 again → surface as
@@ -184,28 +97,28 @@ type ProviderRoute = {
 
 const byoRouting: Record<TaskType, ProviderRoute[]> = {
   reasoning: [
-    { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "gemini", model: "gemini-3.6-flash", baseURL: "https://generativelanguage.googleapis.com" },
     { provider: "openai", model: "gpt-4o", baseURL: "https://api.openai.com" },
     { provider: "openrouter", model: "openai/gpt-4o", baseURL: "https://openrouter.ai/api" },
-    { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
+    { provider: "deepseek", model: "deepseek-v4-flash", baseURL: "https://api.deepseek.com" },
   ],
   classification: [
-    { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
-    { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "deepseek", model: "deepseek-v4-flash", baseURL: "https://api.deepseek.com" },
+    { provider: "gemini", model: "gemini-3.6-flash", baseURL: "https://generativelanguage.googleapis.com" },
     { provider: "openrouter", model: "openai/gpt-4o-mini", baseURL: "https://openrouter.ai/api" },
     { provider: "openai", model: "gpt-4o-mini", baseURL: "https://api.openai.com" },
   ],
   teaching: [
     { provider: "openai", model: "gpt-4o", baseURL: "https://api.openai.com" },
-    { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "gemini", model: "gemini-3.6-flash", baseURL: "https://generativelanguage.googleapis.com" },
     { provider: "openrouter", model: "openai/gpt-4o", baseURL: "https://openrouter.ai/api" },
-    { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
+    { provider: "deepseek", model: "deepseek-v4-flash", baseURL: "https://api.deepseek.com" },
   ],
   summarization: [
-    { provider: "gemini", model: "gemini-2.0-flash", baseURL: "https://generativelanguage.googleapis.com" },
+    { provider: "gemini", model: "gemini-3.6-flash", baseURL: "https://generativelanguage.googleapis.com" },
     { provider: "openai", model: "gpt-4o-mini", baseURL: "https://api.openai.com" },
     { provider: "openrouter", model: "openai/gpt-4o-mini", baseURL: "https://openrouter.ai/api" },
-    { provider: "nvidia_nim", model: "meta/llama-3.1-405b-instruct", baseURL: "https://integrate.api.nvidia.com" },
+    { provider: "deepseek", model: "deepseek-v4-flash", baseURL: "https://api.deepseek.com" },
   ],
 };
 
@@ -214,7 +127,8 @@ async function callProviderDirect(
   apiKey: string,
   payload: EgressContext,
   taskType: string,
-  featureId: string
+  featureId: string,
+  prompt?: string
 ): Promise<AIResult> {
   let url: string;
   let body: unknown;
@@ -223,32 +137,20 @@ async function callProviderDirect(
     case "gemini": {
       url = `${route.baseURL}/v1beta/models/${route.model}:generateContent`;
       body = {
-        contents: [{ parts: [{ text: JSON.stringify(payload) }] }],
+        contents: [{ parts: [{ text: providerInput(payload, prompt) }] }],
         generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
       };
       break;
     }
     case "openai":
-    case "openrouter": {
+    case "openrouter":
+    case "deepseek": {
       url = `${route.baseURL}/v1/chat/completions`;
       body = {
         model: route.model,
         messages: [
           { role: "system", content: "You are a helpful financial assistant." },
-          { role: "user", content: JSON.stringify(payload) },
-        ],
-        temperature: 0.7,
-        max_tokens: 1024,
-      };
-      break;
-    }
-    case "nvidia_nim": {
-      url = `${route.baseURL}/v1/chat/completions`;
-      body = {
-        model: route.model,
-        messages: [
-          { role: "system", content: "You are a helpful financial assistant." },
-          { role: "user", content: JSON.stringify(payload) },
+          { role: "user", content: providerInput(payload, prompt) },
         ],
         temperature: 0.7,
         max_tokens: 1024,
@@ -272,16 +174,10 @@ async function callProviderDirect(
         : { Authorization: `Bearer ${apiKey}` }),
     },
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(DIRECT_PROVIDER_TIMEOUT_MS),
   });
 
   if (!resp.ok) {
-    if (resp.status >= 500) {
-      return {
-        unavailable: true,
-        taskType: taskType as TaskType,
-        message: `${route.provider} is temporarily unavailable.`,
-      };
-    }
     throw new Error(`${route.provider} returned status ${resp.status}`);
   }
 
@@ -300,7 +196,17 @@ async function callProviderDirect(
     text = typeof content === "string" ? content : "";
   }
 
+  if (text.trim() === "") {
+    throw new Error(`${route.provider} returned an empty response`);
+  }
+
   return { text, featureId, taskType: taskType as TaskType, provider: route.provider };
+}
+
+function providerInput(payload: EgressContext, prompt?: string): string {
+  return JSON.stringify(prompt == null || prompt.trim() === ""
+    ? { context: payload }
+    : { context: payload, prompt: prompt.trim() });
 }
 
 export async function submit(
@@ -308,8 +214,13 @@ export async function submit(
   taskType: TaskType,
   mode: AIMode,
   featureId: string,
-  masterKey: MasterKey
+  masterKey: MasterKey,
+  prompt?: string
 ): Promise<AIResult> {
+  const normalizedPrompt = prompt?.trim();
+  if (normalizedPrompt != null && normalizedPrompt.length > MAX_AI_PROMPT_LENGTH) {
+    throw new Error(`AI prompt exceeds ${MAX_AI_PROMPT_LENGTH} characters`);
+  }
   if (mode === "byo") {
     const chain = byoRouting[taskType];
     if (chain == null || chain.length === 0) {
@@ -328,7 +239,7 @@ export async function submit(
       triedProviders.add(route.provider);
       try {
         const apiKey = await decryptBYOKey(route.provider, masterKey);
-        const result = await callProviderDirect(route, apiKey, egressContext, taskType, featureId);
+        const result = await callProviderDirect(route, apiKey, egressContext, taskType, featureId, normalizedPrompt);
         return result;
       } catch (err) {
         lastErr = err instanceof Error ? err : new Error(String(err));
@@ -350,63 +261,22 @@ export async function submit(
   // in, never retained in this module.
   const accessToken = await getAccessToken(masterKey);
 
-  // ── Egress level resolution ───────────────────────────────────────────────
-  //
-  // Full egress requires FullGranted consent + Full context variant + a valid
-  // assertion. The assertion may need to be re-acquired if absent/expired.
-  //
-  // If re-acquisition fails we downgrade to redacted (toRedacted strips the
-  // full-only fields) — never send a Full-shaped body under X-Egress-Level: redacted,
-  // which would produce a 400 from the edge structural cap (INV-EGR-03a).
-
-  let effectiveEgressLevel: "redacted" | "full";
-  let effectiveAssertion: string | undefined;
-  let effectivePayload: EgressContext;
-
-  if (needsFullEgressCheck(featureId, egressContext)) {
-    const resolved = await resolveFullEgress(featureId, accessToken, masterKey);
-    if (resolved !== null) {
-      // Assertion acquired (or already cached) — send full.
-      effectiveEgressLevel = "full";
-      effectiveAssertion = resolved.assertion;
-      effectivePayload = egressContext;
-    } else {
-      // Re-acquisition failed — graceful downgrade: strip full-only fields so
-      // the payload is structurally RedactedEgressContext (INV-EGR-01).
-      effectiveEgressLevel = "redacted";
-      effectiveAssertion = undefined;
-      effectivePayload = toRedacted(egressContext);
-    }
-  } else {
-    // Consent is Redacted/NotPrompted, or context is already the Redacted
-    // variant — send redacted without attempting assertion re-acquisition.
-    effectiveEgressLevel = "redacted";
-    effectiveAssertion = undefined;
-    effectivePayload = egressContext;
-  }
+  // Managed MVP is aggregate-only regardless of local consent state. Full
+  // egress remains available only through the user-funded BYO path (ADR-0011).
+  const effectivePayload = toRedacted(egressContext);
 
   const callProxy = async (token: string): Promise<AIResult> => {
     try {
       // exactOptionalPropertyTypes: build the args object without the optional
       // key when there is no assertion, so `undefined` is not assigned to an
       // optional property (TS2379).
-      const proxyArgs =
-        effectiveAssertion !== undefined
-          ? {
-              accessToken: token,
-              egressLevel: effectiveEgressLevel,
-              feature: featureId,
-              consentAssertion: effectiveAssertion,
-              taskType,
-              payload: effectivePayload,
-            }
-          : {
-              accessToken: token,
-              egressLevel: effectiveEgressLevel,
-              feature: featureId,
-              taskType,
-              payload: effectivePayload,
-            };
+      const proxyArgs = {
+        accessToken: token,
+        feature: featureId,
+        taskType,
+        payload: effectivePayload,
+        ...(normalizedPrompt == null || normalizedPrompt === "" ? {} : { prompt: normalizedPrompt }),
+      };
       const resp = await postAiProxy(proxyArgs);
       return { text: resp.content, featureId, taskType, provider: resp.provider };
     } catch (err) {
@@ -431,8 +301,6 @@ export async function submit(
     if (err instanceof EdgeAuthError && err.status === 401) {
       // Token was rejected — perform one refresh attempt and retry.
       // INV-AUTH-07: masterKey passed through, not retained.
-      // Note: assertion re-acquisition already performed a refresh if the
-      // assertion call 401-ed. This retry covers a 401 on the proxy call itself.
       await refresh(masterKey);
       const freshToken = await getAccessToken(masterKey);
       // Second attempt: if this 401s again the error propagates to the caller —
@@ -441,40 +309,4 @@ export async function submit(
     }
     throw err;
   }
-}
-
-/**
- * Resolve the primary provider config for a task type in BYO-key mode.
- */
-export function clientSideRoute(
-  taskType: TaskType,
-  preferredProvider?: string
-): { provider: string; model: string } {
-  const chain = byoRouting[taskType];
-  if (chain == null || chain.length === 0) {
-    throw new Error(`clientSideRoute: no route for task type "${taskType}"`);
-  }
-  const entry = preferredProvider != null
-    ? chain.find((c) => c.provider === preferredProvider)
-    : chain[0];
-  if (entry == null) {
-    throw new Error(`clientSideRoute: provider "${preferredProvider}" not found for "${taskType}"`);
-  }
-  return { provider: entry.provider, model: entry.model };
-}
-
-/**
- * Resolve the next fallback provider for a task type in BYO-key mode.
- * Cross-provider fallback (FR-AIORCH-05): the fallback must be on a
- * DIFFERENT provider than the one that failed.
- */
-export function clientSideFallback(
-  taskType: TaskType,
-  failedProvider: string
-): { provider: string; model: string } | null {
-  const chain = byoRouting[taskType];
-  if (chain == null) return null;
-  const next = chain.find((c) => c.provider !== failedProvider);
-  if (next == null) return null;
-  return { provider: next.provider, model: next.model };
 }
