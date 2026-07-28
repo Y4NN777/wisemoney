@@ -11,11 +11,13 @@ export default defineConfig({
     VitePWA({
       registerType: "prompt",
       injectAutoRegister: false,
-      includeAssets: ["icon.svg", "wisemoney-icon.svg", "logo.svg", "icons/*.png"],
+      includeAssets: ["wisemoney-icon.svg", "logo.svg", "icons/wisemoney-icon-*.png"],
       manifest: {
+        id: "/",
         name: "WiseMoney",
         short_name: "WiseMoney",
         description: "Local-first personal finance with AI guidance",
+        lang: "en",
         theme_color: "#0077b6",
         background_color: "#ffffff",
         display: "standalone",
@@ -76,6 +78,25 @@ export default defineConfig({
   ],
   resolve: {
     alias: { "@": "/src" },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (id.includes("/write-excel-file/") || id.includes("/fflate/")) return "excel-export";
+          if (id.includes("/@tanstack/")) return "data-router-vendor";
+          if (id.includes("/hash-wasm/") || id.includes("/@simplewebauthn/") || id.includes("/dexie/")) {
+            return "crypto-storage-vendor";
+          }
+          if (id.includes("/i18next") || id.includes("/react-i18next/")) return "i18n-vendor";
+          if (id.includes("/@radix-ui/") || id.includes("/lucide-react/") || id.includes("/sonner/")) {
+            return "ui-vendor";
+          }
+          return "vendor";
+        },
+      },
+    },
   },
   // VITE_EDGE_BASE_URL is the only env variable the client consumes (managed mode).
   // BYO-key mode requires no env variables — it runs fully client-side (INV-AUTH-05).
