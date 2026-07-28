@@ -108,6 +108,7 @@ import {
   refresh,
   getAccessToken,
   restoreSession,
+  lockSession,
   logout,
   getSessionStatus,
   __resetSessionForTest,
@@ -291,6 +292,26 @@ describe("refresh", () => {
     // No login — no record.
     await expect(refresh(masterKey)).rejects.toThrow("no authSession record");
   });
+
+  it("coalesces concurrent refreshes into one token rotation", async () => {
+    const masterKey = await makeTestMasterKey();
+    mockLoginUser.mockResolvedValueOnce(makeTokenResponse("old.access", "old.refresh", 900));
+    await login("u@x.com", "pass", masterKey);
+
+    let resolveRefresh!: (tokens: AuthTokenResponse) => void;
+    mockRefreshSession.mockImplementationOnce(() => new Promise((resolve) => {
+      resolveRefresh = resolve;
+    }));
+
+    const first = refresh(masterKey);
+    const second = refresh(masterKey);
+    await vi.waitFor(() => expect(mockRefreshSession).toHaveBeenCalledOnce());
+    resolveRefresh(makeTokenResponse("new.access", "new.refresh", 900));
+
+    await Promise.all([first, second]);
+    expect(mockRefreshSession).toHaveBeenCalledOnce();
+    expect(__getSessionStateForTest().accessToken).toBe("new.access");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -356,6 +377,47 @@ describe("getAccessToken", () => {
 });
 
 // ---------------------------------------------------------------------------
+// lockSession()
+// ---------------------------------------------------------------------------
+
+describe("lockSession", () => {
+  it("drops the access token but preserves the sealed refresh session", async () => {
+    const masterKey = await makeTestMasterKey();
+    mockLoginUser.mockResolvedValueOnce(makeTokenResponse("access.token", "refresh.token", 900));
+    await login("u@x.com", "pass", masterKey);
+
+    lockSession();
+
+    expect(__getSessionStateForTest()).toEqual({
+      status: "locked",
+      accessToken: null,
+      accessTokenExpiresAt: null,
+    });
+    expect(fakeAuthSession.peek("primary")).toBeDefined();
+  });
+
+  it("prevents an in-flight refresh from re-authenticating after lock", async () => {
+    const masterKey = await makeTestMasterKey();
+    mockLoginUser.mockResolvedValueOnce(makeTokenResponse("old.access", "old.refresh", 900));
+    await login("u@x.com", "pass", masterKey);
+
+    let resolveRefresh!: (tokens: AuthTokenResponse) => void;
+    mockRefreshSession.mockImplementationOnce(() => new Promise((resolve) => {
+      resolveRefresh = resolve;
+    }));
+    const refreshing = refresh(masterKey);
+    await vi.waitFor(() => expect(mockRefreshSession).toHaveBeenCalledOnce());
+
+    lockSession();
+    resolveRefresh(makeTokenResponse("new.access", "new.refresh", 900));
+
+    await expect(refreshing).rejects.toMatchObject({ name: "AbortError" });
+    expect(getSessionStatus()).toBe("locked");
+    expect(__getSessionStateForTest().accessToken).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // restoreSession()
 // ---------------------------------------------------------------------------
 
@@ -411,5 +473,25 @@ describe("logout", () => {
 
   it("is idempotent: does not throw when already logged out", async () => {
     await expect(logout()).resolves.toBeUndefined();
+  });
+
+  it("wins over an in-flight refresh", async () => {
+    const masterKey = await makeTestMasterKey();
+    mockLoginUser.mockResolvedValueOnce(makeTokenResponse("old.access", "old.refresh", 900));
+    await login("u@x.com", "pass", masterKey);
+
+    let resolveRefresh!: (tokens: AuthTokenResponse) => void;
+    mockRefreshSession.mockImplementationOnce(() => new Promise((resolve) => {
+      resolveRefresh = resolve;
+    }));
+    const refreshing = refresh(masterKey);
+    await vi.waitFor(() => expect(mockRefreshSession).toHaveBeenCalledOnce());
+    const loggingOut = logout();
+    resolveRefresh(makeTokenResponse("new.access", "new.refresh", 900));
+
+    const [refreshResult] = await Promise.allSettled([refreshing, loggingOut]);
+    expect(refreshResult.status).toBe("rejected");
+    expect(getSessionStatus()).toBe("unauthenticated");
+    expect(fakeAuthSession.peek("primary")).toBeUndefined();
   });
 });

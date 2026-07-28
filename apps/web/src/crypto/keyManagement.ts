@@ -35,7 +35,7 @@ import { seal, open } from "./envelope.ts";
 // ---------------------------------------------------------------------------
 
 /** Argon2id KDF parameters stored in keyMeta alongside the salt. */
-export type Argon2idParams = {
+type Argon2idParams = {
   /** Memory in KiB. Minimum 65536 (64 MiB) per ARCHITECTURE §7. */
   memory: number;
   /** Iteration count. Minimum 3. */
@@ -82,6 +82,52 @@ const WEBAUTHN_PRF_APP_SALT: BufferSource = (() => {
   buf.set(src);
   return buf;
 })();
+
+/**
+ * Create a local WebAuthn credential for optional device unlock.
+ * The credential is not an account credential and never leaves this browser.
+ */
+export async function createWebAuthnCredential(): Promise<Uint8Array> {
+  if (typeof PublicKeyCredential === "undefined" || navigator.credentials == null) {
+    throw new Error("WebAuthn is not supported by this browser");
+  }
+
+  const credential = await navigator.credentials.create({
+    publicKey: {
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      rp: { name: "WiseMoney" },
+      user: {
+        id: crypto.getRandomValues(new Uint8Array(32)),
+        name: "local-vault",
+        displayName: "WiseMoney local vault",
+      },
+      pubKeyCredParams: [
+        { type: "public-key", alg: -7 },
+        { type: "public-key", alg: -257 },
+      ],
+      authenticatorSelection: {
+        residentKey: "preferred",
+        userVerification: "required",
+      },
+      timeout: 60_000,
+      attestation: "none",
+      extensions: {
+        prf: { eval: { first: WEBAUTHN_PRF_APP_SALT } },
+      },
+    },
+  });
+
+  if (!(credential instanceof PublicKeyCredential)) {
+    throw new Error("WebAuthn credential creation was cancelled");
+  }
+  const extensionResults = credential.getClientExtensionResults() as {
+    prf?: { enabled?: boolean };
+  };
+  if (extensionResults.prf?.enabled !== true) {
+    throw new Error("WebAuthn authenticator does not support the PRF extension");
+  }
+  return new Uint8Array(credential.rawId.slice(0));
+}
 
 // ---------------------------------------------------------------------------
 // Internal helpers
@@ -300,7 +346,13 @@ async function deriveMasterKeyWithRaw(
 
   // Import a non-extractable CryptoKey. The raw buffer is NOT zeroed here —
   // that is the caller's responsibility (see contract above).
-  const cryptoKey = await importRawAsAesGcm256(raw);
+  let cryptoKey: CryptoKey;
+  try {
+    cryptoKey = await importRawAsAesGcm256(raw);
+  } catch (error) {
+    raw.fill(0);
+    throw error;
+  }
 
   return {
     masterKey: asMasterKey(cryptoKey),
@@ -353,52 +405,44 @@ export async function setupMasterKey(
     null
   );
 
-  // Seal the known constant to produce the verificationToken/verificationIv pair.
-  const { ciphertext: verificationToken, iv: verificationIv } =
-    await seal(VERIFICATION_CONSTANT, masterKey);
+  try {
+    const { ciphertext: verificationToken, iv: verificationIv } =
+      await seal(VERIFICATION_CONSTANT, masterKey);
 
-  let webAuthnHandle: Uint8Array | null = null;
-  let wrappedKey: Uint8Array | null = null;
-  let wrappedIv: Uint8Array | null = null;
+    let webAuthnHandle: Uint8Array | null = null;
+    let wrappedKey: Uint8Array | null = null;
+    let wrappedIv: Uint8Array | null = null;
 
-  if (credentialId != null) {
-    // rawBytes are passed to wrapMasterKeyWithWebAuthn, which zeroes them
-    // internally after sealing. The fill(0) below is belt-and-suspenders.
-    try {
-      const wrapped = await wrapMasterKeyWithWebAuthn(rawBytes, credentialId);
-      webAuthnHandle = wrapped.webAuthnHandle;
-      wrappedKey = wrapped.wrappedKey;
-      wrappedIv = wrapped.wrappedIv;
-    } catch (err) {
-      // PRF unsupported or authenticator error — WebAuthn unlock will not be
-      // available, but the passphrase path works. Surface the error as a
-      // non-fatal warning: the caller can notify the user.
-      // rawBytes must still be zeroed even on this path.
-      rawBytes.fill(0);
-      throw new Error(
-        `setupMasterKey: WebAuthn wrap failed — ${String(err)}. ` +
-          "WebAuthn daily unlock will not be available. " +
-          "Re-call setupMasterKey without credentialId to complete passphrase-only setup."
-      );
+    if (credentialId != null) {
+      try {
+        const wrapped = await wrapMasterKeyWithWebAuthn(rawBytes, credentialId);
+        webAuthnHandle = wrapped.webAuthnHandle;
+        wrappedKey = wrapped.wrappedKey;
+        wrappedIv = wrapped.wrappedIv;
+      } catch (err) {
+        throw new Error(
+          `setupMasterKey: WebAuthn wrap failed — ${String(err)}. ` +
+            "WebAuthn daily unlock will not be available. " +
+            "Re-call setupMasterKey without credentialId to complete passphrase-only setup."
+        );
+      }
     }
+
+    await db.keyMeta.put({
+      id: "primary",
+      argon2idSalt: salt,
+      argon2idParams: params,
+      webAuthnHandle,
+      wrappedKey,
+      wrappedIv,
+      verificationToken,
+      verificationIv,
+    });
+
+    return masterKey;
+  } finally {
+    rawBytes.fill(0);
   }
-
-  // Zero raw bytes. If credentialId was provided, wrapMasterKeyWithWebAuthn
-  // already zeroed them; this fill is the belt-and-suspenders second zero.
-  rawBytes.fill(0);
-
-  await db.keyMeta.put({
-    id: "primary",
-    argon2idSalt: salt,
-    argon2idParams: params,
-    webAuthnHandle,
-    wrappedKey,
-    wrappedIv,
-    verificationToken,
-    verificationIv,
-  });
-
-  return masterKey;
 }
 
 // ---------------------------------------------------------------------------
@@ -415,9 +459,9 @@ export async function setupMasterKey(
  * to seal the raw master key bytes via seal(). The raw key bytes and PRF bytes
  * are zeroed before returning.
  *
- * BROWSER-ONLY: requires a real WebAuthn authenticator with PRF (hmac-secret)
- * extension support. Cannot be executed headlessly — do not include in unit tests.
- * Integration verification requires a browser with a compatible FIDO2 device.
+ * BROWSER-ONLY: requires a WebAuthn authenticator with PRF (hmac-secret)
+ * extension support. Integration verification uses Chrome's virtual CTAP2
+ * authenticator; real-device behavior remains browser/platform dependent.
  *
  * @param rawMasterKeyBytes - 32 raw Argon2id output bytes (CALLER MUST ZERO after call)
  * @param credentialId      - WebAuthn credential handle (from registration)
@@ -431,31 +475,25 @@ export async function wrapMasterKeyWithWebAuthn(
   wrappedKey: Uint8Array;
   wrappedIv: Uint8Array;
 }> {
-  const prfBytes = await assertPrfBytes(credentialId);
+  try {
+    const prfBytes = await assertPrfBytes(credentialId);
+    let wrappingKey: CryptoKey;
+    try {
+      wrappingKey = await importRawAsAesGcm256(prfBytes);
+    } finally {
+      prfBytes.fill(0);
+    }
 
-  // Import PRF bytes as the wrapping key (encrypt/decrypt only — F1).
-  const wrappingKey = await importRawAsAesGcm256(prfBytes);
+    const wrappingMasterKey = { _brand: "MasterKey" as const, key: wrappingKey };
+    const { ciphertext: wrappedKey, iv: wrappedIv } = await seal(
+      rawMasterKeyBytes,
+      wrappingMasterKey
+    );
 
-  // Zero the PRF bytes immediately — they must not outlive this import.
-  prfBytes.fill(0);
-
-  // Seal the raw master key bytes under the wrapping key. seal() generates a
-  // fresh IV and returns { ciphertext, iv }. We treat rawMasterKeyBytes as
-  // opaque plaintext so no extractable CryptoKey is ever needed.
-  const wrappingMasterKey = { _brand: "MasterKey" as const, key: wrappingKey };
-  const { ciphertext: wrappedKey, iv: wrappedIv } = await seal(
-    rawMasterKeyBytes,
-    wrappingMasterKey
-  );
-
-  // Zero the raw master key bytes as required by contract.
-  rawMasterKeyBytes.fill(0);
-
-  return {
-    webAuthnHandle: credentialId,
-    wrappedKey,
-    wrappedIv,
-  };
+    return { webAuthnHandle: credentialId, wrappedKey, wrappedIv };
+  } finally {
+    rawMasterKeyBytes.fill(0);
+  }
 }
 
 /**
@@ -478,12 +516,12 @@ export async function unwrapMasterKeyWithWebAuthn(
   wrappedIv: Uint8Array
 ): Promise<MasterKey> {
   const prfBytes = await assertPrfBytes(webAuthnHandle);
-
-  // Import PRF bytes as the wrapping key (encrypt/decrypt only — F1).
-  const wrappingKey = await importRawAsAesGcm256(prfBytes);
-
-  // Zero PRF bytes immediately.
-  prfBytes.fill(0);
+  let wrappingKey: CryptoKey;
+  try {
+    wrappingKey = await importRawAsAesGcm256(prfBytes);
+  } finally {
+    prfBytes.fill(0);
+  }
 
   // Open the wrapped envelope to recover the raw master key bytes.
   const wrappingMasterKey = { _brand: "MasterKey" as const, key: wrappingKey };
@@ -494,10 +532,12 @@ export async function unwrapMasterKeyWithWebAuthn(
 
   // Import recovered bytes as the session master key (non-extractable,
   // encrypt/decrypt only — F1).
-  const cryptoKey = await importRawAsAesGcm256(rawBytes);
-
-  // Zero the raw bytes immediately after import.
-  rawBytes.fill(0);
+  let cryptoKey: CryptoKey;
+  try {
+    cryptoKey = await importRawAsAesGcm256(rawBytes);
+  } finally {
+    rawBytes.fill(0);
+  }
 
   return asMasterKey(cryptoKey);
 }
@@ -530,11 +570,13 @@ export async function storeBYOKey(
   const encoder = new TextEncoder();
   const rawBytes = encoder.encode(rawApiKey);
 
-  const { ciphertext, iv } = await seal(rawBytes, masterKey);
-
-  // Best-effort zero the intermediate byte buffer. The JS string rawApiKey
-  // itself cannot be zeroed — string immutability is a language constraint.
-  rawBytes.fill(0);
+  let ciphertext: Uint8Array;
+  let iv: Uint8Array;
+  try {
+    ({ ciphertext, iv } = await seal(rawBytes, masterKey));
+  } finally {
+    rawBytes.fill(0);
+  }
 
   await db.byoProviderKeys.put({
     id: providerId,
@@ -572,7 +614,11 @@ export async function decryptBYOKey(
     masterKey
   );
 
-  return new TextDecoder().decode(plaintext);
+  try {
+    return new TextDecoder().decode(plaintext);
+  } finally {
+    plaintext.fill(0);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -609,10 +655,11 @@ export async function verifyPassphrase(passphrase: string): Promise<boolean> {
   );
 
   try {
-    await open(
+    const verification = await open(
       { ciphertext: meta.verificationToken, iv: meta.verificationIv },
       masterKey
     );
+    verification.fill(0);
     return true;
   } catch {
     // AES-GCM auth tag mismatch → wrong passphrase.

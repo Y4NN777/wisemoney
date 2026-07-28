@@ -1,17 +1,19 @@
 import { useState, useEffect, useRef, type FormEvent, type ReactNode } from "react";
 import {
   deriveMasterKey,
+  createWebAuthnCredential,
   setupMasterKey,
   verifyPassphrase,
   unwrapMasterKeyWithWebAuthn,
 } from "../../crypto/keyManagement.ts";
 import type { MasterKey } from "../../crypto/envelope.ts";
 import { db } from "../../db/schema.ts";
-import { register, restoreSession } from "../../auth/session.ts";
+import { lockSession, register, restoreSession } from "../../auth/session.ts";
 import { importJSON } from "../../exportImport/index.ts";
 import { RouterProvider } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { router } from "../../router.ts";
-import { MasterKeyContext } from "../../lib/masterKeyContext.ts";
+import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContext.ts";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
 import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, Languages, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, Smartphone, Upload, WalletCards, WifiOff } from "lucide-react";
@@ -21,6 +23,7 @@ import { Label } from "../../components/ui/label.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import Logo from "../../components/Logo.tsx";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 type Flow =
   | "loading"
@@ -45,13 +48,33 @@ function isStandaloneDisplayMode(): boolean {
 
 export default function KeyUnlock() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [flow, setFlow] = useState<Flow>("loading");
   const [error, setError] = useState<string | null>(null);
   const [masterKey, setMasterKey] = useState<MasterKey | null>(null);
   const [vaultUnlockFlow, setVaultUnlockFlow] = useState<"setup" | "unlock-passphrase" | "unlock-webauthn">("setup");
 
+  const openVault = async (mk: MasterKey) => {
+    await restoreSession(mk);
+    const meta = await db.keyMeta.get("primary");
+    setVaultUnlockFlow(meta?.webAuthnHandle != null ? "unlock-webauthn" : "unlock-passphrase");
+    queryClient.clear();
+    setMasterKey(mk);
+    setFlow("app");
+  };
+
+  const lockVault = () => {
+    lockSession();
+    queryClient.clear();
+    setMasterKey(null);
+    setError(null);
+    setFlow(vaultUnlockFlow);
+  };
+
   useEffect(() => {
+    let active = true;
     void db.keyMeta.get("primary").then((meta) => {
+      if (!active) return;
       if (meta == null) {
         setVaultUnlockFlow("setup");
         setFlow(isStandaloneDisplayMode() ? "restore" : "landing");
@@ -62,7 +85,15 @@ export default function KeyUnlock() {
         setVaultUnlockFlow("unlock-passphrase");
         setFlow("landing");
       }
+    }).catch(() => {
+      if (active) {
+        setError("Unable to open local storage");
+        setFlow("landing");
+      }
     });
+    return () => {
+      active = false;
+    };
   }, []);
 
   let content: React.ReactNode;
@@ -86,11 +117,7 @@ export default function KeyUnlock() {
       <RestoreWorkspace
         onBack={() => setFlow("landing")}
         onCreateNew={() => setFlow("setup")}
-        onReady={async (mk) => {
-          setMasterKey(mk);
-          await restoreSession(mk);
-          setFlow("app");
-        }}
+        onReady={openVault}
         error={error}
         setError={setError}
       />
@@ -101,11 +128,7 @@ export default function KeyUnlock() {
     content = (
       <LocalSetup
         onBack={() => setFlow("landing")}
-        onReady={async (mk) => {
-          setMasterKey(mk);
-          await restoreSession(mk);
-          setFlow("app");
-        }}
+        onReady={openVault}
         error={error}
         setError={setError}
       />
@@ -114,11 +137,7 @@ export default function KeyUnlock() {
     content = (
       <PassphraseUnlock
         onBack={() => setFlow("landing")}
-        onUnlock={async (mk) => {
-          setMasterKey(mk);
-          await restoreSession(mk);
-          setFlow("app");
-        }}
+        onUnlock={openVault}
         error={error}
         setError={setError}
       />
@@ -127,17 +146,13 @@ export default function KeyUnlock() {
     content = (
       <WebAuthnUnlock
         onBack={() => setFlow("landing")}
-        onUnlock={async (mk) => {
-          setMasterKey(mk);
-          await restoreSession(mk);
-          setFlow("app");
-        }}
+        onUnlock={openVault}
         error={error}
         setError={setError}
       />
     );
   } else {
-    content = <AppShell masterKey={masterKey!} />;
+    content = <AppShell masterKey={masterKey!} onLock={lockVault} />;
   }
 
   return (
@@ -268,6 +283,7 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
   const [confirmPassphrase, setConfirmPassphrase] = useState("");
   const [exportPassphrase, setExportPassphrase] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [enableDeviceUnlock, setEnableDeviceUnlock] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
@@ -291,8 +307,18 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
     setSubmitting(true);
     void (async () => {
       try {
-        const mk = await setupMasterKey(passphrase);
-        await importJSON(file, mk, exportPassphrase.trim().length > 0 ? exportPassphrase.trim() : undefined);
+        const previousKeyMeta = await db.keyMeta.get("primary");
+        const mk = await setupWithOptionalDeviceUnlock(passphrase, enableDeviceUnlock, t);
+        try {
+          await importJSON(file, mk, exportPassphrase.trim().length > 0 ? exportPassphrase.trim() : undefined);
+        } catch (importError) {
+          if (previousKeyMeta == null) {
+            await db.keyMeta.delete("primary");
+          } else {
+            await db.keyMeta.put(previousKeyMeta);
+          }
+          throw importError;
+        }
         await onReady(mk);
       } catch (err) {
         setError(err instanceof Error ? err.message : t("keyUnlock.restore.errors.failed"));
@@ -376,6 +402,7 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
                   />
                   <p className="text-xs text-muted-foreground">{t("keyUnlock.restore.exportPassphraseHelp")}</p>
                 </div>
+                <DeviceUnlockOption checked={enableDeviceUnlock} onCheckedChange={setEnableDeviceUnlock} />
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Button type="submit" disabled={submitting} className="justify-between">
                     {submitting ? t("keyUnlock.restore.restoring") : t("keyUnlock.restore.restore")}
@@ -710,12 +737,17 @@ function InstallPromptCard() {
   const handleInstall = () => {
     if (installPrompt == null) return;
     void (async () => {
-      await installPrompt.prompt();
-      const choice = await installPrompt.userChoice;
-      if (choice.outcome === "accepted") {
-        setIsInstalled(true);
+      try {
+        await installPrompt.prompt();
+        const choice = await installPrompt.userChoice;
+        if (choice.outcome === "accepted") {
+          setIsInstalled(true);
+        }
+      } catch {
+        toast.error(t("keyUnlock.install.failed"));
+      } finally {
+        setInstallPrompt(null);
       }
-      setInstallPrompt(null);
     })();
   };
 
@@ -835,17 +867,43 @@ function LanguageSwitcher() {
 
 type AppShellProps = {
   masterKey: MasterKey;
+  onLock: () => void;
 };
 
-function AppShell({ masterKey }: AppShellProps) {
+function AppShell({ masterKey, onLock }: AppShellProps) {
+  const { t } = useTranslation();
+  const [categoriesReady, setCategoriesReady] = useState(false);
+
   useEffect(() => {
-    void seedDefaultCategories(masterKey);
+    let active = true;
+    setCategoriesReady(false);
+    void seedDefaultCategories(masterKey)
+      .catch(() => {
+        toast.error(t("keyUnlock.errors.categoryInitialization"));
+      })
+      .finally(() => {
+        if (active) setCategoriesReady(true);
+      });
+    return () => {
+      active = false;
+    };
   }, [masterKey]);
 
+  if (!categoriesReady) {
+    return (
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-6 bg-background p-4" aria-live="polite">
+        <Logo className="h-auto w-56" />
+        <p className="text-sm text-muted-foreground animate-pulse">{t("keyUnlock.loading")}</p>
+      </div>
+    );
+  }
+
   return (
-    <MasterKeyContext.Provider value={masterKey}>
-      <RouterProvider router={router} />
-    </MasterKeyContext.Provider>
+    <VaultActionsContext.Provider value={{ lockVault: onLock }}>
+      <MasterKeyContext.Provider value={masterKey}>
+        <RouterProvider router={router} />
+      </MasterKeyContext.Provider>
+    </VaultActionsContext.Provider>
   );
 }
 
@@ -861,6 +919,7 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
   const [passphrase, setPassphrase] = useState("");
   const [confirmPassphrase, setConfirmPassphrase] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [enableDeviceUnlock, setEnableDeviceUnlock] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -876,7 +935,7 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
     setSubmitting(true);
     void (async () => {
       try {
-        const mk = await setupMasterKey(passphrase);
+        const mk = await setupWithOptionalDeviceUnlock(passphrase, enableDeviceUnlock, t);
         await onReady(mk);
       } catch (err) {
         setError(err instanceof Error ? err.message : t("keyUnlock.setup.errors.failed"));
@@ -929,6 +988,7 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
             <p className="text-xs text-muted-foreground">
               {t("keyUnlock.login.passphraseDescription")}
             </p>
+            <DeviceUnlockOption checked={enableDeviceUnlock} onCheckedChange={setEnableDeviceUnlock} />
             <Button type="submit" disabled={submitting || passphrase.length === 0} className="w-full">
               {submitting ? t("keyUnlock.setup.submitting") : t("keyUnlock.setup.createVault")}
             </Button>
@@ -938,6 +998,52 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
       </Card>
       </div>
     </main>
+  );
+}
+
+type Translate = (key: string) => string;
+
+async function setupWithOptionalDeviceUnlock(
+  passphrase: string,
+  enabled: boolean,
+  t: Translate,
+): Promise<MasterKey> {
+  if (!enabled) return setupMasterKey(passphrase);
+
+  let credentialId: Uint8Array;
+  try {
+    credentialId = await createWebAuthnCredential();
+  } catch {
+    toast.warning(t("keyUnlock.setup.deviceUnlockUnavailable"));
+    return setupMasterKey(passphrase);
+  }
+
+  try {
+    return await setupMasterKey(passphrase, undefined, credentialId);
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("WebAuthn wrap failed")) {
+      toast.warning(t("keyUnlock.setup.deviceUnlockUnavailable"));
+      return setupMasterKey(passphrase);
+    }
+    throw error;
+  }
+}
+
+function DeviceUnlockOption({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (checked: boolean) => void }) {
+  const { t } = useTranslation();
+  return (
+    <label className="flex cursor-pointer items-start gap-3 rounded-md border border-border bg-accent/35 p-3">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onCheckedChange(event.target.checked)}
+        className="mt-0.5 h-4 w-4 accent-primary"
+      />
+      <span>
+        <span className="block text-sm font-medium">{t("keyUnlock.setup.deviceUnlock")}</span>
+        <span className="mt-1 block text-xs text-muted-foreground">{t("keyUnlock.setup.deviceUnlockDescription")}</span>
+      </span>
+    </label>
   );
 }
 

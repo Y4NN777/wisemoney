@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Button } from "../../components/ui/button.tsx";
-import { Monitor, Smartphone, Laptop, Globe, Clock, LogOut } from "lucide-react";
-import { getSessionStatus } from "../../auth/session.ts";
+import { Monitor, Smartphone, Laptop, Globe, Clock, LockKeyhole, LogOut } from "lucide-react";
+import { logout, useSessionStatus } from "../../auth/session.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
 import { useTranslation } from "react-i18next";
+import { useVaultActions } from "../../lib/masterKeyContext.ts";
+import { toast } from "sonner";
 
 type DeviceInfo = {
   userAgent: string;
@@ -46,23 +48,10 @@ function browserName(ua: string): string {
 
 export default function DevicesSection() {
   const { t } = useTranslation();
+  const { lockVault } = useVaultActions();
   const [device] = useState<DeviceInfo>(detectDevice);
-  const [sessionStatus, setSessionStatus] = useState(getSessionStatus());
+  const sessionStatus = useSessionStatus();
   const [now] = useState(() => new Date().toLocaleString());
-
-  useEffect(() => {
-    const unsub = () => {
-      // subscribe to store changes
-    };
-    // Poll session status on mount
-    const interval = setInterval(() => {
-      setSessionStatus(getSessionStatus());
-    }, 5000);
-    return () => {
-      clearInterval(interval);
-      unsub();
-    };
-  }, []);
 
   const isAuthenticated = sessionStatus === "authenticated";
   const edgeConfigured = isEdgeConfigured();
@@ -118,17 +107,24 @@ export default function DevicesSection() {
           </div>
         </div>
 
+        <Button variant="outline" size="sm" className="w-full gap-2" onClick={lockVault}>
+          <LockKeyhole className="h-4 w-4" />
+          {t("settings.devices.lock")}
+        </Button>
+
         <Button
           variant="outline"
           size="sm"
           className="w-full gap-2 text-destructive hover:text-destructive"
           disabled={!isAuthenticated}
           onClick={() => {
-            void import("../../auth/session.ts").then((mod) =>
-              mod.logout().then(() => {
-                window.location.reload();
-              })
-            );
+            void logout()
+              .then(() => window.location.reload())
+              .catch((error: unknown) => {
+                toast.error(t("settings.devices.signOutFailed"), {
+                  description: error instanceof Error ? error.message : t("common.unknown"),
+                });
+              });
           }}
         >
           <LogOut className="h-4 w-4" />

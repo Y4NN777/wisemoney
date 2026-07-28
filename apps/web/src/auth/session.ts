@@ -44,7 +44,7 @@ import { db } from "../db/schema.ts";
  *                       was lost (page reload while vault was open); call
  *                       restoreSession(masterKey) after unlock to recover.
  */
-export type SessionStatus = "unauthenticated" | "authenticated" | "locked";
+type SessionStatus = "unauthenticated" | "authenticated" | "locked";
 
 type SessionState = {
   status: SessionStatus;
@@ -60,6 +60,7 @@ type SessionState = {
 type SessionActions = {
   _setAuthenticated: (accessToken: string, expiresAt: number) => void;
   _clearInMemory: () => void;
+  _lockInMemory: () => void;
 };
 
 /** Internal zustand store — module-private; use the public session API or test helpers below. */
@@ -73,7 +74,18 @@ const _sessionStore = create<SessionState & SessionActions>()((set) => ({
 
   _clearInMemory: () =>
     set({ status: "unauthenticated", accessToken: null, accessTokenExpiresAt: null }),
+
+  _lockInMemory: () =>
+    set((state) => ({
+      status: state.status === "authenticated" ? "locked" : "unauthenticated",
+      accessToken: null,
+      accessTokenExpiresAt: null,
+    })),
 }));
+
+export function useSessionStatus(): SessionStatus {
+  return _sessionStore((state) => state.status);
+}
 
 // ---------------------------------------------------------------------------
 // Internal helpers
@@ -102,7 +114,12 @@ async function sealAndStoreRefreshToken(
   masterKey: MasterKey
 ): Promise<void> {
   const plaintext = encodeRefreshToken(refreshToken);
-  const envelope = await seal(plaintext, masterKey);
+  let envelope;
+  try {
+    envelope = await seal(plaintext, masterKey);
+  } finally {
+    plaintext.fill(0);
+  }
   await db.authSession.put({
     id: AUTH_SESSION_ID,
     refreshCiphertext: envelope.ciphertext,
@@ -125,7 +142,11 @@ async function readAndUnsealRefreshToken(
     { ciphertext: record.refreshCiphertext, iv: record.refreshIv },
     masterKey
   );
-  return decodeRefreshToken(plaintext);
+  try {
+    return decodeRefreshToken(plaintext);
+  } finally {
+    plaintext.fill(0);
+  }
 }
 
 /**
@@ -170,8 +191,8 @@ export async function login(
   masterKey: MasterKey
 ): Promise<void> {
   const tokens = await loginUser(email, password);
-  setInMemoryToken(tokens.access_token, tokens.expires_in);
   await sealAndStoreRefreshToken(tokens.refresh_token, masterKey);
+  setInMemoryToken(tokens.access_token, tokens.expires_in);
 }
 
 /**
@@ -189,7 +210,26 @@ export async function login(
  *
  * INV-AUTH-07: masterKey required.
  */
-export async function refresh(masterKey: MasterKey): Promise<void> {
+let refreshInFlight: Promise<void> | null = null;
+let refreshAbortController: AbortController | null = null;
+let sessionGeneration = 0;
+
+export function refresh(masterKey: MasterKey): Promise<void> {
+  if (refreshInFlight != null) return refreshInFlight;
+  const controller = new AbortController();
+  const generation = sessionGeneration;
+  refreshAbortController = controller;
+  const pending = performRefresh(masterKey, generation, controller.signal).finally(() => {
+    if (refreshInFlight === pending) {
+      refreshInFlight = null;
+      refreshAbortController = null;
+    }
+  });
+  refreshInFlight = pending;
+  return pending;
+}
+
+async function performRefresh(masterKey: MasterKey, generation: number, signal: AbortSignal): Promise<void> {
   const storedRefreshToken = await readAndUnsealRefreshToken(masterKey);
   if (storedRefreshToken === null) {
     _sessionStore.getState()._clearInMemory();
@@ -198,7 +238,7 @@ export async function refresh(masterKey: MasterKey): Promise<void> {
 
   let tokens;
   try {
-    tokens = await refreshSession(storedRefreshToken);
+    tokens = await refreshSession(storedRefreshToken, signal);
   } catch (err) {
     if (err instanceof EdgeAuthError && err.status === 401) {
       // Token revoked or expired — clear session entirely.
@@ -208,8 +248,15 @@ export async function refresh(masterKey: MasterKey): Promise<void> {
     throw err;
   }
 
-  setInMemoryToken(tokens.access_token, tokens.expires_in);
+  if (generation !== sessionGeneration || signal.aborted) {
+    throw new DOMException("session changed during refresh", "AbortError");
+  }
+
   await sealAndStoreRefreshToken(tokens.refresh_token, masterKey);
+  if (generation !== sessionGeneration || signal.aborted) {
+    throw new DOMException("session changed during refresh", "AbortError");
+  }
+  setInMemoryToken(tokens.access_token, tokens.expires_in);
 }
 
 /**
@@ -279,8 +326,26 @@ export async function restoreSession(masterKey: MasterKey): Promise<void> {
  * INV-AUTH-06: both in-memory token and IndexedDB record are cleared.
  */
 export async function logout(): Promise<void> {
+  sessionGeneration += 1;
+  refreshAbortController?.abort();
   _sessionStore.getState()._clearInMemory();
+  const pendingRefresh = refreshInFlight;
+  if (pendingRefresh != null) {
+    try {
+      await pendingRefresh;
+    } catch {
+      // Logout wins regardless of the refresh outcome.
+    }
+    _sessionStore.getState()._clearInMemory();
+  }
   await db.authSession.delete(AUTH_SESSION_ID);
+}
+
+/** Clear unlock-coupled credentials while retaining the sealed refresh token. */
+export function lockSession(): void {
+  sessionGeneration += 1;
+  refreshAbortController?.abort();
+  _sessionStore.getState()._lockInMemory();
 }
 
 /**
@@ -307,6 +372,10 @@ export function getSessionStatus(): SessionStatus {
 export function __resetSessionForTest(
   overrides: Partial<SessionState> = {}
 ): void {
+  sessionGeneration += 1;
+  refreshAbortController?.abort();
+  refreshAbortController = null;
+  refreshInFlight = null;
   _sessionStore.setState({
     status: "unauthenticated",
     accessToken: null,

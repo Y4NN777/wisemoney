@@ -12,7 +12,6 @@ import {
   loginUser,
   refreshSession,
   postAiProxy,
-  postConsentAssert,
   EdgeAuthError,
 } from "./edgeClient.ts";
 
@@ -64,6 +63,7 @@ describe("registerUser", () => {
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe(`${BASE}/v1/auth/register`);
     expect(init.method).toBe("POST");
+    expect(init.signal).toBeInstanceOf(AbortSignal);
     const parsedBody = JSON.parse(init.body as string) as unknown;
     expect(parsedBody).toEqual({ email: "a@b.com", password: "hunter2" });
   });
@@ -120,6 +120,16 @@ describe("loginUser", () => {
     await expect(loginUser("user@x.com", "pass")).rejects.toSatisfy(
       (err: unknown) =>
         err instanceof EdgeAuthError && err.status === 500
+    );
+  });
+
+  it("rejects a malformed successful token response", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      makeFetchResponse(200, { access_token: "access", expires_in: -1 }, true)
+    );
+
+    await expect(loginUser("user@x.com", "pass")).rejects.toSatisfy(
+      (err: unknown) => err instanceof EdgeAuthError && err.status === 502
     );
   });
 
@@ -211,7 +221,6 @@ describe("postAiProxy", () => {
 
     const result = await postAiProxy({
       accessToken: "test.jwt",
-      egressLevel: "redacted",
       feature: "feature-a",
       taskType: "reasoning",
       payload: REDACTED_PAYLOAD,
@@ -223,6 +232,7 @@ describe("postAiProxy", () => {
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe(`${BASE}/v1/ai/proxy`);
     expect(init.method).toBe("POST");
+    expect(init.signal).toBeInstanceOf(AbortSignal);
 
     const headers = init.headers as Record<string, string>;
     expect(headers["Authorization"]).toBe("Bearer test.jwt");
@@ -235,44 +245,25 @@ describe("postAiProxy", () => {
     expect(body).toEqual({ task_type: "reasoning", payload: REDACTED_PAYLOAD });
   });
 
-  it("attaches X-Consent-Assertion on a full-egress request when assertion is provided", async () => {
+  it("sends the user prompt as a separate top-level field", async () => {
     const fetchMock = vi
       .spyOn(globalThis, "fetch")
       .mockResolvedValueOnce(makeFetchResponse(200, AI_OK, true));
 
     await postAiProxy({
       accessToken: "test.jwt",
-      egressLevel: "full",
-      feature: "feature-b",
-      consentAssertion: "opaque.blob.here",
-      taskType: "summarization",
+      feature: "literacy",
+      taskType: "teaching",
       payload: REDACTED_PAYLOAD,
+      prompt: "How can I save?",
     });
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-    const headers = init.headers as Record<string, string>;
-    expect(headers["X-Egress-Level"]).toBe("full");
-    expect(headers["X-Consent-Assertion"]).toBe("opaque.blob.here");
-  });
-
-  it("does NOT attach X-Consent-Assertion on a full request when assertion is absent", async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(makeFetchResponse(200, AI_OK, true));
-
-    await postAiProxy({
-      accessToken: "test.jwt",
-      egressLevel: "full",
-      feature: "feature-c",
-      // consentAssertion omitted
-      taskType: "classification",
+    expect(JSON.parse(init.body as string)).toEqual({
+      task_type: "teaching",
       payload: REDACTED_PAYLOAD,
+      prompt: "How can I save?",
     });
-
-    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-    const headers = init.headers as Record<string, string>;
-    expect(headers["X-Egress-Level"]).toBe("full");
-    expect(headers["X-Consent-Assertion"]).toBeUndefined();
   });
 
   it("throws EdgeAuthError(401) on a 401 response", async () => {
@@ -283,7 +274,6 @@ describe("postAiProxy", () => {
     await expect(
       postAiProxy({
         accessToken: "expired.jwt",
-        egressLevel: "redacted",
         feature: "feature-d",
         taskType: "reasoning",
         payload: REDACTED_PAYLOAD,
@@ -301,7 +291,6 @@ describe("postAiProxy", () => {
     await expect(
       postAiProxy({
         accessToken: "test.jwt",
-        egressLevel: "redacted",
         feature: "feature-e",
         taskType: "teaching",
         payload: REDACTED_PAYLOAD,
@@ -310,84 +299,21 @@ describe("postAiProxy", () => {
       (err: unknown) => err instanceof EdgeAuthError && err.status === 503
     );
   });
-});
 
-// ---------------------------------------------------------------------------
-// postConsentAssert
-// ---------------------------------------------------------------------------
-
-describe("postConsentAssert", () => {
-  it("POSTs to /v1/consent/assert with Bearer token and feature in body", async () => {
-    const assertionObject = {
-      user_id: "user-123",
-      feature: "ai-full",
-      level: "full",
-      exp: Math.floor(Date.now() / 1000) + 300,
-    };
-
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(makeFetchResponse(200, assertionObject, true));
-
-    const result = await postConsentAssert({
-      accessToken: "my.access.jwt",
-      feature: "ai-full",
-    });
-
-    expect(fetchMock).toHaveBeenCalledOnce();
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(url).toBe(`${BASE}/v1/consent/assert`);
-    expect(init.method).toBe("POST");
-
-    const headers = init.headers as Record<string, string>;
-    expect(headers["Authorization"]).toBe("Bearer my.access.jwt");
-    expect(headers["Content-Type"]).toBe("application/json");
-
-    const body = JSON.parse(init.body as string) as unknown;
-    expect(body).toEqual({ feature: "ai-full" });
-
-    // Response object is JSON.stringify-ed so it round-trips as the
-    // X-Consent-Assertion header value.
-    expect(result).toBe(JSON.stringify(assertionObject));
-  });
-
-  it("returns the response string as-is when the edge returns a plain string", async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(
-        makeFetchResponse(200, "opaque.signed.string", true)
-      );
-
-    const result = await postConsentAssert({
-      accessToken: "token",
-      feature: "feature-x",
-    });
-
-    expect(fetchMock).toHaveBeenCalledOnce();
-    expect(result).toBe("opaque.signed.string");
-  });
-
-  it("throws EdgeAuthError(401) when the token is invalid or expired", async () => {
+  it("rejects an empty successful AI response", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
-      makeFetchResponse(401, { message: "token expired" }, false)
+      makeFetchResponse(200, { content: "", provider: "deepseek" }, true)
     );
 
     await expect(
-      postConsentAssert({ accessToken: "expired.jwt", feature: "ai-full" })
+      postAiProxy({
+        accessToken: "test.jwt",
+        feature: "feature-e",
+        taskType: "teaching",
+        payload: REDACTED_PAYLOAD,
+      })
     ).rejects.toSatisfy(
-      (err: unknown) => err instanceof EdgeAuthError && err.status === 401
-    );
-  });
-
-  it("throws EdgeAuthError(403) when consent has not been granted for the feature", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
-      makeFetchResponse(403, { message: "consent not granted" }, false)
-    );
-
-    await expect(
-      postConsentAssert({ accessToken: "valid.jwt", feature: "feature-y" })
-    ).rejects.toSatisfy(
-      (err: unknown) => err instanceof EdgeAuthError && err.status === 403
+      (err: unknown) => err instanceof EdgeAuthError && err.status === 502
     );
   });
 });

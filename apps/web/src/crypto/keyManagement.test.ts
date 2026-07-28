@@ -18,10 +18,8 @@
  *   import "fake-indexeddb/auto";
  *   // and remove the vi.mock("../db/schema.ts") block entirely.
  *
- * WEBAUTHN PRF TESTS:
- * wrapMasterKeyWithWebAuthn and unwrapMasterKeyWithWebAuthn require a real FIDO2
- * authenticator with PRF extension support. They cannot be executed headlessly.
- * The tests below are marked skip with an explanatory message.
+ * The browser-level WebAuthn PRF round trip is covered by
+ * scripts/webauthn-smoke.mjs with Chrome's virtual CTAP2 authenticator.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -312,6 +310,38 @@ describe("storeBYOKey opacity (INV-KEY-02 — F7)", () => {
   });
 });
 
+describe("createWebAuthnCredential", () => {
+  it("returns the raw credential id when PRF is enabled", async () => {
+    class FakePublicKeyCredential {
+      rawId = new Uint8Array([1, 2, 3]).buffer;
+      getClientExtensionResults() { return { prf: { enabled: true } }; }
+    }
+    vi.stubGlobal("PublicKeyCredential", FakePublicKeyCredential);
+    vi.stubGlobal("navigator", {
+      credentials: { create: vi.fn().mockResolvedValue(new FakePublicKeyCredential()) },
+    });
+    const { createWebAuthnCredential } = await import("./keyManagement.ts");
+
+    await expect(createWebAuthnCredential()).resolves.toEqual(new Uint8Array([1, 2, 3]));
+    vi.unstubAllGlobals();
+  });
+
+  it("rejects authenticators that do not expose PRF", async () => {
+    class FakePublicKeyCredential {
+      rawId = new ArrayBuffer(3);
+      getClientExtensionResults() { return {}; }
+    }
+    vi.stubGlobal("PublicKeyCredential", FakePublicKeyCredential);
+    vi.stubGlobal("navigator", {
+      credentials: { create: vi.fn().mockResolvedValue(new FakePublicKeyCredential()) },
+    });
+    const { createWebAuthnCredential } = await import("./keyManagement.ts");
+
+    await expect(createWebAuthnCredential()).rejects.toThrow(/does not support the PRF extension/);
+    vi.unstubAllGlobals();
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Production Argon2id params — slow round-trip (F8 — Joab review)
 // ---------------------------------------------------------------------------
@@ -344,33 +374,10 @@ describe("DEFAULT_ARGON2ID_PARAMS round-trip (slow)", () => {
 });
 
 // ---------------------------------------------------------------------------
-// WebAuthn PRF — skipped (browser-only, not headlessly testable)
+// WebAuthn PRF — Node failure behavior; browser round trip is in the smoke script
 // ---------------------------------------------------------------------------
 
 describe("wrapMasterKeyWithWebAuthn / unwrapMasterKeyWithWebAuthn", () => {
-  it.skip(
-    "wrapMasterKeyWithWebAuthn — BROWSER-ONLY: requires a real FIDO2 authenticator " +
-      "with PRF (hmac-secret) extension support. Cannot be executed in a Node/jsdom " +
-      "headless environment. Verify manually in a browser with a compatible device.\n" +
-      "Signature (Gap-2 Option A): wrapMasterKeyWithWebAuthn(" +
-      "rawMasterKeyBytes: Uint8Array, credentialId: Uint8Array" +
-      ") — returns { webAuthnHandle, wrappedKey, wrappedIv }",
-    async () => {
-      // Not implemented — browser-only; see skip reason above.
-    }
-  );
-
-  it.skip(
-    "unwrapMasterKeyWithWebAuthn — BROWSER-ONLY: requires a real FIDO2 authenticator " +
-      "with PRF (hmac-secret) extension support. Cannot be executed headlessly.\n" +
-      "Signature (Gap-2 Option A): unwrapMasterKeyWithWebAuthn(" +
-      "webAuthnHandle: Uint8Array, wrappedKey: Uint8Array, wrappedIv: Uint8Array" +
-      ") — returns MasterKey",
-    async () => {
-      // Not implemented — browser-only; see skip reason above.
-    }
-  );
-
   it("wrapMasterKeyWithWebAuthn throws clearly in a non-browser environment", async () => {
     // Gap-2 Option A: first parameter is rawMasterKeyBytes (Uint8Array), not MasterKey.
     const rawBytes = crypto.getRandomValues(new Uint8Array(32));
@@ -381,6 +388,7 @@ describe("wrapMasterKeyWithWebAuthn / unwrapMasterKeyWithWebAuthn", () => {
     await expect(
       wrapMasterKeyWithWebAuthn(rawBytes, credentialId)
     ).rejects.toThrow();
+    expect(rawBytes.every((byte) => byte === 0)).toBe(true);
   });
 
   it("unwrapMasterKeyWithWebAuthn throws clearly in a non-browser environment", async () => {
