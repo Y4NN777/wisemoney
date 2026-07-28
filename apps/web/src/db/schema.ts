@@ -8,10 +8,6 @@
  *   PLAINTEXT:  structural index keys only (id, timestamp, type, entityId, …)
  *   ENCRYPTED:  all financial payload (amounts, notes, names, rates, key material)
  *
- * DQ-01 (open): projection-store staleness detection needs a precise strategy
- * before implementation. The asOfEventId field in financialStateSnapshot is one
- * hook; individual projection stores have no equivalent guard yet.
- *
  * DQ-02 (open): key-rotation (passphrase change / Argon2id param hardening) must
  * be interruptible-safe before the crypto module is implemented.
  */
@@ -23,7 +19,7 @@ import Dexie, { type Table } from "dexie";
 // ---------------------------------------------------------------------------
 
 /** Shared encrypted envelope; identical across all stores. */
-export type EncryptedRecord = {
+type EncryptedRecord = {
   ciphertext: Uint8Array;
   iv: Uint8Array;
 };
@@ -36,55 +32,6 @@ export type FinancialEventRecord = EncryptedRecord & {
   entityId: string;   // primary referenced entity id — plaintext, indexed
 };
 
-/** accounts — projection derived from event log. */
-export type AccountRecord = EncryptedRecord & {
-  id: string;       // UUID PK — plaintext
-  currency: string; // ISO-4217, immutable from creation (ARCHITECTURE §6) — plaintext, indexed
-  isActive: boolean;// plaintext — supports active-account filter (accepted metadata leakage)
-};
-
-/** transactions — projection derived from event log. */
-export type TransactionRecord = EncryptedRecord & {
-  id: string;        // UUID PK — plaintext
-  timestamp: number; // Unix ms UTC — plaintext, indexed
-  accountId: string; // FK ref, validated at append time (INV-EVT-03) — plaintext, indexed
-  categoryId: string;// FK ref, validated at append time (INV-EVT-03) — plaintext, indexed
-};
-
-/** categories — projection derived from event log. */
-export type CategoryRecord = EncryptedRecord & {
-  id: string;               // UUID PK — plaintext
-  parentId: string | null;  // self-referential FK (INV-EVT-03) — plaintext, indexed
-  isSystemDefault: boolean; // plaintext — drives UI distinction
-};
-
-/** budgets — projection derived from event log. */
-export type BudgetRecord = EncryptedRecord & {
-  id: string;          // UUID PK — plaintext
-  categoryId: string;  // FK ref (INV-EVT-03) — plaintext, indexed
-  periodMonth: string; // "YYYY-MM" — plaintext, indexed (INV-EVT-03)
-};
-
-/** goals — projection derived from event log. */
-export type GoalRecord = EncryptedRecord & {
-  id: string; // UUID PK — plaintext
-  // accumulatedAmount derives exclusively from goalContributions replay (INV-EVT-04)
-};
-
-/** goalContributions — projection derived from event log. */
-export type GoalContributionRecord = EncryptedRecord & {
-  id: string;        // UUID PK — plaintext
-  goalId: string;    // FK ref (INV-EVT-04) — plaintext, indexed
-  timestamp: number; // Unix ms UTC — plaintext, indexed
-};
-
-/** recurringItems — projection derived from event log. */
-export type RecurringItemRecord = EncryptedRecord & {
-  id: string;        // UUID PK — plaintext
-  categoryId: string;// FK ref (INV-EVT-03) — plaintext, indexed
-  // Projected occurrences are NEVER stored — computed in memory (INV-EVT-05)
-};
-
 /**
  * financialStateSnapshot — cached projection, subordinate to the event log.
  *
@@ -92,7 +39,7 @@ export type RecurringItemRecord = EncryptedRecord & {
  * If asOfEventId does not match the last event in financialEvents, the
  * FinancialState Engine must replay from inception before serving reads (INV-EVT-02).
  */
-export type FinancialStateSnapshotRecord = EncryptedRecord & {
+type FinancialStateSnapshotRecord = EncryptedRecord & {
   id: string;             // singleton key "current" — plaintext PK
   asOfEventId: string;    // last incorporated event id — plaintext (integrity check)
   asOfTimestamp: number;  // Unix ms — plaintext
@@ -167,12 +114,17 @@ export type AuthSessionRecord = {
   refreshIv: Uint8Array;         // nonce for refreshCiphertext
 };
 
+/** appSettings — encrypted financial preferences such as the base currency. */
+export type AppSettingRecord = EncryptedRecord & {
+  id: string;
+};
+
 // ---------------------------------------------------------------------------
 // Dexie database class
 // ---------------------------------------------------------------------------
 
 /**
- * WiseMoneyDB — current schema version: 4.
+ * WiseMoneyDB — current schema version: 6.
  *
  * Version 1 → 2: added `wrappedIv` to keyMeta (WebAuthn wrap IV, parallel to
  * wrappedKey). data-model.md §A.3 records the migration rationale.
@@ -184,23 +136,20 @@ export type AuthSessionRecord = {
  * Version 3 → 4: indexed `categories.isSystemDefault` for idempotent default
  * category seeding.
  *
+ * Version 4 → 5: removed unused projection stores. The encrypted event journal
+ * and cached snapshot remain the only financial persistence surfaces.
+ *
  * Version increments on every schema change per data-model.md §A.3 strategy.
  * Projection stores are clearable + replayable from financialEvents (INV-EVT-01/02).
  */
-export class WiseMoneyDB extends Dexie {
+class WiseMoneyDB extends Dexie {
   financialEvents!: Table<FinancialEventRecord, string>;
-  accounts!: Table<AccountRecord, string>;
-  transactions!: Table<TransactionRecord, string>;
-  categories!: Table<CategoryRecord, string>;
-  budgets!: Table<BudgetRecord, string>;
-  goals!: Table<GoalRecord, string>;
-  goalContributions!: Table<GoalContributionRecord, string>;
-  recurringItems!: Table<RecurringItemRecord, string>;
   financialStateSnapshot!: Table<FinancialStateSnapshotRecord, string>;
   fxRates!: Table<FxRateRecord, string>;
   keyMeta!: Table<KeyMetaRecord, string>;
   byoProviderKeys!: Table<BYOProviderKeyRecord, string>;
   authSession!: Table<AuthSessionRecord, string>;
+  appSettings!: Table<AppSettingRecord, string>;
 
   constructor() {
     super("WiseMoney");
@@ -387,6 +336,45 @@ export class WiseMoneyDB extends Dexie {
         authSession:
           "id",
       });
+
+    this.version(5).stores({
+      financialEvents:
+        "id, timestamp, type, entityId, [type+timestamp]",
+      accounts: null,
+      transactions: null,
+      categories: null,
+      budgets: null,
+      goals: null,
+      goalContributions: null,
+      recurringItems: null,
+      financialStateSnapshot:
+        "id",
+      fxRates:
+        "id, baseCurrency, quoteCurrency, lastUpdated",
+      keyMeta:
+        "id",
+      byoProviderKeys:
+        "id, provider",
+      authSession:
+        "id",
+    });
+
+    this.version(6).stores({
+      financialEvents:
+        "id, timestamp, type, entityId, [type+timestamp]",
+      financialStateSnapshot:
+        "id",
+      fxRates:
+        "id, baseCurrency, quoteCurrency, lastUpdated",
+      keyMeta:
+        "id",
+      byoProviderKeys:
+        "id, provider",
+      authSession:
+        "id",
+      appSettings:
+        "id",
+    });
   }
 }
 

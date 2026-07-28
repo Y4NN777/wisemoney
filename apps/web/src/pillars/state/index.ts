@@ -1,19 +1,8 @@
 import type { MasterKey } from "@/crypto/envelope.ts";
-import { appendEvent } from "@/domain/eventStore.ts";
+import { appendEvent, appendEvents } from "@/domain/eventStore.ts";
 import type { MoneyDTO } from "@/domain/financialState.ts";
-import { getSnapshot } from "@/domain/financialState.ts";
+import { getSnapshot, readTransactionsInRange } from "@/domain/financialState.ts";
 
-export type {
-  MoneyDTO,
-  AccountState,
-  CategoryState,
-  BudgetState,
-  GoalState,
-  RecurringItemState,
-  DebtCreditKind,
-  DebtCreditState,
-  DebtCreditStatus,
-} from "@/domain/financialState.ts";
 import type { DebtCreditKind, DebtCreditStatus } from "@/domain/financialState.ts";
 
 function uuid(): string {
@@ -22,6 +11,14 @@ function uuid(): string {
 
 function nowMs(): number {
   return Date.now();
+}
+
+function isSameLocalDay(left: number, right: number): boolean {
+  const a = new Date(left);
+  const b = new Date(right);
+  return a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
 }
 
 type ValidationErrorDetail = {
@@ -48,6 +45,28 @@ function validateMoney(
     errors.push({ field, message: "Amount must be greater than zero" });
   }
   validateCurrency(`${field}.currency`, amount.currency, errors);
+}
+
+function validateSafeResult(field: string, value: number, errors: ValidationErrorDetail[]): void {
+  if (!Number.isSafeInteger(value)) {
+    errors.push({ field, message: "Result exceeds the safe integer range (INV-MON-01)" });
+  }
+}
+
+function applyTransactionAmount(
+  balance: number,
+  amount: number,
+  direction: "income" | "expense"
+): number {
+  return direction === "income" ? balance + amount : balance - amount;
+}
+
+function reverseTransactionAmount(
+  balance: number,
+  amount: number,
+  direction: "income" | "expense"
+): number {
+  return direction === "income" ? balance - amount : balance + amount;
 }
 
 export class ValidationError extends Error {
@@ -150,6 +169,7 @@ export async function updateAccount(params: UpdateAccountParams): Promise<void> 
       type: params.type.trim(),
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 }
 
@@ -172,6 +192,12 @@ export async function archiveAccount(params: ArchiveAccountParams): Promise<void
   if (account == null || !account.isActive) {
     throw new ValidationError([{ field: "accountId", message: "Account not found (INV-EVT-03)" }]);
   }
+  if (account.balance.minorUnits !== 0) {
+    throw new ValidationError([{
+      field: "accountId",
+      message: "Account balance must be zero before archiving",
+    }]);
+  }
 
   await appendEvent({
     id: uuid(),
@@ -180,6 +206,7 @@ export async function archiveAccount(params: ArchiveAccountParams): Promise<void
     entityId: params.accountId,
     payload: { accountId: params.accountId },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 }
 
@@ -208,7 +235,7 @@ export async function recordTransaction(
   if (!params.accountId || account == null) {
     errors.push({ field: "accountId", message: "Account not found (INV-EVT-03)" });
   }
-  const category = snapshot.categories.find((c) => c.id === params.categoryId);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId && c.isArchived !== true);
   if (!params.categoryId || category == null) {
     errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
   }
@@ -218,6 +245,13 @@ export async function recordTransaction(
   }
   if (params.direction !== "income" && params.direction !== "expense") {
     errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });
+  }
+  if (account != null && Number.isSafeInteger(params.amount.minorUnits)) {
+    validateSafeResult(
+      "amount",
+      applyTransactionAmount(account.balance.minorUnits, params.amount.minorUnits, params.direction),
+      errors,
+    );
   }
   if (errors.length > 0) {
     throw new ValidationError(errors);
@@ -241,6 +275,7 @@ export async function recordTransaction(
       merchant: params.merchant ?? null,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 
   return id;
@@ -267,7 +302,7 @@ export async function createCategory(
     errors.push({ field: "name", message: "Category name is required" });
   }
   if (params.parentId != null) {
-    const parent = snapshot.categories.find((c) => c.id === params.parentId);
+    const parent = snapshot.categories.find((c) => c.id === params.parentId && c.isArchived !== true);
     if (parent == null) {
       errors.push({ field: "parentId", message: "Parent category not found" });
     }
@@ -290,6 +325,7 @@ export async function createCategory(
       isSystemDefault: params.isSystemDefault ?? false,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 
   return id;
@@ -310,7 +346,7 @@ export async function renameCategory(
 ): Promise<void> {
   const errors: ValidationErrorDetail[] = [];
   const snapshot = await getSnapshot(params.masterKey);
-  if (!params.categoryId || snapshot.categories.find((c) => c.id === params.categoryId) == null) {
+  if (!params.categoryId || snapshot.categories.find((c) => c.id === params.categoryId && c.isArchived !== true) == null) {
     errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
   }
   if (!params.newName || params.newName.trim().length === 0) {
@@ -333,6 +369,7 @@ export async function renameCategory(
       newName: params.newName.trim(),
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 }
 
@@ -351,8 +388,26 @@ export async function archiveCategory(params: ArchiveCategoryParams): Promise<vo
   if (!params.categoryId || params.categoryId.trim().length === 0) {
     throw new ValidationError([{ field: "categoryId", message: "Category id is required" }]);
   }
-  if (snapshot.categories.find((c) => c.id === params.categoryId) == null) {
+  if (snapshot.categories.find((c) => c.id === params.categoryId && c.isArchived !== true) == null) {
     throw new ValidationError([{ field: "categoryId", message: "Category not found (INV-EVT-03)" }]);
+  }
+  if (snapshot.budgets.some((budget) => budget.categoryId === params.categoryId && !budget.isArchived)) {
+    throw new ValidationError([{
+      field: "categoryId",
+      message: "Archive active budgets for this category first",
+    }]);
+  }
+  if (snapshot.categories.some((category) => category.parentId === params.categoryId && !category.isArchived)) {
+    throw new ValidationError([{
+      field: "categoryId",
+      message: "Archive active child categories first",
+    }]);
+  }
+  if (snapshot.recurringItems.some((item) => item.categoryId === params.categoryId && !item.isArchived)) {
+    throw new ValidationError([{
+      field: "categoryId",
+      message: "This category is used by a recurring item and cannot be archived",
+    }]);
   }
 
   await appendEvent({
@@ -362,6 +417,7 @@ export async function archiveCategory(params: ArchiveCategoryParams): Promise<vo
     entityId: params.categoryId,
     payload: { categoryId: params.categoryId },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 }
 
@@ -386,7 +442,7 @@ export async function createBudget(
   if (!params.name || params.name.trim().length === 0) {
     errors.push({ field: "name", message: "Budget name is required" });
   }
-  const category = snapshot.categories.find((c) => c.id === params.categoryId);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId && c.isArchived !== true);
   if (!category) {
     errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
   }
@@ -413,6 +469,7 @@ export async function createBudget(
       periodMonth: params.periodMonth,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 
   return id;
@@ -449,6 +506,7 @@ export async function archiveBudget(
     entityId: params.budgetId,
     payload: { budgetId: params.budgetId },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 }
 
@@ -521,6 +579,9 @@ export async function recordGoalContribution(
   if (goal != null && params.amount.currency !== goal.targetAmount.currency) {
     errors.push({ field: "amount.currency", message: "Must match goal currency" });
   }
+  if (goal != null && Number.isSafeInteger(params.amount.minorUnits)) {
+    validateSafeResult("amount", goal.accumulated.minorUnits + params.amount.minorUnits, errors);
+  }
   if (errors.length > 0) {
     throw new ValidationError(errors);
   }
@@ -538,6 +599,7 @@ export async function recordGoalContribution(
       amount: params.amount,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 
   return id;
@@ -574,6 +636,7 @@ export async function archiveGoal(
     entityId: params.goalId,
     payload: { goalId: params.goalId },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 }
 
@@ -597,7 +660,7 @@ export async function createRecurringItem(
   const errors: ValidationErrorDetail[] = [];
   const snapshot = await getSnapshot(params.masterKey);
 
-  const category = snapshot.categories.find((c) => c.id === params.categoryId);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId && c.isArchived !== true);
   if (!category) {
     errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
   }
@@ -635,9 +698,37 @@ export async function createRecurringItem(
       startDate: params.startDate,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 
   return id;
+}
+
+// ---------------------------------------------------------------------------
+// archiveRecurringItem
+// ---------------------------------------------------------------------------
+
+export type ArchiveRecurringItemParams = {
+  itemId: string;
+  masterKey: MasterKey;
+};
+
+export async function archiveRecurringItem(params: ArchiveRecurringItemParams): Promise<void> {
+  const snapshot = await getSnapshot(params.masterKey);
+  const item = snapshot.recurringItems.find((candidate) => candidate.id === params.itemId && !candidate.isArchived);
+  if (item == null) {
+    throw new ValidationError([{ field: "itemId", message: "Recurring item not found (INV-EVT-03)" }]);
+  }
+
+  await appendEvent({
+    id: uuid(),
+    timestamp: nowMs(),
+    type: "recurring_item_archived",
+    entityId: params.itemId,
+    payload: { itemId: params.itemId },
+    masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -660,9 +751,9 @@ export async function realiseRecurringOccurrence(
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
   const snapshot = await getSnapshot(params.masterKey);
-  const item = snapshot.recurringItems.find((r) => r.id === params.itemId);
+  const item = snapshot.recurringItems.find((r) => r.id === params.itemId && !r.isArchived);
   const account = snapshot.accounts.find((a) => a.id === params.accountId && a.isActive);
-  const category = snapshot.categories.find((c) => c.id === params.categoryId);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId && c.isArchived !== true);
 
   if (item == null) {
     errors.push({ field: "itemId", message: "Recurring item not found (INV-EVT-03)" });
@@ -677,14 +768,32 @@ export async function realiseRecurringOccurrence(
   if (account != null && params.amount.currency !== account.currency) {
     errors.push({ field: "amount.currency", message: "Must match account currency" });
   }
+  if (
+    item != null &&
+    (params.amount.currency !== item.amount.currency ||
+      params.amount.minorUnits !== item.amount.minorUnits)
+  ) {
+    errors.push({ field: "amount", message: "Must match recurring item amount" });
+  }
   if (item != null && params.categoryId !== item.categoryId) {
     errors.push({ field: "categoryId", message: "Must match recurring item category" });
   }
   if (item != null && params.direction !== item.direction) {
     errors.push({ field: "direction", message: "Must match recurring item direction" });
   }
+  const realisationDate = params.date ?? nowMs();
+  if (item?.lastRealised != null && isSameLocalDay(item.lastRealised, realisationDate)) {
+    errors.push({ field: "date", message: "This recurring item was already realised today" });
+  }
   if (params.direction !== "income" && params.direction !== "expense") {
     errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });
+  }
+  if (account != null && Number.isSafeInteger(params.amount.minorUnits)) {
+    validateSafeResult(
+      "amount",
+      applyTransactionAmount(account.balance.minorUnits, params.amount.minorUnits, params.direction),
+      errors,
+    );
   }
   if (params.date != null && !Number.isSafeInteger(params.date)) {
     errors.push({ field: "date", message: "Must be a Unix timestamp in milliseconds" });
@@ -695,37 +804,40 @@ export async function realiseRecurringOccurrence(
 
   const realiseId = uuid();
   const txId = uuid();
-  const now = params.date ?? nowMs();
+  const now = realisationDate;
 
-  await appendEvent({
-    id: realiseId,
-    timestamp: now,
-    type: "recurring_item_realised",
-    entityId: params.itemId,
-    payload: {
-      itemId: params.itemId,
-      amount: params.amount,
-      date: now,
+  await appendEvents([
+    {
+      id: realiseId,
+      timestamp: now,
+      type: "recurring_item_realised",
+      entityId: params.itemId,
+      payload: {
+        itemId: params.itemId,
+        amount: params.amount,
+        date: now,
+      },
+      masterKey: params.masterKey,
+      expectedLastEventId: snapshot.asOfEventId,
     },
-    masterKey: params.masterKey,
-  });
-
-  await appendEvent({
-    id: txId,
-    timestamp: now,
-    type: "transaction_created",
-    entityId: params.accountId,
-    payload: {
-      accountId: params.accountId,
-      categoryId: params.categoryId,
-      amount: params.amount,
-      direction: params.direction,
-      note: params.label != null && params.label !== "" ? `Recurring: ${params.label}` : "Recurring",
-      tags: ["recurring"],
-      merchant: null,
+    {
+      id: txId,
+      timestamp: now,
+      type: "transaction_created",
+      entityId: params.accountId,
+      payload: {
+        accountId: params.accountId,
+        categoryId: params.categoryId,
+        amount: params.amount,
+        direction: params.direction,
+        note: params.label != null && params.label !== "" ? `Recurring: ${params.label}` : "Recurring",
+        tags: ["recurring"],
+        merchant: null,
+      },
+      masterKey: params.masterKey,
+      expectedLastEventId: snapshot.asOfEventId,
     },
-    masterKey: params.masterKey,
-  });
+  ]);
 
   return txId;
 }
@@ -772,6 +884,15 @@ export async function recordTransfer(
   if (fromAccount != null && params.amount.currency !== fromAccount.currency) {
     errors.push({ field: "amount.currency", message: "Must match source account currency" });
   }
+  if (fromAccount != null && Number.isSafeInteger(params.amount.minorUnits)) {
+    validateSafeResult("amount", fromAccount.balance.minorUnits - params.amount.minorUnits, errors);
+    if (params.toAccountId != null) {
+      const toAccount = snapshot.accounts.find((account) => account.id === params.toAccountId && account.isActive);
+      if (toAccount != null) {
+        validateSafeResult("amount", toAccount.balance.minorUnits + params.amount.minorUnits, errors);
+      }
+    }
+  }
   if (errors.length > 0) {
     throw new ValidationError(errors);
   }
@@ -792,6 +913,7 @@ export async function recordTransfer(
       note: params.note ?? null,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 
   return id;
@@ -899,6 +1021,7 @@ export async function updateDebtCreditStatus(
       status: params.status,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 }
 
@@ -923,11 +1046,22 @@ export async function updateTransaction(
 ): Promise<string> {
   const errors: ValidationErrorDetail[] = [];
   const snapshot = await getSnapshot(params.masterKey);
+  const existingTransaction = params.originalEventId.trim().length > 0
+    ? (await readTransactionsInRange(0, Number.MAX_SAFE_INTEGER, params.masterKey))
+      .find((transaction) => transaction.id === params.originalEventId)
+    : undefined;
   const account = snapshot.accounts.find((a) => a.id === params.accountId && a.isActive);
-  const category = snapshot.categories.find((c) => c.id === params.categoryId);
+  const category = snapshot.categories.find((c) => c.id === params.categoryId && c.isArchived !== true);
+  const originalAccount = existingTransaction == null
+    ? undefined
+    : snapshot.accounts.find((candidate) => candidate.id === existingTransaction.accountId);
 
   if (!params.originalEventId || params.originalEventId.trim().length === 0) {
     errors.push({ field: "originalEventId", message: "Transaction id is required" });
+  } else if (existingTransaction == null) {
+    errors.push({ field: "originalEventId", message: "Transaction not found (INV-EVT-03)" });
+  } else if (originalAccount == null || !originalAccount.isActive) {
+    errors.push({ field: "originalEventId", message: "Transactions on archived accounts cannot be edited" });
   }
   if (account == null) {
     errors.push({ field: "accountId", message: "Account not found (INV-EVT-03)" });
@@ -941,6 +1075,25 @@ export async function updateTransaction(
   }
   if (params.direction !== "income" && params.direction !== "expense") {
     errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });
+  }
+  if (
+    existingTransaction != null && originalAccount != null && originalAccount.isActive &&
+    account != null && Number.isSafeInteger(params.amount.minorUnits)
+  ) {
+    const restoredOriginalBalance = reverseTransactionAmount(
+      originalAccount.balance.minorUnits,
+      existingTransaction.amount.minorUnits,
+      existingTransaction.direction,
+    );
+    validateSafeResult("originalEventId", restoredOriginalBalance, errors);
+    const targetBalance = originalAccount.id === account.id
+      ? restoredOriginalBalance
+      : account.balance.minorUnits;
+    validateSafeResult(
+      "amount",
+      applyTransactionAmount(targetBalance, params.amount.minorUnits, params.direction),
+      errors,
+    );
   }
   if (errors.length > 0) {
     throw new ValidationError(errors);
@@ -965,6 +1118,7 @@ export async function updateTransaction(
       merchant: params.merchant ?? null,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 
   return id;
@@ -985,6 +1139,33 @@ export async function deleteTransaction(
   if (!params.originalEventId || params.originalEventId.trim().length === 0) {
     throw new ValidationError([{ field: "originalEventId", message: "Transaction id is required" }]);
   }
+  const snapshot = await getSnapshot(params.masterKey);
+  const existingTransaction = (await readTransactionsInRange(
+    0,
+    Number.MAX_SAFE_INTEGER,
+    params.masterKey
+  )).find((transaction) => transaction.id === params.originalEventId);
+  if (existingTransaction == null) {
+    throw new ValidationError([{ field: "originalEventId", message: "Transaction not found (INV-EVT-03)" }]);
+  }
+  const account = snapshot.accounts.find((candidate) => candidate.id === existingTransaction.accountId);
+  if (account == null || !account.isActive) {
+    throw new ValidationError([{
+      field: "originalEventId",
+      message: "Transactions on archived accounts cannot be deleted",
+    }]);
+  }
+  const restoredBalance = reverseTransactionAmount(
+    account.balance.minorUnits,
+    existingTransaction.amount.minorUnits,
+    existingTransaction.direction,
+  );
+  if (!Number.isSafeInteger(restoredBalance)) {
+    throw new ValidationError([{
+      field: "originalEventId",
+      message: "Result exceeds the safe integer range (INV-MON-01)",
+    }]);
+  }
 
   const id = uuid();
   const now = nowMs();
@@ -998,6 +1179,7 @@ export async function deleteTransaction(
       originalEventId: params.originalEventId,
     },
     masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
   });
 }
 
@@ -1034,6 +1216,8 @@ const DEFAULT_CATEGORIES = [
   ...DEFAULT_EXPENSE_CATEGORIES.map((name) => ({ name, parentId: undefined })),
 ];
 
+const categorySeedByKey = new WeakMap<MasterKey, Promise<void>>();
+
 /**
  * Seed the default category set on first run.
  * Checks if any `isSystemDefault` categories already exist; if not, creates
@@ -1044,10 +1228,23 @@ const DEFAULT_CATEGORIES = [
 export async function seedDefaultCategories(
   masterKey: MasterKey,
 ): Promise<void> {
+  const inFlight = categorySeedByKey.get(masterKey);
+  if (inFlight != null) return inFlight;
+
+  const seed = seedMissingDefaultCategories(masterKey);
+  categorySeedByKey.set(masterKey, seed);
+  try {
+    await seed;
+  } finally {
+    categorySeedByKey.delete(masterKey);
+  }
+}
+
+async function seedMissingDefaultCategories(masterKey: MasterKey): Promise<void> {
   const snapshot = await getSnapshot(masterKey);
   const existingDefaults = new Set(
     snapshot.categories
-      .filter((category) => category.isSystemDefault)
+      .filter((category) => category.isSystemDefault && !category.isArchived)
       .map((category) => category.name)
   );
 
@@ -1063,5 +1260,6 @@ export async function seedDefaultCategories(
       args.parentId = cat.parentId;
     }
     await createCategory(args);
+    existingDefaults.add(cat.name);
   }
 }

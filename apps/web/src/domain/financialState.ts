@@ -2,14 +2,17 @@ import type { MasterKey } from "@/crypto/envelope.ts";
 import { open, seal } from "@/crypto/envelope.ts";
 import type { FinancialEventRecord } from "@/db/schema.ts";
 import { db } from "@/db/schema.ts";
+import { compareFinancialEvents } from "./eventStore.ts";
 import type { FinancialEventPayload, FinancialEventType } from "./eventStore.ts";
+import type { CurrencyContext } from "./currencyStore.ts";
+import { convertUsingContext, loadCurrencyContext } from "./currencyStore.ts";
 
 export type MoneyDTO = {
   readonly minorUnits: number;
   readonly currency: string;
 };
 
-export type AccountState = {
+type AccountState = {
   id: string;
   name: string;
   type: string;
@@ -19,14 +22,15 @@ export type AccountState = {
   initialBalance: MoneyDTO;
 };
 
-export type CategoryState = {
+type CategoryState = {
   id: string;
   name: string;
   parentId: string | null;
   isSystemDefault: boolean;
+  isArchived: boolean;
 };
 
-export type BudgetState = {
+type BudgetState = {
   id: string;
   name: string;
   categoryId: string;
@@ -36,7 +40,7 @@ export type BudgetState = {
   spent: MoneyDTO;
 };
 
-export type GoalState = {
+type GoalState = {
   id: string;
   name: string;
   targetAmount: MoneyDTO;
@@ -45,7 +49,7 @@ export type GoalState = {
   accumulated: MoneyDTO;
 };
 
-export type RecurringItemState = {
+type RecurringItemState = {
   id: string;
   categoryId: string;
   label: string;
@@ -54,6 +58,7 @@ export type RecurringItemState = {
   frequency: "weekly" | "monthly" | "yearly";
   startDate: number;
   lastRealised: number | null;
+  isArchived: boolean;
 };
 
 export type DebtCreditStatus = "pending" | "partial" | "settled";
@@ -70,9 +75,23 @@ export type DebtCreditState = {
   status: DebtCreditStatus;
 };
 
+type TransferState = {
+  id: string;
+  timestamp: number;
+  fromAccountId: string;
+  toAccountId: string | null;
+  externalDestination: string | null;
+  amount: MoneyDTO;
+  note: string;
+};
+
 export type FinancialStateSnapshot = {
+  version: 2;
   asOfEventId: string;
   asOfTimestamp: number;
+  baseCurrency: string;
+  currencyContextId: string;
+  missingFxCurrencies: string[];
 
   accounts: AccountState[];
   categories: CategoryState[];
@@ -80,6 +99,7 @@ export type FinancialStateSnapshot = {
   goals: GoalState[];
   recurringItems: RecurringItemState[];
   debtCredits: DebtCreditState[];
+  transfers: TransferState[];
 
   periodStart: number;
   periodEnd: number;
@@ -115,14 +135,18 @@ function addMoney(a: MoneyDTO, b: MoneyDTO): MoneyDTO {
   if (a.currency !== b.currency) {
     return a;
   }
-  return { minorUnits: a.minorUnits + b.minorUnits, currency: a.currency };
+  const minorUnits = a.minorUnits + b.minorUnits;
+  if (!Number.isSafeInteger(minorUnits)) throw new Error("Money addition exceeds the safe integer range");
+  return { minorUnits, currency: a.currency };
 }
 
 function subMoney(a: MoneyDTO, b: MoneyDTO): MoneyDTO {
   if (a.currency !== b.currency) {
     return a;
   }
-  return { minorUnits: a.minorUnits - b.minorUnits, currency: a.currency };
+  const minorUnits = a.minorUnits - b.minorUnits;
+  if (!Number.isSafeInteger(minorUnits)) throw new Error("Money subtraction exceeds the safe integer range");
+  return { minorUnits, currency: a.currency };
 }
 
 function positiveMoney(amount: MoneyDTO): MoneyDTO {
@@ -141,6 +165,21 @@ function getPeriodBounds(now: number): { start: number; end: number } {
   return { start, end };
 }
 
+function getMonthBounds(periodMonth: string): { start: number; end: number } {
+  const [yearText, monthText] = periodMonth.split("-");
+  const year = Number(yearText);
+  const monthIndex = Number(monthText) - 1;
+  return {
+    start: new Date(year, monthIndex, 1).getTime(),
+    end: new Date(year, monthIndex + 1, 0, 23, 59, 59, 999).getTime(),
+  };
+}
+
+function toPeriodMonth(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
 type AccountFold = {
   id: string;
   name: string;
@@ -151,6 +190,15 @@ type AccountFold = {
   initialBalance: MoneyDTO;
 };
 
+type TransactionFold = {
+  id: string;
+  timestamp: number;
+  accountId: string;
+  categoryId: string;
+  amount: MoneyDTO;
+  direction: "income" | "expense";
+};
+
 type Accumulator = {
   accounts: Map<string, AccountFold>;
   categories: Map<string, {
@@ -158,15 +206,9 @@ type Accumulator = {
     name: string;
     parentId: string | null;
     isSystemDefault: boolean;
+    isArchived: boolean;
   }>;
-  transactions: Array<{
-    id: string;
-    timestamp: number;
-    accountId: string;
-    categoryId: string;
-    amount: MoneyDTO;
-    direction: "income" | "expense";
-  }>;
+  transactions: Map<string, TransactionFold>;
   budgets: Map<string, {
     id: string;
     name: string;
@@ -183,32 +225,17 @@ type Accumulator = {
     isArchived: boolean;
     accumulated: MoneyDTO;
   }>;
-  recurringItems: Map<string, {
-    id: string;
-    categoryId: string;
-    label: string;
-    amount: MoneyDTO;
-    direction: "income" | "expense";
-    frequency: "weekly" | "monthly" | "yearly";
-    startDate: number;
-    lastRealised: number | null;
-  }>;
+  recurringItems: Map<string, RecurringItemState>;
   debtCredits: Map<string, DebtCreditState>;
   /** Transfers: debit fromAccount, credit toAccount (internal) or external */
-  transfers: Array<{
-    id: string;
-    fromAccountId: string;
-    toAccountId: string | null;
-    externalDestination: string | null;
-    amount: MoneyDTO;
-  }>;
+  transfers: TransferState[];
 };
 
 function createEmptyAccumulator(): Accumulator {
   return {
     accounts: new Map(),
     categories: new Map(),
-    transactions: [],
+    transactions: new Map(),
     budgets: new Map(),
     goals: new Map(),
     recurringItems: new Map(),
@@ -224,6 +251,11 @@ function applyPayload(
   eventId: string,
   timestamp: number
 ): void {
+  const missing = (entity: string, id: string): never => {
+    throw new Error(`event ${eventId}: missing ${entity} ${id}`);
+  };
+  const required = <T>(value: T | undefined, entity: string, id: string): T =>
+    value ?? missing(entity, id);
   switch (type) {
     case "account_created": {
       const p = payload as unknown as {
@@ -245,19 +277,19 @@ function applyPayload(
     }
     case "account_updated": {
       const p = payload as unknown as { accountId: string; name: string; type: string };
-      const account = acc.accounts.get(p.accountId);
-      if (account) {
-        account.name = p.name;
-        account.type = p.type;
-      }
+      const account = required(acc.accounts.get(p.accountId), "account", p.accountId);
+      if (!account.isActive) throw new Error(`event ${eventId}: account ${p.accountId} is archived`);
+      account.name = p.name;
+      account.type = p.type;
       break;
     }
     case "account_archived": {
       const p = payload as unknown as { accountId: string };
-      const account = acc.accounts.get(p.accountId);
-      if (account) {
-        account.isActive = false;
-      }
+      const account = required(acc.accounts.get(p.accountId), "account", p.accountId);
+      // Older clients allowed this event for non-zero accounts. Keep those
+      // accounts visible so their balance can be corrected and archived again.
+      if (account.balance.minorUnits !== 0) break;
+      account.isActive = false;
       break;
     }
     case "transaction_created": {
@@ -268,15 +300,17 @@ function applyPayload(
         direction: "income" | "expense";
       };
       const amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
-      const account = acc.accounts.get(p.accountId);
-      if (account) {
-        if (p.direction === "income") {
-          account.balance = addMoney(account.balance, amount);
-        } else {
-          account.balance = subMoney(account.balance, amount);
-        }
+      const account = required(acc.accounts.get(p.accountId), "account", p.accountId);
+      const category = required(acc.categories.get(p.categoryId), "category", p.categoryId);
+      if (!account.isActive) throw new Error(`event ${eventId}: account ${p.accountId} is archived`);
+      if (category.isArchived) throw new Error(`event ${eventId}: category ${p.categoryId} is archived`);
+      if (account.currency !== amount.currency) throw new Error(`event ${eventId}: transaction currency mismatch`);
+      if (p.direction === "income") {
+        account.balance = addMoney(account.balance, amount);
+      } else {
+        account.balance = subMoney(account.balance, amount);
       }
-      acc.transactions.push({
+      acc.transactions.set(eventId, {
         id: eventId,
         timestamp,
         accountId: p.accountId,
@@ -294,8 +328,12 @@ function applyPayload(
         amount: { minorUnits: number; currency: string };
         direction: "income" | "expense";
       };
-      const oldTx = acc.transactions.find((t) => t.id === p.originalEventId);
-      if (oldTx) {
+      const oldTx = required(
+        acc.transactions.get(p.originalEventId),
+        "transaction",
+        p.originalEventId,
+      );
+      {
         const oldAccount = acc.accounts.get(oldTx.accountId);
         if (oldAccount) {
           if (oldTx.direction === "income") {
@@ -308,22 +346,23 @@ function applyPayload(
         oldTx.categoryId = p.categoryId;
         oldTx.amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
         oldTx.direction = p.direction;
-        const newAccount = acc.accounts.get(p.accountId);
-        if (newAccount) {
-          if (p.direction === "income") {
-            newAccount.balance = addMoney(newAccount.balance, oldTx.amount);
-          } else {
-            newAccount.balance = subMoney(newAccount.balance, oldTx.amount);
-          }
+        const newAccount = required(acc.accounts.get(p.accountId), "account", p.accountId);
+        const category = required(acc.categories.get(p.categoryId), "category", p.categoryId);
+        if (!newAccount.isActive) throw new Error(`event ${eventId}: account ${p.accountId} is archived`);
+        if (category.isArchived) throw new Error(`event ${eventId}: category ${p.categoryId} is archived`);
+        if (newAccount.currency !== oldTx.amount.currency) throw new Error(`event ${eventId}: transaction currency mismatch`);
+        if (p.direction === "income") {
+          newAccount.balance = addMoney(newAccount.balance, oldTx.amount);
+        } else {
+          newAccount.balance = subMoney(newAccount.balance, oldTx.amount);
         }
       }
       break;
     }
     case "transaction_deleted": {
       const p = payload as unknown as { originalEventId: string };
-      const idx = acc.transactions.findIndex((t) => t.id === p.originalEventId);
-      if (idx !== -1) {
-        const tx = acc.transactions[idx]!;
+      const tx = required(acc.transactions.get(p.originalEventId), "transaction", p.originalEventId);
+      {
         const account = acc.accounts.get(tx.accountId);
         if (account) {
           if (tx.direction === "income") {
@@ -332,31 +371,43 @@ function applyPayload(
             account.balance = addMoney(account.balance, tx.amount);
           }
         }
-        acc.transactions.splice(idx, 1);
+        acc.transactions.delete(p.originalEventId);
       }
       break;
     }
     case "category_created": {
       const p = payload as unknown as { name: string; parentId?: string; isSystemDefault?: boolean };
+      if (p.parentId != null) {
+        const parent = required(acc.categories.get(p.parentId), "parent category", p.parentId);
+        if (parent.isArchived) throw new Error(`event ${eventId}: parent category ${p.parentId} is archived`);
+      }
       acc.categories.set(eventId, {
         id: eventId,
         name: p.name,
         parentId: p.parentId ?? null,
         isSystemDefault: p.isSystemDefault ?? false,
+        isArchived: false,
       });
       break;
     }
     case "category_renamed": {
       const p = payload as unknown as { categoryId: string; newName: string };
-      const cat = acc.categories.get(p.categoryId);
-      if (cat) {
-        cat.name = p.newName;
-      }
+      const cat = required(acc.categories.get(p.categoryId), "category", p.categoryId);
+      if (cat.isArchived) throw new Error(`event ${eventId}: category ${p.categoryId} is archived`);
+      cat.name = p.newName;
       break;
     }
     case "category_archived": {
       const p = payload as unknown as { categoryId: string };
-      acc.categories.delete(p.categoryId);
+      const category = required(acc.categories.get(p.categoryId), "category", p.categoryId);
+      // Preserve access to legacy categories archived before dependency guards
+      // existed. A later valid archive event can apply after dependencies end.
+      const hasActiveDependency =
+        [...acc.categories.values()].some((item) => item.parentId === p.categoryId && !item.isArchived) ||
+        [...acc.budgets.values()].some((item) => item.categoryId === p.categoryId && !item.isArchived) ||
+        [...acc.recurringItems.values()].some((item) => item.categoryId === p.categoryId && !item.isArchived);
+      if (hasActiveDependency) break;
+      category.isArchived = true;
       break;
     }
     case "budget_created": {
@@ -366,6 +417,8 @@ function applyPayload(
         limit: { minorUnits: number; currency: string };
         periodMonth: string;
       };
+      const category = required(acc.categories.get(p.categoryId), "category", p.categoryId);
+      if (category.isArchived) throw new Error(`event ${eventId}: category ${p.categoryId} is archived`);
       acc.budgets.set(eventId, {
         id: eventId,
         name: p.name,
@@ -378,10 +431,8 @@ function applyPayload(
     }
     case "budget_archived": {
       const p = payload as unknown as { budgetId: string };
-      const budget = acc.budgets.get(p.budgetId);
-      if (budget) {
-        budget.isArchived = true;
-      }
+      const budget = required(acc.budgets.get(p.budgetId), "budget", p.budgetId);
+      budget.isArchived = true;
       break;
     }
     case "goal_created": {
@@ -405,21 +456,21 @@ function applyPayload(
         goalId: string;
         amount: { minorUnits: number; currency: string };
       };
-      const goal = acc.goals.get(p.goalId);
-      if (goal) {
-        goal.accumulated = addMoney(goal.accumulated, {
-          minorUnits: Math.abs(p.amount.minorUnits),
-          currency: p.amount.currency,
-        });
+      const goal = required(acc.goals.get(p.goalId), "goal", p.goalId);
+      if (goal.isArchived) throw new Error(`event ${eventId}: goal ${p.goalId} is archived`);
+      if (goal.targetAmount.currency !== p.amount.currency) {
+        throw new Error(`event ${eventId}: goal contribution currency mismatch`);
       }
+      goal.accumulated = addMoney(goal.accumulated, {
+        minorUnits: Math.abs(p.amount.minorUnits),
+        currency: p.amount.currency,
+      });
       break;
     }
     case "goal_archived": {
       const p = payload as unknown as { goalId: string };
-      const goal = acc.goals.get(p.goalId);
-      if (goal) {
-        goal.isArchived = true;
-      }
+      const goal = required(acc.goals.get(p.goalId), "goal", p.goalId);
+      goal.isArchived = true;
       break;
     }
     case "recurring_item_created": {
@@ -431,6 +482,8 @@ function applyPayload(
         frequency: "weekly" | "monthly" | "yearly";
         startDate: number;
       };
+      const category = required(acc.categories.get(p.categoryId), "category", p.categoryId);
+      if (category.isArchived) throw new Error(`event ${eventId}: category ${p.categoryId} is archived`);
       acc.recurringItems.set(eventId, {
         id: eventId,
         categoryId: p.categoryId,
@@ -440,17 +493,24 @@ function applyPayload(
         frequency: p.frequency,
         startDate: p.startDate,
         lastRealised: null,
+        isArchived: false,
       });
+      break;
+    }
+    case "recurring_item_archived": {
+      const p = payload as unknown as { itemId: string };
+      const item = required(acc.recurringItems.get(p.itemId), "recurring item", p.itemId);
+      if (item.isArchived) throw new Error(`event ${eventId}: recurring item ${p.itemId} is already archived`);
+      item.isArchived = true;
       break;
     }
     case "recurring_item_realised": {
       const p = payload as unknown as { itemId: string; amount?: { minorUnits: number; currency: string }; date: number };
-      const item = acc.recurringItems.get(p.itemId);
-      if (item) {
-        item.lastRealised = p.date;
-        if (p.amount) {
-          item.amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
-        }
+      const item = required(acc.recurringItems.get(p.itemId), "recurring item", p.itemId);
+      if (item.isArchived) throw new Error(`event ${eventId}: recurring item ${p.itemId} is archived`);
+      item.lastRealised = p.date;
+      if (p.amount) {
+        item.amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
       }
       break;
     }
@@ -460,24 +520,27 @@ function applyPayload(
         toAccountId: string | null;
         externalDestination: string | null;
         amount: { minorUnits: number; currency: string };
+        note?: string | null;
       };
       const amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
-      const from = acc.accounts.get(p.fromAccountId);
-      if (from) {
-        from.balance = subMoney(from.balance, amount);
-      }
+      const from = required(acc.accounts.get(p.fromAccountId), "account", p.fromAccountId);
+      if (!from.isActive) throw new Error(`event ${eventId}: account ${p.fromAccountId} is archived`);
+      if (from.currency !== amount.currency) throw new Error(`event ${eventId}: transfer currency mismatch`);
+      from.balance = subMoney(from.balance, amount);
       if (p.toAccountId != null) {
-        const to = acc.accounts.get(p.toAccountId);
-        if (to) {
-          to.balance = addMoney(to.balance, amount);
-        }
+        const to = required(acc.accounts.get(p.toAccountId), "account", p.toAccountId);
+        if (!to.isActive) throw new Error(`event ${eventId}: account ${p.toAccountId} is archived`);
+        if (to.currency !== amount.currency) throw new Error(`event ${eventId}: transfer currency mismatch`);
+        to.balance = addMoney(to.balance, amount);
       }
       acc.transfers.push({
         id: eventId,
+        timestamp,
         fromAccountId: p.fromAccountId,
         toAccountId: p.toAccountId,
         externalDestination: p.externalDestination,
         amount,
+        note: p.note ?? "",
       });
       break;
     }
@@ -506,16 +569,32 @@ function applyPayload(
         debtCreditId: string;
         status: DebtCreditStatus;
       };
-      const item = acc.debtCredits.get(p.debtCreditId);
-      if (item) {
-        item.status = p.status;
-      }
+      const item = required(acc.debtCredits.get(p.debtCreditId), "debt or receivable", p.debtCreditId);
+      item.status = p.status;
       break;
     }
   }
 }
 
-function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: number): FinancialStateSnapshot {
+export function validateDecryptedEventSequence(events: ReadonlyArray<{
+  id: string;
+  timestamp: number;
+  type: FinancialEventType;
+  payload: FinancialEventPayload;
+}>): void {
+  const accumulator = createEmptyAccumulator();
+  const sorted = [...events].sort((a, b) => a.timestamp - b.timestamp || a.id.localeCompare(b.id));
+  for (const event of sorted) {
+    applyPayload(accumulator, event.type, event.payload, event.id, event.timestamp);
+  }
+}
+
+function computeSnapshot(
+  acc: Accumulator,
+  asOfEventId: string,
+  asOfTimestamp: number,
+  currencyContext?: CurrencyContext
+): FinancialStateSnapshot {
   const { start, end } = getPeriodBounds(asOfTimestamp);
 
   const accounts: AccountState[] = [];
@@ -524,32 +603,63 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
   const goalsList: GoalState[] = [];
   const recurringList: RecurringItemState[] = [];
   const debtCreditList: DebtCreditState[] = [];
+  const transactionsList = [...acc.transactions.values()];
+  const transactionsByCategory = new Map<string, TransactionFold[]>();
+  for (const transaction of transactionsList) {
+    const categoryTransactions = transactionsByCategory.get(transaction.categoryId);
+    if (categoryTransactions == null) {
+      transactionsByCategory.set(transaction.categoryId, [transaction]);
+    } else {
+      categoryTransactions.push(transaction);
+    }
+  }
 
-  let defaultCurrency = "USD";
+  let inferredCurrency: string | null = null;
 
   for (const a of acc.accounts.values()) {
     accounts.push({ ...a });
-    defaultCurrency = a.currency;
+    if (inferredCurrency == null && a.isActive) inferredCurrency = a.currency;
   }
 
   for (const c of acc.categories.values()) {
     categories.push({ ...c });
   }
 
+  const contextBaseCurrency = currencyContext?.baseCurrency;
+  const baseCurrency = contextBaseCurrency != null && contextBaseCurrency !== ""
+    ? contextBaseCurrency
+    : inferredCurrency ?? accounts[0]?.currency ?? "XOF";
+  const effectiveCurrencyContext: CurrencyContext = currencyContext ?? {
+    baseCurrency,
+    rates: new Map(),
+    fingerprint: baseCurrency,
+  };
+  const rateFingerprintIndex = currencyContext?.fingerprint.indexOf("|") ?? -1;
+  const rateFingerprint = rateFingerprintIndex >= 0
+    ? currencyContext?.fingerprint.slice(rateFingerprintIndex) ?? ""
+    : "";
+  const currencyContextId = `${baseCurrency}${rateFingerprint}`;
+  const missingFxCurrencies = new Set<string>();
+  const convertForAggregate = (amount: MoneyDTO, targetCurrency: string): MoneyDTO | null => {
+    const converted = convertUsingContext(amount, targetCurrency, effectiveCurrencyContext);
+    if (converted == null) missingFxCurrencies.add(amount.currency);
+    return converted;
+  };
+
   for (const b of acc.budgets.values()) {
-    const periodTxs = acc.transactions.filter(
+    const budgetPeriod = getMonthBounds(b.periodMonth);
+    const periodTxs = (transactionsByCategory.get(b.categoryId) ?? []).filter(
       (t) =>
         t.categoryId === b.categoryId &&
-        t.timestamp >= start &&
-        t.timestamp <= end
+        t.timestamp >= budgetPeriod.start &&
+        t.timestamp <= budgetPeriod.end
     );
-    const spent = periodTxs.reduce(
-      (sum, t) =>
-        t.direction === "expense"
-          ? addMoney(sum, t.amount)
-          : sum,
-      zeroMoney(b.limit.currency)
-    );
+    let spent = zeroMoney(b.limit.currency);
+    for (const transaction of periodTxs) {
+      if (transaction.direction !== "expense") continue;
+      const converted = convertForAggregate(transaction.amount, b.limit.currency);
+      if (converted != null) spent = addMoney(spent, converted);
+    }
     budgetsList.push({
       ...b,
       spent,
@@ -568,31 +678,40 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
     debtCreditList.push({ ...item, amount: { ...item.amount } });
   }
 
-  const periodTxs = acc.transactions.filter(
+  const periodTxs = transactionsList.filter(
     (t) => t.timestamp >= start && t.timestamp <= end
   );
 
-  const totalBalance = accounts.reduce(
-    (sum, a) => addMoney(sum, a.balance),
-    zeroMoney(defaultCurrency)
-  );
+  let totalBalance = zeroMoney(baseCurrency);
+  for (const account of accounts) {
+    if (!account.isActive) continue;
+    const converted = convertForAggregate(account.balance, baseCurrency);
+    if (converted != null) totalBalance = addMoney(totalBalance, converted);
+  }
 
-  const periodIncome = periodTxs
-    .filter((t) => t.direction === "income")
-    .reduce((sum, t) => addMoney(sum, t.amount), zeroMoney(defaultCurrency));
-
-  const periodExpenses = periodTxs
-    .filter((t) => t.direction === "expense")
-    .reduce((sum, t) => addMoney(sum, t.amount), zeroMoney(defaultCurrency));
+  let periodIncome = zeroMoney(baseCurrency);
+  let periodExpenses = zeroMoney(baseCurrency);
+  for (const transaction of periodTxs) {
+    const converted = convertForAggregate(transaction.amount, baseCurrency);
+    if (converted == null) continue;
+    if (transaction.direction === "income") {
+      periodIncome = addMoney(periodIncome, converted);
+    } else {
+      periodExpenses = addMoney(periodExpenses, converted);
+    }
+  }
 
   const netCashFlow = subMoney(periodIncome, periodExpenses);
 
   const categoryTotals: Record<string, MoneyDTO> = {};
   for (const t of periodTxs) {
+    if (t.direction !== "expense") continue;
+    const converted = convertForAggregate(t.amount, baseCurrency);
+    if (converted == null) continue;
     const existing = categoryTotals[t.categoryId];
     categoryTotals[t.categoryId] = existing
-      ? addMoney(existing, t.amount)
-      : { ...t.amount };
+      ? addMoney(existing, converted)
+      : converted;
   }
 
   const budgetProgress: Record<string, {
@@ -601,7 +720,7 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
     percentage: number;
   }> = {};
   for (const b of budgetsList) {
-    if (!b.isArchived) {
+    if (!b.isArchived && b.periodMonth === toPeriodMonth(asOfTimestamp)) {
       budgetProgress[b.id] = {
         limit: b.limit,
         spent: b.spent,
@@ -631,8 +750,9 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
     dueDate: number;
   }[] = [];
   for (const r of recurringList) {
-    const last = r.lastRealised ?? r.startDate;
-    const nextDates = computeNextDueDates(r.frequency, last, asOfTimestamp, 3);
+    if (r.isArchived) continue;
+    const after = Math.max(asOfTimestamp, r.lastRealised ?? Number.MIN_SAFE_INTEGER);
+    const nextDates = computeNextDueDates(r.frequency, r.startDate, after, 3);
     for (const d of nextDates) {
       projectedRecurring.push({
         label: r.label,
@@ -643,8 +763,12 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
   }
 
   return {
+    version: 2,
     asOfEventId,
     asOfTimestamp,
+    baseCurrency,
+    currencyContextId,
+    missingFxCurrencies: [...missingFxCurrencies].sort(),
 
     accounts,
     categories,
@@ -652,6 +776,7 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
     goals: goalsList,
     recurringItems: recurringList,
     debtCredits: debtCreditList,
+    transfers: [...acc.transfers].sort((a, b) => b.timestamp - a.timestamp || b.id.localeCompare(a.id)),
 
     periodStart: start,
     periodEnd: end,
@@ -670,63 +795,82 @@ function computeSnapshot(acc: Accumulator, asOfEventId: string, asOfTimestamp: n
 
 function computeNextDueDates(
   frequency: "weekly" | "monthly" | "yearly",
-  since: number,
-  now: number,
+  scheduleStart: number,
+  after: number,
   count: number
 ): number[] {
   const results: number[] = [];
-  let cursor = since;
+  let cursor = scheduleStart;
+  const anchorDay = new Date(scheduleStart).getDate();
 
-  for (let i = 0; i < count; i++) {
-    const d = new Date(cursor);
-    switch (frequency) {
-      case "weekly":
-        d.setDate(d.getDate() + 7);
-        break;
-      case "monthly":
-        d.setMonth(d.getMonth() + 1);
-        break;
-      case "yearly":
-        d.setFullYear(d.getFullYear() + 1);
-        break;
-    }
-    cursor = d.getTime();
-    if (cursor > now) {
-      results.push(cursor);
-    }
+  while (cursor <= after) {
+    cursor = advanceDueDate(frequency, cursor, anchorDay);
+  }
+  while (results.length < count) {
+    results.push(cursor);
+    cursor = advanceDueDate(frequency, cursor, anchorDay);
   }
 
   return results;
 }
 
+function advanceDueDate(
+  frequency: "weekly" | "monthly" | "yearly",
+  timestamp: number,
+  anchorDay: number
+): number {
+  const date = new Date(timestamp);
+  if (frequency === "weekly") {
+    date.setDate(date.getDate() + 7);
+    return date.getTime();
+  }
+
+  date.setDate(1);
+  if (frequency === "monthly") {
+    date.setMonth(date.getMonth() + 1);
+  } else {
+    date.setFullYear(date.getFullYear() + 1);
+  }
+  const lastDayOfTargetMonth = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    0
+  ).getDate();
+  date.setDate(Math.min(anchorDay, lastDayOfTargetMonth));
+  return date.getTime();
+}
+
 export async function replayFromInception(
   events: FinancialEventRecord[],
-  masterKey: MasterKey
+  masterKey: MasterKey,
+  asOfTimestamp?: number,
+  currencyContext?: CurrencyContext
 ): Promise<FinancialStateSnapshot> {
   const acc = createEmptyAccumulator();
+  const sortedEvents = [...events].sort(compareFinancialEvents);
 
-  for (const event of events) {
+  for (const event of sortedEvents) {
     const plaintext = await open(
       { ciphertext: event.ciphertext, iv: event.iv },
       masterKey
     );
-    const payload = JSON.parse(
-      new TextDecoder().decode(plaintext)
-    ) as FinancialEventPayload;
+    let payload: FinancialEventPayload;
+    try {
+      payload = JSON.parse(new TextDecoder().decode(plaintext)) as FinancialEventPayload;
+    } finally {
+      plaintext.fill(0);
+    }
 
     applyPayload(acc, event.type as FinancialEventType, payload, event.id, event.timestamp);
   }
 
-  const sortedEvents = [...events].sort((a, b) => {
-    if (a.timestamp !== b.timestamp) return a.timestamp - b.timestamp;
-    return a.id.localeCompare(b.id);
-  });
   const lastEvent = sortedEvents[sortedEvents.length - 1];
 
   return computeSnapshot(
     acc,
     lastEvent?.id ?? "none",
-    lastEvent?.timestamp ?? Date.now()
+    asOfTimestamp ?? lastEvent?.timestamp ?? Date.now(),
+    currencyContext
   );
 }
 
@@ -738,7 +882,8 @@ export async function replayUpTo(
     .where("timestamp")
     .belowOrEqual(targetTimestamp)
     .sortBy("timestamp");
-  return replayFromInception(events, masterKey);
+  const currencyContext = await loadCurrencyContext(masterKey, "");
+  return replayFromInception(events, masterKey, targetTimestamp, currencyContext);
 }
 
 export type TransactionDisplay = {
@@ -747,7 +892,11 @@ export type TransactionDisplay = {
   accountId: string;
   categoryId: string;
   amount: MoneyDTO;
+  displayAmount: MoneyDTO | null;
   direction: "income" | "expense";
+  note: string;
+  tags: string[];
+  merchant: string;
 };
 
 export async function readTransactionsInRange(
@@ -755,94 +904,131 @@ export async function readTransactionsInRange(
   end: number,
   masterKey: MasterKey
 ): Promise<TransactionDisplay[]> {
-  const events = await db.financialEvents
-    .where("[type+timestamp]")
-    .between(["transaction_created", start], ["transaction_created", end])
-    .toArray();
+  const transactionTypes = [
+    "transaction_created",
+    "transaction_updated",
+    "transaction_deleted",
+  ] as const;
+  const eventGroups = await Promise.all(
+    transactionTypes.map((type) =>
+      db.financialEvents
+        .where("[type+timestamp]")
+        .between([type, 0], [type, end], true, true)
+        .toArray()
+    )
+  );
+  const events = eventGroups.flat().sort(compareFinancialEvents);
+  const transactions = new Map<string, TransactionDisplay>();
 
-  const results: TransactionDisplay[] = [];
-  for (const event of events) {
-    const plaintext = await open(
-      { ciphertext: event.ciphertext, iv: event.iv },
-      masterKey
-    );
-    const payload = JSON.parse(
-      new TextDecoder().decode(plaintext)
-    ) as {
-      accountId: string;
-      categoryId: string;
-      amount: { minorUnits: number; currency: string };
-      direction: "income" | "expense";
-    };
-    results.push({
-      id: event.id,
-      timestamp: event.timestamp,
-      accountId: payload.accountId,
-      categoryId: payload.categoryId,
-      amount: payload.amount,
-      direction: payload.direction,
-    });
+  const decryptBatchSize = 32;
+  const decoder = new TextDecoder();
+  for (let offset = 0; offset < events.length; offset += decryptBatchSize) {
+    const batch = events.slice(offset, offset + decryptBatchSize);
+    const decodedBatch = await Promise.all(batch.map(async (event) => {
+      const plaintext = await open(
+        { ciphertext: event.ciphertext, iv: event.iv },
+        masterKey
+      );
+      try {
+        return {
+          event,
+          payload: JSON.parse(decoder.decode(plaintext)) as FinancialEventPayload,
+        };
+      } finally {
+        plaintext.fill(0);
+      }
+    }));
+    for (const { event, payload } of decodedBatch) {
+      if (event.type === "transaction_deleted") {
+        const deleted = payload as { originalEventId: string };
+        transactions.delete(deleted.originalEventId);
+        continue;
+      }
+
+      const transaction = payload as {
+        originalEventId?: string;
+        accountId: string;
+        categoryId: string;
+        amount: MoneyDTO;
+        direction: "income" | "expense";
+        note?: string | null;
+        tags?: string[];
+        merchant?: string | null;
+      };
+      const originalEventId = transaction.originalEventId ?? event.id;
+      const existing = transactions.get(originalEventId);
+      if (event.type === "transaction_updated" && existing == null) continue;
+
+      transactions.set(originalEventId, {
+        id: originalEventId,
+        timestamp: existing?.timestamp ?? event.timestamp,
+        accountId: transaction.accountId,
+        categoryId: transaction.categoryId,
+        amount: positiveMoney(transaction.amount),
+        displayAmount: null,
+        direction: transaction.direction,
+        note: transaction.note ?? "",
+        tags: transaction.tags ?? [],
+        merchant: transaction.merchant ?? "",
+      });
+    }
   }
 
-  results.sort((a, b) => b.timestamp - a.timestamp);
+  const results = [...transactions.values()].filter(
+    (transaction) => transaction.timestamp >= start && transaction.timestamp <= end
+  );
+  const currencyContext = await loadCurrencyContext(masterKey, "");
+  const displayCurrency = currencyContext.baseCurrency !== ""
+    ? currencyContext.baseCurrency
+    : results[0]?.amount.currency ?? "USD";
+  for (const transaction of results) {
+    transaction.displayAmount = convertUsingContext(
+      transaction.amount,
+      displayCurrency,
+      currencyContext
+    );
+  }
+  results.sort((a, b) => b.timestamp - a.timestamp || b.id.localeCompare(a.id));
   return results;
 }
 
-export async function applyEventToSnapshot(
-  current: FinancialStateSnapshot,
-  event: FinancialEventRecord,
-  masterKey: MasterKey
-): Promise<FinancialStateSnapshot> {
-  const plaintext = await open(
-    { ciphertext: event.ciphertext, iv: event.iv },
-    masterKey
-  );
-  const payload = JSON.parse(
-      new TextDecoder().decode(plaintext)
-    ) as FinancialEventPayload;
-
-  const acc = createEmptyAccumulator();
-
-  for (const a of current.accounts) {
-    acc.accounts.set(a.id, { ...a });
-  }
-  for (const c of current.categories) {
-    acc.categories.set(c.id, { ...c });
-  }
-  for (const b of current.budgets) {
-    acc.budgets.set(b.id, { ...b });
-  }
-  for (const g of current.goals) {
-    acc.goals.set(g.id, { ...g });
-  }
-  for (const r of current.recurringItems) {
-    acc.recurringItems.set(r.id, { ...r });
-  }
-  // Snapshot does not persist transfer details; incremental replay processes only
-  // new transfer_created events; acc.transfers starts empty here.
-
-  applyPayload(acc, event.type as FinancialEventType, payload, event.id, event.timestamp);
-
-  return computeSnapshot(acc, event.id, event.timestamp);
-}
-
 export async function isSnapshotFresh(
-  snapshot: FinancialStateSnapshot
+  snapshot: FinancialStateSnapshot,
+  expectedCurrencyContextId?: string
 ): Promise<boolean> {
-  const lastEvent = await db.financialEvents
+  if (snapshot.version !== 2) return false;
+  const lastByTimestamp = await db.financialEvents
     .orderBy("timestamp")
     .last();
 
-  if (!lastEvent) {
-    return snapshot.asOfEventId === "none";
+  const now = Date.now();
+  if (!lastByTimestamp) {
+    return (
+      snapshot.asOfEventId === "none" &&
+      (expectedCurrencyContextId == null || snapshot.currencyContextId === expectedCurrencyContextId) &&
+      now >= snapshot.periodStart &&
+      now <= snapshot.periodEnd
+    );
   }
 
-  return snapshot.asOfEventId === lastEvent.id;
+  const sameTimestampEvents = await db.financialEvents
+    .where("timestamp")
+    .equals(lastByTimestamp.timestamp)
+    .toArray();
+  const lastEvent = sameTimestampEvents.sort(compareFinancialEvents).at(-1);
+
+  return (
+    snapshot.asOfEventId === lastEvent?.id &&
+    (expectedCurrencyContextId == null || snapshot.currencyContextId === expectedCurrencyContextId) &&
+    now >= snapshot.periodStart &&
+    now <= snapshot.periodEnd
+  );
 }
 
 export async function getSnapshot(
   masterKey: MasterKey
 ): Promise<FinancialStateSnapshot> {
+  const currencyContext = await loadCurrencyContext(masterKey, "");
   const cached = await db.financialStateSnapshot.get("current");
 
   if (cached) {
@@ -850,18 +1036,41 @@ export async function getSnapshot(
       { ciphertext: cached.ciphertext, iv: cached.iv },
       masterKey
     );
-    const snapshot = JSON.parse(
-      new TextDecoder().decode(snapshotPlaintext)
-    ) as FinancialStateSnapshot;
+    let parsedSnapshot: unknown;
+    try {
+      try {
+        parsedSnapshot = JSON.parse(new TextDecoder().decode(snapshotPlaintext)) as unknown;
+      } catch (error) {
+        if (!(error instanceof SyntaxError)) throw error;
+        parsedSnapshot = null;
+      }
+    } finally {
+      snapshotPlaintext.fill(0);
+    }
 
-    const fresh = await isSnapshotFresh(snapshot);
-    if (fresh) {
-      return snapshot;
+    if (
+      parsedSnapshot != null &&
+      typeof parsedSnapshot === "object" &&
+      (parsedSnapshot as { version?: unknown }).version === 2
+    ) {
+      const snapshot = parsedSnapshot as FinancialStateSnapshot;
+      const cachedBaseCurrency = snapshot.baseCurrency ?? snapshot.totalBalance.currency;
+      const rateFingerprintIndex = currencyContext.fingerprint.indexOf("|");
+      const rateFingerprint = rateFingerprintIndex >= 0
+        ? currencyContext.fingerprint.slice(rateFingerprintIndex)
+        : "";
+      const expectedCurrencyContextId = currencyContext.baseCurrency
+        ? currencyContext.fingerprint
+        : `${cachedBaseCurrency}${rateFingerprint}`;
+      const fresh = await isSnapshotFresh(snapshot, expectedCurrencyContextId);
+      if (fresh) {
+        return snapshot;
+      }
     }
   }
 
   const events = await db.financialEvents.orderBy("timestamp").toArray();
-  const snapshot = await replayFromInception(events, masterKey);
+  const snapshot = await replayFromInception(events, masterKey, Date.now(), currencyContext);
   await persistSnapshot(snapshot, masterKey);
 
   return snapshot;
@@ -872,7 +1081,13 @@ export async function persistSnapshot(
   masterKey: MasterKey
 ): Promise<void> {
   const plaintext = new TextEncoder().encode(JSON.stringify(snapshot));
-  const { ciphertext, iv } = await seal(plaintext, masterKey);
+  let ciphertext: Uint8Array;
+  let iv: Uint8Array;
+  try {
+    ({ ciphertext, iv } = await seal(plaintext, masterKey));
+  } finally {
+    plaintext.fill(0);
+  }
 
   await db.financialStateSnapshot.put({
     id: "current",
@@ -898,8 +1113,9 @@ export function computeProjectedOccurrences(
   }[] = [];
 
   for (const item of recurringItems) {
-    const last = item.lastRealised ?? item.startDate;
-    const dates = computeNextDueDates(item.frequency, last, asOfTimestamp, 5);
+    if (item.isArchived) continue;
+    const after = Math.max(asOfTimestamp, item.lastRealised ?? Number.MIN_SAFE_INTEGER);
+    const dates = computeNextDueDates(item.frequency, item.startDate, after, 5);
     for (const d of dates) {
       results.push({
         label: item.label,

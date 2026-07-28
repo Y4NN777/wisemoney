@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { fakeAppendEvent, fakeGetSnapshot, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable } = vi.hoisted(() => {
+const { fakeAppendEvent, fakeAppendEvents, fakeGetSnapshot, fakeReadTransactions, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable } = vi.hoisted(() => {
   const fakeAppendEvent = vi.fn<(args: { type: string; payload: Record<string, unknown>; masterKey: unknown }) => Promise<void>>();
+  const fakeAppendEvents = vi.fn<(args: Array<{ type: string; payload: Record<string, unknown>; masterKey: unknown }>) => Promise<void>>();
   const fakeGetSnapshot = vi.fn<() => Promise<Record<string, unknown>>>();
+  const fakeReadTransactions = vi.fn<() => Promise<Array<Record<string, unknown>>>>();
   class FakeTable<T extends { id: string }> {
     private store = new Map<string, T>();
     get(id: string): Promise<T | undefined> { return Promise.resolve(this.store.get(id)); }
@@ -13,11 +15,12 @@ const { fakeAppendEvent, fakeGetSnapshot, fakeAccountsTable, fakeCategoriesTable
   const fakeCategoriesTable = new FakeTable();
   const fakeGoalsTable = new FakeTable();
   const fakeRecurringItemsTable = new FakeTable();
-  return { fakeAppendEvent, fakeGetSnapshot, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable };
+  return { fakeAppendEvent, fakeAppendEvents, fakeGetSnapshot, fakeReadTransactions, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable };
 });
 
 vi.mock("@/domain/eventStore.ts", () => ({
   appendEvent: fakeAppendEvent,
+  appendEvents: fakeAppendEvents,
 }));
 
 vi.mock("@/db/schema.ts", () => ({
@@ -31,6 +34,7 @@ vi.mock("@/db/schema.ts", () => ({
 
 vi.mock("@/domain/financialState.ts", () => ({
   getSnapshot: fakeGetSnapshot,
+  readTransactionsInRange: fakeReadTransactions,
 }));
 
 import {
@@ -44,31 +48,51 @@ import {
   createGoal,
   recordGoalContribution,
   createRecurringItem,
+  archiveRecurringItem,
   createDebtCredit,
   updateDebtCreditStatus,
+  updateTransaction,
+  deleteTransaction,
   realiseRecurringOccurrence,
+  recordTransfer,
   ValidationError,
 } from "./index.ts";
 
 const mkKey = { _brand: "MasterKey" as const, key: null as unknown as CryptoKey };
 
 function snapshot(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  const accounts = (overrides.accounts as Array<Record<string, unknown>> | undefined) ?? [];
+  const goals = (overrides.goals as Array<Record<string, unknown>> | undefined) ?? [];
   return {
-    accounts: [],
+    asOfEventId: "snapshot-event",
     categories: [],
     budgets: [],
-    goals: [],
     recurringItems: [],
     debtCredits: [],
     ...overrides,
+    accounts: accounts.map((account) => ({
+      balance: { minorUnits: 0, currency: account.currency ?? "XOF" },
+      ...account,
+    })),
+    goals: goals.map((goal) => ({
+      accumulated: {
+        minorUnits: 0,
+        currency: (goal.targetAmount as { currency?: string } | undefined)?.currency ?? "XOF",
+      },
+      ...goal,
+    })),
   };
 }
 
 beforeEach(() => {
   fakeAppendEvent.mockReset();
+  fakeAppendEvents.mockReset();
   fakeGetSnapshot.mockReset();
   fakeAppendEvent.mockResolvedValue(undefined);
+  fakeAppendEvents.mockResolvedValue(undefined);
   fakeGetSnapshot.mockResolvedValue(snapshot());
+  fakeReadTransactions.mockReset();
+  fakeReadTransactions.mockResolvedValue([]);
   fakeAccountsTable.clear();
   fakeCategoriesTable.clear();
   fakeGoalsTable.clear();
@@ -104,7 +128,7 @@ describe("createAccount", () => {
 describe("updateAccount", () => {
   it("emits account_updated event when account exists", async () => {
     fakeGetSnapshot.mockResolvedValue(snapshot({
-      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true, balance: { minorUnits: 0, currency: "USD" } }],
     }));
 
     await updateAccount({
@@ -126,13 +150,23 @@ describe("updateAccount", () => {
 describe("archiveAccount", () => {
   it("emits account_archived event when account exists", async () => {
     fakeGetSnapshot.mockResolvedValue(snapshot({
-      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true, balance: { minorUnits: 0, currency: "USD" } }],
     }));
 
     await archiveAccount({ accountId: "acct-1", masterKey: mkKey });
 
     expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("account_archived");
     expect(fakeAppendEvent.mock.calls[0]![0].payload).toMatchObject({ accountId: "acct-1" });
+  });
+
+  it("rejects archiving an account while it still has a balance", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true, balance: { minorUnits: 100, currency: "USD" } }],
+    }));
+
+    await expect(archiveAccount({ accountId: "acct-1", masterKey: mkKey }))
+      .rejects.toThrow(/balance must be zero/);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
   });
 });
 
@@ -186,6 +220,86 @@ describe("recordTransaction", () => {
       })
     ).rejects.toThrow(ValidationError);
   });
+
+  it("rejects a transaction that would overflow the account balance", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{
+        id: "acct-1", currency: "USD", isActive: true,
+        balance: { minorUnits: Number.MAX_SAFE_INTEGER, currency: "USD" },
+      }],
+      categories: [{ id: "cat-1" }],
+    }));
+
+    await expect(recordTransaction({
+      accountId: "acct-1",
+      categoryId: "cat-1",
+      amount: { minorUnits: 1, currency: "USD" },
+      direction: "income",
+      masterKey: mkKey,
+    })).rejects.toThrow(/safe integer range/);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
+  });
+});
+
+describe("transaction mutations", () => {
+  const activeTransaction = {
+    id: "tx-1",
+    timestamp: 1,
+    accountId: "acct-1",
+    categoryId: "cat-1",
+    amount: { minorUnits: 100, currency: "USD" },
+    displayAmount: { minorUnits: 100, currency: "USD" },
+    direction: "expense",
+  };
+
+  it("rejects an update for a transaction that does not exist", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+      categories: [{ id: "cat-1" }],
+    }));
+
+    await expect(updateTransaction({
+      originalEventId: "missing",
+      accountId: "acct-1",
+      categoryId: "cat-1",
+      amount: { minorUnits: 100, currency: "USD" },
+      direction: "expense",
+      masterKey: mkKey,
+    })).rejects.toThrow(ValidationError);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
+  });
+
+  it("rejects deleting a transaction twice", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+    }));
+    fakeReadTransactions.mockResolvedValueOnce([activeTransaction]).mockResolvedValueOnce([]);
+
+    await deleteTransaction({ originalEventId: "tx-1", masterKey: mkKey });
+    await expect(deleteTransaction({ originalEventId: "tx-1", masterKey: mkKey }))
+      .rejects.toThrow(ValidationError);
+    expect(fakeAppendEvent).toHaveBeenCalledOnce();
+  });
+
+  it("rejects editing or deleting a transaction on an archived account", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: false }],
+      categories: [{ id: "cat-1" }],
+    }));
+    fakeReadTransactions.mockResolvedValue([activeTransaction]);
+
+    await expect(updateTransaction({
+      originalEventId: "tx-1",
+      accountId: "acct-1",
+      categoryId: "cat-1",
+      amount: { minorUnits: 100, currency: "USD" },
+      direction: "expense",
+      masterKey: mkKey,
+    })).rejects.toThrow(/archived accounts cannot be edited/);
+    await expect(deleteTransaction({ originalEventId: "tx-1", masterKey: mkKey }))
+      .rejects.toThrow(/archived accounts cannot be deleted/);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
+  });
 });
 
 describe("createCategory", () => {
@@ -213,6 +327,47 @@ describe("archiveCategory", () => {
 
     expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("category_archived");
     expect(fakeAppendEvent.mock.calls[0]![0].payload).toMatchObject({ categoryId: "cat-1" });
+  });
+
+  it("rejects categories referenced by active budgets or recurring items", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      categories: [{ id: "cat-1" }],
+      budgets: [{ id: "budget-1", categoryId: "cat-1", isArchived: false }],
+    }));
+    await expect(archiveCategory({ categoryId: "cat-1", masterKey: mkKey }))
+      .rejects.toThrow(/active budgets/);
+
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      categories: [{ id: "cat-1" }],
+      recurringItems: [{ id: "recurring-1", categoryId: "cat-1", isArchived: false }],
+    }));
+    await expect(archiveCategory({ categoryId: "cat-1", masterKey: mkKey }))
+      .rejects.toThrow(/recurring item/);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
+  });
+
+  it("allows a category whose recurring items are archived", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      categories: [{ id: "cat-1" }],
+      recurringItems: [{ id: "recurring-1", categoryId: "cat-1", isArchived: true }],
+    }));
+
+    await archiveCategory({ categoryId: "cat-1", masterKey: mkKey });
+
+    expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("category_archived");
+  });
+
+  it("rejects categories with active children", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      categories: [
+        { id: "parent" },
+        { id: "child", parentId: "parent", isArchived: false },
+      ],
+    }));
+
+    await expect(archiveCategory({ categoryId: "parent", masterKey: mkKey }))
+      .rejects.toThrow(/child categories/);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
   });
 });
 
@@ -312,6 +467,30 @@ describe("createRecurringItem", () => {
   });
 });
 
+describe("archiveRecurringItem", () => {
+  it("archives an active recurring item", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      recurringItems: [{ id: "recur-1", isArchived: false }],
+    }));
+
+    await archiveRecurringItem({ itemId: "recur-1", masterKey: mkKey });
+
+    expect(fakeAppendEvent.mock.calls[0]![0]).toMatchObject({
+      type: "recurring_item_archived",
+      payload: { itemId: "recur-1" },
+    });
+  });
+
+  it("rejects missing or already archived recurring items", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      recurringItems: [{ id: "recur-1", isArchived: true }],
+    }));
+
+    await expect(archiveRecurringItem({ itemId: "recur-1", masterKey: mkKey }))
+      .rejects.toThrow(/not found/);
+  });
+});
+
 describe("createDebtCredit", () => {
   it("emits debt_credit_created event with motive", async () => {
     const id = await createDebtCredit({
@@ -346,6 +525,59 @@ describe("createDebtCredit", () => {
         masterKey: mkKey,
       }),
     ).rejects.toThrow(ValidationError);
+  });
+});
+
+describe("recordTransfer", () => {
+  it("records an internal transfer between active same-currency accounts", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [
+        { id: "cash", currency: "XOF", isActive: true },
+        { id: "savings", currency: "XOF", isActive: true },
+      ],
+    }));
+
+    await recordTransfer({
+      fromAccountId: "cash",
+      toAccountId: "savings",
+      amount: { minorUnits: 10_000, currency: "XOF" },
+      note: "Emergency fund",
+      masterKey: mkKey,
+    });
+
+    expect(fakeAppendEvent.mock.calls[0]![0]).toMatchObject({
+      type: "transfer_created",
+      entityId: "cash",
+      payload: {
+        fromAccountId: "cash",
+        toAccountId: "savings",
+        amount: { minorUnits: 10_000, currency: "XOF" },
+        note: "Emergency fund",
+      },
+    });
+  });
+
+  it("rejects self-transfers and cross-currency transfers", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [
+        { id: "cash", currency: "XOF", isActive: true },
+        { id: "usd", currency: "USD", isActive: true },
+      ],
+    }));
+
+    await expect(recordTransfer({
+      fromAccountId: "cash",
+      toAccountId: "cash",
+      amount: { minorUnits: 10_000, currency: "XOF" },
+      masterKey: mkKey,
+    })).rejects.toThrow(ValidationError);
+    await expect(recordTransfer({
+      fromAccountId: "cash",
+      toAccountId: "usd",
+      amount: { minorUnits: 10_000, currency: "XOF" },
+      masterKey: mkKey,
+    })).rejects.toThrow(ValidationError);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
   });
 });
 
@@ -393,8 +625,60 @@ describe("realiseRecurringOccurrence", () => {
     });
 
     expect(txId).toBeDefined();
-    expect(fakeAppendEvent).toHaveBeenCalledTimes(2);
-    expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("recurring_item_realised");
-    expect(fakeAppendEvent.mock.calls[1]![0].type).toBe("transaction_created");
+    expect(fakeAppendEvents).toHaveBeenCalledOnce();
+    expect(fakeAppendEvents.mock.calls[0]![0]).toMatchObject([
+      { type: "recurring_item_realised" },
+      { type: "transaction_created" },
+    ]);
+  });
+
+  it("rejects a realised amount that differs from the recurring item", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+      categories: [{ id: "cat-1" }],
+      recurringItems: [{
+        id: "recur-1",
+        categoryId: "cat-1",
+        amount: { minorUnits: 1599, currency: "USD" },
+        direction: "expense",
+      }],
+    }));
+
+    await expect(realiseRecurringOccurrence({
+      itemId: "recur-1",
+      accountId: "acct-1",
+      categoryId: "cat-1",
+      amount: { minorUnits: 999, currency: "USD" },
+      direction: "expense",
+      masterKey: mkKey,
+    })).rejects.toThrow(ValidationError);
+    expect(fakeAppendEvents).not.toHaveBeenCalled();
+  });
+
+  it("rejects a second realisation on the same local day", async () => {
+    const today = new Date(2026, 6, 26, 9).getTime();
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ id: "acct-1", currency: "USD", isActive: true }],
+      categories: [{ id: "cat-1" }],
+      recurringItems: [{
+        id: "recur-1",
+        categoryId: "cat-1",
+        amount: { minorUnits: 1599, currency: "USD" },
+        direction: "expense",
+        lastRealised: today,
+        isArchived: false,
+      }],
+    }));
+
+    await expect(realiseRecurringOccurrence({
+      itemId: "recur-1",
+      accountId: "acct-1",
+      categoryId: "cat-1",
+      amount: { minorUnits: 1599, currency: "USD" },
+      direction: "expense",
+      date: today + 1000,
+      masterKey: mkKey,
+    })).rejects.toThrow(/already realised today/);
+    expect(fakeAppendEvents).not.toHaveBeenCalled();
   });
 });
