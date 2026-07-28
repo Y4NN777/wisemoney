@@ -9,20 +9,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Managed AI adapters** — aligned the edge with the active provider contract:
+  OpenRouter Free and Gemini 3.6 Flash, with an optional DeepSeek V4 Flash
+  adapter and tested cross-provider fallback. Removed the prohibited NVIDIA
+  hosted adapter and obsolete managed OpenAI path.
 - **PWA update prompt** — added a Sonner-powered update notification so refreshed
   service-worker builds can prompt the user instead of silently racing a reload.
+- **Device unlock setup** — added explicit local WebAuthn credential registration,
+  PRF capability verification, passphrase-only fallback, and a Chrome CTAP2 smoke
+  test covering wrapped-key persistence and unlock after reload.
 - **Global action feedback** — added localized success/error feedback across BYO
   key settings, budgets, export/import, goals, and recurring management flows.
 - **Event-sourced management actions** — wired state-management actions through the
-  financial-state event pipeline with tests for domain and pillar behavior.
+  financial-state event pipeline with tests for domain and pillar behavior,
+  including recurring-item archival and projection removal.
 - **Dettes & Créances** — added an event-sourced planning surface for receivables
   and debts with debtor/creditor name, motive, amount, date, status updates, and
   reminders for unsettled receivables.
 
 ### Fixed
 
+- **Financial projections** — made event replay deterministic for equal timestamps,
+  fixed historical period boundaries and stale snapshots, applied transaction
+  updates/deletions correctly, excluded validly archived accounts from current
+  totals, and keeps legacy invalid archives visible for user recovery.
+- **Concurrent mutations** — rejects writes validated against an outdated journal
+  tail, refreshes UI queries after failed or cross-tab mutations, and prevents
+  duplicate same-day realisation of a recurring item. Cross-tab invalidation also
+  covers encrypted base-currency changes.
+- **Budgets, recurrence, and currencies** — limited category totals to expenses,
+  corrected recurring catch-up and anchor dates, converted aggregates into the
+  selected base currency, and added exact half-even conversion for ISO currency
+  fraction digits (including XOF, JPY, and KWD).
+- **Import and export** — validates encrypted backup envelopes and event types,
+  restores atomically without destroying prior vault metadata on failure, exports
+  version 2 backups with base-currency and custom-FX settings, retains version 1
+  import and legacy encrypted-envelope compatibility, uses compact Base64 encrypted
+  envelopes, emits a real OOXML XLSX workbook, and protects CSV output from
+  spreadsheet-formula injection.
+- **Journal performance** — indexes replayed transactions by id, narrows budget
+  aggregation by category, and applies decrypted history in bounded batches.
+- **Monetary integrity** — rejects balance, goal, transfer, and projection arithmetic
+  outside JavaScript's safe-integer range, and prevents edits or deletions that
+  would recreate hidden balances on archived accounts.
+- **Session and AI data flow** — made refresh persistence race-safe, scoped query
+  caches to the unlocked vault, separated conversational prompts from financial
+  context, fixed BYO provider fallback, and built AI context from active
+  transactions with real month-over-month trends. Added an explicit vault lock
+  action that drops the master key, access token, and decrypted query cache while
+  retaining only the sealed refresh token for restoration after unlock.
+- **Client protocol validation** — rejects malformed successful auth and AI edge
+  responses before they can enter session state, and bounds browser requests to
+  the edge and direct BYO providers with 30-second abort signals.
+- **International interface** — connected dashboard, budget, goal, recurring, and
+  provider-key surfaces to the English/French resources and removed stale
+  single-provider labels from the multi-provider assistant.
+- **Managed egress** — removed the unused consent-assertion endpoint and secret;
+  every managed request now has one non-elevatable aggregate-only schema.
+- **Edge resource bounds** — added per-provider attempt deadlines, immediate
+  cancellation of fallback after client disconnect, startup and header timeouts,
+  strict JWT/Argon2 configuration bounds, and explicit trusted-proxy IP handling.
+- **Sensitive buffer lifetime** — zeroes plaintext event, snapshot, FX-rate,
+  refresh-token, export, provider-key, master-key, and WebAuthn PRF byte buffers
+  in success and failure paths after their final cryptographic use.
+- **Encrypted financial settings** — moved the base currency out of plaintext
+  `localStorage` into the AES-GCM-sealed `appSettings` store, added automatic
+  legacy migration, and restores backup currency plus FX rates atomically.
+- **Transfer projection** — retained transfer date and motive in the derived state
+  and exposed transfers in the dashboard history without counting internal moves
+  as income or expense.
+- **Transaction lifecycle** — exposed event-sourced transaction editing and deletion
+  from the current dashboard, preserving note, tags, and merchant fields while
+  invalidating all affected financial queries.
+- **Recurring schedules and import integrity** — kept monthly/yearly schedules
+  anchored to their original start date after late realisation, and reject imports
+  that write incompatible currencies or mutate archived entities.
+- **Edge memory bounds** — periodically evicts inactive per-user rate-limit buckets
+  and validates positive rate-limit configuration.
 - **PWA assets and refresh flow** — refreshed app icons, added `workbox-window`, and
-  fixed the update-handler lint issue and reload race.
+  fixed the update-handler reload race, SPA deep-link fallback, manifest metadata,
+  service-worker cleanup, and route-level loading.
 - **Responsive web UI** — constrained the account form on small screens and
   stabilized dropdown behavior inside dialogs.
 - **Capture flow** — added action feedback and fixed event-sourced state updates
@@ -32,9 +98,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Public docs** — updated the root README status/run instructions and rewrote
   `SECURITY.md` for public readability.
+- **Production defaults** — new local vaults default to XOF; forms and summaries
+  now use the selected base or account currency instead of assuming USD.
 
 ### Security
 
+- **Managed edge hardening** — added per-IP and per-account auth attempt limits,
+  atomic refresh-token rotation and an exact
+  aggregate-only schema for redacted AI egress.
 - **Edge — pgx/v5 5.7.4 → 5.9.2** — fixes CVE-2026-33816 (GO-2026-4772, CVSS 9.8),
   a memory-safety vulnerability in the Postgres driver on the auth + rate-limit path
   (also clears GO-2026-4771).
@@ -52,16 +123,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **AI orchestration — managed path** — `submit` (managed mode) attaches the in-memory
-  access JWT (`Bearer`), resolves egress level from per-feature consent (`X-Egress-Level`
-  + `X-Feature`, and `X-Consent-Assertion` only on full), and calls the edge `/v1/ai/proxy`
-  via `edgeClient.postAiProxy`. 401 → session refresh + one retry; 503 → `ProviderUnavailableSignal`
-  (INV-PROXY-04, never fabricates); 200 → normalized response. Consent-gated egress enforced
-  client-side and at the edge boundary. When full consent is granted but the assertion is
-  missing/expired, the client **re-acquires** it (`POST /v1/consent/assert`, with refresh+retry)
-  and, if that fails, **gracefully downgrades** — `toRedacted()` strips full-only fields so a
-  full-shaped payload is never sent under a `redacted` header. BYO-direct path remains a
-  separate follow-up.
+- **AI orchestration — managed path** — `submit` attaches the in-memory access JWT
+  (`Bearer`) and calls `/v1/ai/proxy` with an aggregate-only payload. 401 triggers
+  one session refresh and retry; 503 returns `ProviderUnavailableSignal`; 200 is
+  normalized. BYO mode calls configured providers directly and may use explicitly
+  consented full context.
 - **Client auth-session module** — `api/edgeClient.ts` (typed register/login/refresh,
   `Authorization: Bearer`, HTTPS-enforced base URL) + `auth/session.ts` (zustand store).
   Access JWT held **in-memory only**; refresh token **AES-GCM-sealed** into a new `authSession`
@@ -73,20 +139,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   15-min HS256 access JWT (alg-pinned) + rotating single-use refresh token with
   **reuse-detection family invalidation** (M-AUTH-05, RFC 6749 §10.4); login timing-equalized
   against account enumeration. Mishmar review fixed a timing-oracle (dummy hash now uses prod
-  Argon2 params) and pinned JWT to HS256. (Refresh rotation atomicity + handler integration
-  tests are tracked follow-ups.)
+  Argon2 params) and pinned JWT to HS256. Refresh rotation is transactional so concurrent
+  reuse cannot create parallel token lineages.
 - **Client crypto foundation** — `crypto/envelope.ts` (AES-GCM-256 seal/open, unique
   96-bit IV) and `crypto/keyManagement.ts` (Argon2id master-key derivation via hash-wasm,
   passphrase verification, BYO key seal/open, WebAuthn-PRF master-key wrap/unwrap). Keys
   imported non-extractable, `encrypt`/`decrypt` usages only; raw key bytes zeroed after use
   (INV-KEY-02/03). Dexie schema → **v2** (`keyMeta.wrappedIv`). Mishmar review PASS-WITH-NITS.
-- **Edge — consent gate on `POST /v1/ai/proxy`** — `consentSvc.Verify` wired into the
-  proxy handler (ARCHITECTURE §10a, INV-EGR-03a). Full-egress requires a valid, unexpired,
-  signature-correct assertion bound to the caller's JWT sub, the `X-Feature` header, and
-  `level="full"`; any failure forces redacted and the structural cap rejects full-only
-  fields with 400. Fail-closed; no payload logged (INV-PROXY-02). 10 gate tests.
-- **`X-Feature` request header** — declares the feature a `/v1/ai/proxy` request pertains
-  to (ARCHITECTURE §10a). Sibling to `X-Egress-Level` / `X-Consent-Assertion`.
+- **Edge aggregate gate on `POST /v1/ai/proxy`** — validates the exact managed
+  aggregate schema and rejects full-only fields. No client header or assertion can
+  elevate a managed request to full egress.
 - `GOTOOLCHAIN=local` in the edge Dockerfile builder — hermetic build, no surprise
   toolchain auto-download.
 

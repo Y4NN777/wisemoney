@@ -95,8 +95,6 @@ classDiagram
         +grantConsent(featureId) void
         +revokeConsent(featureId) void
         +getConsentState(featureId) ConsentLevel
-        +storeConsentAssertion(featureId, assertion) void
-        +clearConsentAssertion(featureId) void
         --
         NFR-MOD-03: only module that reads/writes consent state
         localStorage consent: advisory UI only; not enforcement
@@ -115,7 +113,7 @@ classDiagram
         NFR-MOD-02: only module that knows about provider SDKs/adapters
         UI surfaces never call this directly
         BYO-key: decrypts key in-memory, calls provider direct (INV-KEY-02)
-        Managed: sends to Go edge with JWT + consent assertion
+        Managed: sends aggregate-only context to Go edge with JWT
         Provider endpoint allow-list hardcoded (M-KEY-03)
         Key zeroed from memory after call (INV-KEY-02)
     }
@@ -159,7 +157,7 @@ classDiagram
     FinancialIntelligenceModule --> AIContextBuilder : trigger context build
     FinancialLiteracyModule --> AIContextBuilder : trigger context build
     AIContextBuilder --> ConsentRedactionSubsystem : shape every egress context
-    ConsentRedactionSubsystem --> AIOrchestrClient : shaped context + assertion
+    ConsentRedactionSubsystem --> AIOrchestrClient : consent-shaped context
     AIOrchestrClient --> CryptoKeyMgmtModule : decrypt BYO key in-memory
     ExportImportModule --> EventStore : read full log for export
     ExportImportModule --> CryptoKeyMgmtModule : encrypt/decrypt export blob
@@ -193,18 +191,6 @@ classDiagram
         M-AUTH-05: refresh token rotation on every use
     }
 
-    class ConsentAssertionIssuer {
-        <<issues short-lived server-signed consent assertions>>
-        +issueAssertion(userId, featureId, level) SignedAssertion
-        +validateAssertion(assertion, featureId) bool
-        --
-        THREAT_MODEL §3 (AQ-01 resolution)
-        Assertion: {userId, featureId, level=full, expiresAt}
-        Signed by server key (same signer as JWT, or separate)
-        Short-lived (minutes); absent assertion → treated as redacted
-        Adds endpoint /consent/assert to Go edge scope
-    }
-
     class RateLimiter {
         <<per-user token-bucket; keyed on JWT sub only>>
         +checkAndConsume(userId) bool
@@ -234,12 +220,10 @@ classDiagram
     class StructuralPayloadCap {
         <<validates egress shape; enforces redacted ceiling at the boundary>>
         +validateRedacted(payload) ValidationResult
-        +validateConsentAssertion(assertion, featureId) ValidationResult
         --
-        THREAT_MODEL §3 (AQ-01 resolution, Option C + B)
-        Redacted requests: validate payload against aggregate-only JSON schema
+        THREAT_MODEL §3 structural payload cap
+        All managed requests: validate payload against aggregate-only JSON schema
         Reject (400) any payload with individual-transaction fields (amounts, dates, merchant, notes)
-        Full requests: validate signed consent assertion; absent/invalid → treat as redacted (fail-safe)
         Schema versioned alongside client ContextBuilder
         INV-EGR-03a: enforcement independent of client localStorage flag
     }
@@ -262,7 +246,7 @@ classDiagram
         --
         INV-PROXY-03: output always passed to Normalizer
         Adding a provider = adding an adapter + routing config entry; no cross-cutting change
-        FR-AIORCH-01: Gemini / NVIDIA NIM / OpenAI adapters for MVP
+        FR-AIORCH-01: OpenRouter / Gemini / optional DeepSeek managed adapters
         Provider endpoint URL hardcoded (M-PROXY-01 / M-KEY-03)
         TLS required on all provider calls (TB-03)
     }
@@ -278,7 +262,6 @@ classDiagram
 
     %% Go edge dependency flow
     AuthService <-- RequestRouter : validates JWT on every request
-    ConsentAssertionIssuer <-- RequestRouter : consent/assert endpoint
     RateLimiter <-- RequestRouter : check per-user budget before dispatch
     StructuralPayloadCap <-- RequestRouter : validate payload before dispatch
     LogSanitizer <-- RequestRouter : sanitize before any log write

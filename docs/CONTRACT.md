@@ -30,6 +30,8 @@ Rev 2026-06-05c — §4: INV-KEY-03 clarified to name the transient in-memory ra
 **INV-MON-01** Every monetary amount stored or transmitted by the system is
 represented as **(integer minor units, ISO-4217 currency code)**. Floating-point
 types are prohibited for monetary amounts at any storage or transmission boundary.
+Every stored amount and arithmetic result must remain within JavaScript's safe
+integer range; overflow is rejected before an event is appended.
 
 *Why: floating-point arithmetic is non-associative and produces rounding errors
 that compound across aggregations. A two-field integer+currency representation is
@@ -221,7 +223,8 @@ credential database, not an auth store.*
 
 **INV-AUTH-03** JWTs are signed with a key known only to the server. The signing
 key is never transmitted to any client. Tokens carry an expiry and must be
-validated on every proxied request.
+validated on every proxied request. The edge accepts only HS256 access tokens
+issued with `iss=wisemoney-edge`.
 
 *Why: an unsigned or client-visible signing key allows arbitrary token forgery,
 defeating per-user isolation.*
@@ -302,9 +305,10 @@ user's complete financial history to anyone with device access.*
 
 **INV-PERS-03 (JSON export losslessness)** A JSON export is lossless: importing
 a JSON export reconstructs the exact local state, including the full event log,
-all entity references, and all account/category/goal/budget records. After a
-successful JSON import, the system must be in a state indistinguishable from the
-state at export time.
+all entity references, the base currency, and custom FX rates. Device credentials,
+authentication sessions, and AI provider keys are intentionally outside the
+financial backup boundary. After a successful JSON import, the financial state
+must be indistinguishable from the state at export time.
 
 *Why: JSON export is the sole backup and restore path for MVP; a lossy or
 non-round-trippable export means backup does not actually protect against data
@@ -410,15 +414,13 @@ explicit re-scoping at the CONTRACT level before implementation begins.
 
 ---
 
-## 9. Open questions (contract-level)
+## 9. Resolved contract questions
 
-**CQ-01 — Account currency mutability after zero events.** INV-MON-02 fixes
-account currency after the first event is recorded. The behaviour when a user
-wants to "correct" a currency on an account that has never had a transaction (i.e.
-the account was just created) is not yet defined. This is a minor edge case but
-the CONTRACT should state whether zero-event accounts are an exception or whether
-currency is immutable from creation regardless. Deferred to ARCHITECTURE; default
-assumption is immutable-from-creation.
+**CQ-01 — Account currency mutability after zero events: resolved.** Account
+currency is immutable from creation, including before the first transaction.
+Correcting a mistaken currency requires replacing an empty account. This keeps
+event replay and FX conversion free of account-currency mutation branches
+(ARCHITECTURE §6).
 
 ---
 

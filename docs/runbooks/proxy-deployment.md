@@ -25,7 +25,10 @@
 - `.env` exists at repo root, copied from `.env.example` and filled with real
   local secrets.
 - `DATABASE_URL` points at the Compose service host `postgres`.
-- `JWT_SIGNING_KEY` and `CONSENT_SIGNING_KEY` are both strong and different.
+- `JWT_SIGNING_KEY` is a strong, unique production secret.
+- `TRUST_PROXY_HEADERS=false` for direct exposure. Set it to `true` only when the
+  edge cannot be reached except through the platform's trusted reverse proxy;
+  otherwise clients can spoof the IP used by authentication rate limits.
 
 ## Deployment steps
 
@@ -41,7 +44,7 @@ docker compose up -d edge
 
 - `docker compose ps` shows `postgres` healthy and `edge` running.
 - `curl -i http://localhost:8080/v1/ai/proxy` should reject unauthenticated access.
-- Confirm logs do not include provider keys, JWTs, consent assertions, or financial
+- Confirm logs do not include provider keys, JWTs, or financial
   payloads.
 
 ## Rollback
@@ -53,7 +56,8 @@ docker compose up -d edge
 
 ## Notes
 
-- Postgres holds auth + rate-limit metadata only — never financial data.
+- Postgres holds users and hashed refresh-token records only — never financial
+  data. Rate-limit state is in edge memory until the documented Redis scale-out.
 - The current Compose file publishes Postgres on host port `5432` for local
   development. A future managed-service deployment must remove that host binding
   or restrict it to a private network.

@@ -26,8 +26,9 @@ WiseMoney is a **client-heavy / thin-edge** system. Essentially all domain and
 business logic lives in the **client** — a React + TypeScript PWA. The **backend**
 is a thin, stateless Go edge whose only jobs are to authenticate managed-mode
 users, rate-limit them, and proxy AI requests to providers. The backend holds **no
-financial or domain logic** (Gate-4 decision 16). Postgres backs the edge with
-users/auth and rate-limit metadata only — **never financial data**.
+financial or domain logic** (Gate-4 decision 16). Postgres stores users and
+hashed refresh-token records only — **never financial data**. Rate-limit state is
+process-local at the current scale.
 
 This split is the spine of the architecture and is what lets the product keep its
 local-first promise: the entire Financial State pillar — capture, snapshot
@@ -78,16 +79,16 @@ solely to hold provider keys the user has chosen not to hold themselves.
   its output through the consent subsystem before any egress; it never emits a
   context directly to a transport.
 - **Consent & Redaction Subsystem** — the sole owner of consent state
-  (localStorage) and the sole producer of egress-shaped contexts. Given a feature
-  + the requested egress level, it returns either a full context (only if
-  per-feature full-egress consent is granted, INV-EGR-02) or a redacted context
-  capped at the FR-CONSENT-07 / INV-EGR-01 ceiling. No other module may shape an
-  egress payload.
+  (localStorage) and the sole producer of egress-shaped contexts. Direct BYO mode
+  may receive full transaction context only after per-feature consent; managed
+  mode always applies `toRedacted()` and the Go edge independently enforces the
+  aggregate-only schema. No other module may shape an egress payload.
 - **Crypto / Key-Management Module** — Argon2id KDF, AES-GCM encrypt/decrypt for
   the IndexedDB store, WebAuthn-wrapped daily unlock, and storage of BYO provider
   keys encrypted at rest (§7, INV-KEY-02/03, INV-PERS-02).
-- **Export / Import Module** — JSON (lossless, restore-capable, INV-PERS-03),
-  CSV + XLSX (human-readable secondaries, never restore formats, INV-PERS-04).
+- **Export / Import Module** — versioned JSON (lossless journal, base currency,
+  and custom FX rates; restore-capable, INV-PERS-03), CSV + XLSX (human-readable
+  secondaries, never restore formats, INV-PERS-04).
 - **Three UI surfaces** — **Dashboard** (State snapshot), **Capture** (fast entry,
   offline-first), **Assistant** (chat: guidance + learning).
 
@@ -103,15 +104,15 @@ solely to hold provider keys the user has chosen not to hold themselves.
 - **Provider-Adapter Layer** — one adapter per provider, each translating the
   internal request into the provider's API and back. Adding a provider is adding
   an adapter + routing config — no cross-cutting change (FR-AIORCH-01,
-  INV-PROXY-03). **MVP managed-mode adapters: OpenRouter (free-model aggregator)
-  and Gemini free tier (eligible for redacted-egress; see §9 for the constraint
-  that makes this safe).** NVIDIA hosted API is **not** in the roster (terms
+  INV-PROXY-03). **Managed-mode adapters: OpenRouter Free and Gemini 3.6 Flash,
+  plus optional DeepSeek V4 Flash when an operator key and terms approval are
+  present (all eligible only for redacted egress; see §9).** NVIDIA hosted API is **not** in the roster (terms
   breach — §9). BYO-key adapters are client-side and are user-determined.
 - **Response Normalizer** — collapses every provider response into one internal
   shape before it returns to the client (INV-PROXY-03). No feature depends on a
   provider-specific format.
 
-The edge persists **only** auth + rate-limit state in Postgres. It never persists
+The edge persists **only** users and hashed refresh tokens in Postgres. It never persists
 transaction payloads, financial context, or AI responses (INV-PROXY-01).
 
 ---
@@ -250,6 +251,10 @@ Setup:
 Daily unlock:
   WebAuthn / biometric ──unwraps──▶ a stored wrapped copy of the master key ──▶ master key (in memory)
 
+Explicit lock:
+  clear master key + access JWT + decrypted query cache from memory
+  retain only the AES-GCM-sealed refresh token in IndexedDB
+
 Recovery:
   passphrase is the root of trust. Lose it ⇒ data is unrecoverable by design.
   The recovery path is the lossless JSON export (re-import into a fresh setup).
@@ -284,7 +289,7 @@ Register/login: email + password
   password ──Argon2id(salt)──▶ hash, stored in Postgres (INV-AUTH-02; never plaintext)
   on success ──▶ issue JWT (server-signed, expiry) + refresh token
 Each proxied request:
-  client presents JWT ──▶ edge validates signature + expiry (INV-AUTH-03)
+  client presents JWT ──▶ edge validates HS256 signature + expiry + `iss=wisemoney-edge` (INV-AUTH-03)
   invalid/absent ⇒ reject (INV-AUTH-01: no unauthenticated path)
   valid ⇒ attribute to user identity ──▶ per-user rate-limit + routing (INV-AUTH-04)
 Refresh: short-lived access JWT + refresh token rotation (detail → THREAT_MODEL)
@@ -354,26 +359,19 @@ INV-PROXY-03, §2.2).
 
 ### 9b. Consent gate and managed-redacted-only structural guarantee (2026-06-05)
 
-The consent-assertion gate (§10a) is designed around a full-egress / redacted-egress
-split. With no full-egress provider configured in managed mode at MVP, the
+The current edge gate (§10a) accepts only aggregate redacted egress. With no
+full-egress provider configured in managed mode at MVP, the
 interaction is:
 
-- A managed-mode client that presents a valid consent assertion for full-egress
-  will find **no full-egress provider in the routing table**. The router fails
-  closed to redacted (INV-PROXY-04 graceful degradation path applies: no provider
-  available for the requested level → fail closed).
+- A managed-mode client is reduced to redacted aggregates before transport. The
+  edge independently forces the redacted validator regardless of client claims.
 - The existing structural payload cap (THREAT_MODEL §3, Option C) independently
   rejects any full-only fields at the edge, providing a second enforcement layer.
-- The net effect: **managed mode is structurally redacted-only at MVP by the
-  combination of (1) no configured full-egress provider and (2) the structural
-  payload cap.** The consent gate remains in place so the code path is correct
-  when a paid provider is eventually configured; the gate does not need to
-  distinguish "no provider configured" from "consent absent" — both fail to
-  redacted identically.
-- **This does NOT require a new "reject full outright" code path.** The
-  existing fail-closed behavior is the guarantee. The managed-full-egress path
-  becomes active only when a paid provider adapter is added to the routing config
-  — at that point the consent gate is already the enforcement mechanism.
+- The net effect is **managed mode is structurally redacted-only at MVP** at both
+  client and edge boundaries. Provider configuration cannot bypass that ceiling.
+- Full-only payload fields are rejected outright. A future managed-full-egress
+  path requires an explicit code change, security review, and approved provider
+  terms; adding an API key alone cannot activate it.
 
 ### 9c. Task-type routing and fallback
 
@@ -416,9 +414,8 @@ the provider. Because every managed-mode request passes through the edge, the ed
 inspect/limit the egress level the client claims, independent of the client's
 localStorage consent flag (which is advisory UI context only, INV-EGR-03). The edge
 is the enforcement point — it sees the outbound payload before it reaches a
-provider. *(Whether the edge re-derives the permitted shape, or validates a signed
-consent assertion, or caps payloads structurally, is the adversarial design and is
-owned by the THREAT_MODEL.)*
+provider. The current edge applies an exact aggregate-only structural cap to every
+managed request; there is no managed full-egress route.
 
 **BYO-key mode — there is NO server boundary.** The client talks to the provider
 **directly** (flow (d)). No edge sees the request. Therefore, in BYO-key mode,
@@ -444,35 +441,18 @@ BYO-key mode.
 > managed-mode enforcement seam; it does not claim to have solved the security
 > design. **This is the headline cross-cutting security item to carry forward.**
 
-### 10a. Consent-assertion contract (pinned, 2026-06-02)
+### 10a. Managed egress contract (revised 2026-07-26)
 
-The managed-mode enforcement mechanism (AQ-01) is pinned here so the egress
-subsystem is built against a fixed contract. The CONTRACT binds the *principle*
-(INV-EGR-03a: server-boundary enforcement, not client trust); this section binds
-the *wire shape*.
+Managed mode has one wire-level egress shape: aggregate-only redacted context.
+The client sends `task_type`, `payload`, and an optional user-authored `prompt`.
+The prompt is kept separate from financial context and capped at 4,000 characters.
+The edge always applies the exact redacted schema and rejects unknown or full-only
+fields with HTTP 400. Headers cannot elevate this ceiling.
 
-**Purpose.** The client's localStorage consent flag is advisory and untrusted
-(INV-EGR-03). Before the edge forwards a *full-egress* payload to a provider, it
-requires a **server-minted, signed permission slip** — the consent assertion —
-proving consent was granted via a server round-trip, not merely claimed by the
-client.
-
-| Aspect | Pinned decision |
-| --- | --- |
-| **Algorithm** | HMAC-SHA256 over the assertion fields (the edge both issues and verifies — symmetric is correct). |
-| **Signing key** | A **dedicated** `CONSENT_SIGNING_KEY`, distinct from `JWT_SIGNING_KEY` and **required to differ** (independent rotation). Server-only. |
-| **Bound fields** | `user_id` (must equal the caller's authenticated JWT `sub`, INV-AUTH-04), `feature` (per-feature, INV-EGR-02), `level` = `"full"`, `iat`, `exp`, `nonce`. |
-| **TTL** | `CONSENT_ASSERTION_TTL` ≈ **5 min** — short, so a stale/leaked slip cannot be replayed for long. |
-| **Issued by** | `POST /v1/consent/assert` (authenticated) on per-feature full-egress grant → returned to the client, cached **opaquely** per feature. |
-| **Carried on** | request header **`X-Consent-Assertion`** (kept separate from `Authorization`). |
-| **Feature transport** | request header **`X-Feature`** — the client attaches this alongside `X-Consent-Assertion` and `X-Egress-Level` to declare which feature the request pertains to. The request body carries `task_type` + `payload` only; consent/egress metadata stays in headers. (X-Feature transport pinned 2026-06-05) |
-| **Edge verification** | on `/v1/ai/proxy`: valid HMAC **and** not expired **and** `user_id`==caller **and** `assertion.feature`==`X-Feature` (header mismatch ⇒ force redacted) **and** `level=="full"` → permit full payload; **any failure ⇒ force redacted** (structural payload cap rejects full-only fields). Fail-closed. |
-| **Revocation** | short TTL + client dropping the cached slip on revoke. A `nonce`/`jti` one-time-use denylist is **deferred** (overkill at this TTL and scale) — recorded as a hardening TODO. |
-
-Until the proxy handler wires `consentSvc.Verify(...)`, `/v1/ai/proxy` MUST treat
-every request as redacted (fail-closed). Implemented by: `internal/consent`
-(issue/verify), `internal/egress` (structural cap), `consent/consentStore.ts` +
-`ai/orchestration.ts` (client: obtain, cache, attach the header).
+The former consent-assertion endpoint and signing key were removed because no
+managed full-egress provider exists. Full transaction context remains available
+only through direct BYO-key transport after per-feature local consent. A future
+managed full-egress design requires a new ADR, implementation, and security review.
 
 ---
 
@@ -496,8 +476,8 @@ every request as redacted (fail-closed). Implemented by: `internal/consent`
                                                 │
                                    ┌────────────▼─────────────┐
                                    │  Postgres (pgx)          │
-                                   │  users/auth + rate-limit │
-                                   │  metadata ONLY           │
+                                   │  users + refresh tokens  │
+                                   │  ONLY                    │
                                    └──────────────────────────┘
 
 BYO-key bypass:  PWA ───────────────────────────────▶ AI provider
@@ -506,7 +486,7 @@ BYO-key bypass:  PWA ───────────────────�
 
 - **Go image is distroless and version-pinned.** Single static binary. **No
   `:latest` tags anywhere** — every image pinned (harness primitive).
-- **Postgres holds auth + rate-limit metadata only** — never financial data
+- **Postgres holds authentication data only** — never financial data
   (Gate-4 decision 20, INV-PROXY-01).
 - **BYO-key mode bypasses the proxy entirely** — client → provider, zero cloud
   dependency (INV-AUTH-05).
@@ -556,9 +536,8 @@ These rules enforce NFR-MOD and are binding on implementation:
 
 Genuine architecture-level questions only; nothing fabricated.
 
-- **AQ-01 — RESOLVED.** Managed-mode egress enforcement uses a signed consent
-  assertion (`X-Consent-Assertion`), `X-Feature`, `X-Egress-Level`, fail-closed
-  downgrade to redacted, and structural payload caps at the Go edge.
+- **AQ-01 — RESOLVED.** Managed-mode egress enforcement uses JWT authentication,
+  an exact aggregate schema, and fail-closed structural validation at the Go edge.
 - **AQ-02 — RESOLVED / accepted residual.** BYO-key mode has no server boundary;
   egress shaping is client-side because the user is both principal and key-holder.
   This remains an accepted residual in the threat model.

@@ -98,122 +98,17 @@ Dexie indexes: "id", "timestamp", "type", "entityId", "[type+timestamp]"
 Invariants:
   - No update or delete path exists on this store (INV-EVT-01).
   - A read of the full log by timestamp ascending is the replay path (INV-EVT-02).
-  - entityId is validated at append time against the projection stores (INV-EVT-03).
+  - entityId and referenced entities are validated against replayed state before append (INV-EVT-03).
   - Money amounts (minorUnits, currency) live inside ciphertext — never plaintext (INV-MON-01).
 ```
 
-#### `accounts` (projection — derived from event log)
+#### In-memory domain projections
 
-```
-accounts {
-  id          : string          // UUID PK — plaintext, indexed
-  currency    : string          // ISO-4217 — plaintext, indexed (immutable from creation,
-                                //   INV-MON-02, ARCHITECTURE §6)
-  isActive    : boolean         // plaintext — to support active-account filter queries
-  ciphertext  : Uint8Array      // name, type, initialBalance (Money), currentBalance (Money)
-  iv          : Uint8Array
-}
-
-Dexie indexes: "id", "currency", "isActive"
-
-Note: currentBalance is derived/cached from replay; replay wins over cache (INV-EVT-02).
-      isActive is stored plaintext to allow filtering without decrypting every record.
-      The plaintext boolean leaks which accounts are active — accepted metadata leakage
-      (same category as timestamp metadata above).
-```
-
-#### `transactions` (projection — derived from event log)
-
-```
-transactions {
-  id          : string          // UUID PK — plaintext
-  timestamp   : number          // Unix ms UTC — plaintext, indexed
-  accountId   : string          // FK ref — plaintext, indexed (INV-EVT-03)
-  categoryId  : string          // FK ref — plaintext, indexed (INV-EVT-03)
-  ciphertext  : Uint8Array      // amount (Money), direction, note, tags
-  iv          : Uint8Array
-}
-
-Dexie indexes: "id", "timestamp", "accountId", "categoryId", "[accountId+timestamp]",
-               "[categoryId+timestamp]"
-```
-
-#### `categories` (projection — derived from event log)
-
-```
-categories {
-  id          : string          // UUID PK — plaintext
-  parentId    : string | null   // self-referential FK — plaintext, indexed (INV-EVT-03)
-  isSystemDefault : boolean     // plaintext — drives UI distinction
-  ciphertext  : Uint8Array      // name
-  iv          : Uint8Array
-}
-
-Dexie indexes: "id", "parentId"
-```
-
-#### `budgets` (projection — derived from event log)
-
-```
-budgets {
-  id          : string          // UUID PK — plaintext
-  categoryId  : string          // FK ref — plaintext, indexed (INV-EVT-03)
-  periodMonth : string          // "YYYY-MM" — plaintext, indexed (INV-EVT-03)
-  ciphertext  : Uint8Array      // limit (Money), spent (Money, derived)
-  iv          : Uint8Array
-}
-
-Dexie indexes: "id", "categoryId", "periodMonth", "[categoryId+periodMonth]"
-
-Note: spent is a derived projection, not independently authoritative (INV-EVT-02).
-```
-
-#### `goals` (projection — derived from event log)
-
-```
-goals {
-  id          : string          // UUID PK — plaintext
-  ciphertext  : Uint8Array      // name, targetAmount (Money), accumulatedAmount (Money, derived),
-                                //   targetDate
-  iv          : Uint8Array
-}
-
-Dexie indexes: "id"
-
-Note: accumulatedAmount derives exclusively from goalContributions replay (INV-EVT-04).
-      No plaintext structural key beyond id is needed for goal queries.
-```
-
-#### `goalContributions` (projection — derived from event log)
-
-```
-goalContributions {
-  id          : string          // UUID PK — plaintext
-  goalId      : string          // FK ref — plaintext, indexed (INV-EVT-04)
-  timestamp   : number          // Unix ms UTC — plaintext, indexed
-  ciphertext  : Uint8Array      // amount (Money)
-  iv          : Uint8Array
-}
-
-Dexie indexes: "id", "goalId", "[goalId+timestamp]"
-```
-
-#### `recurringItems` (projection — derived from event log)
-
-```
-recurringItems {
-  id          : string          // UUID PK — plaintext
-  categoryId  : string          // FK ref — plaintext, indexed (INV-EVT-03)
-  ciphertext  : Uint8Array      // label, amount (Money), direction, frequency, startDate
-  iv          : Uint8Array
-}
-
-Dexie indexes: "id", "categoryId"
-
-Note: projected occurrences are never stored — they are computed in memory by the
-      FinancialState Engine (INV-EVT-05). An occurrence enters financialEvents only
-      when the user explicitly realises it as a Transaction.
-```
+Accounts, transactions, categories, budgets, goals, contributions, debts and
+recurring items are replayed in memory from `financialEvents`; they are not
+separate IndexedDB stores. This removes cache-consistency failure modes and avoids
+leaking projection indexes. `financialStateSnapshot` is the only persisted cache
+and is discarded whenever its journal cursor is stale.
 
 #### `financialStateSnapshot` (cached projection — subordinate to log)
 
@@ -222,7 +117,7 @@ financialStateSnapshot {
   id          : string          // singleton key, e.g. "current" — plaintext PK
   asOfEventId : string          // last event id incorporated — plaintext (integrity check)
   asOfTimestamp : number        // Unix ms — plaintext
-  ciphertext  : Uint8Array      // full FinancialState: totalBalance, periodIncome,
+  ciphertext  : Uint8Array      // FinancialState version 2: totalBalance, periodIncome,
                                 //   periodExpenses, netCashFlow, categoryTotals,
                                 //   budgetProgress, goalProgress, projectedRecurring
   iv          : Uint8Array
@@ -230,7 +125,8 @@ financialStateSnapshot {
 
 Dexie indexes: "id"
 
-Invariant: if asOfEventId does not match the last event in financialEvents, the
+Invariant: if the decrypted projection version is unsupported, its JSON is invalid,
+           or asOfEventId does not match the last event in financialEvents, the
            snapshot is stale and the FinancialState Engine must replay from inception
            before serving reads (INV-EVT-02).
 ```
@@ -256,6 +152,23 @@ Note: rate is stored as a decimal string inside ciphertext (not float — INV-MO
       (INV-MON-05), applied at the conversion call site.
       The baseCurrency/quoteCurrency pair being plaintext leaks which currency pairs
       the user works with — accepted metadata leakage.
+```
+
+#### `appSettings` (encrypted financial preferences — INV-PERS-02/03)
+
+```
+appSettings {
+  id          : string          // setting key; currently "baseCurrency"
+  ciphertext  : Uint8Array      // UTF-8 setting value sealed under the master key
+  iv          : Uint8Array      // AES-GCM nonce
+}
+
+Dexie indexes: "id"
+
+Invariant: financial preferences required for a lossless backup, including the
+base currency, never exist in plaintext persistent storage. Version 6 migrates
+the previous `localStorage` value on the first unlocked read and removes that
+legacy value only after the encrypted write succeeds.
 ```
 
 #### `keyMeta` (key-management artifacts — INV-KEY-02/03)
@@ -373,25 +286,11 @@ version is below the declared version. Multiple sequential version declarations
 are additive — each `.upgrade()` sees the database as it existed after the
 previous version's callback completed.
 
-**Projection rebuild after an upgrade.** Projection stores (`accounts`,
-`transactions`, `categories`, `budgets`, `goals`, `goalContributions`,
-`recurringItems`, `financialStateSnapshot`) are derived data. When a schema
-upgrade changes a projection store structure (e.g. adds an index, adds a
-plaintext structural key), the correct upgrade path is:
-
-1. Clear the affected projection store(s) in the `.upgrade()` callback.
-2. On application startup, if the projection stores are empty or
-   `financialStateSnapshot.asOfEventId` does not match the tail of
-   `financialEvents`, trigger a full replay from the `financialEvents` log.
-3. The FinancialState Engine replays all events in `timestamp` ascending order,
-   re-derives every projection, and re-populates the stores.
-4. Only after replay completes does the application allow reads from projection
-   stores.
-
-This approach is correct because `financialEvents` is the sole source of truth
-(INV-EVT-02); clearing derived stores loses nothing that cannot be recovered
-by replay. Replay correctness is guaranteed by the append-only, immutable log
-(INV-EVT-01).
+**Snapshot rebuild after an upgrade.** `financialStateSnapshot` is derived data.
+If its `(asOfTimestamp, asOfEventId)` cursor does not match the journal tail, the
+Financial State Engine replays the encrypted journal in canonical
+`(timestamp, id)` order and replaces the snapshot atomically. The UI does not read
+from independent projection stores.
 
 **Client-side execution model.** IndexedDB/Dexie migrations run automatically in
 the browser the first time a client opens a database whose declared version exceeds
@@ -603,6 +502,9 @@ migration design. Execution is always client-side and automatic on version bump.
 | 1       | 2026-06-02 | Initial schema — all stores created     | all             |
 | 2       | 2026-06-05 | keyMeta v2 — add `wrappedIv` field      | keyMeta         |
 | 3       | 2026-06-05 | authSession — new store for sealed refresh token (client session module, ADR-0012) | authSession (new) |
+| 4       | 2026-07-26 | Added the system-default category index | categories (historical projection store) |
+| 5       | 2026-07-26 | Removed unused persisted projection stores; replay remains authoritative | accounts, transactions, categories, budgets, goals, goalContributions, recurringItems |
+| 6       | 2026-07-26 | Encrypted base-currency preference and legacy plaintext migration | appSettings (new), localStorage (removed after migration) |
 
 ---
 
@@ -793,18 +695,6 @@ is disclosed.
 
 ## D. Open questions — genuine only
 
-**DQ-01 — Projection store consistency on concurrent writes.**
-The FinancialState Engine appends to `financialEvents` and then updates the
-relevant projection store in a single logical operation, but IndexedDB does not
-provide cross-store transactions in Dexie's v4 API in the same way a relational
-DB does. If the app crashes between the event append and the projection update,
-the projection store is stale. The recovery path (replay from the log) handles
-this correctly, but the condition that triggers a replay (detecting projection
-staleness) needs a precise definition — the `asOfEventId` field in
-`financialStateSnapshot` is one hook, but individual projection stores have no
-equivalent guard. This needs a precise staleness-detection strategy before
-implementation begins.
-
 **DQ-02 — Key-rotation handling.**
 If the user changes their passphrase (or Argon2id parameters are hardened in a
 future version), every encrypted record in every IndexedDB store must be
@@ -833,9 +723,10 @@ module is implemented.
 > the user establishes a *new* passphrase/key for that device and the imported data
 > is re-encrypted at rest under it — `keyMeta` (salt/KDF params/WebAuthn handle/wrapped
 > key) is therefore **NOT** carried in the export; it is regenerated on the target
-> device. **BYO provider key material is excluded from the plaintext export** (the
-> user re-enters keys on the new device) and may appear only inside the optional
-> passphrase-encrypted export. The encrypted export variant (Gate-5 #26, FR-PERSIST-08)
+> device. Export format version 2 also carries the base currency and decrypted
+> custom FX rates so financial projections round-trip exactly. **BYO provider key
+> material is always excluded**, including from the encrypted variant; the user
+> re-enters provider keys on the new device. The encrypted export variant (Gate-5 #26, FR-PERSIST-08)
 > is exactly the decrypted JSON re-encrypted under a user-supplied export passphrase
 > (which may equal the at-rest passphrase). This satisfies INV-PERS-03 (lossless,
 > portable restore) while keeping the plaintext-export disclosure surface explicit and
@@ -843,21 +734,14 @@ module is implemented.
 
 ---
 
-## E. ER diagram reconciliation note
+## E. ER diagram reconciliation
 
-`docs/diagrams/UML/01-domain-er.md` §2 depicts a `RATE_LIMIT_BUCKET` Postgres
-table and §3 lists `RateLimitBucket` as stored in "Edge Postgres." Both entries
-are superseded by Gate-4 decision 20: rate-limit is in-memory for MVP.
-
-The correction is recorded here rather than rewriting the ER diagram mid-sequence.
-The ER diagram's `RATE_LIMIT_BUCKET` entity and the §3 store-assignment row for
-`RateLimitBucket` should be amended on the next revision of `01-domain-er.md` to
-read: "in-memory token-bucket (Go process); Redis on scale-out — no Postgres
-table at MVP."
+`docs/diagrams/UML/01-domain-er.md` now reflects Gate-4 decision 20: rate-limit
+state is in-memory for the current single-instance edge and is not a Postgres
+entity. Redis remains the scale-out path.
 
 ---
 
 *End of MODELING T-S0-01 v0.3 — data-model.md. Owned by Shallum (databases).
-Next in sequence: implementation of the Dexie schema module (client, Dexie v3
-with authSession — Oholiab) and the golang-migrate migration files (edge). Both
-are implementation artifacts; execution is owned by Y4NN.*
+Current executable schema: Dexie v5 in `apps/web/src/db/schema.ts`. SQL migrations
+for the optional edge remain under `services/edge/migrations/`.*

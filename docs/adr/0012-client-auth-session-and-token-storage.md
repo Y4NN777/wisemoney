@@ -91,7 +91,9 @@ gate as BYO keys and financial data.
 
 Session lifecycle is coupled to store-unlock state: the edge is not contacted
 for background token refresh while the store is locked. On unlock, re-acquire a
-fresh access token using the decrypted refresh token.
+fresh access token using the decrypted refresh token. The implemented lock action
+also clears the master-key reference and decrypted React Query cache before it
+returns to the unlock screen.
 
 **Chosen.** See Decision and Rationale.
 
@@ -206,4 +208,4 @@ that point.
 - ADR-0002 — dual AI key modes and AES-GCM IndexedDB crypto layer
 - ADR-0004 — managed proxy email/password JWT auth and Bearer token contract
 - ADR-0006 — React + TS PWA with WebAuthn/passphrase key management
-- ADR-0008 — egress enforcement mode-split and consent assertion wire shape
+- ADR-0008 — egress enforcement mode-split and historical managed-full-egress design

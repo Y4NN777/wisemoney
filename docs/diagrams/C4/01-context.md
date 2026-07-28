@@ -23,25 +23,20 @@ C4Context
   }
 
   System_Boundary(edge_boundary, "Edge Trust Boundary (managed mode only)") {
-    System(go_edge, "Go Managed Edge", "Thin, stateless Go proxy. Authenticates managed-mode users, enforces rate limits, issues consent assertions, applies structural payload caps, and routes AI requests to providers.")
-    SystemDb(postgres, "Postgres", "Stores auth credentials (Argon2id hashes) and rate-limit metadata only. Never holds financial data.")
+    System(go_edge, "Go Managed Edge", "Thin, stateless Go proxy. Authenticates managed-mode users, enforces rate limits, applies an aggregate-only payload cap, and routes AI requests to providers.")
+    SystemDb(postgres, "Postgres", "Stores users and hashed refresh-token records only. Never holds financial data.")
   }
 
-  System_Ext(gemini, "Gemini (Google)", "External AI provider. Receives AI context payloads from the edge (managed) or directly from the client (BYO).")
-  System_Ext(nvidia_nim, "NVIDIA NIM", "External AI provider. Same routing as Gemini.")
-  System_Ext(openai, "OpenAI", "External AI provider. Same routing as Gemini.")
+  System_Ext(managed_ai, "Managed AI providers", "OpenRouter Free, Gemini 3.6 Flash, and optional DeepSeek V4 Flash. Receive redacted aggregate context only.")
+  System_Ext(byo_ai, "User-selected BYO providers", "Provider selected and funded by the user; reached directly from the browser.")
 
   Rel(user, pwa, "Captures transactions, views dashboard, chats with assistant", "HTTPS / browser")
 
-  Rel(pwa, go_edge, "Managed mode: AI requests + JWT auth. Consent assertion requests.", "HTTPS TB-02")
-  Rel(go_edge, gemini, "Managed mode: routes AI context to provider", "HTTPS TB-03")
-  Rel(go_edge, nvidia_nim, "Managed mode: routes AI context to provider", "HTTPS TB-03")
-  Rel(go_edge, openai, "Managed mode: routes AI context to provider", "HTTPS TB-03")
-  Rel(go_edge, postgres, "Reads/writes auth and rate-limit metadata", "TCP/TLS TB-05")
+  Rel(pwa, go_edge, "Managed mode: aggregate-only AI requests + JWT auth.", "HTTPS TB-02")
+  Rel(go_edge, managed_ai, "Managed mode: routes redacted aggregate context", "HTTPS TB-03")
+  Rel(go_edge, postgres, "Reads/writes users and refresh-token records", "TCP/TLS TB-05")
 
-  Rel(pwa, gemini, "BYO-key mode: direct AI request, bypassing edge entirely", "HTTPS TB-04")
-  Rel(pwa, nvidia_nim, "BYO-key mode: direct AI request, bypassing edge entirely", "HTTPS TB-04")
-  Rel(pwa, openai, "BYO-key mode: direct AI request, bypassing edge entirely", "HTTPS TB-04")
+  Rel(pwa, byo_ai, "BYO-key mode: direct AI request, bypassing edge entirely", "HTTPS TB-04")
 ```
 
 ## Legend
@@ -50,7 +45,7 @@ C4Context
 |---|---|
 | Device | PWA, IndexedDB (encrypted), BYO key material (encrypted), consent state (localStorage) |
 | Edge | Go process, JWT signing key, managed provider API keys — never financial data |
-| Postgres | Auth hashes, rate-limit metadata — never financial data |
+| Postgres | User credentials and hashed refresh tokens — never financial data |
 | AI providers | External; outside operator control once a request is sent |
 
 **Financial data** (event log, transactions, balances) never crosses the device

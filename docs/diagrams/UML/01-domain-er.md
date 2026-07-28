@@ -179,15 +179,16 @@ All event types enumerated in FR-DE-01:
 | `transaction_created`     | Transaction               | INV-EVT-01, INV-EVT-03  |
 | `transaction_updated`     | Transaction delta         | INV-EVT-01              |
 | `transaction_deleted`     | Transaction id            | INV-EVT-01              |
-| `budget_updated`          | Budget                    | INV-EVT-01, INV-EVT-03  |
+| `budget_created`          | Budget                    | INV-EVT-01, INV-EVT-03  |
+| `budget_archived`         | Budget id                 | INV-EVT-01              |
 | `goal_created`            | Goal                      | INV-EVT-01, INV-EVT-04  |
-| `goal_updated`            | Goal delta                | INV-EVT-01, INV-EVT-04  |
+| `goal_contribution`       | Goal contribution         | INV-EVT-01, INV-EVT-04  |
+| `goal_archived`           | Goal id                   | INV-EVT-01              |
 | `recurring_item_created`  | RecurringItem             | INV-EVT-01, INV-EVT-05  |
-| `recurring_item_updated`  | RecurringItem delta       | INV-EVT-01, INV-EVT-05  |
-| `insight_generated`       | Insight payload           | INV-EVT-01              |
-| `learning_interaction`    | Interaction payload       | INV-EVT-01              |
+| `recurring_item_archived` | RecurringItem id          | INV-EVT-01, INV-EVT-05  |
+| `recurring_item_realised` | RecurringItem occurrence  | INV-EVT-01, INV-EVT-05  |
 
-Event envelope (FR-DE-02):
+The complete canonical event list is maintained in `docs/SRS.md`. Event envelope (FR-DE-02):
 - `id` — stable UUID, never reused
 - `type` — one of the ten types above
 - `timestamp` — ISO-8601 UTC, system-assigned at append

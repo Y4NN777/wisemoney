@@ -30,6 +30,12 @@ pnpm lint
 # Run unit tests:
 pnpm test
 
+# Run the built PWA smoke flow (requires a preview server on port 4173):
+pnpm --filter @wisemoney/web test:pwa
+
+# Verify WebAuthn PRF setup/unlock with Chrome's virtual CTAP2 authenticator:
+pnpm --filter @wisemoney/web test:webauthn
+
 # Build for production:
 pnpm build
 ```

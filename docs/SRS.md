@@ -338,13 +338,15 @@ actual data (subject to consent state — see §8).
 ### 7.1 Financial Event System
 
 **FR-DE-01** `[MVP]` Every state-changing user action must be stored as an
-immutable FinancialEvent. The following event types must be supported in the MVP:
-`transaction_created`, `transaction_updated`, `transaction_deleted`,
-`budget_updated`, `goal_created`, `goal_updated`, `goal_contribution_recorded`,
-`recurring_item_created`, `recurring_item_updated`, `insight_generated`,
-`learning_interaction`. (`goal_contribution_recorded` is a distinct event type so
-that a Goal's accumulated amount derives exclusively from contribution events per
-CONTRACT INV-EVT-04 — added during MODELING, 2026-06-02.)
+immutable FinancialEvent. The supported types are `account_created`,
+`account_updated`, `account_archived`, `transaction_created`,
+`transaction_updated`, `transaction_deleted`, `category_created`,
+`category_renamed`, `category_archived`, `budget_created`, `budget_archived`,
+`goal_created`, `goal_contribution`, `goal_archived`,
+`recurring_item_created`, `recurring_item_archived`,
+`recurring_item_realised`, `transfer_created`, `debt_credit_created`, and
+`debt_credit_status_updated`. Goal totals and recurring projections derive only
+from these immutable events.
 
 **FR-DE-02** `[MVP]` Each FinancialEvent must carry a stable identifier,
 a timestamp, the event type, and a payload sufficient to reconstruct the change it
@@ -503,14 +505,10 @@ or AI responses (see CON-04).
 authentication, or any contact with the managed proxy. A user who chooses BYO-key
 must be able to operate the full application without any cloud dependency.
 
-**FR-AUTH-06** `[MVP]` (Gate-5 decision 24) In managed mode, the proxy must issue a
-**server-signed, short-lived consent assertion** when a user grants per-feature
-full-egress consent. A managed-mode full-egress request lacking a valid assertion
-must be treated as redacted. The proxy must additionally enforce a **structural
-payload cap**: redacted-mode requests are validated against an aggregate-only schema
-and rejected if they carry any field permissible only under full egress. This is the
-managed-mode egress enforcement mechanism (INV-EGR-03 amended, clause (a)); it does
-not apply to BYO-key mode, which has no proxy.
+**FR-AUTH-06** `[MVP]` Managed requests must always use the aggregate-only redacted
+schema. The proxy rejects full-only fields regardless of client headers. Full
+egress is available only in BYO-key mode. Any future managed full-egress path
+requires a new reviewed design and implementation.
 
 ---
 
@@ -518,10 +516,10 @@ not apply to BYO-key mode, which has no proxy.
 
 ### 10.1 Provider support
 
-**FR-AIORCH-01** `[MVP]` The AI layer must integrate Google Gemini, NVIDIA NIM,
-and OpenAI as named providers at MVP launch. All three are mandatory at initial
-release, not optional. The provider set must be extensible without structural
-code changes. (Gate-2 decision 10.)
+**FR-AIORCH-01** `[MVP]` Managed routing must support OpenRouter Free and Google
+Gemini, with DeepSeek as an optional configured fallback. BYO-key routing supports
+Gemini, OpenAI, OpenRouter, and DeepSeek. NVIDIA hosted is excluded by ADR-0011.
+The provider set must remain extensible without structural code changes.
 
 ### 10.2 Model routing per task type
 
@@ -591,8 +589,10 @@ connectivity is restored.
 time. Three export formats must be supported (Gate-2 decision 11):
 
 - **JSON** — the primary, lossless format. The full event-log structure must be
-  preserved. This is the restore-capable format; it must contain sufficient data
-  to fully reconstruct local state via FR-PERSIST-06.
+  preserved together with the base currency and custom FX rates. This is the
+  restore-capable format; it must contain sufficient data to fully reconstruct
+  local financial state via FR-PERSIST-06. Version 2 is current; version 1 imports
+  remain supported and preserve currency settings already on the target device.
 - **CSV** — a human-readable secondary export. May be lossy with respect to nested
   event structure; does not need to support full restore.
 - **XLSX** — a human-readable secondary export. Same lossiness allowance as CSV;

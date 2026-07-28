@@ -162,9 +162,15 @@ provider relationship and its terms, accepts the associated cost.
 prohibition and §3.3(iv) no-opt-out training are each independently sufficient to
 disqualify it.
 
-**Paid managed full-egress:** Deferred until operator budget is available. The
-§10a consent-assertion gate is already the activation mechanism; a paid no-train
-provider adapter is the only implementation change required when funded.
+**DeepSeek API:** Optional managed fallback using `deepseek-v4-flash`; dormant
+unless `DEEPSEEK_API_KEY` is configured. Managed redacted aggregates only. Before
+setting a production key, record current retention, training, region, and DPA
+terms. Technical references: `https://api-docs.deepseek.com/api/create-chat-completion`
+and `https://api-docs.deepseek.com/quick_start/pricing`.
+
+**Paid managed full-egress:** Deferred until operator budget is available. A new
+reviewed consent and edge-enforcement design is required in addition to a paid
+no-train provider adapter.
 
 ---
 

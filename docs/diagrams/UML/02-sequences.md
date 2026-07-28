@@ -44,7 +44,7 @@ sequenceDiagram
 ## (b) Managed-mode AI request — redacted path and full path
 
 INV-AUTH-01/02/03: JWT required. INV-EGR-01/02/03(a): edge is enforcement point.
-THREAT_MODEL §3 (AQ-01 resolution): structural payload cap + signed consent assertion for full-egress.
+Managed mode is aggregate-only; the structural payload cap rejects full-egress fields.
 
 ```mermaid
 sequenceDiagram
@@ -55,10 +55,9 @@ sequenceDiagram
     participant AIOrchestr as AI Orchestration Client
     participant GoEdge as Go Edge (Auth / RateLimiter / Router)
     participant SPC as StructuralPayloadCap (Go middleware)
-    participant CAI as ConsentAssertionIssuer (Go endpoint)
     participant ProvAdapter as Provider Adapter
     participant Normalizer as Response Normalizer
-    participant Provider as AI Provider (Gemini / NIM / OpenAI)
+    participant Provider as AI Provider (OpenRouter / Gemini / DeepSeek)
 
     User->>Feature: request AI insight / conversation
     Feature->>CtxBuilder: buildContext(featureId, timeWindow)
@@ -83,29 +82,8 @@ sequenceDiagram
         AIOrchestr-->>Feature: AI result
         Feature-->>User: render insight / answer
 
-    else per-feature consent = full (explicit opt-in, INV-EGR-02)
-        note over ConsentSub: consent granted for this specific featureId only<br/>cross-feature bleed forbidden (INV-EGR-02)
-        ConsentSub-->>CtxBuilder: fullContext (raw transaction detail included)
-
-        note over AIOrchestr: must present server-signed consent assertion<br/>assertion obtained at consent-grant time (CAI endpoint)
-        AIOrchestr->>CAI: POST /consent/assert {featureId, userId} + JWT
-        CAI->>CAI: validate JWT; issue signed assertion<br/>{userId, featureId, level=full, expiresAt=short-lived}
-        CAI-->>AIOrchestr: signedConsentAssertion
-
-        AIOrchestr->>GoEdge: POST /ai/request {payload, X-Egress-Level: full, consentAssertion} + JWT
-        GoEdge->>GoEdge: validate JWT (INV-AUTH-01/03)
-        GoEdge->>GoEdge: per-user rate-limit (INV-AUTH-04)
-        GoEdge->>SPC: validateConsentAssertion(assertion, featureId)
-        note over SPC: validate signature + expiry of assertion<br/>absent or invalid → treat as redacted (fail-safe)<br/>valid → forward without field-level inspection
-        SPC-->>GoEdge: assertion valid — full-egress permitted
-        GoEdge->>ProvAdapter: dispatch(fullContext, taskType)
-        ProvAdapter->>Provider: provider-specific API call (TLS, TB-03)
-        Provider-->>ProvAdapter: provider response
-        ProvAdapter->>Normalizer: normalize(providerResponse)
-        Normalizer-->>GoEdge: internalShape
-        GoEdge-->>AIOrchestr: normalized response
-        AIOrchestr-->>Feature: AI result
-        Feature-->>User: render insight / answer
+    else full context requested
+        note over GoEdge: managed full egress is disabled<br/>full-only fields are rejected with HTTP 400
     end
 ```
 
@@ -159,7 +137,7 @@ sequenceDiagram
     actor User
     participant ClientAuth as PWA Auth Flow
     participant GoEdge as Go Edge (Auth Service)
-    participant Postgres as Postgres (auth + rate-limit metadata only)
+    participant Postgres as Postgres (users + hashed refresh tokens only)
 
     rect rgb(240,248,255)
         note right of User: Registration
@@ -283,9 +261,10 @@ sequenceDiagram
         ExportUI-->>User: warn — exported file contains complete financial history in plaintext;<br/>treat as credential; store securely (M-EXPORT-01, I-EXPORT-01)
         User->>ExportUI: confirm + optional: enable encrypted export
         ExportUI->>ExportMod: exportJSON(encrypt=false|true, exportPassphrase?)
-        ExportMod->>IDB: read full event log (all FinancialEvents, immutable)
-        ExportMod->>IDB: read all entity records (accounts, categories, budgets, goals, recurring items)
-        ExportMod->>ExportMod: assemble lossless JSON blob (INV-PERS-03: full event log + entity refs + argon2id params + salt)
+        ExportMod->>IDB: read full encrypted event log and FX-rate records
+        ExportMod->>CryptoMod: decrypt event payloads and custom FX rates
+        ExportMod->>ExportMod: assemble v2 JSON (event log + base currency + FX rates)
+        note over ExportMod: Device key metadata, auth sessions, and BYO provider keys are never exported
         note over ExportMod: CSV/XLSX exports: human-readable summaries only<br/>explicitly NOT restore formats (INV-PERS-04)<br/>UI must not label them as backup
 
         alt encrypted export chosen (FR-PERSIST-08)

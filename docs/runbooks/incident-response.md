@@ -34,7 +34,7 @@ Incident classes to cover (from THREAT_MODEL):
 ## Triage & classification
 
 - Classify whether the incident affects local-only financial data, edge auth data,
-  provider keys, consent assertions, or third-party AI egress.
+  provider keys, or third-party AI egress.
 - Separate operator-controlled failures from accepted residual risks documented in
   THREAT_MODEL §7.
 
@@ -42,12 +42,10 @@ Incident classes to cover (from THREAT_MODEL):
 
 - For suspected JWT signing-key compromise, rotate `JWT_SIGNING_KEY` and force
   active sessions to reauthenticate.
-- For suspected consent signing-key compromise, rotate `CONSENT_SIGNING_KEY`; active
-  assertions expire quickly but should still be invalidated by rotation.
 - For provider-key exposure, revoke the provider key upstream, replace the local
   secret, and redeploy/restart the edge.
-- For unintended full-egress, disable the affected managed provider route and review
-  consent/assertion logs without exposing payloads.
+- For an egress-schema violation, disable the managed proxy and review sanitized
+  request metadata without exposing payloads.
 
 ## Recovery & post-incident
 

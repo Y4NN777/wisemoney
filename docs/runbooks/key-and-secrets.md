@@ -18,8 +18,6 @@ Secrets this runbook covers:
 - **JWT signing key** — server-only, never transmitted to a client, never committed
   (INV-AUTH-03; THREAT_MODEL §2.2, S-AUTH-02). Sourced from a secrets manager /
   env-injected secret.
-- **Consent signing key** — dedicated HMAC key for consent assertions. It must be
-  different from `JWT_SIGNING_KEY`; `config.Load` enforces this at startup.
 - **Managed provider API keys** — held server-side only (INV-KEY-01); never logged or
   in error payloads (INV-PROXY-02).
 - **Postgres credentials** — least-privilege DB user; injected at runtime via SOPS/age
@@ -39,11 +37,10 @@ Fill at least:
 - `POSTGRES_PASSWORD`
 - `DATABASE_URL`
 - `JWT_SIGNING_KEY`
-- `CONSENT_SIGNING_KEY`
 - provider keys needed by the managed provider router
 
-Use independent high-entropy values for `JWT_SIGNING_KEY` and
-`CONSENT_SIGNING_KEY`; do not reuse placeholders from `.env.example`.
+Use a high-entropy value for `JWT_SIGNING_KEY`; do not reuse placeholders from
+`.env.example`.
 
 ## Injection / delivery
 
@@ -55,7 +52,6 @@ Use independent high-entropy values for `JWT_SIGNING_KEY` and
 ## Rotation
 
 - Rotating `JWT_SIGNING_KEY` invalidates active access JWTs.
-- Rotating `CONSENT_SIGNING_KEY` invalidates active consent assertions.
 - Rotating provider keys should require only an edge restart/redeploy with updated
   environment.
 - Rotating DB credentials requires updating Postgres credentials and `DATABASE_URL`
@@ -64,6 +60,4 @@ Use independent high-entropy values for `JWT_SIGNING_KEY` and
 ## Verification
 
 - `git status --short` must not show `.env`.
-- Edge startup must fail if `JWT_SIGNING_KEY` and `CONSENT_SIGNING_KEY` match.
-- Confirm logs do not contain `Authorization`, `api_key`, provider keys, JWTs, or
-  consent assertions.
+- Confirm logs do not contain `Authorization`, `api_key`, provider keys, or JWTs.

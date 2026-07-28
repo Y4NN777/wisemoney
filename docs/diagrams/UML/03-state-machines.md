@@ -22,23 +22,20 @@ stateDiagram-v2
     [*] --> NotPrompted : feature first accessed
 
     NotPrompted --> Redacted : user dismisses prompt\nor declines consent
-    NotPrompted --> ConsentFlow : user initiates full-egress request
+    NotPrompted --> ConsentFlow : user chooses an egress level
 
     state ConsentFlow {
         [*] --> ShowingConsentDialog
-        ShowingConsentDialog --> ConsentAssertionRequest : user explicitly grants consent\n(plain-language dialog names feature + provider + what is sent)
-        ConsentAssertionRequest --> AssertionIssued : Go edge issues short-lived\nserver-signed consent assertion\n(featureId, userId, level=full, expiresAt)
-        AssertionIssued --> [*]
+        ShowingConsentDialog --> ChoiceStored : user explicitly grants BYO full egress\n(plain-language dialog names feature + provider + what is sent)
+        ChoiceStored --> [*]
         ShowingConsentDialog --> [*] : user cancels → remains Redacted
     }
 
-    ConsentFlow --> FullGranted : assertion issued + stored by\nConsent & Redaction Subsystem
+    ConsentFlow --> FullGranted : BYO full choice stored by\nConsent & Redaction Subsystem
     ConsentFlow --> Redacted : user cancels dialog
 
     FullGranted --> Redacted : user revokes consent via UI
-    FullGranted --> Redacted : consent assertion expires\n(no auto-renewal; re-prompt required)
     FullGranted --> Redacted : localStorage cleared\n(clear = not-granted, M-EGR-02;\nnever treat absent state as granted)
-    FullGranted --> FullGranted : new assertion issued on re-confirm\n(before prior assertion expires)
 
     Redacted --> ConsentFlow : user explicitly requests full-egress
     Redacted --> Redacted : any ambiguous / error state\n(safe fallback, INV-EGR-03)
@@ -56,8 +53,9 @@ stateDiagram-v2
         Consent is per-feature only.
         Granting for feature A does not extend
         to feature B (INV-EGR-02).
-        Edge validates signed assertion before
-        forwarding full-egress payload (AQ-01 / THREAT_MODEL §3).
+        Applies only to direct BYO-key transport.
+        Managed transport remains redacted regardless
+        of this local preference.
     end note
 ```
 
@@ -139,13 +137,9 @@ stateDiagram-v2
 
     RealisedAsTransaction --> Scheduled : next occurrence projected\n(derived — never written to log until user realises it)
 
-    Scheduled --> Paused : user pauses recurring item
+    Scheduled --> Ended : user archives the series\n(recurring_item_archived)
 
-    Paused --> Scheduled : user resumes
-
-    Scheduled --> Ended : user ends the series\nor end date reached
-
-    Paused --> Ended : user ends while paused
+    RealisedAsTransaction --> Ended : user archives the series
 
     Ended --> [*]
 

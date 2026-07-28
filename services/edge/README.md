@@ -47,7 +47,15 @@ govulncheck ./...
 - Listens on `:8080` (EDGE_PORT).
 - Postgres: `postgres:5432` (compose service name). Tables: `users`, `refresh_tokens` only.
 - Rate-limit: in-memory token bucket per user (Gate-4 #20). Redis is the scale-out path.
+- Authentication attempts: in-memory per-IP and per-account windows; use a shared
+  limiter before horizontal scale-out. Set `TRUST_PROXY_HEADERS=true` only when
+  the service is reachable exclusively through a trusted reverse proxy.
 - Middleware chain: LogSanitizer → JWTAuth → RateLimit.
-- Egress enforcement: structural payload cap for managed mode (AQ-01, THREAT_MODEL §3).
-- Provider fallback: cross-provider chain per task type (FR-AIORCH-05).
+- Egress enforcement: exact aggregate-only schema. Managed full egress and the
+  former consent-assertion endpoint are disabled and absent from the runtime.
+- Provider fallback: cross-provider chain per task type with a 20-second ceiling
+  per attempt and 55-second total ceiling; client cancellation stops the chain
+  immediately (FR-AIORCH-05).
+- Managed providers: OpenRouter Free, Gemini 3.6 Flash, then optional DeepSeek
+  V4 Flash. Adapters without a configured key are excluded from routing.
 - No financial data persisted anywhere on the edge (INV-PROXY-01).

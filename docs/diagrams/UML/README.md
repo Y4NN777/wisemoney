@@ -20,9 +20,9 @@ Mermaid. All source documents are versioned at v0.1, dated 2026-06-02.
 | File | Owner | Type | Contents |
 | ---- | ----- | ---- | -------- |
 | `01-domain-er.md` | Shallum (data modeling) | Entity-Relationship | Domain model: FinancialEvent, Account, Transaction, Category, Budget, Goal, RecurringItem, FinancialStateSnapshot. Canonical entity definitions and relationships. |
-| `02-sequences.md` | Nathan (architecture) | Sequence (`sequenceDiagram`) | Six non-trivial flows: (a) offline capture → event append → snapshot update; (b) managed-mode AI request — redacted and full paths with structural payload cap and consent assertion; (c) BYO-key AI request — direct to provider, key in-memory; (d) auth — register / login / JWT issue / token refresh; (e) hybrid key management — passphrase setup / WebAuthn daily unlock / JSON restore; (f) export and restore from JSON. |
-| `03-state-machines.md` | Nathan (architecture) | State machine (`stateDiagram-v2`) | Per-feature consent (security-critical: NotPrompted → Redacted default → FullGranted → Redacted on revoke/expiry); Budget lifecycle (active → approaching → exceeded); Goal lifecycle (active → completed → archived); RecurringItem lifecycle (scheduled → realised-as-Transaction). |
-| `04-class-component.md` | Nathan (architecture) | Class / Component (`classDiagram`) | Client modules: EventStore, FinancialStateEngine, FinancialStateModule, FinancialIntelligenceModule, FinancialLiteracyModule, AIContextBuilder, ConsentRedactionSubsystem, AIOrchestrClient, CryptoKeyMgmtModule, ExportImportModule. Go edge components: AuthService, ConsentAssertionIssuer, RateLimiter, RequestRouter, StructuralPayloadCap, LogSanitizer, ProviderAdapter, ResponseNormalizer. NFR-MOD dependency rules encoded as class relationships. |
+| `02-sequences.md` | Nathan (architecture) | Sequence (`sequenceDiagram`) | Six non-trivial flows: offline capture; aggregate-only managed AI; BYO-key AI; auth; hybrid key management; export and restore. |
+| `03-state-machines.md` | Nathan (architecture) | State machine (`stateDiagram-v2`) | Per-feature AI disclosure, budget and goal lifecycles, and RecurringItem lifecycle (scheduled → realised-as-Transaction or archived). |
+| `04-class-component.md` | Nathan (architecture) | Class / Component (`classDiagram`) | Client state, intelligence, consent, crypto and export modules; Go auth, rate limiting, routing, payload validation, logging and provider adapters. |
 
 ---
 

@@ -15,6 +15,11 @@
 > boundaries. It delegates no threat to a later document. Every mitigation listed
 > is durable — no workarounds, no "clean up later" patches.
 
+> **Runtime amendment (2026-07-26):** managed egress is now unconditionally
+> aggregate-only. The consent-assertion mechanism discussed historically in §3
+> is not deployed or present in runtime code. The exact structural payload cap is
+> the active enforcement mechanism; full egress exists only in direct BYO mode.
+
 ---
 
 ## 1. System overview for threat purposes
@@ -55,7 +60,7 @@ profiles. This is not cosmetic.
 - Edge holds provider keys; client never sees them (INV-KEY-01).
 - Every AI request crosses TB-02 and TB-03. The edge is a real enforcement
   boundary (relevant to AQ-01 / INV-EGR-03).
-- Postgres holds password hashes (Argon2id) and rate-limit metadata.
+- Postgres holds user credentials and hashed refresh-token records.
 - Multi-tenant: cross-tenant isolation is a hard requirement (INV-AUTH-04).
 
 **BYO-key mode:**
@@ -165,11 +170,10 @@ JWT signing key. **Boundary:** TB-01 (login), TB-02 (every proxied request).
 
 #### S — Spoofing: credential theft and token forgery
 
-- **Threat S-AUTH-01: Credential stuffing / brute-force on the login endpoint.**
-  The login endpoint accepts email + password. With no rate limiting or lockout on
-  the login path specifically, an attacker with a credential list can automate
-  attempts. At tens–hundreds of users the blast radius per account is limited but
-  the risk to individual accounts is real.
+- **Threat S-AUTH-01: Credential stuffing / brute-force on authentication.**
+  Login and registration accept email + password. The edge applies bounded
+  per-IP and per-account attempt windows; distributed attacks and process restarts
+  remain residual risks until limits move to a shared store.
 - **Threat S-AUTH-02: JWT forgery if the signing key is leaked.** The signing key
   never leaves the server (INV-AUTH-03). If it is stored in a plaintext env var
   in a Docker Compose file committed to version control, or in a container
@@ -192,14 +196,14 @@ JWT signing key. **Boundary:** TB-01 (login), TB-02 (every proxied request).
   access token, this window is unacceptably wide.
 - **Root cause 1 (applicative):** no token revocation mechanism (stateless by
   design; revocation requires state or very short lifetimes).
-- **Root cause 2 (infrastructural):** JWT lifetime not yet specified in any
-  document; a naive default (e.g. 24h) combined with no refresh rotation creates
-  a long exfiltration window.
+- **Residual condition:** access JWTs remain usable until their configured 15-minute
+  expiry. Refresh tokens rotate atomically and reuse invalidates the user's token
+  family, but access-token revocation is intentionally not maintained.
 
 #### I — Information disclosure: Postgres breach
 
 - **Threat I-AUTH-01.** If Postgres is breached, the attacker obtains Argon2id
-  password hashes, email addresses, and rate-limit metadata. Argon2id is the right
+  password hashes, email addresses, and refresh-token hashes. Argon2id is the right
   choice (INV-AUTH-02) and significantly raises the cost of offline cracking. The
   residual risk is users who chose weak passphrases. Impact is limited: Postgres
   holds no financial data (Gate-4 decision 20). The email address itself is PII.
@@ -232,12 +236,12 @@ JWT signing key. **Boundary:** TB-01 (login), TB-02 (every proxied request).
 | Argon2id (tuned: memory ≥ 64 MiB, 3+ iterations, parallelism 1+) for all passwords | Go edge / Postgres | MVP |
 | Short-lived access JWTs (recommend: 15 min) + rotating refresh tokens | Go edge | MVP |
 | Refresh token rotation on every use; old token invalidated         | Go edge           | MVP |
-| Per-IP and per-account rate limiting on /login and /register (not just per-user AI budget) | Go edge | MVP |
+| Per-IP and per-account attempt limits on /login and /register (not just per-user AI budget) | Go edge | MVP |
 | Constant-time password comparison; identical error message for "no account" and "wrong password" | Go edge | MVP |
 | Password-reset token: cryptographically random (≥ 128-bit), single-use, expires ≤ 15 min, bound to user session | Go edge | MVP |
 | JWT signing key sourced from secrets manager / env-injected secret, never in a committed file | Ops / Docker Compose | MVP |
 | All routing decisions keyed on JWT `sub` claim only; no client-supplied user ID trusted | Go edge | MVP |
-| Account lockout or exponential back-off after N failed login attempts | Go edge | MVP |
+| Shared/distributed auth-attempt limits before horizontal scale-out | Go edge / ops | Pre-scale |
 | SECURITY.md documents all of the above for operators | Repo root | MVP |
 
 ---
@@ -495,7 +499,7 @@ auth data. **Boundaries:** TB-02, TB-03, TB-05.
 
 ### 2.9 Postgres — scope and hardening
 
-**Assets:** email addresses, Argon2id password hashes, rate-limit metadata.
+**Assets:** email addresses, Argon2id password hashes, hashed refresh tokens.
 **No financial data** (Gate-4 decision 20, INV-PROXY-01). **Boundary:** TB-05.
 
 - **Threat I-PG-01.** A Postgres breach exposes email addresses and Argon2id
@@ -566,7 +570,11 @@ for field-level financial semantics is required — the distinction is structura
 - Downside: requires a defined schema contract between client and edge for
   redacted-egress payloads. Adds a versioning surface.
 
-### Recommendation: Option C + Option B for full-egress
+### Historical recommendation: Option C + Option B for full-egress (superseded)
+
+The 2026-07-26 runtime amendment supersedes the full-egress portion below.
+Managed mode now accepts only the aggregate schema regardless of headers and has
+no assertion endpoint. The analysis remains as historical design context.
 
 **The edge MUST implement structural payload caps (Option C) for managed mode.**
 Specifically:
@@ -698,11 +706,11 @@ the egress subsystem.
 
 | ID          | Threat                                         | Mitigation                                                   | Component              | MVP/Post |
 | ----------- | ---------------------------------------------- | ------------------------------------------------------------ | ---------------------- | -------- |
-| M-EGR-01    | Consent flag tampered to escalate egress       | Edge structural payload cap + signed consent assertion for full-egress (§3) | Go edge | MVP |
+| M-EGR-01    | Consent flag tampered to escalate egress       | Edge always applies the exact aggregate-only structural payload cap | Go edge | MVP |
 | M-EGR-02    | localStorage cleared → defaults to full-egress | Clear = not-granted; re-prompt required; never assume granted | Consent subsystem | MVP |
 | M-EGR-03    | Provider-side retention outside operator control | Disclose to user; verify provider terms; link from consent prompt | UX + ops | MVP |
 | M-EGR-04    | XSS flips consent + triggers AI call; XSS reaches in-memory access token or Web Crypto-decryptable refresh token (ADR-0012, 2026-06-05) | **PRIMARY MVP CONTROL** (escalated from defence-in-depth — ADR-0012). Strict CSP (`default-src 'self'`, `script-src 'self'`, no `unsafe-inline`, no `unsafe-eval`); SRI on all third-party scripts; service-worker bundle integrity. MVP gate: must be active before any user authenticates in managed mode. | PWA build / infra | MVP |
-| M-AUTH-01   | Credential stuffing / brute-force             | Per-IP + per-account rate limit + lockout on /login          | Go edge                | MVP |
+| M-AUTH-01   | Credential stuffing / brute-force             | Per-IP + per-account attempt limits on login and registration | Go edge               | MVP |
 | M-AUTH-02   | JWT forgery via leaked signing key            | Key from secrets manager (SOPS/age), never committed        | Ops / Docker Compose   | MVP |
 | M-AUTH-03   | Account enumeration                           | Constant-time comparison; uniform error messages            | Go edge                | MVP |
 | M-AUTH-04   | Password-reset token attack                   | 128-bit random token, single-use, 15-min TTL, user-session-bound | Go edge           | MVP |
@@ -755,15 +763,12 @@ These are genuine decisions that cannot be resolved by analysis alone:
    the disclosure risk unacceptable for MVP, encrypted export must move to MVP.
    This is a product-scope decision, not a security-analysis one.
 
-2. **Consent assertion endpoint on the Go edge (AQ-01 implementation).** The
-   recommended AQ-01 resolution (§3) requires the edge to issue short-lived
-   signed consent assertions when the user grants full-egress consent. This adds
-   an endpoint to the Go edge beyond the current auth + AI-proxy scope. Y4NN
-   should confirm this scope addition to the edge is approved before Bezalel
-   implements it.
+2. **Future managed full egress.** No assertion endpoint exists and the edge
+   forces every managed request to redacted aggregates. Enabling a paid managed
+   full-egress provider requires a new design, security review, and terms review.
 
 3. **Provider data-handling terms — must verify before MVP launch.** The threat
-   model flags (§2.1, I-EGR-01) that Gemini, NVIDIA NIM, and OpenAI data
+   model flags (§2.1, I-EGR-01) that OpenRouter, Gemini, and optional DeepSeek data
    retention and model-training opt-out terms must be verified and linked from the
    consent prompt. This is an operational and legal-review item, not a code item.
    Someone must own this verification before the product ships.

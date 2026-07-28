@@ -6,7 +6,7 @@
 | Date     | 2026-06-05                                                                               |
 | Diátaxis | Explanation                                                                              |
 | Source   | T-S0-02; ARCHITECTURE §9a/§9b; THREAT_MODEL §2.1 (I-EGR-01), §7 residual; CONTRACT §8 MVP-scoping note |
-| Binds    | `services/edge` AI router; consent-assertion wire (ARCHITECTURE §10a); INV-EGR-03 (as amended by ADR-0008); ADR-0001, ADR-0002 |
+| Binds    | `services/edge` AI router; aggregate-only managed wire (ARCHITECTURE §10a); INV-EGR-03 (as amended by ADR-0008); ADR-0001, ADR-0002 |
 
 ## Context
 
@@ -16,6 +16,10 @@ user-consented; redacted-default). ADR-0002 established the dual key-mode split
 (managed proxy vs. bring-your-own-key). ADR-0008 amended INV-EGR-03 to formalise
 the enforcement mode-split: managed = server-boundary structural payload cap +
 signed consent assertion; BYO-key = client-side, user-as-principal.
+
+**2026-07-26 runtime amendment:** because managed mode is redacted-only, the
+unused assertion endpoint and signing key have been removed. Reintroducing managed
+full egress requires a new reviewed design; provider configuration cannot enable it.
 
 The MVP provider roster must now be determined. At Sprint S0 the edge is scaffolded
 but no live provider is configured. Three decisions are pending:
@@ -52,9 +56,9 @@ but no live provider is configured. Three decisions are pending:
   need full-egress can supply their own paid API key; they own the cost and accept
   the terms of their chosen provider. This satisfies the full-egress use-case without
   operator expenditure and without a training-data contract exposure on the operator.
-- **The §10a consent-assertion gate is already the activation mechanism for paid
-  managed full-egress.** When a paid provider adapter is added later, the consent
-  gate requires no structural change — the adapter is the only addition needed.
+- **Managed full-egress has no activation mechanism in the current runtime.** A
+  future paid provider cannot enable it through configuration alone; it requires
+  a new reviewed wire contract, ADR, implementation, and threat-model update.
 
 ## Considered Options
 
@@ -123,9 +127,14 @@ architecturally compatible and deferred to a post-MVP infrastructure phase.
 **4. Paid managed full-egress — deferred.**
 Paid managed full-egress (OpenAI ZDR-eligible, Gemini paid+ZDR, or
 OpenRouter `data_collection:deny` + paid) is deferred until operator budget is
-available. When added, the §10a consent-assertion gate is already the activation
-mechanism; adding a paid no-train provider adapter is the only implementation
-change required.
+available. Adding it requires a new reviewed managed-full-egress design; a provider
+adapter alone must never elevate the aggregate-only wire contract.
+
+**2026-07-26 implementation amendment — optional DeepSeek fallback.** The edge
+includes a DeepSeek V4 Flash adapter, but registers it only when
+`DEEPSEEK_API_KEY` is configured. It remains subject to the managed redacted-only
+ceiling; adding the adapter does not authorize full egress. Operator review of
+current DeepSeek data-processing terms is required before configuring the key.
 
 ## Consequences
 
@@ -181,7 +190,7 @@ change required.
 ## References
 
 - ARCHITECTURE §9a (managed-mode routing), §9b (BYO-key routing), §10a
-  (consent-assertion wire; structural payload cap)
+  (aggregate-only managed wire; structural payload cap)
 - THREAT_MODEL §2.1 (I-EGR-01 — provider-side retention residual), §7 (accepted
   residuals), M-EGR-03 (consent UI must name routing provider per feature)
 - CONTRACT §8 (MVP-scoping note on provider posture)

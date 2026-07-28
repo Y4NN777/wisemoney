@@ -2,10 +2,15 @@
 
 | Field   | Value                                                       |
 | ------- | ----------------------------------------------------------- |
-| Status  | Accepted                                                    |
+| Status  | Superseded in part by ADR-0011 and the 2026-07-26 runtime amendment |
 | Date    | 2026-06-02                                                  |
 | Source  | Intake Gate-5 decisions 23, 24, 25                         |
 | Binds   | INV-EGR-03 (amended); THREAT_MODEL §3, §4, §5; ARCHITECTURE §10 |
+
+> Runtime amendment (2026-07-26): managed mode is now unconditionally
+> aggregate-only. The consent-assertion endpoint and key described below were
+> removed. The mode split remains valid; the managed full-egress mechanism is
+> historical design context, not an active API.
 
 ## Context
 

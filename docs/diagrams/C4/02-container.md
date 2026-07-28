@@ -23,17 +23,17 @@ C4Container
   }
 
   System_Boundary(edge_boundary, "Edge Trust Boundary (managed mode only)") {
-    Container(go_edge, "Go Managed Edge", "Go, net/http + chi, golang-jwt, x/crypto/argon2, distroless Docker image", "Stateless. Authenticates managed-mode users (Argon2id, JWT). Enforces per-user rate limits (in-memory token bucket). Issues server-signed consent assertions. Applies structural payload caps on redacted-egress requests (rejects full-egress fields, 400). Routes AI requests to provider adapters. Normalizes provider responses. Holds managed provider API keys — never financial data.")
-    ContainerDb(postgres, "Postgres", "PostgreSQL (pgx driver)", "Auth data only: Argon2id password hashes, email addresses, refresh token records. Rate-limit metadata. Financial data is structurally absent — no schema for it exists.")
+    Container(go_edge, "Go Managed Edge", "Go, net/http + chi, golang-jwt, x/crypto/argon2, distroless Docker image", "Stateless. Authenticates managed-mode users (Argon2id, JWT). Enforces per-user rate limits (in-memory token bucket). Applies an aggregate-only payload cap to every managed request (rejects full-egress fields, 400). Routes AI requests to provider adapters. Holds managed provider API keys — never persists financial data.")
+    ContainerDb(postgres, "Postgres", "PostgreSQL (pgx driver)", "Auth data only: Argon2id password hashes, email addresses, and refresh-token records. Financial data and rate-limit state are structurally absent.")
   }
 
-  System_Ext(ai_providers, "AI Providers (Gemini / NVIDIA NIM / OpenAI)", "External third-party AI inference providers.")
+  System_Ext(ai_providers, "Managed AI Providers", "OpenRouter Free / Gemini 3.6 Flash / optional DeepSeek V4 Flash.")
 
   Rel(user, pwa_client, "Captures transactions, views state, chats with assistant", "HTTPS / browser TB-01")
 
-  Rel(pwa_client, go_edge, "Managed mode: JWT-authenticated AI request + consent assertion requests", "HTTPS TB-02 — AI context payload (redacted or full-egress, consent-gated). Financial data present only if user granted full-egress consent.")
+  Rel(pwa_client, go_edge, "Managed mode: JWT-authenticated aggregate-only AI request", "HTTPS TB-02 — redacted context plus optional user prompt.")
   Rel(go_edge, ai_providers, "Managed mode: routes normalised AI request to provider using server-held API key", "HTTPS TB-03 — no financial data retained by edge after response.")
-  Rel(go_edge, postgres, "Reads/writes auth rows and rate-limit counters", "TCP/TLS or Unix socket TB-05 — no financial data.")
+  Rel(go_edge, postgres, "Reads/writes users and refresh-token records", "TCP/TLS or Unix socket TB-05 — no financial data.")
 
   Rel(pwa_client, ai_providers, "BYO-key mode: direct provider call, edge entirely bypassed", "HTTPS TB-04 — user's own API key, decrypted in-memory. Edge and Postgres not contacted.")
 ```
@@ -42,7 +42,7 @@ C4Container
 
 | Flow | Carries financial data? | Notes |
 |---|---|---|
-| PWA client → Go edge (managed) | Conditionally — only if user granted per-feature full-egress consent | Redacted requests contain aggregates only (INV-EGR-01). Edge applies structural payload cap regardless of client claim. |
+| PWA client → Go edge (managed) | No | Managed requests contain aggregates only (INV-EGR-01). The edge rejects full-only fields regardless of client claims. |
 | Go edge → AI provider (managed) | Same condition as above | Edge never retains payload after response cycle (INV-PROXY-01). |
 | PWA client → AI provider (BYO) | Conditionally — client-side consent enforcement only | No server boundary; client consent subsystem is the sole gate (INV-EGR-03b, AQ-02 accepted). |
 | Go edge → Postgres | Never | Postgres schema has no financial data columns. |
