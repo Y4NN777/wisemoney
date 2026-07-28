@@ -2,7 +2,7 @@ module github.com/y4nn/wisemoney/services/edge
 
 go 1.25.0
 
-toolchain go1.25.11 // pin build toolchain ≥1.25.11: clears all stdlib advisories (GO-2026-49xx/50xx)
+toolchain go1.25.12 // pin patched build toolchain: clears GO-2026-5856 and prior stdlib advisories
 
 require (
 	github.com/go-chi/chi/v5 v5.2.4 // GO-2025-3770 (open redirect) + GO-2026-4316
@@ -15,7 +15,7 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
-	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect
-	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/text v0.39.0 // indirect
 )
