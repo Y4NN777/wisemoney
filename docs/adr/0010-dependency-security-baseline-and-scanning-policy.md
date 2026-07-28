@@ -65,10 +65,10 @@ reduces cross-project drift while fully clearing the CVEs.
 - `github.com/golang-jwt/jwt/v5` at 5.2.2 — confirmed not vulnerable; unchanged.
 
 **Edge — toolchain and builder:**
-- `go` directive in `go.mod`: 1.23 → **1.25.0**; explicit `toolchain go1.25.11`
+- `go` directive in `go.mod`: 1.23 → **1.25.0**; explicit `toolchain go1.25.12`
   line added to `go.mod`. The toolchain directive makes the manifest's declared
   toolchain unambiguous for scanners and for `go mod tidy`.
-- Dockerfile builder image: `golang:1.23-bookworm` → **`golang:1.25.11-bookworm`**
+- Dockerfile builder image: `golang:1.23-bookworm` → **`golang:1.25.12-bookworm`**
   (pinned; no `:latest`).
 - `GOTOOLCHAIN=local` set in the Dockerfile builder stage. This forces the Go
   toolchain to use exactly the version baked into the builder image — it cannot

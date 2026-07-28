@@ -98,7 +98,7 @@ and must be treated as real findings, not dismissed as dev-only.
 The binary scan reads the Go version and module versions **embedded in the
 compiled binary**. This is the authoritative check. It is immune to the
 directive-vs-toolchain reporting gap: a `go.mod` manifest can declare `go 1.25.0`
-and `toolchain go1.25.11` but still be built with a different toolchain if the
+and `toolchain go1.25.12` but still be built with a different toolchain if the
 Dockerfile is out of sync. The binary encodes what actually compiled it.
 
 **Step 1 — build the edge binary inside Docker (hermetic):**
@@ -166,7 +166,7 @@ For each finding:
 
 The edge Dockerfile builder stage sets `GOTOOLCHAIN=local`. This forces the Go
 toolchain to use exactly the version installed in the builder image
-(`golang:1.25.11-bookworm`). Without it, Go may silently download a different
+(`golang:1.25.12-bookworm`). Without it, Go may silently download a different
 toolchain version from the network if the `toolchain` directive in `go.mod`
 requests one that differs from the builder image.
 
@@ -188,12 +188,12 @@ Rebuild and re-run the binary scan.
 **Symptom:** `osv-scanner scan --lockfile go:services/edge/go.mod` reports stdlib
 advisories (e.g. `GO-2025-40xx`) that were previously cleared.
 
-**Cause:** The `toolchain go1.25.11` line was stripped from `go.mod`. This happens
+**Cause:** The `toolchain go1.25.12` line was stripped from `go.mod`. This happens
 when `go mod tidy` is run in an environment where the Go binary version differs
 from the declared toolchain. The `go` directive alone (`go 1.25.0`) does not pin
 the toolchain binary for scanner purposes.
 
-**The binary was never vulnerable** — the Dockerfile pins `golang:1.25.11-bookworm`
+**The binary was never vulnerable** — the Dockerfile pins `golang:1.25.12-bookworm`
 as the builder and sets `GOTOOLCHAIN=local`, so the compiled binary always embeds
 the correct version. The manifest scan is reporting against the `go` directive
 floor, not the actual build toolchain.
@@ -203,7 +203,7 @@ floor, not the actual build toolchain.
 Open `services/edge/go.mod` and confirm `go 1.25.0` is present. Add immediately
 below it (if absent):
 ```
-toolchain go1.25.11
+toolchain go1.25.12
 ```
 
 Then confirm the manifest scan is clean again:
@@ -226,7 +226,7 @@ must report clean on both surfaces.
 - `golang.org/x/crypto` — 0.52.0 (clears GO-2025-4134, GO-2025-4135, ~10 others)
 - `github.com/go-chi/chi/v5` — 5.2.4 (clears GO-2025-3770, GO-2026-4316)
 - `github.com/golang-jwt/jwt/v5` — 5.2.2 (not vulnerable; unchanged)
-- Go toolchain — 1.25.11 (clears 51 stdlib advisories GO-2025-40xx…GO-2026-50xx)
+- Go toolchain — 1.25.12 (clears GO-2026-5856 and prior stdlib advisories)
 
 **Frontend:**
 - `vitest` — ^4.1.8 (clears GHSA-5xrq-8626-4rwp)

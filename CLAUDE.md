@@ -54,7 +54,7 @@
 - **AI orchestration:** Managed path attaches Bearer auth, `X-Egress-Level`,
   `X-Feature`, and full-consent assertions when available; assertion failures
   downgrade to redacted payloads. BYO direct-provider path remains a future slice.
-- **Edge:** Go 1.25.11 service with auth register/login/refresh, Argon2id PHC
+- **Edge:** Go 1.25.12 service with auth register/login/refresh, Argon2id PHC
   password hashing, HS256 JWTs, refresh-token rotation/reuse detection, consent
   assertion endpoint, managed proxy gate, payload caps, middleware, provider router,
   and Postgres migrations.

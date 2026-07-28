@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **Edge dependency security** — upgraded the pinned Go toolchain and builder to
+  1.25.12 for GO-2026-5856, and `golang.org/x/text` to v0.39.0 for
+  GO-2026-5970. The related `x/sync` indirect dependency moves to v0.21.0.
+
 ### Added
 
 - **Managed AI adapters** — aligned the edge with the active provider contract:

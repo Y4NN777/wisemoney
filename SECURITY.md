@@ -55,7 +55,7 @@ provider under your own API key, with no intermediate server.
   Docker tags).
 - A **dependency audit** (`osv-scanner`) runs on every push via GitHub Actions.
 - Frontend packages are verified via integrity checks; the Go edge is built from
-  a pinned `golang:1.25.11` image into a distroless runtime image.
+  a pinned `golang:1.25.12` image into a distroless runtime image.
 
 ## What we DON'T store
 

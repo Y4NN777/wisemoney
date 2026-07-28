@@ -16,7 +16,7 @@
 
 - **Current hosting.** PWA is live at `wisemoney.y7labs.studio`; Compose runs only
   the local Go service plus Postgres for managed-mode development.
-- **Images.** Go builder is pinned to `golang:1.25.11-bookworm`; runtime is
+- **Images.** Go builder is pinned to `golang:1.25.12-bookworm`; runtime is
   `gcr.io/distroless/static-debian12:nonroot`; Postgres is `postgres:16.8`.
 
 ## Preconditions
