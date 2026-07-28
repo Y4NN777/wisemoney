@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "GHSA-mh99-v99m-4gvg"
+ignoreUntil = 2026-10-31
+reason = "brace-expansion 1.x/2.x are dev-only minimatch dependencies with no compatible patched release; forcing 5.0.8 breaks ESLint. Production code does not process glob patterns. Versions remain patched for GHSA-3jxr-9vmj-r5cp while upstream parents migrate."
