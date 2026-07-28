@@ -52,6 +52,7 @@ func (a *JWTAuth) Middleware(next http.Handler) http.Handler {
 			// algorithm is the one the server issues (issueAccessJWT uses HS256).
 			jwt.WithValidMethods([]string{"HS256"}),
 			jwt.WithExpirationRequired(),
+			jwt.WithIssuer("wisemoney-edge"),
 		)
 
 		if err != nil || !token.Valid {

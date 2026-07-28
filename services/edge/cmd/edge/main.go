@@ -25,7 +25,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	pool, err := store.NewPool(context.Background(), cfg.DatabaseURL)
+	startupCtx, startupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer startupCancel()
+	pool, err := store.NewPool(startupCtx, cfg.DatabaseURL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "edge: postgres pool error: %v\n", err)
 		os.Exit(1)
@@ -35,11 +37,12 @@ func main() {
 	router := httpapi.NewRouter(cfg, pool)
 
 	srv := &http.Server{
-		Addr:         ":" + cfg.Port,
-		Handler:      router,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		IdleTimeout:  60 * time.Second,
+		Addr:              ":" + cfg.Port,
+		Handler:           router,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       60 * time.Second,
 	}
 
 	// Graceful shutdown.

@@ -8,8 +8,7 @@
 //   - INV-AUTH-04: per-user isolation — all lookups keyed on JWT sub or Postgres id.
 //
 // Threat mitigations wired here:
-//   - M-AUTH-01: per-IP + per-account rate limiting on /login (see middleware/ratelimit.go
-//     for the AI-budget limiter; login-specific limiting is a TODO at this layer).
+//   - M-AUTH-01: per-IP + per-account rate limiting on authentication attempts.
 //   - M-AUTH-03: constant-time password comparison; uniform error messages for
 //     "no account" vs "wrong password" (account enumeration prevention).
 //   - M-AUTH-05: 15-min access JWT + rotating refresh token.
@@ -36,6 +35,7 @@ import (
 	"golang.org/x/crypto/argon2"
 
 	"github.com/y4nn/wisemoney/services/edge/internal/config"
+	"github.com/y4nn/wisemoney/services/edge/internal/httpjson"
 	"github.com/y4nn/wisemoney/services/edge/internal/store"
 )
 
@@ -64,9 +64,9 @@ const maxEmailLen = 254
 
 // Service handles auth HTTP endpoints.
 type Service struct {
-	cfg      *config.Config
-	users    *store.UserRepository
-	tokens   *store.RefreshTokenRepository
+	cfg    *config.Config
+	users  *store.UserRepository
+	tokens *store.RefreshTokenRepository
 	// dummyPHC is a pre-computed PHC string used in HandleLogin when no user is
 	// found, so the argon2 derivation cost is paid on both the found and not-found
 	// paths (M-AUTH-03 timing equalization).
@@ -80,7 +80,9 @@ type Service struct {
 	// startup, not per-request. hashPassword only errors on rand.Read failure,
 	// which is a fatal OS-level RNG failure; panicking at construction is correct
 	// (the server cannot run safely without a working RNG).
-	dummyPHC string
+	dummyPHC             string
+	authIPAttempts       *attemptLimiter
+	loginAccountAttempts *attemptLimiter
 }
 
 // NewService constructs an auth Service. It panics if the OS RNG is unavailable
@@ -94,7 +96,11 @@ func NewService(cfg *config.Config, users *store.UserRepository, tokens *store.R
 		// operate safely. Panic is the correct response at construction time.
 		panic("auth: NewService: failed to compute dummy PHC (RNG unavailable): " + err.Error())
 	}
-	return &Service{cfg: cfg, users: users, tokens: tokens, dummyPHC: dummy}
+	return &Service{
+		cfg: cfg, users: users, tokens: tokens, dummyPHC: dummy,
+		authIPAttempts:       newAttemptLimiter(authAttemptLimit, authAttemptWindow),
+		loginAccountAttempts: newAttemptLimiter(authAttemptLimit, authAttemptWindow),
+	}
 }
 
 // -- Credential length validation (HIGH-03, CWE-400) -------------------------
@@ -129,11 +135,17 @@ func validateCredentialLengths(email, password string) error {
 // didn't occur. A fully opaque registration (e.g. always 201 + out-of-band
 // confirmation) is a UX/product decision deferred to Phase 2.
 func (s *Service) HandleRegister(w http.ResponseWriter, r *http.Request) {
+	if !s.authIPAttempts.allow(requestIP(r, s.cfg.TrustProxyHeaders)) {
+		w.Header().Set("Retry-After", "900")
+		writeError(w, http.StatusTooManyRequests, "rate_limit_exceeded", "too many authentication attempts")
+		return
+	}
+
 	var body struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := httpjson.DecodeObject(r.Body, &body); err != nil {
 		// Distinguish body-too-large (MED-01 cap exceeded) from genuine malform.
 		var maxErr *http.MaxBytesError
 		if errors.As(err, &maxErr) {
@@ -191,23 +203,29 @@ func (s *Service) HandleRegister(w http.ResponseWriter, r *http.Request) {
 // Timing equalization (M-AUTH-03): when the email is not found, verifyPassword
 // is called against dummyPHC so the argon2 cost is paid on both the found and
 // not-found paths. The result is discarded; the 401 is returned regardless.
-//
-// TODO(M-AUTH-01): enforce per-IP and per-account rate limit on this endpoint.
-// The global token-bucket in middleware/ratelimit.go is not login-specific;
-// a dedicated login rate-limiter (e.g. 5 attempts / 15 min per IP) is required
-// before production exposure.
 func (s *Service) HandleLogin(w http.ResponseWriter, r *http.Request) {
+	if !s.authIPAttempts.allow(requestIP(r, s.cfg.TrustProxyHeaders)) {
+		w.Header().Set("Retry-After", "900")
+		writeError(w, http.StatusTooManyRequests, "rate_limit_exceeded", "too many authentication attempts")
+		return
+	}
+
 	var body struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := httpjson.DecodeObject(r.Body, &body); err != nil {
 		var maxErr *http.MaxBytesError
 		if errors.As(err, &maxErr) {
 			writeError(w, http.StatusRequestEntityTooLarge, "payload_too_large", "request body exceeds limit")
 			return
 		}
 		writeError(w, http.StatusBadRequest, "invalid_request", "malformed request body")
+		return
+	}
+	if !s.loginAccountAttempts.allow(accountAttemptKey(body.Email)) {
+		w.Header().Set("Retry-After", "900")
+		writeError(w, http.StatusTooManyRequests, "rate_limit_exceeded", "too many authentication attempts")
 		return
 	}
 
@@ -270,38 +288,14 @@ func (s *Service) HandleLogin(w http.ResponseWriter, r *http.Request) {
 //   - If the token is already revoked (reuse detected), the entire token family
 //     for the user is invalidated (RevokeAllForUser) before returning 401.
 //
-// Transaction limitation: the repos expose *pgxpool.Pool directly with no
-// tx-accepting variant. Revoke + Create are therefore two sequential pool
-// operations, not a single atomic transaction. The gap between them is:
-//
-//   - After Revoke succeeds, before Create succeeds: the old token is gone and
-//     no new token exists. A crash here leaves the user logged out with no valid
-//     refresh token; they must re-authenticate. This is the safe failure mode
-//     (no token reuse possible).
-//   - The Create failure path returns 500; the client should retry with fresh
-//     credentials (re-login). This is documented here and flagged for Joab.
-//
-// To eliminate this gap, the repos would need a pgx.Tx variant (e.g.
-// CreateTx(ctx, tx, ...) and RevokeTx(ctx, tx, id)). Surfaced as a follow-up
-// for Zerubbabel / Shallum; see TODO below.
-//
-// TODO(tx-safety): introduce pgx.Tx variants on RefreshTokenRepository.Revoke
-// and RefreshTokenRepository.Create so HandleRefresh can wrap both in a single
-// BEGIN/COMMIT (atomic rotation). Track as a Zerubbabel/Shallum follow-up.
-//
-// Additionally, the non-transactional Revoke→Create sequence permits a
-// concurrent double-issuance race: two simultaneous refresh requests carrying
-// the same token can each pass the FindByTokenHash+RevokedAt check before
-// either Revoke call completes, causing both to issue a new valid token. The
-// tx fix above eliminates this race (only the first committer wins the unique
-// constraint on the new token hash; the second sees a conflict or a now-revoked
-// presented token). Until the tx fix lands, the window is narrow (network RTT)
-// and the reuse-detection path provides a backstop for the second use.
+// RefreshTokenRepository.Rotate revokes the presented token and inserts its
+// replacement in one PostgreSQL transaction. Its conditional UPDATE allows
+// exactly one concurrent request to win; a loser triggers family invalidation.
 func (s *Service) HandleRefresh(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		RefreshToken string `json:"refresh_token"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := httpjson.DecodeObject(r.Body, &body); err != nil {
 		var maxErr *http.MaxBytesError
 		if errors.As(err, &maxErr) {
 			writeError(w, http.StatusRequestEntityTooLarge, "payload_too_large", "request body exceeds limit")
@@ -338,7 +332,7 @@ func (s *Service) HandleRefresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Expiry check.
-	if found.ExpiresAt.Before(time.Now().UTC()) {
+	if !found.ExpiresAt.After(time.Now().UTC()) {
 		writeError(w, http.StatusUnauthorized, "invalid_token", "invalid or expired token")
 		return
 	}
@@ -356,22 +350,8 @@ func (s *Service) HandleRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Rotate: revoke presented token, then create replacement.
-	// See transaction limitation comment on this handler above.
-	if err := s.tokens.Revoke(r.Context(), found.ID); err != nil {
-		writeError(w, http.StatusInternalServerError, "internal_error", "refresh failed")
-		return
-	}
-
 	rawRefresh, newTokenHash, err := generateRefreshToken()
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "internal_error", "refresh failed")
-		return
-	}
-
-	_, err = s.tokens.Create(r.Context(), user.ID, newTokenHash, time.Now().UTC().Add(s.cfg.JWTRefreshTTL))
-	if err != nil {
-		// Old token is already revoked; client must re-authenticate (safe failure).
 		writeError(w, http.StatusInternalServerError, "internal_error", "refresh failed")
 		return
 	}
@@ -379,6 +359,23 @@ func (s *Service) HandleRefresh(w http.ResponseWriter, r *http.Request) {
 	accessToken, err := s.issueAccessJWT(user.ID)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "internal_error", "refresh failed")
+		return
+	}
+
+	_, rotated, err := s.tokens.Rotate(
+		r.Context(),
+		found.ID,
+		user.ID,
+		newTokenHash,
+		time.Now().UTC().Add(s.cfg.JWTRefreshTTL),
+	)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "internal_error", "refresh failed")
+		return
+	}
+	if !rotated {
+		_ = s.tokens.RevokeAllForUser(r.Context(), user.ID)
+		writeError(w, http.StatusUnauthorized, "invalid_token", "invalid or expired token")
 		return
 	}
 
@@ -542,7 +539,7 @@ func parseArgon2Params(params string) (memKiB, iters uint32, par uint8, err erro
 	// (1 GiB memory, 64 iterations) — far above any reasonable production value —
 	// so they only catch malformed or maliciously crafted PHC strings.
 	const maxMemKiB = 1 << 20 // 1 GiB
-	const maxIters  = 64
+	const maxIters = 64
 	if memKiB > maxMemKiB {
 		return 0, 0, 0, fmt.Errorf("invalid PHC params: m=%d exceeds maximum %d KiB", memKiB, maxMemKiB)
 	}

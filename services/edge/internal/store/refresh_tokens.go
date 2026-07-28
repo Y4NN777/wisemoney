@@ -93,15 +93,51 @@ func (r *RefreshTokenRepository) FindByTokenHash(ctx context.Context, hash strin
 	return &t, nil
 }
 
-// Revoke marks a single token as revoked (single-use enforcement, M-AUTH-05).
-// Sets revoked_at = now(). Called before issuing the replacement pair.
-func (r *RefreshTokenRepository) Revoke(ctx context.Context, id string) error {
-	const q = `UPDATE refresh_tokens SET revoked_at = now() WHERE id = $1`
-	_, err := r.pool.Exec(ctx, q, id)
+// Rotate atomically consumes an active refresh token and inserts its replacement.
+// rotated is false when another request already consumed the presented token.
+func (r *RefreshTokenRepository) Rotate(
+	ctx context.Context,
+	presentedID, userID, replacementHash string,
+	replacementExpiresAt time.Time,
+) (replacement *RefreshToken, rotated bool, err error) {
+	tx, err := r.pool.Begin(ctx)
 	if err != nil {
-		return fmt.Errorf("store: refresh_tokens.Revoke: %w", err)
+		return nil, false, fmt.Errorf("store: refresh_tokens.Rotate begin: %w", err)
 	}
-	return nil
+	defer func() { _ = tx.Rollback(ctx) }()
+
+	tag, err := tx.Exec(ctx, `
+		UPDATE refresh_tokens
+		SET revoked_at = now()
+		WHERE id = $1 AND user_id = $2 AND revoked_at IS NULL
+	`, presentedID, userID)
+	if err != nil {
+		return nil, false, fmt.Errorf("store: refresh_tokens.Rotate revoke: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return nil, false, nil
+	}
+
+	const insert = `
+		INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
+		VALUES ($1, $2, $3)
+		RETURNING id, user_id, token_hash, issued_at, expires_at, revoked_at
+	`
+	var created RefreshToken
+	if err := tx.QueryRow(ctx, insert, userID, replacementHash, replacementExpiresAt).Scan(
+		&created.ID,
+		&created.UserID,
+		&created.TokenHash,
+		&created.IssuedAt,
+		&created.ExpiresAt,
+		&created.RevokedAt,
+	); err != nil {
+		return nil, false, fmt.Errorf("store: refresh_tokens.Rotate create: %w", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return nil, false, fmt.Errorf("store: refresh_tokens.Rotate commit: %w", err)
+	}
+	return &created, true, nil
 }
 
 // RevokeAllForUser invalidates the entire token family for a user on reuse

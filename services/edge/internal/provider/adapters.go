@@ -1,23 +1,5 @@
 package provider
 
-// adapters.go contains real Provider implementations for Gemini, NVIDIA NIM,
-// and OpenAI. Each adapter constructs the appropriate API request, sends it
-// via net/http, and normalizes the response (INV-PROXY-03).
-//
-// Provider endpoint URLs are hardcoded constants (M-PROXY-01: SSRF prevention).
-// They are NOT runtime-configurable. Adding a provider requires a code change.
-//
-// Invariants:
-//   - INV-KEY-01: managed provider API keys are server-side only. Adapters read
-//     keys from Config — they are never transmitted to any client.
-//   - INV-PROXY-02: adapters must never log request bodies or API key values.
-//
-// Error wrapping convention:
-//   - Network/transport errors and 5xx responses wrap ErrProviderUnavailable so
-//     the Router can trigger fallback (FR-AIORCH-05).
-//   - Other errors (4xx, malformed data, parse failures) are plain errors —
-//     the Router treats them as permanent and stops the fallback chain.
-
 import (
 	"bytes"
 	"context"
@@ -30,41 +12,17 @@ import (
 	"github.com/y4nn/wisemoney/services/edge/internal/config"
 )
 
-// Hardcoded provider base URLs (M-PROXY-01: not user-configurable).
 const (
-	geminiBaseURL    = "https://generativelanguage.googleapis.com"
-	nvidiaNIMBaseURL = "https://integrate.api.nvidia.com"
-	openAIBaseURL    = "https://api.openai.com"
+	geminiBaseURL       = "https://generativelanguage.googleapis.com"
+	openRouterBaseURL   = "https://openrouter.ai"
+	deepSeekBaseURL     = "https://api.deepseek.com"
+	geminiManagedModel  = "gemini-3.6-flash"
+	openRouterFreeModel = "openrouter/free"
+	deepSeekFlashModel  = "deepseek-v4-flash"
+	maxProviderResponse = 2 * 1024 * 1024
 )
 
-// Model mapping per task type (FR-AIORCH-02).
-var taskModelMap = map[string]map[string]string{
-	"gemini": {
-		"reasoning":      "gemini-2.0-flash",
-		"classification": "gemini-2.0-flash",
-		"teaching":       "gemini-2.0-flash",
-		"summarization":  "gemini-2.0-flash",
-	},
-	"nvidia_nim": {
-		"reasoning":      "meta/llama-3.1-405b-instruct",
-		"classification": "meta/llama-3.1-405b-instruct",
-		"teaching":       "meta/llama-3.1-405b-instruct",
-		"summarization":  "meta/llama-3.1-405b-instruct",
-	},
-	"openai": {
-		"reasoning":      "gpt-4o",
-		"classification": "gpt-4o-mini",
-		"teaching":       "gpt-4o",
-		"summarization":  "gpt-4o-mini",
-	},
-}
-
-// Shared HTTP client with a reasonable timeout.
 var httpClient = &http.Client{Timeout: 30 * time.Second}
-
-// ---------------------------------------------------------------------------
-// Gemini
-// ---------------------------------------------------------------------------
 
 type geminiRequest struct {
 	Contents []geminiContent `json:"contents"`
@@ -84,7 +42,6 @@ type geminiResponse struct {
 	} `json:"candidates"`
 }
 
-// GeminiAdapter adapts the Gemini API to the Provider interface.
 type GeminiAdapter struct {
 	apiKey string
 }
@@ -95,231 +52,157 @@ func NewGeminiAdapter(cfg *config.Config) *GeminiAdapter {
 
 func (a *GeminiAdapter) Name() string { return "gemini" }
 
-func (a *GeminiAdapter) Dispatch(ctx context.Context, taskType string, payload json.RawMessage) (*NormalizedResponse, error) {
-	model, ok := taskModelMap["gemini"][taskType]
-	if !ok {
-		model = "gemini-2.0-flash"
-	}
-
-	url := geminiBaseURL + "/v1beta/models/" + model + ":generateContent"
-
-	reqBody := geminiRequest{
-		Contents: []geminiContent{
-			{Parts: []geminiPart{{Text: string(payload)}}},
-		},
-	}
-
-	bodyBytes, err := json.Marshal(reqBody)
+func (a *GeminiAdapter) Dispatch(ctx context.Context, _ string, payload json.RawMessage) (*NormalizedResponse, error) {
+	requestBody := geminiRequest{Contents: []geminiContent{{Parts: []geminiPart{{Text: string(payload)}}}}}
+	body, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, fmt.Errorf("gemini: marshal: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
+	url := geminiBaseURL + "/v1beta/models/" + geminiManagedModel + ":generateContent"
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
-		return nil, fmt.Errorf("gemini: new request: %w", err)
+		return nil, fmt.Errorf("gemini: create request: %w", err)
 	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("x-goog-api-key", a.apiKey)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("x-goog-api-key", a.apiKey)
 
-	resp, err := httpClient.Do(req)
+	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("gemini: request failed: %w", ErrProviderUnavailable)
+		return nil, fmt.Errorf("gemini: request: %w", ErrProviderUnavailable)
 	}
-	defer resp.Body.Close()
-
-	respBytes, err := io.ReadAll(resp.Body)
+	defer response.Body.Close()
+	responseBody, err := io.ReadAll(io.LimitReader(response.Body, maxProviderResponse+1))
 	if err != nil {
-		return nil, fmt.Errorf("gemini: read response: %w", err)
+		return nil, fmt.Errorf("gemini: read response: %w", ErrProviderUnavailable)
+	}
+	if len(responseBody) > maxProviderResponse {
+		return nil, fmt.Errorf("gemini: response too large: %w", ErrProviderUnavailable)
+	}
+	if response.StatusCode == http.StatusTooManyRequests || response.StatusCode >= 500 {
+		return nil, fmt.Errorf("gemini: status %d: %w", response.StatusCode, ErrProviderUnavailable)
+	}
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("gemini: status %d", response.StatusCode)
 	}
 
-	if resp.StatusCode >= 500 {
-		return nil, fmt.Errorf("gemini: status %d: %w", resp.StatusCode, ErrProviderUnavailable)
+	var decoded geminiResponse
+	if err := json.Unmarshal(responseBody, &decoded); err != nil || len(decoded.Candidates) == 0 {
+		return nil, fmt.Errorf("gemini: invalid response: %w", ErrProviderUnavailable)
 	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("gemini: status %d", resp.StatusCode)
+	content := ""
+	for _, part := range decoded.Candidates[0].Content.Parts {
+		content += part.Text
 	}
-
-	var geminiResp geminiResponse
-	if err := json.Unmarshal(respBytes, &geminiResp); err != nil {
-		return nil, fmt.Errorf("gemini: unmarshal response: %w", err)
+	if content == "" {
+		return nil, fmt.Errorf("gemini: empty response: %w", ErrProviderUnavailable)
 	}
-
-	if len(geminiResp.Candidates) == 0 {
-		return nil, fmt.Errorf("gemini: no candidates: %w", ErrProviderUnavailable)
-	}
-
-	var text string
-	for _, part := range geminiResp.Candidates[0].Content.Parts {
-		text += part.Text
-	}
-
-	return &NormalizedResponse{Content: text, Provider: "gemini"}, nil
+	return &NormalizedResponse{Content: content, Provider: "gemini"}, nil
 }
 
-// ---------------------------------------------------------------------------
-// NVIDIA NIM
-// ---------------------------------------------------------------------------
-
-type openAICompatRequest struct {
-	Model       string              `json:"model"`
-	Messages    []openAICompatMsg   `json:"messages"`
-	Temperature float64             `json:"temperature"`
-	MaxTokens   int                 `json:"max_tokens"`
+type chatRequest struct {
+	Model       string        `json:"model"`
+	Messages    []chatMessage `json:"messages"`
+	Temperature float64       `json:"temperature"`
+	MaxTokens   int           `json:"max_tokens"`
 }
 
-type openAICompatMsg struct {
+type chatMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
-type openAICompatResponse struct {
+type chatResponse struct {
 	Choices []struct {
-		Message openAICompatMsg `json:"message"`
+		Message chatMessage `json:"message"`
 	} `json:"choices"`
 }
 
-// NvidiaNIMAdapter adapts the NVIDIA NIM API to the Provider interface.
-type NvidiaNIMAdapter struct {
+type OpenRouterAdapter struct {
 	apiKey string
 }
 
-func NewNvidiaNIMAdapter(cfg *config.Config) *NvidiaNIMAdapter {
-	return &NvidiaNIMAdapter{apiKey: cfg.NvidiaNIMAPIKey}
+func NewOpenRouterAdapter(cfg *config.Config) *OpenRouterAdapter {
+	return &OpenRouterAdapter{apiKey: cfg.OpenRouterAPIKey}
 }
 
-func (a *NvidiaNIMAdapter) Name() string { return "nvidia_nim" }
+func (a *OpenRouterAdapter) Name() string { return "openrouter" }
 
-func (a *NvidiaNIMAdapter) Dispatch(ctx context.Context, taskType string, payload json.RawMessage) (*NormalizedResponse, error) {
-	model, ok := taskModelMap["nvidia_nim"][taskType]
-	if !ok {
-		model = "meta/llama-3.1-405b-instruct"
-	}
-
-	url := nvidiaNIMBaseURL + "/v1/chat/completions"
-
-	reqBody := openAICompatRequest{
-		Model: model,
-		Messages: []openAICompatMsg{
-			{Role: "system", Content: "You are a helpful financial assistant."},
-			{Role: "user", Content: string(payload)},
-		},
-		Temperature: 0.7,
-		MaxTokens:   1024,
-	}
-
-	bodyBytes, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, fmt.Errorf("nvidia: marshal: %w", err)
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
-	if err != nil {
-		return nil, fmt.Errorf("nvidia: new request: %w", err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+a.apiKey)
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("nvidia: request failed: %w", ErrProviderUnavailable)
-	}
-	defer resp.Body.Close()
-
-	respBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("nvidia: read response: %w", err)
-	}
-
-	if resp.StatusCode >= 500 {
-		return nil, fmt.Errorf("nvidia: status %d: %w", resp.StatusCode, ErrProviderUnavailable)
-	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("nvidia: status %d", resp.StatusCode)
-	}
-
-	var openAIResp openAICompatResponse
-	if err := json.Unmarshal(respBytes, &openAIResp); err != nil {
-		return nil, fmt.Errorf("nvidia: unmarshal response: %w", err)
-	}
-
-	if len(openAIResp.Choices) == 0 {
-		return nil, fmt.Errorf("nvidia: no choices: %w", ErrProviderUnavailable)
-	}
-
-	return &NormalizedResponse{Content: openAIResp.Choices[0].Message.Content, Provider: "nvidia_nim"}, nil
+func (a *OpenRouterAdapter) Dispatch(ctx context.Context, _ string, payload json.RawMessage) (*NormalizedResponse, error) {
+	return dispatchChatProvider(ctx, "openrouter", openRouterBaseURL+"/api/v1/chat/completions", a.apiKey, openRouterFreeModel, payload, map[string]string{
+		"HTTP-Referer": "https://wisemoney.y7labs.studio/",
+		"X-Title":      "WiseMoney",
+	})
 }
 
-// ---------------------------------------------------------------------------
-// OpenAI
-// ---------------------------------------------------------------------------
-
-// OpenAIAdapter adapts the OpenAI API to the Provider interface.
-type OpenAIAdapter struct {
+type DeepSeekAdapter struct {
 	apiKey string
 }
 
-func NewOpenAIAdapter(cfg *config.Config) *OpenAIAdapter {
-	return &OpenAIAdapter{apiKey: cfg.OpenAIAPIKey}
+func NewDeepSeekAdapter(cfg *config.Config) *DeepSeekAdapter {
+	return &DeepSeekAdapter{apiKey: cfg.DeepSeekAPIKey}
 }
 
-func (a *OpenAIAdapter) Name() string { return "openai" }
+func (a *DeepSeekAdapter) Name() string { return "deepseek" }
 
-func (a *OpenAIAdapter) Dispatch(ctx context.Context, taskType string, payload json.RawMessage) (*NormalizedResponse, error) {
-	model, ok := taskModelMap["openai"][taskType]
-	if !ok {
-		model = "gpt-4o-mini"
-	}
+func (a *DeepSeekAdapter) Dispatch(ctx context.Context, _ string, payload json.RawMessage) (*NormalizedResponse, error) {
+	return dispatchChatProvider(ctx, "deepseek", deepSeekBaseURL+"/chat/completions", a.apiKey, deepSeekFlashModel, payload, nil)
+}
 
-	url := openAIBaseURL + "/v1/chat/completions"
-
-	reqBody := openAICompatRequest{
+func dispatchChatProvider(
+	ctx context.Context,
+	providerName string,
+	endpoint string,
+	apiKey string,
+	model string,
+	payload json.RawMessage,
+	extraHeaders map[string]string,
+) (*NormalizedResponse, error) {
+	body, err := json.Marshal(chatRequest{
 		Model: model,
-		Messages: []openAICompatMsg{
-			{Role: "system", Content: "You are a helpful financial assistant."},
+		Messages: []chatMessage{
+			{Role: "system", Content: "You are a concise personal-finance assistant."},
 			{Role: "user", Content: string(payload)},
 		},
-		Temperature: 0.7,
+		Temperature: 0.3,
 		MaxTokens:   1024,
-	}
-
-	bodyBytes, err := json.Marshal(reqBody)
+	})
 	if err != nil {
-		return nil, fmt.Errorf("openai: marshal: %w", err)
+		return nil, fmt.Errorf("%s: marshal: %w", providerName, err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
 	if err != nil {
-		return nil, fmt.Errorf("openai: new request: %w", err)
+		return nil, fmt.Errorf("%s: create request: %w", providerName, err)
 	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+a.apiKey)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer "+apiKey)
+	for key, value := range extraHeaders {
+		request.Header.Set(key, value)
+	}
 
-	resp, err := httpClient.Do(req)
+	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("openai: request failed: %w", ErrProviderUnavailable)
+		return nil, fmt.Errorf("%s: request: %w", providerName, ErrProviderUnavailable)
 	}
-	defer resp.Body.Close()
-
-	respBytes, err := io.ReadAll(resp.Body)
+	defer response.Body.Close()
+	responseBody, err := io.ReadAll(io.LimitReader(response.Body, maxProviderResponse+1))
 	if err != nil {
-		return nil, fmt.Errorf("openai: read response: %w", err)
+		return nil, fmt.Errorf("%s: read response: %w", providerName, ErrProviderUnavailable)
+	}
+	if len(responseBody) > maxProviderResponse {
+		return nil, fmt.Errorf("%s: response too large: %w", providerName, ErrProviderUnavailable)
+	}
+	if response.StatusCode == http.StatusTooManyRequests || response.StatusCode >= 500 {
+		return nil, fmt.Errorf("%s: status %d: %w", providerName, response.StatusCode, ErrProviderUnavailable)
+	}
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%s: status %d", providerName, response.StatusCode)
 	}
 
-	if resp.StatusCode >= 500 {
-		return nil, fmt.Errorf("openai: status %d: %w", resp.StatusCode, ErrProviderUnavailable)
+	var decoded chatResponse
+	if err := json.Unmarshal(responseBody, &decoded); err != nil || len(decoded.Choices) == 0 || decoded.Choices[0].Message.Content == "" {
+		return nil, fmt.Errorf("%s: invalid response: %w", providerName, ErrProviderUnavailable)
 	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("openai: status %d", resp.StatusCode)
-	}
-
-	var openAIResp openAICompatResponse
-	if err := json.Unmarshal(respBytes, &openAIResp); err != nil {
-		return nil, fmt.Errorf("openai: unmarshal response: %w", err)
-	}
-
-	if len(openAIResp.Choices) == 0 {
-		return nil, fmt.Errorf("openai: no choices: %w", ErrProviderUnavailable)
-	}
-
-	return &NormalizedResponse{Content: openAIResp.Choices[0].Message.Content, Provider: "openai"}, nil
+	return &NormalizedResponse{Content: decoded.Choices[0].Message.Content, Provider: providerName}, nil
 }

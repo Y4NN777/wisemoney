@@ -14,7 +14,7 @@ package middleware
 // regardless of which handlers log below it.
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 )
@@ -23,12 +23,21 @@ import (
 // logging without buffering the body (body must NEVER be logged — INV-PROXY-02).
 type responseRecorder struct {
 	http.ResponseWriter
-	status int
+	status      int
+	wroteHeader bool
 }
 
 func (rr *responseRecorder) WriteHeader(status int) {
+	if rr.wroteHeader {
+		return
+	}
+	rr.wroteHeader = true
 	rr.status = status
 	rr.ResponseWriter.WriteHeader(status)
+}
+
+func (rr *responseRecorder) Unwrap() http.ResponseWriter {
+	return rr.ResponseWriter
 }
 
 // LogSanitizer is the chi-compatible middleware function.
@@ -46,17 +55,12 @@ func LogSanitizer(next http.Handler) http.Handler {
 			userID = "-"
 		}
 
-		// TODO(observability): replace fmt.Printf with a structured logger
-		// (e.g. log/slog from stdlib) that writes JSON to stdout.
-		// Fields: timestamp, method, path, status, latency_ms, user_id.
-		// Never add: body, headers["Authorization"], any api_key field.
-		fmt.Printf(
-			"method=%s path=%s status=%d latency_ms=%d user_id=%s\n",
-			r.Method,
-			r.URL.Path,
-			rr.status,
-			time.Since(start).Milliseconds(),
-			userID,
+		slog.InfoContext(r.Context(), "http_request",
+			"method", r.Method,
+			"path", r.URL.Path,
+			"status", rr.status,
+			"latency_ms", time.Since(start).Milliseconds(),
+			"user_id", userID,
 		)
 	})
 }

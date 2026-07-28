@@ -4,9 +4,8 @@ package provider
 // ARCHITECTURE §9). Each task type has a primary and an ordered fallback chain
 // across different providers. Same-provider retry does NOT satisfy FR-AIORCH-05.
 //
-// The routing config is operator-configurable (FR-AIORCH-03): change the routing
-// table to re-route a task type without a code change. Provider endpoint URLs
-// remain hardcoded (M-PROXY-01).
+// Provider registration is operator-configurable through API-key presence.
+// Route order and provider endpoint URLs remain hardcoded (M-PROXY-01).
 //
 // Graceful degradation (INV-PROXY-04): if every provider in the chain for a task
 // type is unavailable, Router.Dispatch returns an error. The handler surfaces a
@@ -17,38 +16,58 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/y4nn/wisemoney/services/edge/internal/config"
+)
+
+// ErrUnknownTaskType identifies a client contract error, not provider outage.
+var ErrUnknownTaskType = errors.New("unknown task type")
+
+const (
+	defaultProviderAttemptTimeout  = 20 * time.Second
+	defaultProviderDispatchTimeout = 55 * time.Second
 )
 
 // taskRouting maps task type names to an ordered list of provider names.
 // Primary is index 0; fallbacks are subsequent entries on different providers.
 // All entries must refer to providers registered in Router.providers.
-//
-// TODO(FR-AIORCH-03): make this operator-configurable via an environment variable
-// or a config file at startup — currently hardcoded for scaffold clarity.
 var taskRouting = map[string][]string{
-	"reasoning":      {"gemini", "openai", "nvidia_nim"},
-	"classification": {"nvidia_nim", "gemini", "openai"},
-	"teaching":       {"openai", "gemini", "nvidia_nim"},
-	"summarization":  {"gemini", "openai", "nvidia_nim"},
+	"reasoning":      {"openrouter", "gemini", "deepseek"},
+	"classification": {"openrouter", "gemini", "deepseek"},
+	"teaching":       {"openrouter", "gemini", "deepseek"},
+	"summarization":  {"openrouter", "gemini", "deepseek"},
+}
+
+// IsSupportedTaskType reports whether taskType has a configured routing contract.
+func IsSupportedTaskType(taskType string) bool {
+	_, ok := taskRouting[taskType]
+	return ok
 }
 
 // Router selects the appropriate provider adapter for a task type and applies
 // the cross-provider fallback chain.
 type Router struct {
-	providers map[string]Provider
+	providers       map[string]Provider
+	attemptTimeout  time.Duration
+	dispatchTimeout time.Duration
 }
 
 // NewRouter constructs the Router with all provider adapters registered.
 func NewRouter(cfg *config.Config) *Router {
-	r := &Router{providers: make(map[string]Provider)}
-	for _, p := range []Provider{
-		NewGeminiAdapter(cfg),
-		NewNvidiaNIMAdapter(cfg),
-		NewOpenAIAdapter(cfg),
-	} {
-		r.providers[p.Name()] = p
+	r := &Router{
+		providers:       make(map[string]Provider),
+		attemptTimeout:  defaultProviderAttemptTimeout,
+		dispatchTimeout: defaultProviderDispatchTimeout,
+	}
+	if cfg.OpenRouterAPIKey != "" {
+		r.providers["openrouter"] = NewOpenRouterAdapter(cfg)
+	}
+	if cfg.GeminiAPIKey != "" {
+		r.providers["gemini"] = NewGeminiAdapter(cfg)
+	}
+	if cfg.DeepSeekAPIKey != "" {
+		r.providers["deepseek"] = NewDeepSeekAdapter(cfg)
 	}
 	return r
 }
@@ -59,8 +78,15 @@ func NewRouter(cfg *config.Config) *Router {
 func (r *Router) Dispatch(ctx context.Context, userID, taskType string, payload json.RawMessage) (*NormalizedResponse, error) {
 	chain, ok := taskRouting[taskType]
 	if !ok {
-		return nil, fmt.Errorf("provider: unknown task type %q", taskType)
+		return nil, fmt.Errorf("provider: %w %q", ErrUnknownTaskType, taskType)
 	}
+
+	dispatchTimeout := r.dispatchTimeout
+	if dispatchTimeout <= 0 {
+		dispatchTimeout = defaultProviderDispatchTimeout
+	}
+	dispatchCtx, cancelDispatch := context.WithTimeout(ctx, dispatchTimeout)
+	defer cancelDispatch()
 
 	var lastErr error
 	for _, name := range chain {
@@ -69,14 +95,23 @@ func (r *Router) Dispatch(ctx context.Context, userID, taskType string, payload 
 			continue
 		}
 
-		resp, err := p.Dispatch(ctx, taskType, payload)
+		attemptTimeout := r.attemptTimeout
+		if attemptTimeout <= 0 {
+			attemptTimeout = defaultProviderAttemptTimeout
+		}
+		attemptCtx, cancel := context.WithTimeout(dispatchCtx, attemptTimeout)
+		resp, err := p.Dispatch(attemptCtx, taskType, payload)
+		cancel()
 		if err == nil {
 			return resp, nil
+		}
+		if ctx.Err() != nil {
+			return nil, fmt.Errorf("provider: request cancelled: %w", ctx.Err())
 		}
 
 		// Only continue fallback on availability errors (FR-AIORCH-05).
 		// Non-availability errors (e.g. bad request) should not trigger fallback.
-		if errors.Is(err, ErrProviderUnavailable) || errors.Is(err, ErrNotImplemented) {
+		if errors.Is(err, ErrProviderUnavailable) {
 			lastErr = err
 			continue
 		}
@@ -86,5 +121,8 @@ func (r *Router) Dispatch(ctx context.Context, userID, taskType string, payload 
 	}
 
 	// All providers exhausted (INV-PROXY-04: fail closed, never fabricate).
+	if lastErr == nil {
+		lastErr = ErrProviderUnavailable
+	}
 	return nil, fmt.Errorf("provider: all providers unavailable for task %q: %w", taskType, lastErr)
 }

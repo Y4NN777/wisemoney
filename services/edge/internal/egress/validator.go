@@ -3,17 +3,13 @@
 //
 // Enforcement model:
 //
-//  1. Every AI request carries X-Egress-Level: "redacted" | "full".
-//  2. For "redacted" requests: the edge validates that the payload body conforms
+//  1. Every managed AI request must conform
 //     to the aggregate-only schema (FR-CONSENT-07 / INV-EGR-01 ceiling). Any
 //     payload containing fields that can only appear in full-egress contexts
 //     (individual transaction amounts, dates, merchant names, free-text notes) is
 //     REJECTED with 400. The client's claimed egress level is not trusted —
 //     the payload is inspected structurally.
-//  3. For "full" requests: the edge requires a valid, server-signed, short-lived
-//     consent assertion (consent package). Without a valid assertion, the request
-//     is treated as "redacted" (fail-safe default, THREAT_MODEL §3 step 3).
-//  4. Schema definitions for redacted-egress payloads are versioned here.
+//  2. Schema definitions for redacted-egress payloads are versioned here.
 //     Additions to the aggregate-only schema require an edge deployment.
 //
 // This package does NOT interpret financial semantics — it enforces schema shape.
@@ -21,25 +17,30 @@
 package egress
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"regexp"
 )
 
-// fullEgressOnlyFields are keys that may only appear in a full-egress payload
-// (INV-EGR-01: raw transaction data). Their presence in a redacted-egress payload
-// is a schema violation — reject with 400.
-//
-// This list is the enforcement contract between the client's AI Context Builder
-// and the edge. Additions here require a coordinated client + edge deployment.
-var fullEgressOnlyFields = []string{
-	"transaction_amount",
-	"transaction_date",
-	"merchant",
-	"merchant_name",
-	"note",
-	"free_text",
-	"transactions",       // array of individual transactions
-	"raw_transactions",
+var currencyCode = regexp.MustCompile(`^[A-Z]{3}$`)
+
+const maxSafeInteger int64 = 9_007_199_254_740_991
+
+type redactedMoney struct {
+	MinorUnits int64  `json:"minorUnits"`
+	Currency   string `json:"currency"`
+}
+
+type redactedPayload struct {
+	PeriodTotalsPerCategory map[string]redactedMoney `json:"periodTotalsPerCategory"`
+	TotalIncome             redactedMoney            `json:"totalIncome"`
+	TotalExpenses           redactedMoney            `json:"totalExpenses"`
+	NetCashFlow             redactedMoney            `json:"netCashFlow"`
+	BudgetStatusPercent     map[string]float64       `json:"budgetStatusPercent"`
+	GoalProgressPercent     map[string]float64       `json:"goalProgressPercent"`
+	TrendDirection          map[string]string        `json:"trendDirection"`
 }
 
 // Validator enforces egress schema shape at the edge boundary.
@@ -48,46 +49,100 @@ type Validator struct{}
 // NewValidator constructs a Validator.
 func NewValidator() *Validator { return &Validator{} }
 
-// Validate checks that the payload conforms to the permitted egress level.
-//
-//   - egressLevel "redacted": payload must not contain fullEgressOnlyFields.
-//   - egressLevel "full": a valid assertionJSON must accompany the request
-//     (validated separately by the consent package before this call).
-//
+// Validate checks that a managed payload matches the aggregate-only schema.
 // Returns a non-nil error with a descriptive message on violation.
 // On error the handler must return 400 to the client (INV-EGR-03a).
-func (v *Validator) Validate(egressLevel string, payload json.RawMessage) error {
-	switch egressLevel {
-	case "redacted", "":
-		return v.validateRedacted(payload)
-	case "full":
-		// For full-egress the consent assertion is validated separately by the
-		// consent package. Here we only confirm the payload is well-formed.
-		// TODO(impl): add any full-egress structural constraints (e.g. max payload
-		// size) if required by the spec.
-		if !json.Valid(payload) {
-			return fmt.Errorf("egress: full-egress payload is not valid JSON")
-		}
-		return nil
-	default:
-		// Unknown egress level — fail safe to redacted validation.
-		return v.validateRedacted(payload)
-	}
+func (v *Validator) Validate(payload json.RawMessage) error {
+	return v.validateRedacted(payload)
 }
 
-// validateRedacted rejects payloads that contain full-egress-only fields.
-// The check is structural (field key presence), not semantic (field value meaning).
-// This is intentional: the edge does not interpret financial data (Gate-4 decision 16).
+// validateRedacted enforces the exact aggregate-only payload schema.
 func (v *Validator) validateRedacted(payload json.RawMessage) error {
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(payload, &m); err != nil {
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(payload, &fields); err != nil {
 		return fmt.Errorf("egress: payload is not a JSON object: %w", err)
 	}
-
-	for _, forbidden := range fullEgressOnlyFields {
-		if _, found := m[forbidden]; found {
-			return fmt.Errorf("egress: redacted-egress payload contains forbidden field %q (INV-EGR-01): full-egress consent required", forbidden)
+	required := []string{
+		"periodTotalsPerCategory",
+		"totalIncome",
+		"totalExpenses",
+		"netCashFlow",
+		"budgetStatusPercent",
+		"goalProgressPercent",
+		"trendDirection",
+	}
+	for _, field := range required {
+		if _, exists := fields[field]; !exists {
+			return fmt.Errorf("egress: redacted-egress payload is missing required field %q", field)
 		}
+	}
+
+	decoder := json.NewDecoder(bytes.NewReader(payload))
+	decoder.DisallowUnknownFields()
+	var decoded redactedPayload
+	if err := decoder.Decode(&decoded); err != nil {
+		return fmt.Errorf("egress: redacted-egress payload violates aggregate-only schema: %w", err)
+	}
+	if err := ensureJSONEOF(decoder); err != nil {
+		return err
+	}
+	if decoded.PeriodTotalsPerCategory == nil || decoded.BudgetStatusPercent == nil ||
+		decoded.GoalProgressPercent == nil || decoded.TrendDirection == nil {
+		return fmt.Errorf("egress: aggregate maps must be JSON objects")
+	}
+
+	for categoryID, amount := range decoded.PeriodTotalsPerCategory {
+		if categoryID == "" {
+			return fmt.Errorf("egress: category id must not be empty")
+		}
+		if err := validateRedactedMoney(amount); err != nil {
+			return fmt.Errorf("egress: category %q: %w", categoryID, err)
+		}
+	}
+	for name, amount := range map[string]redactedMoney{
+		"totalIncome":   decoded.TotalIncome,
+		"totalExpenses": decoded.TotalExpenses,
+		"netCashFlow":   decoded.NetCashFlow,
+	} {
+		if err := validateRedactedMoney(amount); err != nil {
+			return fmt.Errorf("egress: %s: %w", name, err)
+		}
+	}
+	for name, values := range map[string]map[string]float64{
+		"budgetStatusPercent": decoded.BudgetStatusPercent,
+		"goalProgressPercent": decoded.GoalProgressPercent,
+	} {
+		for id, percentage := range values {
+			if id == "" || percentage < 0 {
+				return fmt.Errorf("egress: %s contains invalid percentage", name)
+			}
+		}
+	}
+	for id, trend := range decoded.TrendDirection {
+		if id == "" || (trend != "up" && trend != "down" && trend != "stable") {
+			return fmt.Errorf("egress: trendDirection contains invalid value")
+		}
+	}
+	return nil
+}
+
+func validateRedactedMoney(amount redactedMoney) error {
+	if amount.MinorUnits < -maxSafeInteger || amount.MinorUnits > maxSafeInteger {
+		return fmt.Errorf("minorUnits exceeds the JavaScript safe integer range")
+	}
+	if !currencyCode.MatchString(amount.Currency) {
+		return fmt.Errorf("currency must be a three-letter uppercase code")
+	}
+	return nil
+}
+
+func ensureJSONEOF(decoder *json.Decoder) error {
+	var extra any
+	if err := decoder.Decode(&extra); err != io.EOF {
+		if err == nil {
+			return fmt.Errorf("egress: payload contains multiple JSON values")
+		}
+		return fmt.Errorf("egress: invalid trailing data: %w", err)
 	}
 	return nil
 }

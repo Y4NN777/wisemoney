@@ -8,7 +8,6 @@
 //	POST /v1/auth/login          — login; issues access JWT + refresh token
 //	POST /v1/auth/refresh        — refresh-token rotation (INV-AUTH-03)
 //	POST /v1/ai/proxy            — authenticated AI proxy (INV-AUTH-01, INV-PROXY-*)
-//	POST /v1/consent/assert      — issue short-lived consent assertion (AQ-01, THREAT_MODEL §3)
 //
 // Middleware chain for authenticated routes:
 //
@@ -27,7 +26,6 @@ import (
 
 	"github.com/y4nn/wisemoney/services/edge/internal/auth"
 	"github.com/y4nn/wisemoney/services/edge/internal/config"
-	"github.com/y4nn/wisemoney/services/edge/internal/consent"
 	"github.com/y4nn/wisemoney/services/edge/internal/egress"
 	"github.com/y4nn/wisemoney/services/edge/internal/middleware"
 	"github.com/y4nn/wisemoney/services/edge/internal/provider"
@@ -90,22 +88,12 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool) http.Handler {
 		r.Use(jwtAuth.Middleware)
 		r.Use(rateLimiter.Middleware)
 
-		// Dedicated consent-assertion key, separate from the JWT key (Gate-5;
-		// ARCHITECTURE §10a "Consent-assertion contract").
-		consentSvc := consent.NewService(cfg.ConsentSigningKey, cfg.ConsentAssertionTTL)
 		providerRouter := provider.NewRouter(cfg)
 		egressValidator := egress.NewValidator()
 
-		// consentSvc gates full-egress in the proxy handler: valid HMAC + not
-		// expired + user_id == JWT sub + feature == X-Feature + level == "full"
-		// required; any failure forces redacted (INV-EGR-03a, ARCHITECTURE §10a).
-		//
 		// bodySizeProxy (1 MiB) on /v1/ai/proxy: AI context payloads can be larger
 		// than credential bodies but must still be bounded (MED-01, CWE-400).
-		r.Post("/v1/ai/proxy", withBodyLimit(bodySizeProxy, newProxyHandler(providerRouter, egressValidator, consentSvc)))
-
-		// bodySizeSmall on /v1/consent/assert: body carries only a feature name (MED-01).
-		r.Post("/v1/consent/assert", withBodyLimit(bodySizeSmall, consentSvc.HandleAssert))
+		r.Post("/v1/ai/proxy", withBodyLimit(bodySizeProxy, newProxyHandler(providerRouter, egressValidator)))
 	})
 
 	return r

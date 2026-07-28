@@ -30,9 +30,12 @@ type bucket struct {
 type RateLimiter struct {
 	rps      float64 // token refill rate (tokens per second)
 	capacity float64 // maximum burst capacity
+	idleTTL  time.Duration
 
-	mu      sync.Mutex
-	buckets map[string]*bucket
+	mu          sync.Mutex
+	buckets     map[string]*bucket
+	now         func() time.Time
+	lastCleanup time.Time
 }
 
 // NewRateLimiter constructs a RateLimiter.
@@ -41,7 +44,9 @@ func NewRateLimiter(rps float64, burst int) *RateLimiter {
 	return &RateLimiter{
 		rps:      rps,
 		capacity: float64(burst),
+		idleTTL:  maxDuration(time.Minute, 2*time.Duration(float64(time.Second)*float64(burst)/rps)),
 		buckets:  make(map[string]*bucket),
+		now:      time.Now,
 	}
 }
 
@@ -73,7 +78,11 @@ func (rl *RateLimiter) allow(userID string) bool {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
 
-	now := time.Now()
+	now := rl.now()
+	if rl.lastCleanup.IsZero() || now.Sub(rl.lastCleanup) >= time.Minute {
+		rl.removeIdle(now)
+		rl.lastCleanup = now
+	}
 	b, ok := rl.buckets[userID]
 	if !ok {
 		// First request for this user: start full.
@@ -93,8 +102,23 @@ func (rl *RateLimiter) allow(userID string) bool {
 	return true
 }
 
+func (rl *RateLimiter) removeIdle(now time.Time) {
+	for userID, bucket := range rl.buckets {
+		if now.Sub(bucket.lastRefill) >= rl.idleTTL {
+			delete(rl.buckets, userID)
+		}
+	}
+}
+
 func min(a, b float64) float64 {
 	if a < b {
+		return a
+	}
+	return b
+}
+
+func maxDuration(a, b time.Duration) time.Duration {
+	if a > b {
 		return a
 	}
 	return b

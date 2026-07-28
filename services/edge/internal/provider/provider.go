@@ -1,4 +1,4 @@
-// Package provider defines the Provider interface, per-provider adapter stubs,
+// Package provider defines the Provider interface, provider adapters,
 // and the Router that handles task-type routing and cross-provider fallback.
 //
 // Architecture invariants:
@@ -19,7 +19,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 )
 
 // NormalizedResponse is the single internal response shape all consumers depend on
@@ -35,15 +34,11 @@ type NormalizedResponse struct {
 
 // Provider is the interface every provider adapter must implement.
 // Dispatch sends a task payload to the provider and returns a NormalizedResponse.
-// Real API calls are NOT made in stubs — they return ErrNotImplemented.
 type Provider interface {
 	Name() string
 	Dispatch(ctx context.Context, taskType string, payload json.RawMessage) (*NormalizedResponse, error)
 }
 
-// ErrNotImplemented is returned by adapter stubs pending real implementation.
-var ErrNotImplemented = errors.New("provider: not implemented")
-
 // ErrProviderUnavailable is returned when a provider is unreachable or times out.
 // The Router uses this to trigger fallback (FR-AIORCH-05).
-var ErrProviderUnavailable = fmt.Errorf("provider: unavailable")
+var ErrProviderUnavailable = errors.New("provider: unavailable")

@@ -28,16 +28,10 @@ type Config struct {
 	JWTAccessTTL  time.Duration
 	JWTRefreshTTL time.Duration
 
-	// Consent-assertion signing (AQ-01; ARCHITECTURE §10a "Consent-assertion contract").
-	// A DEDICATED key, separate from JWTSigningKey, so the consent and auth keys
-	// rotate independently (Gate-5). Server-only; never sent to a client.
-	ConsentSigningKey   string
-	ConsentAssertionTTL time.Duration
-
 	// Argon2id KDF parameters (INV-AUTH-02).
 	// Minimum: memory >= 64 MiB (65536 KiB), iterations >= 3 (THREAT_MODEL §2.2).
-	Argon2MemoryKiB  uint32
-	Argon2Iterations uint32
+	Argon2MemoryKiB   uint32
+	Argon2Iterations  uint32
 	Argon2Parallelism uint8
 
 	// Rate-limit token bucket (in-memory, Gate-4 #20).
@@ -45,11 +39,15 @@ type Config struct {
 	RateLimitRPS   float64
 	RateLimitBurst int
 
+	// TrustProxyHeaders enables client-IP extraction from X-Forwarded-For for
+	// deployments behind a trusted reverse proxy. Keep false for direct exposure.
+	TrustProxyHeaders bool
+
 	// Managed-mode AI provider keys (server-side only; INV-KEY-01).
 	// Never transmitted to the client.
-	GeminiAPIKey    string
-	NvidiaNIMAPIKey string
-	OpenAIAPIKey    string
+	GeminiAPIKey     string
+	OpenRouterAPIKey string
+	DeepSeekAPIKey   string
 }
 
 // Load reads and validates configuration from environment variables.
@@ -58,6 +56,10 @@ func Load() (*Config, error) {
 	var errs []error
 
 	port := envOr("EDGE_PORT", "8080")
+	portNumber, err := strconv.Atoi(port)
+	if err != nil || portNumber < 1 || portNumber > 65535 {
+		errs = append(errs, fmt.Errorf("EDGE_PORT must be an integer between 1 and 65535, got %q", port))
+	}
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
@@ -75,25 +77,16 @@ func Load() (*Config, error) {
 	accessTTL, err := parseDuration("JWT_ACCESS_TTL", "15m")
 	if err != nil {
 		errs = append(errs, err)
+	} else if accessTTL <= 0 {
+		errs = append(errs, errors.New("JWT_ACCESS_TTL must be greater than zero"))
 	}
 	refreshTTL, err := parseDuration("JWT_REFRESH_TTL", "720h")
 	if err != nil {
 		errs = append(errs, err)
-	}
-
-	consentKey := os.Getenv("CONSENT_SIGNING_KEY")
-	if consentKey == "" {
-		errs = append(errs, errors.New("CONSENT_SIGNING_KEY is required"))
-	}
-	if len(consentKey) < 32 {
-		errs = append(errs, errors.New("CONSENT_SIGNING_KEY must be at least 32 bytes"))
-	}
-	if consentKey != "" && consentKey == jwtKey {
-		errs = append(errs, errors.New("CONSENT_SIGNING_KEY must differ from JWT_SIGNING_KEY (independent rotation)"))
-	}
-	consentTTL, err := parseDuration("CONSENT_ASSERTION_TTL", "5m")
-	if err != nil {
-		errs = append(errs, err)
+	} else if refreshTTL <= 0 {
+		errs = append(errs, errors.New("JWT_REFRESH_TTL must be greater than zero"))
+	} else if accessTTL > 0 && refreshTTL <= accessTTL {
+		errs = append(errs, errors.New("JWT_REFRESH_TTL must be greater than JWT_ACCESS_TTL"))
 	}
 
 	memKiB, err := parseUint32("ARGON2_MEMORY_KIB", 65536)
@@ -115,13 +108,23 @@ func Load() (*Config, error) {
 	parallelism, err := parseUint8("ARGON2_PARALLELISM", 2)
 	if err != nil {
 		errs = append(errs, err)
+	} else if parallelism == 0 {
+		errs = append(errs, errors.New("ARGON2_PARALLELISM must be greater than zero"))
 	}
 
 	rlRPS, err := parseFloat64("RATE_LIMIT_RPS", 2.0)
 	if err != nil {
 		errs = append(errs, err)
+	} else if rlRPS <= 0 {
+		errs = append(errs, errors.New("RATE_LIMIT_RPS must be greater than zero"))
 	}
 	rlBurst, err := parseInt("RATE_LIMIT_BURST", 10)
+	if err != nil {
+		errs = append(errs, err)
+	} else if rlBurst <= 0 {
+		errs = append(errs, errors.New("RATE_LIMIT_BURST must be greater than zero"))
+	}
+	trustProxyHeaders, err := parseBool("TRUST_PROXY_HEADERS", false)
 	if err != nil {
 		errs = append(errs, err)
 	}
@@ -133,19 +136,18 @@ func Load() (*Config, error) {
 	return &Config{
 		Port:              port,
 		DatabaseURL:       dbURL,
-		JWTSigningKey:       jwtKey,
-		JWTAccessTTL:        accessTTL,
-		JWTRefreshTTL:       refreshTTL,
-		ConsentSigningKey:   consentKey,
-		ConsentAssertionTTL: consentTTL,
+		JWTSigningKey:     jwtKey,
+		JWTAccessTTL:      accessTTL,
+		JWTRefreshTTL:     refreshTTL,
 		Argon2MemoryKiB:   memKiB,
 		Argon2Iterations:  iters,
 		Argon2Parallelism: parallelism,
 		RateLimitRPS:      rlRPS,
 		RateLimitBurst:    rlBurst,
+		TrustProxyHeaders: trustProxyHeaders,
 		GeminiAPIKey:      os.Getenv("GEMINI_API_KEY"),
-		NvidiaNIMAPIKey:   os.Getenv("NVIDIA_NIM_API_KEY"),
-		OpenAIAPIKey:      os.Getenv("OPENAI_API_KEY"),
+		OpenRouterAPIKey:  os.Getenv("OPENROUTER_API_KEY"),
+		DeepSeekAPIKey:    os.Getenv("DEEPSEEK_API_KEY"),
 	}, nil
 }
 
@@ -211,6 +213,18 @@ func parseInt(key string, def int) (int, error) {
 	v, err := strconv.Atoi(s)
 	if err != nil {
 		return 0, fmt.Errorf("%s: invalid int %q: %w", key, s, err)
+	}
+	return v, nil
+}
+
+func parseBool(key string, def bool) (bool, error) {
+	s := os.Getenv(key)
+	if s == "" {
+		return def, nil
+	}
+	v, err := strconv.ParseBool(s)
+	if err != nil {
+		return false, fmt.Errorf("%s: invalid boolean %q: %w", key, s, err)
 	}
 	return v, nil
 }
