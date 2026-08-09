@@ -1,12 +1,41 @@
 {
   "app": {
     "name": "WiseMoney",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "updateAvailable": "Update available",
+    "updateDescription": "A new version is ready. Reload to apply.",
+    "reload": "Reload"
+  },
+  "language": {
+    "choose": "Choose language",
+    "english": "English",
+    "french": "Français"
+  },
+  "systemCategories": {
+    "foodDining": "Food & Dining",
+    "transport": "Transport",
+    "housing": "Housing",
+    "utilities": "Utilities",
+    "entertainment": "Entertainment",
+    "healthcare": "Healthcare",
+    "education": "Education",
+    "shopping": "Shopping",
+    "personalCare": "Personal Care",
+    "insurance": "Insurance",
+    "subscriptions": "Subscriptions",
+    "giftsDonations": "Gifts & Donations",
+    "travel": "Travel",
+    "salary": "Salary",
+    "freelance": "Freelance",
+    "investments": "Investments",
+    "refunds": "Refunds",
+    "otherIncome": "Other Income"
   },
   "keyUnlock": {
     "loading": "Loading…",
     "errors": {
-      "categoryInitialization": "Failed to initialize categories"
+      "categoryInitialization": "Failed to initialize categories",
+      "localStorage": "Unable to open local storage"
     },
     "login": {
       "title": "Create Account",
@@ -31,6 +60,7 @@
       "toggleRegisterAction": "Register"
     },
     "unlock": {
+      "aria": "Unlock WiseMoney",
       "title": "Open your private space",
       "descriptionPassphrase": "Enter your private passphrase to access your financial records",
       "passphrase": "Private passphrase",
@@ -250,6 +280,8 @@
     }
   },
   "nav": {
+    "mainAria": "Main navigation",
+    "primaryAria": "Primary navigation",
     "dashboard": "Dashboard",
     "capture": "Capture",
     "assistant": "Assistant",
@@ -261,10 +293,11 @@
   },
   "helpCenter": {
     "open": "Open help center",
+    "shortLabel": "Help",
     "title": "Help Center",
     "description": "Use this guide when you need help with accounts, expenses, planning, offline access, or optional services.",
     "faqTitle": "Questions users often ask",
-    "installNote": "Install WiseMoney from the landing page or browser menu before relying on it without internet.",
+    "installNote": "Install WiseMoney from your browser menu before relying on it without internet.",
     "journey": {
       "accounts": {
         "title": "Create accounts",
@@ -311,9 +344,27 @@
     }
   },
   "dashboard": {
+    "accountCount": "{{count}} accounts",
+    "loadFailed": "The dashboard could not be loaded. Try again.",
     "title": "Dashboard",
+    "setup": {
+      "title": "Start with one account",
+      "body": "Add the place where you keep money. WiseMoney will use it to calculate balances and organize future transactions.",
+      "action": "Create an account",
+      "steps": {
+        "account": "Create an account",
+        "transaction": "Record money movement",
+        "review": "Review your dashboard"
+      }
+    },
+    "firstTransaction": {
+      "title": "Your account is ready",
+      "body": "Record your first income or expense to unlock monthly activity and spending insights.",
+      "action": "Record first transaction"
+    },
     "alerts": "Alerts",
     "aiInsight": "AI insight",
+    "viaProvider": "via {{provider}}",
     "budgetUse": "Budget use",
     "goalProgress": "Goal progress",
     "cashMargin": "Cash margin",
@@ -371,6 +422,8 @@
     "upcoming": "Upcoming",
     "remaining": "{{percentage}}% remaining",
     "transactions": "Transactions",
+    "addTransaction": "Add transaction",
+    "noActivityTitle": "No activity in this range",
     "transfers": "Transfers",
     "externalAccount": "External account",
     "unknownAccount": "Unknown account",
@@ -417,6 +470,11 @@
     "title": "Capture",
     "heading": "Record money movement",
     "ariaLabel": "Capture transaction",
+    "prerequisite": {
+      "accountTitle": "Create an account first",
+      "accountBody": "Transactions and transfers need an active account so WiseMoney can keep balances accurate.",
+      "createAccount": "Create an account"
+    },
     "empty": {
       "accountsManage": "No accounts yet. Create one in Manage.",
       "categoriesManage": "No categories yet. Create one in Manage.",
@@ -840,7 +898,18 @@
       "goals": "Goals",
       "recurring": "Recurring Transactions",
       "debts": "Debts & Receivables"
-    }
+    },
+    "counts": {
+      "budgets_one": "{{count}} active budget",
+      "budgets_other": "{{count}} active budgets",
+      "goals_one": "{{count}} active goal",
+      "goals_other": "{{count}} active goals",
+      "recurring_one": "{{count}} recurring item",
+      "recurring_other": "{{count}} recurring items",
+      "debts_one": "{{count}} unsettled item",
+      "debts_other": "{{count}} unsettled items"
+    },
+    "loadFailed": "Planning information could not be loaded."
   },
   "debts": {
     "aria": "Debts and receivables",
@@ -903,9 +972,33 @@
   "settings": {
     "system": "System",
     "title": "Settings",
+    "description": "Choose the essentials first. Open the other sections only when you need them.",
+    "language": {
+      "title": "App language",
+      "description": "Changes labels, guidance, dates, and currency names throughout WiseMoney."
+    },
+    "sections": {
+      "money": {
+        "title": "Money and currency",
+        "description": "Default currency and exchange rates"
+      },
+      "data": {
+        "title": "Data and backup",
+        "description": "Export, restore, and move your private space"
+      },
+      "ai": {
+        "title": "Optional assistant services",
+        "description": "Connect an AI provider only if you want smart features"
+      },
+      "security": {
+        "title": "Security and session",
+        "description": "Lock this space or manage an online session"
+      }
+    },
     "devices": {
-      "title": "Devices & Sessions",
-      "description": "Current device and active session information",
+      "title": "Private space and session",
+      "description": "Control access to the private space on this device.",
+      "thisDevice": "This device",
       "active": "Active",
       "offline": "Offline",
       "localOnly": "Local only",
@@ -925,7 +1018,7 @@
       "supported": "Supported Currencies",
       "default": "Default currency",
       "defaultHelp": "African currencies are listed first. New accounts use this currency; existing accounts are unchanged.",
-      "search": "Search code, currency, or country",
+      "search": "Search code or currency",
       "currenciesAria": "Currencies",
       "noMatch": "No matching currency.",
       "regions": {

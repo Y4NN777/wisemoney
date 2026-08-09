@@ -18,7 +18,7 @@ export default defineConfig({
         short_name: "WiseMoney",
         description: "Local-first personal finance with AI guidance",
         lang: "en",
-        theme_color: "#0077b6",
+        theme_color: "#002fa7",
         background_color: "#ffffff",
         display: "standalone",
         orientation: "portrait",

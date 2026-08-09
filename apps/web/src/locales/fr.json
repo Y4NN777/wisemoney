@@ -1,12 +1,41 @@
 {
   "app": {
     "name": "WiseMoney",
-    "loading": "Chargement…"
+    "loading": "Chargement…",
+    "updateAvailable": "Mise à jour disponible",
+    "updateDescription": "Une nouvelle version est prête. Rechargez pour l’appliquer.",
+    "reload": "Recharger"
+  },
+  "language": {
+    "choose": "Choisir la langue",
+    "english": "English",
+    "french": "Français"
+  },
+  "systemCategories": {
+    "foodDining": "Repas et alimentation",
+    "transport": "Transport",
+    "housing": "Logement",
+    "utilities": "Factures et services",
+    "entertainment": "Loisirs",
+    "healthcare": "Santé",
+    "education": "Éducation",
+    "shopping": "Achats",
+    "personalCare": "Soins personnels",
+    "insurance": "Assurance",
+    "subscriptions": "Abonnements",
+    "giftsDonations": "Cadeaux et dons",
+    "travel": "Voyages",
+    "salary": "Salaire",
+    "freelance": "Travail indépendant",
+    "investments": "Investissements",
+    "refunds": "Remboursements",
+    "otherIncome": "Autres revenus"
   },
   "keyUnlock": {
     "loading": "Chargement…",
     "errors": {
-      "categoryInitialization": "Échec de l’initialisation des catégories"
+      "categoryInitialization": "Échec de l’initialisation des catégories",
+      "localStorage": "Impossible d’ouvrir le stockage local"
     },
     "login": {
       "title": "Créer un compte",
@@ -31,6 +60,7 @@
       "toggleRegisterAction": "S'inscrire"
     },
     "unlock": {
+      "aria": "Déverrouiller WiseMoney",
       "title": "Ouvrir votre espace privé",
       "descriptionPassphrase": "Entrez votre phrase privée pour accéder à vos données financières",
       "passphrase": "Phrase privée",
@@ -250,6 +280,8 @@
     }
   },
   "nav": {
+    "mainAria": "Navigation principale",
+    "primaryAria": "Navigation principale",
     "dashboard": "Tableau de bord",
     "capture": "Saisie",
     "assistant": "Assistant",
@@ -261,10 +293,11 @@
   },
   "helpCenter": {
     "open": "Ouvrir le centre d'aide",
+    "shortLabel": "Aide",
     "title": "Centre d'aide",
     "description": "Utilisez ce guide quand vous avez besoin d'aide avec les comptes, les dépenses, la planification, l'accès hors ligne ou les services optionnels.",
     "faqTitle": "Questions fréquentes",
-    "installNote": "Installez WiseMoney depuis la page d'accueil ou le menu du navigateur avant de compter dessus sans internet.",
+    "installNote": "Installez WiseMoney depuis le menu du navigateur avant de compter dessus sans internet.",
     "journey": {
       "accounts": {
         "title": "Créer des comptes",
@@ -311,9 +344,27 @@
     }
   },
   "dashboard": {
+    "accountCount": "{{count}} comptes",
+    "loadFailed": "Impossible de charger le tableau de bord. Réessayez.",
     "title": "Tableau de bord",
+    "setup": {
+      "title": "Commencez par un compte",
+      "body": "Ajoutez l’endroit où vous conservez votre argent. WiseMoney l’utilisera pour calculer les soldes et organiser les futures transactions.",
+      "action": "Créer un compte",
+      "steps": {
+        "account": "Créer un compte",
+        "transaction": "Enregistrer un mouvement",
+        "review": "Consulter votre tableau de bord"
+      }
+    },
+    "firstTransaction": {
+      "title": "Votre compte est prêt",
+      "body": "Enregistrez votre premier revenu ou votre première dépense pour afficher l’activité mensuelle et l’analyse des dépenses.",
+      "action": "Enregistrer la première transaction"
+    },
     "alerts": "Alertes",
     "aiInsight": "Analyse IA",
+    "viaProvider": "via {{provider}}",
     "budgetUse": "Utilisation du budget",
     "goalProgress": "Progression des objectifs",
     "cashMargin": "Marge de trésorerie",
@@ -371,6 +422,8 @@
     "upcoming": "À venir",
     "remaining": "{{percentage}} % restant",
     "transactions": "Transactions",
+    "addTransaction": "Ajouter une transaction",
+    "noActivityTitle": "Aucune activité sur cette période",
     "transfers": "Transferts",
     "externalAccount": "Compte externe",
     "unknownAccount": "Compte inconnu",
@@ -417,6 +470,11 @@
     "title": "Saisie",
     "heading": "Enregistrer un mouvement d’argent",
     "ariaLabel": "Saisie d’une transaction",
+    "prerequisite": {
+      "accountTitle": "Créez d’abord un compte",
+      "accountBody": "Les transactions et virements nécessitent un compte actif afin que WiseMoney tienne les soldes à jour.",
+      "createAccount": "Créer un compte"
+    },
     "empty": {
       "accountsManage": "Aucun compte. Créez-en un dans Gérer.",
       "categoriesManage": "Aucune catégorie. Créez-en une dans Gérer.",
@@ -637,6 +695,7 @@
     "chat": {
       "title": "Chat d'éducation financière",
       "description": "Posez des questions sur les finances personnelles",
+      "paused": "Le chat est en pause jusqu’à ce que vous configuriez une clé fournisseur ou connectiez le service géré.",
       "emptyTitle": "Posez une question pour commencer à apprendre",
       "emptyExample": "p. ex. \"Qu'est-ce que la règle 50/30/20 ?\"",
       "placeholder": "Posez une question…",
@@ -839,7 +898,18 @@
       "goals": "Objectifs",
       "recurring": "Transactions récurrentes",
       "debts": "Dettes & Créances"
-    }
+    },
+    "counts": {
+      "budgets_one": "{{count}} budget actif",
+      "budgets_other": "{{count}} budgets actifs",
+      "goals_one": "{{count}} objectif actif",
+      "goals_other": "{{count}} objectifs actifs",
+      "recurring_one": "{{count}} élément récurrent",
+      "recurring_other": "{{count}} éléments récurrents",
+      "debts_one": "{{count}} élément non soldé",
+      "debts_other": "{{count}} éléments non soldés"
+    },
+    "loadFailed": "Impossible de charger les informations de planification."
   },
   "debts": {
     "aria": "Dettes et créances",
@@ -902,9 +972,33 @@
   "settings": {
     "system": "Système",
     "title": "Paramètres",
+    "description": "Choisissez d’abord l’essentiel. Ouvrez les autres sections seulement quand vous en avez besoin.",
+    "language": {
+      "title": "Langue de l’application",
+      "description": "Modifie les libellés, les conseils, les dates et les noms de devises dans WiseMoney."
+    },
+    "sections": {
+      "money": {
+        "title": "Argent et devise",
+        "description": "Devise par défaut et taux de change"
+      },
+      "data": {
+        "title": "Données et sauvegarde",
+        "description": "Exporter, restaurer ou déplacer votre espace privé"
+      },
+      "ai": {
+        "title": "Services d’assistant optionnels",
+        "description": "Connectez un fournisseur d’IA uniquement si vous voulez les fonctions intelligentes"
+      },
+      "security": {
+        "title": "Sécurité et session",
+        "description": "Verrouiller cet espace ou gérer une session en ligne"
+      }
+    },
     "devices": {
-      "title": "Appareils et sessions",
-      "description": "Informations sur l'appareil actuel et la session active",
+      "title": "Espace privé et session",
+      "description": "Contrôlez l’accès à l’espace privé sur cet appareil.",
+      "thisDevice": "Cet appareil",
       "active": "Actif",
       "offline": "Hors ligne",
       "localOnly": "Local uniquement",
@@ -924,7 +1018,7 @@
       "supported": "Devises prises en charge",
       "default": "Devise par défaut",
       "defaultHelp": "Les devises africaines sont affichées en premier. Les nouveaux comptes utilisent cette devise ; les comptes existants restent inchangés.",
-      "search": "Rechercher un code, une devise ou un pays",
+      "search": "Rechercher un code ou une devise",
       "currenciesAria": "Devises",
       "noMatch": "Aucune devise correspondante.",
       "regions": {

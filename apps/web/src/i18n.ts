@@ -13,11 +13,15 @@ void i18n
       fr: { translation: fr },
     },
     fallbackLng: "en",
+    supportedLngs: ["en", "fr"],
+    nonExplicitSupportedLngs: true,
     detection: {
-      order: ["navigator", "htmlTag", "localStorage", "cookie"],
+      order: ["localStorage", "navigator", "htmlTag", "cookie"],
       caches: ["localStorage"],
     },
     interpolation: {
       escapeValue: false,
     },
   });
+
+export default i18n;

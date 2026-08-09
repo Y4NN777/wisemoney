@@ -64,7 +64,7 @@ export default function Logo({ variant = "full", className }: LogoProps) {
       />
       <text
         x="108" y="54"
-        fontFamily="'Clash Display','Satoshi',ui-sans-serif,system-ui,sans-serif"
+        fontFamily="'Helvetica Neue',Helvetica,Arial,ui-sans-serif,system-ui,sans-serif"
         fontSize="34"
         fontWeight="600"
         letterSpacing="-0.02em"

@@ -3,8 +3,10 @@ import { useRegisterSW } from "virtual:pwa-register/react";
 import { toast } from "sonner";
 import KeyUnlock from "./components/KeyUnlock/index.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
+import { useTranslation } from "react-i18next";
 
 function PwaUpdateHandler() {
+  const { t } = useTranslation();
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const {
     needRefresh: [needRefresh],
@@ -41,17 +43,17 @@ function PwaUpdateHandler() {
 
   useEffect(() => {
     if (!needRefresh) return;
-    toast("Update available", {
-      description: "A new version is ready. Reload to apply.",
+    toast(t("app.updateAvailable"), {
+      description: t("app.updateDescription"),
       action: {
-        label: "Reload",
+        label: t("app.reload"),
         onClick: () => {
           void updateServiceWorker(true);
         },
       },
       duration: Infinity,
     });
-  }, [needRefresh, updateServiceWorker]);
+  }, [needRefresh, t, updateServiceWorker]);
 
   return null;
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type FormEvent, type ReactNode } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import {
   deriveMasterKey,
   createWebAuthnCredential,
@@ -16,12 +16,14 @@ import { router } from "../../router.ts";
 import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContext.ts";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
-import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, Languages, LayoutDashboard, PiggyBank, ReceiptText, Settings, ShieldCheck, Smartphone, Upload, WalletCards, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, ShieldCheck, Upload, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import Logo from "../../components/Logo.tsx";
+import HelpCenter from "../../components/HelpCenter.tsx";
+import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -34,11 +36,6 @@ type Flow =
   | "unlock-passphrase"
   | "unlock-webauthn"
   | "app";
-
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
-};
 
 function isStandaloneDisplayMode(): boolean {
   if (typeof window === "undefined") return false;
@@ -87,14 +84,14 @@ export default function KeyUnlock() {
       }
     }).catch(() => {
       if (active) {
-        setError("Unable to open local storage");
+        setError(t("keyUnlock.errors.localStorage"));
         setFlow("landing");
       }
     });
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   let content: React.ReactNode;
 
@@ -169,101 +166,81 @@ type LandingOnboardingProps = {
 
 function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
   const { t } = useTranslation();
-  const primaryLabel = hasVault ? t("keyUnlock.landing.openVault") : t("keyUnlock.landing.startOnboarding");
+  const primaryLabel = hasVault ? t("keyUnlock.landing.openVault") : t("keyUnlock.landing.start");
+  const trustItems = [
+    {
+      icon: <ShieldCheck className="h-5 w-5" />,
+      title: t("keyUnlock.landing.steps.vault.title"),
+      body: t("keyUnlock.landing.steps.vault.body"),
+    },
+    {
+      icon: <WifiOff className="h-5 w-5" />,
+      title: t("keyUnlock.landing.steps.offline.title"),
+      body: t("keyUnlock.landing.steps.offline.body"),
+    },
+    {
+      icon: <Bot className="h-5 w-5" />,
+      title: t("keyUnlock.landing.steps.ai.title"),
+      body: t("keyUnlock.landing.steps.ai.body"),
+    },
+  ];
 
   return (
     <main aria-label={t("keyUnlock.landing.aria")} className="landing-grid min-h-dvh bg-background text-foreground">
-      <section className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
+      <section className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
         <header className="flex items-center justify-between border-b border-border py-3">
           <Logo className="h-8 w-auto" />
           <div className="flex items-center gap-2">
-            <LanguageSwitcher />
-            <Button type="button" onClick={onStart} className="h-9 px-4">
+            <HelpCenter navigation={false} />
+            <LanguageSwitcher compact />
+            <Button type="button" onClick={onStart} className="hidden h-9 px-4 sm:inline-flex">
               {hasVault ? t("keyUnlock.landing.openApp") : t("keyUnlock.landing.start")}
             </Button>
           </div>
         </header>
 
-        <div className="grid flex-1 gap-0 border-b border-border lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)]">
-          <div className="grid content-start gap-8 border-border py-8 lg:border-r lg:py-12 lg:pr-10">
-            <div className="space-y-6">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-ocean-primary">{t("keyUnlock.landing.kicker")}</p>
-              <h1 className="max-w-4xl text-5xl font-bold leading-[0.94] tracking-normal text-foreground sm:text-7xl lg:text-8xl">
+        <div className="grid flex-1 border-b border-border lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)]">
+          <div className="flex flex-col justify-center gap-7 py-10 lg:border-r lg:border-border lg:py-16 lg:pr-12">
+            <div className="space-y-5">
+              <p className="text-sm font-semibold text-ocean-primary">{t("keyUnlock.landing.kicker")}</p>
+              <h1 className="max-w-4xl text-4xl font-bold leading-[0.98] tracking-normal text-foreground sm:text-6xl lg:text-7xl">
                 {t("keyUnlock.landing.title")}
               </h1>
-              <p className="max-w-2xl text-base font-medium leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {t("keyUnlock.landing.body")}
               </p>
               {hasVault && (
-                <p className="max-w-2xl border-l-4 border-ocean-primary pl-4 text-base font-medium leading-relaxed text-muted-foreground">
+                <p className="max-w-2xl border-l-2 border-ocean-primary pl-4 text-sm leading-relaxed text-muted-foreground">
                   {t("keyUnlock.landing.existingVault")}
                 </p>
               )}
             </div>
-
-            <ProductPreviewPanel />
-
-            <div className="grid gap-3 sm:grid-cols-2 lg:max-w-3xl">
-              <Button type="button" onClick={onStart} className="h-12 justify-between px-4">
-                {primaryLabel}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-              <a
-                href="#help"
-                className="flex h-12 items-center justify-between rounded-md border border-border bg-card px-4 text-sm font-semibold transition-colors hover:bg-accent"
-              >
-                {t("keyUnlock.landing.viewSteps")}
-                <ArrowRight className="h-4 w-4" />
-              </a>
-            </div>
+            <Button type="button" onClick={onStart} className="h-12 w-full justify-between px-4 sm:max-w-xs">
+              {primaryLabel}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
 
-          <aside className="grid content-start gap-4 py-6 lg:py-12 lg:pl-8">
-            <InstallPromptCard />
+          <aside className="flex flex-col justify-center py-8 lg:pl-10">
             <div className="border border-border bg-card">
-              <div className="border-b border-border bg-ocean-primary p-4 text-white">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em]">{t("keyUnlock.landing.afterSetup")}</p>
-                <h2 className="mt-2 text-2xl font-bold leading-tight">{t("keyUnlock.landing.workspaceTitle")}</h2>
-              </div>
-              <div className="grid grid-cols-2">
-                <ProductTile icon={<LayoutDashboard className="h-5 w-5" />} label={t("nav.dashboard")} />
-                <ProductTile icon={<ReceiptText className="h-5 w-5" />} label={t("nav.capture")} />
-                <ProductTile icon={<WalletCards className="h-5 w-5" />} label={t("dashboard.accounts")} />
-                <ProductTile icon={<PiggyBank className="h-5 w-5" />} label={t("nav.planning")} />
-                <ProductTile icon={<Bot className="h-5 w-5" />} label={t("nav.assistant")} />
-                <ProductTile icon={<Settings className="h-5 w-5" />} label={t("nav.settings")} />
-              </div>
-            </div>
-            <div className="border border-border bg-card">
-              <OnboardingRow
-                number="01"
-                icon={<ShieldCheck className="h-5 w-5" />}
-                title={t("keyUnlock.landing.steps.vault.title")}
-                body={t("keyUnlock.landing.steps.vault.body")}
-              />
-              <OnboardingRow
-                number="02"
-                icon={<WifiOff className="h-5 w-5" />}
-                title={t("keyUnlock.landing.steps.offline.title")}
-                body={t("keyUnlock.landing.steps.offline.body")}
-              />
-              <OnboardingRow
-                number="03"
-                icon={<Bot className="h-5 w-5" />}
-                title={t("keyUnlock.landing.steps.ai.title")}
-                body={t("keyUnlock.landing.steps.ai.body")}
-              />
-              <OnboardingRow
-                number="04"
-                icon={<Download className="h-5 w-5" />}
-                title={t("keyUnlock.landing.steps.install.title")}
-                body={t("keyUnlock.landing.steps.install.body")}
-                isLast
-              />
+              {trustItems.map((item, index) => (
+                <article
+                  key={item.title}
+                  className={`grid grid-cols-[3.5rem_1fr] ${index < trustItems.length - 1 ? "border-b border-border" : ""}`}
+                >
+                  <div className="flex flex-col items-center gap-3 border-r border-border p-3 text-ocean-primary">
+                    <span className="text-lg font-bold tabular-nums">{String(index + 1).padStart(2, "0")}</span>
+                    {item.icon}
+                  </div>
+                  <div className="p-4 sm:p-5">
+                    <h2 className="text-base font-semibold text-foreground">{item.title}</h2>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+                  </div>
+                </article>
+              ))}
             </div>
           </aside>
         </div>
-        <LandingHelpAndFaq />
       </section>
     </main>
   );
@@ -320,8 +297,8 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
           throw importError;
         }
         await onReady(mk);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("keyUnlock.restore.errors.failed"));
+      } catch {
+        setError(t("keyUnlock.restore.errors.failed"));
       } finally {
         setSubmitting(false);
       }
@@ -419,183 +396,6 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
         </div>
       </section>
     </main>
-  );
-}
-
-function LandingHelpAndFaq() {
-  const { t } = useTranslation();
-  const guideItems = [
-    {
-      icon: <ShieldCheck className="h-5 w-5" />,
-      title: t("keyUnlock.help.guide.private.title"),
-      body: t("keyUnlock.help.guide.private.body"),
-    },
-    {
-      icon: <Smartphone className="h-5 w-5" />,
-      title: t("keyUnlock.help.guide.install.title"),
-      body: t("keyUnlock.help.guide.install.body"),
-    },
-    {
-      icon: <WifiOff className="h-5 w-5" />,
-      title: t("keyUnlock.help.guide.offline.title"),
-      body: t("keyUnlock.help.guide.offline.body"),
-    },
-    {
-      icon: <Bot className="h-5 w-5" />,
-      title: t("keyUnlock.help.guide.assistant.title"),
-      body: t("keyUnlock.help.guide.assistant.body"),
-    },
-  ];
-  const faqItems = [
-    {
-      question: t("keyUnlock.help.faq.data.question"),
-      answer: t("keyUnlock.help.faq.data.answer"),
-    },
-    {
-      question: t("keyUnlock.help.faq.internet.question"),
-      answer: t("keyUnlock.help.faq.internet.answer"),
-    },
-    {
-      question: t("keyUnlock.help.faq.install.question"),
-      answer: t("keyUnlock.help.faq.install.answer"),
-    },
-    {
-      question: t("keyUnlock.help.faq.ai.question"),
-      answer: t("keyUnlock.help.faq.ai.answer"),
-    },
-    {
-      question: t("keyUnlock.help.faq.sync.question"),
-      answer: t("keyUnlock.help.faq.sync.answer"),
-    },
-  ];
-
-  return (
-    <section id="help" aria-label={t("keyUnlock.help.aria")} className="border-b border-border py-10 lg:py-14">
-      <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
-        <div className="space-y-4">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-ocean-primary">{t("keyUnlock.help.kicker")}</p>
-          <h2 className="max-w-xl text-3xl font-bold leading-tight text-foreground sm:text-5xl">{t("keyUnlock.help.title")}</h2>
-          <p className="max-w-xl text-base leading-relaxed text-muted-foreground">{t("keyUnlock.help.body")}</p>
-        </div>
-        <div className="grid gap-4">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {guideItems.map((item) => (
-              <article key={item.title} className="landing-step border border-border bg-card p-4">
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
-                  {item.icon}
-                </div>
-                <h3 className="text-lg font-bold leading-tight text-foreground">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
-              </article>
-            ))}
-          </div>
-          <div className="border border-border bg-card">
-            <div className="border-b border-border bg-ocean-primary p-4 text-white">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em]">{t("keyUnlock.help.faqKicker")}</p>
-              <h3 className="mt-2 text-2xl font-bold leading-tight">{t("keyUnlock.help.faqTitle")}</h3>
-            </div>
-            <div className="divide-y divide-border">
-              {faqItems.map((item) => (
-                <details key={item.question} className="group p-4">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-base font-bold text-foreground">
-                    {item.question}
-                    <ChevronDown className="h-4 w-4 shrink-0 text-ocean-primary transition-transform group-open:rotate-180" />
-                  </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.answer}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ProductPreviewPanel() {
-  const { t } = useTranslation();
-  return (
-    <section aria-label={t("keyUnlock.preview.aria")} className="landing-preview-panel border border-border bg-card/90 shadow-sm lg:max-w-3xl">
-      <div className="flex items-center justify-between border-b border-border bg-ocean-wash/80 p-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ocean-primary">{t("keyUnlock.preview.kicker")}</p>
-          <h2 className="mt-1 text-lg font-bold leading-tight text-foreground">{t("keyUnlock.preview.title")}</h2>
-        </div>
-        <span className="hidden rounded-md border border-ocean-primary/25 bg-card px-2 py-1 text-xs font-semibold text-ocean-primary sm:inline-flex">
-          {t("keyUnlock.preview.offlineReady")}
-        </span>
-      </div>
-      <div className="grid min-h-[20rem] gap-0 md:grid-cols-[1.05fr_0.95fr] lg:min-h-[24rem]">
-        <div className="grid content-between gap-5 border-b border-border p-4 md:border-b-0 md:border-r">
-          <div className="preview-flow-line mb-4 h-1 rounded-full bg-ocean-primary" />
-          <div className="grid gap-3 sm:grid-cols-3 md:grid-cols-1">
-            <PreviewRow label={t("keyUnlock.preview.rows.cashFlow")} tone="primary" width="w-10/12" value={t("keyUnlock.preview.rowStates.live")} />
-            <PreviewRow label={t("keyUnlock.preview.rows.budgetChecks")} tone="secondary" width="w-8/12" value={t("keyUnlock.preview.rowStates.review")} />
-            <PreviewRow label={t("keyUnlock.preview.rows.savingsGoals")} tone="sage" width="w-9/12" value={t("keyUnlock.preview.rowStates.track")} />
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <PreviewStatus label={t("keyUnlock.preview.status.vault")} value={t("keyUnlock.preview.status.local")} />
-            <PreviewStatus label={t("keyUnlock.preview.status.network")} value={t("keyUnlock.preview.status.offline")} />
-            <PreviewStatus label={t("keyUnlock.preview.status.services")} value={t("keyUnlock.preview.status.optional")} />
-          </div>
-        </div>
-        <div className="grid grid-rows-[1fr_auto]">
-          <div className="grid grid-cols-2">
-            <PreviewMetric label={t("dashboard.accounts")} value={t("keyUnlock.preview.metrics.accounts")} />
-            <PreviewMetric label={t("nav.capture")} value={t("keyUnlock.preview.metrics.capture")} />
-            <PreviewMetric label={t("nav.planning")} value={t("keyUnlock.preview.metrics.planning")} />
-            <PreviewMetric label={t("nav.settings")} value={t("keyUnlock.preview.metrics.settings")} />
-          </div>
-          <div className="border-t border-border bg-background/70 p-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ocean-primary">{t("keyUnlock.preview.deviceLabel")}</p>
-            <div className="mt-3 grid grid-cols-[2.4rem_1fr] gap-3">
-              <div className="landing-device-pulse flex h-10 w-10 items-center justify-center rounded-md bg-ocean-primary text-white">
-                <Smartphone className="h-5 w-5" />
-              </div>
-              <p className="text-sm font-medium leading-relaxed text-muted-foreground">{t("keyUnlock.preview.deviceBody")}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function PreviewRow({ label, tone, width, value }: { label: string; tone: "primary" | "secondary" | "sage"; width: string; value: string }) {
-  const toneClass = {
-    primary: "bg-ocean-primary",
-    secondary: "bg-ocean-secondary",
-    sage: "bg-sage",
-  }[tone];
-
-  return (
-    <div className="preview-row rounded-md border border-border bg-background/70 p-3">
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <span className="text-sm font-semibold text-foreground">{label}</span>
-        <span className="text-xs font-semibold text-ocean-primary">{value}</span>
-      </div>
-      <div className="h-2 rounded-full bg-muted">
-        <div className={`h-2 rounded-full ${toneClass} ${width}`} />
-      </div>
-    </div>
-  );
-}
-
-function PreviewStatus({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="preview-row rounded-md border border-border bg-card p-2">
-      <p className="text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
-      <p className="mt-2 text-sm font-bold text-foreground">{value}</p>
-    </div>
-  );
-}
-
-function PreviewMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="min-h-28 border-b border-r border-border p-3 even:border-r-0 [&:nth-last-child(-n+2)]:border-b-0">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ocean-primary">{label}</p>
-      <p className="mt-4 text-sm font-bold leading-tight text-foreground">{value}</p>
-    </div>
   );
 }
 
@@ -706,122 +506,6 @@ function OnboardingFlow({ onBack, onComplete }: { onBack: () => void; onComplete
   );
 }
 
-function InstallPromptCard() {
-  const { t } = useTranslation();
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
-
-  useEffect(() => {
-    const standalone = window.matchMedia("(display-mode: standalone)").matches ||
-      (navigator as Navigator & { standalone?: boolean }).standalone === true;
-    setIsInstalled(standalone);
-
-    const handleBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setInstallPrompt(event as BeforeInstallPromptEvent);
-    };
-
-    const handleAppInstalled = () => {
-      setIsInstalled(true);
-      setInstallPrompt(null);
-    };
-
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    window.addEventListener("appinstalled", handleAppInstalled);
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-      window.removeEventListener("appinstalled", handleAppInstalled);
-    };
-  }, []);
-
-  const handleInstall = () => {
-    if (installPrompt == null) return;
-    void (async () => {
-      try {
-        await installPrompt.prompt();
-        const choice = await installPrompt.userChoice;
-        if (choice.outcome === "accepted") {
-          setIsInstalled(true);
-        }
-      } catch {
-        toast.error(t("keyUnlock.install.failed"));
-      } finally {
-        setInstallPrompt(null);
-      }
-    })();
-  };
-
-  return (
-    <div className="border border-border bg-card">
-      <div className="flex items-start gap-3 border-b border-border bg-accent/65 p-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-card text-ocean-primary">
-          <Smartphone className="h-5 w-5" />
-        </div>
-        <div>
-          <h2 className="text-xl font-bold leading-tight text-foreground">{t("keyUnlock.install.title")}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            {t("keyUnlock.install.body")}
-          </p>
-        </div>
-      </div>
-      <div className="grid gap-3 p-4">
-        {isInstalled ? (
-          <p className="rounded-md border border-ocean-primary bg-ocean-primary px-3 py-2 text-sm font-semibold text-white">
-            {t("keyUnlock.install.installed")}
-          </p>
-        ) : installPrompt != null ? (
-          <Button type="button" onClick={handleInstall} className="h-11 justify-between px-4">
-            {t("keyUnlock.install.button")}
-            <Download className="h-4 w-4" />
-          </Button>
-        ) : (
-          <div className="rounded-md border border-border bg-accent/60 p-3 text-sm leading-relaxed text-muted-foreground">
-            <p className="font-bold text-foreground">{t("keyUnlock.install.manualTitle")}</p>
-            <p className="mt-1">{t("keyUnlock.install.android")}</p>
-            <p className="mt-1">{t("keyUnlock.install.ios")}</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ProductTile({ icon, label }: { icon: ReactNode; label: string }) {
-  return (
-    <div className="flex min-h-24 flex-col justify-between border-b border-r border-border p-3 last:border-r-0 even:border-r-0">
-      <span className="text-ocean-primary">{icon}</span>
-      <span className="text-sm font-bold text-foreground">{label}</span>
-    </div>
-  );
-}
-
-function OnboardingRow({
-  number,
-  icon,
-  title,
-  body,
-  isLast = false,
-}: {
-  number: string;
-  icon: ReactNode;
-  title: string;
-  body: string;
-  isLast?: boolean;
-}) {
-  return (
-    <article className={`landing-step grid grid-cols-[4rem_1fr] gap-0 ${isLast ? "" : "border-b border-border"}`}>
-      <div className="border-r border-border p-3 text-2xl font-bold tabular-nums text-ocean-primary">{number}</div>
-      <div className="p-4">
-        <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-ocean-primary">
-          {icon}
-        </div>
-        <h2 className="text-lg font-bold leading-tight text-foreground">{title}</h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
-      </div>
-    </article>
-  );
-}
-
 function AuthTopBar({ onBack }: { onBack: () => void }) {
   const { t } = useTranslation();
   return (
@@ -835,33 +519,6 @@ function AuthTopBar({ onBack }: { onBack: () => void }) {
         </Button>
       </div>
     </header>
-  );
-}
-
-function LanguageSwitcher() {
-  const { i18n, t } = useTranslation();
-  const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language ?? "en";
-  const language = resolvedLanguage.startsWith("fr") ? "fr" : "en";
-
-  return (
-    <div className="flex items-center gap-1 rounded-md border border-border bg-card p-1" aria-label={t("settings.devices.language")}>
-      <Languages className="mx-1 h-4 w-4 text-ocean-primary" aria-hidden="true" />
-      {(["en", "fr"] as const).map((code) => (
-        <button
-          key={code}
-          type="button"
-          onClick={() => {
-            void i18n.changeLanguage(code);
-          }}
-          className={`rounded px-2 py-1 text-xs font-bold uppercase transition-colors ${
-            language === code ? "bg-ocean-primary text-white" : "text-muted-foreground hover:bg-accent hover:text-foreground"
-          }`}
-          aria-pressed={language === code}
-        >
-          {code}
-        </button>
-      ))}
-    </div>
   );
 }
 
@@ -937,8 +594,8 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
       try {
         const mk = await setupWithOptionalDeviceUnlock(passphrase, enableDeviceUnlock, t);
         await onReady(mk);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("keyUnlock.setup.errors.failed"));
+      } catch {
+        setError(t("keyUnlock.setup.errors.failed"));
       } finally {
         setSubmitting(false);
       }
@@ -1094,8 +751,8 @@ function CloudEdgeAuth() {
       try {
         await register(email, password);
         setDone(true);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("keyUnlock.cloud.errors.failed"));
+      } catch {
+        setError(t("keyUnlock.cloud.errors.failed"));
       } finally {
         setSubmitting(false);
       }
@@ -1211,8 +868,8 @@ function PassphraseUnlock({ onBack, onUnlock, error, setError }: PassphraseUnloc
           meta.argon2idSalt,
         );
         await onUnlock(masterKey);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("keyUnlock.unlock.errors.unlockFailed"));
+      } catch {
+        setError(t("keyUnlock.unlock.errors.unlockFailed"));
       } finally {
         setSubmitting(false);
       }
@@ -1290,10 +947,8 @@ function WebAuthnUnlock({ onBack, onUnlock, error, setError }: WebAuthnUnlockPro
           meta.wrappedIv,
         );
         await onUnlock(mk);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : t("keyUnlock.unlock.webauthnErrors.failed"),
-        );
+      } catch {
+        setError(t("keyUnlock.unlock.webauthnErrors.failed"));
       } finally {
         setSubmitting(false);
       }

@@ -12,7 +12,7 @@
   <path d="M18 75 Q35 67 50 74 Q65 81 82 72"
         stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-linecap="round" fill="none"/>
   <text x="108" y="54"
-        font-family="'Clash Display','Satoshi',ui-sans-serif,system-ui,sans-serif"
+        font-family="'Helvetica Neue',Helvetica,Arial,ui-sans-serif,system-ui,sans-serif"
         font-size="34" font-weight="600" letter-spacing="-0.02em" fill="#0077b6">
     Wise<tspan fill="#00b4d8">Money</tspan>
   </text>
