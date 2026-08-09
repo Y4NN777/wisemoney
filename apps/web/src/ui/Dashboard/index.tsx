@@ -718,13 +718,13 @@ function DashboardContent({ snapshot, canMutate }: { snapshot: FinancialStateSna
         <SummaryCard
           title={t("dashboard.income")}
           value={formatMoney(snapshot.periodIncome.minorUnits, currency)}
-          icon={<ArrowUp className={`h-4 w-4 ${snapshot.periodIncome.minorUnits === 0 ? "text-muted-foreground" : "text-green-600"}`} />}
+          icon={<ArrowDown className={`h-4 w-4 ${snapshot.periodIncome.minorUnits === 0 ? "text-muted-foreground" : "text-green-600"}`} />}
           valueClass={snapshot.periodIncome.minorUnits === 0 ? undefined : "text-green-600"}
         />
         <SummaryCard
           title={t("dashboard.expenses")}
           value={formatMoney(snapshot.periodExpenses.minorUnits, currency)}
-          icon={<ArrowDown className={`h-4 w-4 ${snapshot.periodExpenses.minorUnits === 0 ? "text-muted-foreground" : "text-red-500"}`} />}
+          icon={<ArrowUp className={`h-4 w-4 ${snapshot.periodExpenses.minorUnits === 0 ? "text-muted-foreground" : "text-red-500"}`} />}
           valueClass={snapshot.periodExpenses.minorUnits === 0 ? undefined : "text-red-500"}
         />
         <SummaryCard

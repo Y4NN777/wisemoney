@@ -529,7 +529,7 @@ export default function Capture() {
                     className="w-full"
                     onClick={() => setDirection("expense")}
                   >
-                    <ArrowUp className="h-4 w-4 mr-1 rotate-180" />
+                    <ArrowUp className="h-4 w-4 mr-1" />
                     {t("capture.transaction.expense")}
                   </Button>
                   <Button
