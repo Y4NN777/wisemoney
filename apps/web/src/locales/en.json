@@ -295,9 +295,41 @@
     "open": "Open help center",
     "shortLabel": "Help",
     "title": "Help Center",
-    "description": "Use this guide when you need help with accounts, expenses, planning, offline access, or optional services.",
+    "description": "Find simple explanations for your figures, accounts, planning, offline access, and optional services.",
     "faqTitle": "Questions users often ask",
     "installNote": "Install WiseMoney from your browser menu before relying on it without internet.",
+    "figures": {
+      "title": "Understand my figures",
+      "description": "Dashboard terms explained simply, with examples.",
+      "signs": {
+        "title": "+ and − before an amount",
+        "body": "+ means money entered an account. − means money left the account. For example, +100 received raises the balance; −20 spent lowers it."
+      },
+      "balance": {
+        "title": "Total balance",
+        "body": "This is the money currently available across all your active accounts. It is not only the money received this month."
+      },
+      "income": {
+        "title": "Income",
+        "body": "This is all money received during the selected period: salary, sales, payments received, or other money coming in."
+      },
+      "expenses": {
+        "title": "Expenses",
+        "body": "This is all money that left during the selected period: purchases, bills, transport, or other payments."
+      },
+      "moneyLeft": {
+        "title": "Money left",
+        "body": "WiseMoney calculates income minus expenses. For example, 100 received − 60 spent = 40 left. A negative result means you spent more than you received."
+      },
+      "comparison": {
+        "title": "More or less than last month",
+        "body": "The comparison shows the real difference from the previous month. If the previous month was zero, WiseMoney says “new this month” instead of showing a misleading +100%."
+      },
+      "budget": {
+        "title": "Budget and percentage used",
+        "body": "A budget is a limit you choose. 75% used means 75 parts out of 100 of that limit have been spent, leaving 25%."
+      }
+    },
     "journey": {
       "accounts": {
         "title": "Create accounts",
@@ -313,7 +345,7 @@
       },
       "dashboard": {
         "title": "Review the dashboard",
-        "body": "Check cash flow, spending by category, alerts, goals, and upcoming payments."
+        "body": "Check money received, money spent, what remains, goals, and upcoming payments."
       },
       "services": {
         "title": "Add extras only if needed",
@@ -367,13 +399,13 @@
     "viaProvider": "via {{provider}}",
     "budgetUse": "Budget use",
     "goalProgress": "Goal progress",
-    "cashMargin": "Cash margin",
-    "cashMarginFooter": "{{count}} upcoming",
+    "cashMargin": "Share of income not spent",
+    "cashMarginFooter": "Income received minus expenses",
     "netWorth": "Net Worth",
     "periodRange": "Period",
     "income": "Income",
     "expenses": "Expenses",
-    "netCashFlow": "Net Cash Flow",
+    "netCashFlow": "Money left",
     "accounts": "Accounts",
     "budgetAlerts": "Budget Alerts",
     "budgetAlertsNone": "No budget alerts",
@@ -401,16 +433,16 @@
     "netCashFlowNegative": "Your spending exceeds your income this period",
     "missingFxTitle": "Some totals are incomplete",
     "missingFxBody": "Add an exchange rate from {{currencies}} to {{baseCurrency}} in Settings to include those amounts.",
-    "negativeCashFlow": "Negative cash flow",
+    "negativeCashFlow": "Spending above income",
     "negativeCashFlowBody": "Expenses exceed income by {{amount}}.",
     "budgetExceeded": "Budget exceeded",
     "budgetExceededBody": "\"{{name}}\" exceeded its budget of {{amount}}.",
     "analyticsOverview": "Analytics overview",
-    "cashFlowTrend": "Cash flow trend",
-    "cashFlowTrendBody": "Income, expenses, and net movement for the selected range",
+    "cashFlowTrend": "Money in and money out",
+    "cashFlowTrendBody": "Money received, money spent, and the difference for the selected range",
     "spendingMix": "Spending mix",
     "spendingMixBody": "Top categories by share of outflow",
-    "balanceSummary": "Balance summary",
+    "balanceSummary": "Your money at a glance",
     "totalBalance": "Total balance",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
@@ -434,6 +466,14 @@
     "previousMonth": "Previous month",
     "nextMonth": "Next month",
     "today": "Today",
+    "understandFigures": "Understand these figures",
+    "comparison": {
+      "newThisMonth": "new this month",
+      "noneThisMonth": "none this month",
+      "sameAsLastMonth": "same amount as last month",
+      "moreThanLastMonth": "{{amount}} more than last month",
+      "lessThanLastMonth": "{{amount}} less than last month"
+    },
     "filters": {
       "day": "Day",
       "week": "Week",

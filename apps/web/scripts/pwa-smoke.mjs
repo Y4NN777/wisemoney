@@ -247,6 +247,10 @@ try {
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
   await appPage.getByText(/Smoke transfer motive/).waitFor();
+  await appPage.getByRole("button", { name: "Understand these figures", exact: true }).click();
+  await appPage.getByText("Understand my figures", { exact: true }).waitFor();
+  await appPage.getByText("+ and − before an amount", { exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "Close", exact: true }).click();
   await appPage.screenshot({ path: `${outputDir}/transfer-history.png`, fullPage: true });
 
   await appPage.getByRole("link", { name: "Settings", exact: true }).click();

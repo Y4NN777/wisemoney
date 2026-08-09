@@ -295,9 +295,41 @@
     "open": "Ouvrir le centre d'aide",
     "shortLabel": "Aide",
     "title": "Centre d'aide",
-    "description": "Utilisez ce guide quand vous avez besoin d'aide avec les comptes, les dépenses, la planification, l'accès hors ligne ou les services optionnels.",
+    "description": "Retrouvez ici des explications simples sur vos chiffres, vos comptes, la planification, l'accès hors ligne et les services optionnels.",
     "faqTitle": "Questions fréquentes",
     "installNote": "Installez WiseMoney depuis le menu du navigateur avant de compter dessus sans internet.",
+    "figures": {
+      "title": "Comprendre mes chiffres",
+      "description": "Les mots du tableau de bord expliqués simplement, avec des exemples.",
+      "signs": {
+        "title": "+ et − devant un montant",
+        "body": "+ signifie que l’argent entre dans un compte. − signifie que l’argent sort du compte. Exemple : +10 000 F reçus augmente le solde ; −2 000 F dépensés le diminue."
+      },
+      "balance": {
+        "title": "Solde total",
+        "body": "C’est l’argent disponible maintenant dans tous vos comptes actifs réunis. Ce n’est pas seulement l’argent reçu ce mois-ci."
+      },
+      "income": {
+        "title": "Revenus",
+        "body": "C’est tout l’argent reçu pendant la période choisie : salaire, vente, paiement reçu ou autre entrée d’argent."
+      },
+      "expenses": {
+        "title": "Dépenses",
+        "body": "C’est tout l’argent sorti pendant la période choisie : achats, factures, transport ou autres paiements."
+      },
+      "moneyLeft": {
+        "title": "Argent restant",
+        "body": "WiseMoney calcule revenus moins dépenses. Exemple : 100 000 F reçus − 60 000 F dépensés = 40 000 F restants. Un résultat négatif signifie que vous avez dépensé plus que reçu."
+      },
+      "comparison": {
+        "title": "De plus ou de moins que le mois dernier",
+        "body": "La comparaison montre la différence réelle avec le mois précédent. Si le mois précédent était à zéro, WiseMoney écrit « nouveau ce mois » au lieu d’afficher un +100 % trompeur."
+      },
+      "budget": {
+        "title": "Budget et pourcentage utilisé",
+        "body": "Un budget est une limite que vous choisissez. 75 % utilisé signifie que 75 parts sur 100 de cette limite ont déjà été dépensées ; il en reste 25 %."
+      }
+    },
     "journey": {
       "accounts": {
         "title": "Créer des comptes",
@@ -313,7 +345,7 @@
       },
       "dashboard": {
         "title": "Consulter le tableau de bord",
-        "body": "Vérifiez le flux de trésorerie, les dépenses par catégorie, les alertes, les objectifs et les paiements à venir."
+        "body": "Vérifiez l’argent reçu, l’argent dépensé, ce qu’il reste, les objectifs et les paiements à venir."
       },
       "services": {
         "title": "Ajouter les extras seulement si besoin",
@@ -367,13 +399,13 @@
     "viaProvider": "via {{provider}}",
     "budgetUse": "Utilisation du budget",
     "goalProgress": "Progression des objectifs",
-    "cashMargin": "Marge de trésorerie",
-    "cashMarginFooter": "{{count}} à venir",
+    "cashMargin": "Part des revenus non dépensée",
+    "cashMarginFooter": "Revenus reçus moins dépenses",
     "netWorth": "Patrimoine net",
     "periodRange": "Période",
     "income": "Revenus",
     "expenses": "Dépenses",
-    "netCashFlow": "Flux de trésorerie net",
+    "netCashFlow": "Argent restant",
     "accounts": "Comptes",
     "budgetAlerts": "Alertes budgétaires",
     "budgetAlertsNone": "Aucune alerte budgétaire",
@@ -401,16 +433,16 @@
     "netCashFlowNegative": "Vos dépenses dépassent vos revenus cette période",
     "missingFxTitle": "Certains totaux sont incomplets",
     "missingFxBody": "Ajoutez un taux de change de {{currencies}} vers {{baseCurrency}} dans les paramètres pour inclure ces montants.",
-    "negativeCashFlow": "Flux de trésorerie négatif",
+    "negativeCashFlow": "Dépenses supérieures aux revenus",
     "negativeCashFlowBody": "Les dépenses dépassent les revenus de {{amount}}.",
     "budgetExceeded": "Budget dépassé",
     "budgetExceededBody": "« {{name}} » a dépassé son budget de {{amount}}.",
     "analyticsOverview": "Aperçu analytique",
-    "cashFlowTrend": "Évolution de la trésorerie",
-    "cashFlowTrendBody": "Revenus, dépenses et mouvement net sur la période sélectionnée",
+    "cashFlowTrend": "Entrées et sorties d’argent",
+    "cashFlowTrendBody": "Argent reçu, argent dépensé et différence sur la période sélectionnée",
     "spendingMix": "Répartition des dépenses",
     "spendingMixBody": "Principales catégories selon leur part des sorties",
-    "balanceSummary": "Résumé des soldes",
+    "balanceSummary": "Votre argent en bref",
     "totalBalance": "Solde total",
     "accountCount_one": "{{count}} compte",
     "accountCount_other": "{{count}} comptes",
@@ -434,6 +466,14 @@
     "previousMonth": "Mois précédent",
     "nextMonth": "Mois suivant",
     "today": "Aujourd’hui",
+    "understandFigures": "Comprendre ces chiffres",
+    "comparison": {
+      "newThisMonth": "nouveau ce mois",
+      "noneThisMonth": "aucun ce mois",
+      "sameAsLastMonth": "même montant que le mois dernier",
+      "moreThanLastMonth": "{{amount}} de plus que le mois dernier",
+      "lessThanLastMonth": "{{amount}} de moins que le mois dernier"
+    },
     "filters": {
       "day": "Jour",
       "week": "Semaine",

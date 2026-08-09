@@ -12,9 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import {
   AlertTriangle, ArrowUp, ArrowDown, Wallet, TrendingUp, Target, Repeat,
-  Info, ChevronLeft, ChevronRight, List, TrendingDown, BarChart3,
+  Info, ChevronLeft, ChevronRight, List, BarChart3,
   Lightbulb, ArrowRightLeft, Pencil, Trash2,
-  PlusCircle,
+  PlusCircle, BookOpen,
 } from "lucide-react";
 import type { FinancialStateSnapshot, TransactionDisplay } from "../../domain/financialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
@@ -26,6 +26,8 @@ import { currencyFractionDigits, formatMoney as formatMoneyValue, parseMajorUnit
 import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
+import { comparePeriodAmounts, type PeriodAmountComparison } from "./periodComparison.ts";
+import { openHelpCenter } from "../../components/helpCenterEvents.ts";
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -33,23 +35,6 @@ function formatMoney(minorUnits: number, currency: string): string {
 
 function formatDate(ts: number): string {
   return new Date(ts).toLocaleDateString(document.documentElement.lang || undefined, { month: "short", day: "numeric" });
-}
-
-function computePercentChange(current: number, previous: number): number | null {
-  if (previous === 0) return current > 0 ? 100 : null;
-  return Math.round(((current - previous) / previous) * 100);
-}
-
-function changeColor(pct: number, invert: boolean): string {
-  const isGood = invert ? pct < 0 : pct > 0;
-  if (pct === 0) return "text-muted-foreground";
-  return isGood ? "text-green-600" : "text-red-500";
-}
-
-function changeIcon(pct: number, invert: boolean) {
-  if (pct === 0) return null;
-  const isGood = invert ? pct < 0 : pct > 0;
-  return isGood ? ArrowUp : TrendingDown;
 }
 
 type TimeFilter = "day" | "week" | "month" | "all";
@@ -239,12 +224,10 @@ function SpendingMixChart({
 function HealthRail({
   activeBudgets,
   activeGoals,
-  recurringCount,
   snapshot,
 }: {
   activeBudgets: FinancialStateSnapshot["budgets"];
   activeGoals: FinancialStateSnapshot["goals"];
-  recurringCount: number;
   snapshot: FinancialStateSnapshot;
 }) {
   const { t } = useTranslation();
@@ -262,7 +245,7 @@ function HealthRail({
     <div className="grid gap-2 sm:grid-cols-3">
       <HealthPill label={t("dashboard.budgetUse")} value={`${budgetAverage}%`} progress={Math.min(100, budgetAverage)} tone={activeBudgets.length === 0 ? "neutral" : budgetAverage > 90 ? "risk" : "normal"} />
       <HealthPill label={t("dashboard.goalProgress")} value={`${goalAverage}%`} progress={Math.min(100, goalAverage)} tone={activeGoals.length === 0 ? "neutral" : "good"} />
-      <HealthPill label={t("dashboard.cashMargin")} value={`${cashflowScore}%`} progress={cashflowScore} tone={snapshot.periodIncome.minorUnits === 0 ? "neutral" : cashflowScore < 10 ? "risk" : "good"} footer={t("dashboard.cashMarginFooter", { count: recurringCount })} />
+      <HealthPill label={t("dashboard.cashMargin")} value={`${cashflowScore}%`} progress={cashflowScore} tone={snapshot.periodIncome.minorUnits === 0 ? "neutral" : cashflowScore < 10 ? "risk" : "good"} footer={t("dashboard.cashMarginFooter")} />
     </div>
   );
 }
@@ -757,7 +740,6 @@ function DashboardContent({ snapshot, canMutate }: { snapshot: FinancialStateSna
       <HealthRail
         activeBudgets={activeBudgets}
         activeGoals={activeGoals}
-        recurringCount={snapshot.projectedRecurring.length}
         snapshot={snapshot}
       />
 
@@ -1039,9 +1021,8 @@ export default function Dashboard() {
   const periodComparison = useMemo(() => {
     if (snapshot == null || prevSnapshot == null) return null;
     return {
-      incomeChange: computePercentChange(snapshot.periodIncome.minorUnits, prevSnapshot.periodIncome.minorUnits),
-      expenseChange: computePercentChange(snapshot.periodExpenses.minorUnits, prevSnapshot.periodExpenses.minorUnits),
-      cashflowChange: computePercentChange(snapshot.netCashFlow.minorUnits, prevSnapshot.netCashFlow.minorUnits),
+      incomeChange: comparePeriodAmounts(snapshot.periodIncome.minorUnits, prevSnapshot.periodIncome.minorUnits),
+      expenseChange: comparePeriodAmounts(snapshot.periodExpenses.minorUnits, prevSnapshot.periodExpenses.minorUnits),
     };
   }, [snapshot, prevSnapshot]);
 
@@ -1137,11 +1118,20 @@ export default function Dashboard() {
           </h1>
           {periodComparison != null && (
             <div className="flex flex-wrap items-center gap-3 mt-1">
-              <PeriodBadge label={t("dashboard.income")} pct={periodComparison.incomeChange} invert={false} />
-              <PeriodBadge label={t("dashboard.expenses")} pct={periodComparison.expenseChange} invert={true} />
-              <PeriodBadge label={t("dashboard.netCashFlow")} pct={periodComparison.cashflowChange} invert={false} />
+              <PeriodBadge label={t("dashboard.income")} comparison={periodComparison.incomeChange} invert={false} currency={snapshot.baseCurrency} />
+              <PeriodBadge label={t("dashboard.expenses")} comparison={periodComparison.expenseChange} invert currency={snapshot.baseCurrency} />
             </div>
           )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="mt-1 h-auto gap-1.5 px-0 py-1 text-xs text-ocean-primary hover:bg-transparent hover:text-ocean-dark"
+            onClick={() => openHelpCenter("financial-figures")}
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            {t("dashboard.understandFigures")}
+          </Button>
         </div>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" onClick={goPrev} aria-label={t("dashboard.previousMonth")}>
@@ -1164,13 +1154,37 @@ export default function Dashboard() {
 }
 
 // ── Period comparison badge ──────────────────────────────────────────────
-function PeriodBadge({ label, pct, invert }: { label: string; pct: number | null; invert: boolean }) {
-  if (pct == null) return null;
-  const Icon = changeIcon(pct, invert);
+function PeriodBadge({
+  label,
+  comparison,
+  invert,
+  currency,
+}: {
+  label: string;
+  comparison: PeriodAmountComparison;
+  invert: boolean;
+  currency: string;
+}) {
+  const { t } = useTranslation();
+  if (comparison.kind === "no-activity") return null;
+  const upward = comparison.kind === "new" || comparison.kind === "increase";
+  const downward = comparison.kind === "stopped" || comparison.kind === "decrease";
+  const isGood = comparison.kind === "same" ? null : invert ? downward : upward;
+  const toneClass = isGood == null ? "text-muted-foreground" : isGood ? "text-green-600" : "text-red-500";
+  const Icon = comparison.kind === "same" ? null : upward ? ArrowUp : ArrowDown;
+  const message = comparison.kind === "new"
+    ? t("dashboard.comparison.newThisMonth")
+    : comparison.kind === "stopped"
+      ? t("dashboard.comparison.noneThisMonth")
+      : comparison.kind === "same"
+        ? t("dashboard.comparison.sameAsLastMonth")
+        : comparison.kind === "increase"
+          ? t("dashboard.comparison.moreThanLastMonth", { amount: formatMoney(comparison.difference, currency) })
+          : t("dashboard.comparison.lessThanLastMonth", { amount: formatMoney(comparison.difference, currency) });
   return (
-    <Badge variant="outline" className={`flex items-center gap-1 text-xs ${changeColor(pct, invert)}`}>
-      {Icon != null && <Icon className="h-3 w-3" />}
-      {label}: {pct > 0 ? "+" : ""}{pct}%
+    <Badge variant="outline" className={`max-w-full whitespace-normal text-left leading-relaxed ${toneClass}`}>
+      {Icon != null && <Icon className="mr-1 inline h-3 w-3 shrink-0" />}
+      <span>{label}: {message}</span>
     </Badge>
   );
 }
