@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { BookOpenCheck, CheckCircle2, Download, HelpCircle, Wallet } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "./ui/button.tsx";
@@ -13,7 +13,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet.tsx";
-import { OPEN_HELP_CENTER_EVENT, type HelpCenterSection } from "./helpCenterEvents.ts";
 
 const journeySteps = [
   { titleKey: "helpCenter.journey.accounts.title", bodyKey: "helpCenter.journey.accounts.body", to: "/capture", tab: "manage" },
@@ -54,9 +53,6 @@ export default function HelpCenter({ navigation = true }: HelpCenterProps) {
   const { t } = useTranslation();
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [figuresOpen, setFiguresOpen] = useState(false);
-  const figuresRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
     const standalone = window.matchMedia("(display-mode: standalone)").matches ||
@@ -80,19 +76,6 @@ export default function HelpCenter({ navigation = true }: HelpCenterProps) {
     };
   }, []);
 
-  useEffect(() => {
-    const handleOpenHelp = (event: Event) => {
-      const customEvent = event as CustomEvent<{ section?: HelpCenterSection }>;
-      setOpen(true);
-      if (customEvent.detail?.section === "financial-figures") {
-        setFiguresOpen(true);
-        window.setTimeout(() => figuresRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
-      }
-    };
-    window.addEventListener(OPEN_HELP_CENTER_EVENT, handleOpenHelp);
-    return () => window.removeEventListener(OPEN_HELP_CENTER_EVENT, handleOpenHelp);
-  }, []);
-
   const installApp = () => {
     if (installPrompt == null) return;
     void (async () => {
@@ -109,7 +92,7 @@ export default function HelpCenter({ navigation = true }: HelpCenterProps) {
   };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet>
       <SheetTrigger asChild>
         <Button type="button" variant="outline" size="sm" className="gap-2" aria-label={t("helpCenter.open")}>
           <HelpCircle className="h-4 w-4" />
@@ -156,12 +139,7 @@ export default function HelpCenter({ navigation = true }: HelpCenterProps) {
           })}
         </div>
 
-        <details
-          ref={figuresRef}
-          open={figuresOpen}
-          onToggle={(event) => setFiguresOpen(event.currentTarget.open)}
-          className="group mt-5 scroll-mt-5 rounded-lg border border-ocean-primary/25 bg-card"
-        >
+        <details className="group mt-5 rounded-lg border border-ocean-primary/25 bg-card">
           <summary className="interactive-surface flex cursor-pointer list-none items-start gap-3 p-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
               <Wallet className="h-4 w-4" />

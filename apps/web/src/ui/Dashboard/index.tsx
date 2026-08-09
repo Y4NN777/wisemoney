@@ -14,7 +14,7 @@ import {
   AlertTriangle, ArrowUp, ArrowDown, Wallet, TrendingUp, Target, Repeat,
   Info, ChevronLeft, ChevronRight, List, BarChart3,
   Lightbulb, ArrowRightLeft, Pencil, Trash2,
-  PlusCircle, BookOpen,
+  PlusCircle,
 } from "lucide-react";
 import type { FinancialStateSnapshot, TransactionDisplay } from "../../domain/financialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
@@ -27,7 +27,6 @@ import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
 import { comparePeriodAmounts, type PeriodAmountComparison } from "./periodComparison.ts";
-import { openHelpCenter } from "../../components/helpCenterEvents.ts";
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -377,10 +376,7 @@ function TransactionActivity({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 pb-3">
-        <div>
-          <CardTitle className="text-base">{t("dashboard.transactions")}</CardTitle>
-          <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.transactionsFilterScope")}</p>
-        </div>
+        <CardTitle className="text-base">{t("dashboard.transactions")}</CardTitle>
         {canMutate && (
           <Button asChild variant="outline" size="sm">
             <Link to="/capture" search={{ tab: "transaction" }}>
@@ -1247,16 +1243,6 @@ export default function Dashboard() {
           <h1 className="page-title">
             {t(`dashboard.months.${selectedMonth - 1}`)} {selectedYear}
           </h1>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="mt-1 h-auto gap-1.5 px-0 py-1 text-xs text-ocean-primary hover:bg-transparent hover:text-ocean-dark"
-            onClick={() => openHelpCenter("financial-figures")}
-          >
-            <BookOpen className="h-3.5 w-3.5" />
-            {t("dashboard.understandFigures")}
-          </Button>
         </div>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" onClick={goPrev} aria-label={t("dashboard.previousMonth")}>

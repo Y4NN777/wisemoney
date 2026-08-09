@@ -253,13 +253,12 @@ try {
   await financialOverview.getByText("Money received", { exact: true }).waitFor();
   await financialOverview.getByText("Money spent", { exact: true }).waitFor();
   await financialOverview.getByText("Difference", { exact: true }).waitFor();
-  await appPage.getByText("This filter changes only the list below. Figures and charts stay on the month shown.", { exact: true }).waitFor();
   await appPage.getByRole("tab", { name: "All", exact: true }).click();
-  await appPage.getByText(/^All recorded activity up to /).waitFor();
+  await appPage.getByText(/^Through /).waitFor();
   await appPage.getByRole("tab", { name: "Month", exact: true }).click();
-  await appPage.getByText(/^Activity shown: /).waitFor();
-  await appPage.getByRole("button", { name: "Understand these figures", exact: true }).click();
-  await appPage.getByText("Understand my figures", { exact: true }).waitFor();
+  await appPage.getByText(/Aug 1 .* August 9, 2026/).waitFor();
+  await appPage.getByRole("button", { name: "Open help center", exact: true }).click();
+  await appPage.getByText("Understand my figures", { exact: true }).click();
   await appPage.getByText("+ and − before an amount", { exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Close", exact: true }).click();
   await appPage.screenshot({ path: `${outputDir}/transfer-history.png`, fullPage: true });
