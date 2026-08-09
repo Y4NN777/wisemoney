@@ -140,7 +140,7 @@ try {
     if (message.type() === "error") appErrors.push(`console: ${message.text()}`);
   });
   await appPage.goto(baseURL, { waitUntil: "networkidle" });
-  await appPage.getByRole("button", { name: "Start", exact: true }).click();
+  await appPage.getByRole("button", { name: "Start", exact: true }).last().click();
   for (let step = 0; step < 3; step++) {
     await appPage.getByRole("button", { name: "Next", exact: true }).click();
   }
@@ -150,13 +150,11 @@ try {
   await appPage.getByLabel("Confirm private passphrase").fill(passphrase);
   await appPage.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
   try {
-    await appPage.getByText("Welcome to WiseMoney", { exact: true }).waitFor({ timeout: 90_000 });
+    await appPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
   } catch (error) {
     await appPage.screenshot({ path: `${outputDir}/setup-failure.png`, fullPage: true });
     throw new Error(`Vault setup did not reach Dashboard. Body:\n${await appPage.locator("body").innerText()}`, { cause: error });
   }
-  await appPage.getByText(/CFA/).first().waitFor();
-
   const syncPage = await appContext.newPage();
   syncPage.on("pageerror", (error) => appErrors.push(`sync pageerror: ${error.message}`));
   syncPage.on("console", (message) => {
@@ -166,13 +164,13 @@ try {
   await syncPage.getByRole("button", { name: "Open app", exact: true }).click();
   await syncPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await syncPage.getByRole("button", { name: "Unlock", exact: true }).click();
-  await syncPage.getByText("Welcome to WiseMoney", { exact: true }).waitFor({ timeout: 90_000 });
+  await syncPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
   await syncPage.getByRole("link", { name: "Planning", exact: true }).click();
-  await syncPage.getByRole("link", { name: "Debts & Receivables", exact: true }).click();
+  await syncPage.getByRole("link", { name: /^Debts & Receivables/ }).click();
   await syncPage.getByRole("heading", { name: "Debts & Receivables", exact: true }).waitFor();
 
   await appPage.getByRole("link", { name: "Planning", exact: true }).click();
-  await appPage.getByRole("link", { name: "Debts & Receivables", exact: true }).click();
+  await appPage.getByRole("link", { name: /^Debts & Receivables/ }).click();
   await appPage.getByRole("heading", { name: "Debts & Receivables", exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Add", exact: true }).click();
   await appPage.getByLabel("Debtor name").fill("Smoke Debtor");
@@ -230,6 +228,14 @@ try {
   await appPage.getByText(/Smoke transaction updated/).waitFor({ state: "detached" });
 
   await appPage.getByRole("link", { name: "Capture", exact: true }).click();
+  await appPage.getByRole("tab", { name: "Transaction", exact: true }).click();
+  await appPage.getByLabel("Account", { exact: true }).click();
+  await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
+  await appPage.getByLabel("Category", { exact: true }).click();
+  await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
+  await appPage.getByLabel("Amount", { exact: true }).fill("500");
+  await appPage.getByLabel("Note (optional)", { exact: true }).fill("Smoke retained transaction");
+  await appPage.getByRole("button", { name: "Record Transaction", exact: true }).click();
   await appPage.getByRole("tab", { name: "Transfer", exact: true }).click();
   await appPage.getByLabel("From Account", { exact: true }).click();
   await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
@@ -244,6 +250,7 @@ try {
   await appPage.screenshot({ path: `${outputDir}/transfer-history.png`, fullPage: true });
 
   await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();
   await appPage.getByLabel("Private passphrase", { exact: true }).waitFor();
   await appPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
