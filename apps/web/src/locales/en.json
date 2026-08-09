@@ -466,7 +466,9 @@
     "upcoming": "Upcoming",
     "remaining": "{{percentage}}% remaining",
     "transactions": "Transactions",
-    "transactionsPeriodContext": "Only activity from the month shown.",
+    "transactionsFilterScope": "This filter changes only the list below. Figures and charts stay on the month shown.",
+    "transactionsRangeContext": "Activity shown: {{range}}.",
+    "transactionsAllContext": "All recorded activity up to {{date}}.",
     "addTransaction": "Add transaction",
     "noActivityTitle": "No activity in this range",
     "transfers": "Transfers",
@@ -489,7 +491,7 @@
     },
     "filters": {
       "day": "Day",
-      "week": "Week",
+      "week": "7 days",
       "month": "Month",
       "all": "All"
     },

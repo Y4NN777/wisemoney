@@ -9,6 +9,7 @@ import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
+import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import {
   AlertTriangle, ArrowUp, ArrowDown, Wallet, TrendingUp, Target, Repeat,
   Info, ChevronLeft, ChevronRight, List, BarChart3,
@@ -36,12 +37,52 @@ function formatDate(ts: number): string {
   return new Date(ts).toLocaleDateString(document.documentElement.lang || undefined, { month: "short", day: "numeric" });
 }
 
+type TransactionFilter = "day" | "week" | "month" | "all";
 type CashFlowPoint = {
   label: string;
   income: number;
   expenses: number;
   net: number;
 };
+
+function getTransactionFilterBounds(
+  filter: TransactionFilter,
+  asOfTimestamp: number,
+  periodStart: number,
+  periodEnd: number,
+): { start: number; end: number } {
+  switch (filter) {
+    case "day":
+      return { start: new Date(asOfTimestamp).setHours(0, 0, 0, 0), end: asOfTimestamp };
+    case "week":
+      return { start: asOfTimestamp - 7 * 24 * 60 * 60 * 1000, end: asOfTimestamp };
+    case "month":
+      return { start: periodStart, end: Math.min(periodEnd, asOfTimestamp) };
+    case "all":
+      return { start: 0, end: asOfTimestamp };
+  }
+}
+
+function formatFilterDate(timestamp: number): string {
+  return new Date(timestamp).toLocaleDateString(document.documentElement.lang || undefined, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function formatFilterRange(start: number, end: number): string {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  if (startDate.toDateString() === endDate.toDateString()) return formatFilterDate(end);
+  const locale = document.documentElement.lang || undefined;
+  const startLabel = startDate.toLocaleDateString(locale, {
+    day: "numeric",
+    month: "short",
+    year: startDate.getFullYear() === endDate.getFullYear() ? undefined : "numeric",
+  });
+  return `${startLabel} – ${formatFilterDate(end)}`;
+}
 
 function computePrevPeriod(year: number, month: number): { year: number; month: number } {
   if (month === 1) return { year: year - 1, month: 12 };
@@ -312,6 +353,9 @@ function amountInput(transaction: TransactionDisplay): string {
 function TransactionActivity({
   snapshot,
   canMutate,
+  filter,
+  onFilterChange,
+  filterContext,
   transactions,
   loading,
   transfers,
@@ -320,6 +364,9 @@ function TransactionActivity({
 }: {
   snapshot: FinancialStateSnapshot;
   canMutate: boolean;
+  filter: TransactionFilter;
+  onFilterChange: (filter: TransactionFilter) => void;
+  filterContext: string;
   transactions: TransactionDisplay[] | undefined;
   loading: boolean;
   transfers: FinancialStateSnapshot["transfers"];
@@ -332,7 +379,7 @@ function TransactionActivity({
       <CardHeader className="flex flex-row items-center justify-between gap-3 pb-3">
         <div>
           <CardTitle className="text-base">{t("dashboard.transactions")}</CardTitle>
-          <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.transactionsPeriodContext")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.transactionsFilterScope")}</p>
         </div>
         {canMutate && (
           <Button asChild variant="outline" size="sm">
@@ -344,6 +391,15 @@ function TransactionActivity({
         )}
       </CardHeader>
       <CardContent className="space-y-3">
+        <Tabs value={filter} onValueChange={(value) => onFilterChange(value as TransactionFilter)}>
+          <TabsList className="grid w-full grid-cols-4 sm:w-[380px]">
+            <TabsTrigger value="day">{t("dashboard.filters.day")}</TabsTrigger>
+            <TabsTrigger value="week">{t("dashboard.filters.week")}</TabsTrigger>
+            <TabsTrigger value="month">{t("dashboard.filters.month")}</TabsTrigger>
+            <TabsTrigger value="all">{t("dashboard.filters.all")}</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <p className="rounded-md bg-accent/60 px-3 py-2 text-xs text-muted-foreground">{filterContext}</p>
         {loading ? (
           <div className="space-y-2">
             {Array.from({ length: 3 }).map((_, index) => <Skeleton key={index} className="h-12 w-full" />)}
@@ -608,6 +664,7 @@ function DashboardContent({
 }) {
   const { t } = useTranslation();
   const masterKey = useMasterKey();
+  const [transactionFilter, setTransactionFilter] = useState<TransactionFilter>("month");
   const [aiInsight, setAiInsight] = useState<AIResult | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiCapability, setAiCapability] = useState<AICapability | null>(null);
@@ -616,13 +673,28 @@ function DashboardContent({
   const updateTransaction = useUpdateTransaction();
   const deleteTransaction = useDeleteTransaction();
 
-  const txStart = snapshot.periodStart;
-  const txEnd = snapshot.periodEnd;
-  const { data: transactions, isLoading: txLoading } = useTransactionsInRange(txStart, txEnd);
-  const filteredTransfers = useMemo(
-    () => snapshot.transfers.filter((transfer) => transfer.timestamp >= txStart && transfer.timestamp <= txEnd),
-    [snapshot.transfers, txStart, txEnd],
+  const periodStart = snapshot.periodStart;
+  const periodEnd = snapshot.periodEnd;
+  const { data: periodTransactions, isLoading: periodTransactionsLoading } = useTransactionsInRange(periodStart, periodEnd);
+  const transactionBounds = useMemo(
+    () => getTransactionFilterBounds(transactionFilter, snapshot.asOfTimestamp, periodStart, periodEnd),
+    [transactionFilter, snapshot.asOfTimestamp, periodStart, periodEnd],
   );
+  const { data: listTransactions, isLoading: listTransactionsLoading } = useTransactionsInRange(
+    transactionBounds.start,
+    transactionBounds.end,
+  );
+  const filteredTransfers = useMemo(
+    () => snapshot.transfers.filter(
+      (transfer) => transfer.timestamp >= transactionBounds.start && transfer.timestamp <= transactionBounds.end,
+    ),
+    [snapshot.transfers, transactionBounds.end, transactionBounds.start],
+  );
+  const transactionFilterContext = transactionFilter === "all"
+    ? t("dashboard.transactionsAllContext", { date: formatFilterDate(transactionBounds.end) })
+    : t("dashboard.transactionsRangeContext", {
+      range: formatFilterRange(transactionBounds.start, transactionBounds.end),
+    });
 
   useEffect(() => {
     let active = true;
@@ -656,8 +728,8 @@ function DashboardContent({
   }, [categories, snapshot.baseCurrency, snapshot.categoryTotals, t]);
 
   const cashFlowSeries = useMemo(
-    () => buildCashFlowSeries(transactions, txStart, txEnd),
-    [transactions, txStart, txEnd],
+    () => buildCashFlowSeries(periodTransactions, periodStart, periodEnd),
+    [periodTransactions, periodStart, periodEnd],
   );
 
   // budget alerts
@@ -784,8 +856,11 @@ function DashboardContent({
       <TransactionActivity
         snapshot={snapshot}
         canMutate={canMutate}
-        transactions={transactions}
-        loading={txLoading}
+        filter={transactionFilter}
+        onFilterChange={setTransactionFilter}
+        filterContext={transactionFilterContext}
+        transactions={listTransactions}
+        loading={listTransactionsLoading}
         transfers={filteredTransfers}
         onEdit={(transaction) => setTransactionEdit({
           transaction,
@@ -911,7 +986,7 @@ function DashboardContent({
             <TrendingUp className="h-4 w-4 text-ocean-primary" />
           </CardHeader>
           <CardContent>
-            {txLoading ? (
+            {periodTransactionsLoading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
               <CashFlowTrendChart points={cashFlowSeries} currency={currency} />
