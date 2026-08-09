@@ -3,8 +3,8 @@
     "name": "WiseMoney",
     "loading": "Loading…",
     "updateAvailable": "Update available",
-    "updateDescription": "A new version is ready. Reload to apply.",
-    "reload": "Reload"
+    "updateDescription": "You can keep working. The update will install when you lock or reopen WiseMoney.",
+    "continue": "Continue"
   },
   "language": {
     "choose": "Choose language",

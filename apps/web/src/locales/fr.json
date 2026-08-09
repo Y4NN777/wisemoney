@@ -3,8 +3,8 @@
     "name": "WiseMoney",
     "loading": "Chargement…",
     "updateAvailable": "Mise à jour disponible",
-    "updateDescription": "Une nouvelle version est prête. Rechargez pour l’appliquer.",
-    "reload": "Recharger"
+    "updateDescription": "Vous pouvez continuer. La mise à jour s’installera lorsque vous verrouillerez ou rouvrirez WiseMoney.",
+    "continue": "Continuer"
   },
   "language": {
     "choose": "Choisir la langue",

@@ -43,13 +43,21 @@ function isStandaloneDisplayMode(): boolean {
     (navigator as Navigator & { standalone?: boolean }).standalone === true;
 }
 
-export default function KeyUnlock() {
+type KeyUnlockProps = {
+  onVaultUnlockedChange: (unlocked: boolean) => void;
+};
+
+export default function KeyUnlock({ onVaultUnlockedChange }: KeyUnlockProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [flow, setFlow] = useState<Flow>("loading");
   const [error, setError] = useState<string | null>(null);
   const [masterKey, setMasterKey] = useState<MasterKey | null>(null);
   const [vaultUnlockFlow, setVaultUnlockFlow] = useState<"setup" | "unlock-passphrase" | "unlock-webauthn">("setup");
+
+  useEffect(() => {
+    onVaultUnlockedChange(flow === "app");
+  }, [flow, onVaultUnlockedChange]);
 
   const openVault = async (mk: MasterKey) => {
     await restoreSession(mk);
