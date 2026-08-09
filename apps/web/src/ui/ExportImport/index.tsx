@@ -1,14 +1,17 @@
-import { useState, useRef, type FormEvent } from "react";
+import { useEffect, useState, useRef, type FormEvent } from "react";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { exportJSON, exportCSV, exportXLSX, importJSON } from "../../exportImport/index.ts";
+import { closeFinancialCycle, getCycleOverview, prepareCycleArchive, readCycleHistory, type CycleArchiveReceipt, type CycleOverview, type PreparedCycleArchive } from "../../exportImport/cycle.ts";
 import { Button } from "../../components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog.tsx";
-import { Download, Upload, AlertTriangle, Loader2, FileDown } from "lucide-react";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog.tsx";
+import { Download, Upload, AlertTriangle, Loader2, FileDown, Archive, CheckCircle2, FileSpreadsheet, History, RotateCcw, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { seedDefaultCategories } from "../../pillars/state/index.ts";
 
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
@@ -18,13 +21,33 @@ function downloadBlob(blob: Blob, filename: string): void {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function formatCycleDate(timestamp: number | null, locale: string): string {
+  if (timestamp == null) return "—";
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(timestamp);
 }
 
 export default function ExportImportSection() {
   const { t } = useTranslation();
   const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [cycleOverview, setCycleOverview] = useState<CycleOverview | null>(null);
+  const [cycleHistory, setCycleHistory] = useState<CycleArchiveReceipt[]>([]);
+  const [cycleDialogOpen, setCycleDialogOpen] = useState(false);
+  const [cycleLabel, setCycleLabel] = useState("");
+  const [cyclePassphrase, setCyclePassphrase] = useState("");
+  const [cyclePassphraseConfirmation, setCyclePassphraseConfirmation] = useState("");
+  const [cycleError, setCycleError] = useState<string | null>(null);
+  const [preparingCycle, setPreparingCycle] = useState(false);
+  const [preparedCycle, setPreparedCycle] = useState<PreparedCycleArchive | null>(null);
+  const [downloadedCycleFiles, setDownloadedCycleFiles] = useState({ backup: false, report: false });
+  const [savedFilesConfirmed, setSavedFilesConfirmed] = useState(false);
+  const [resetConfirmation, setResetConfirmation] = useState("");
+  const [resettingCycle, setResettingCycle] = useState(false);
 
   const [exporting, setExporting] = useState<string | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
@@ -36,6 +59,102 @@ export default function ExportImportSection() {
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ ok: boolean; message: string } | null>(null);
   const [pendingEncryptedImportText, setPendingEncryptedImportText] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void Promise.all([getCycleOverview(), readCycleHistory(masterKey)])
+      .then(([overview, history]) => {
+        if (!active) return;
+        setCycleOverview(overview);
+        setCycleHistory(history);
+      })
+      .catch(() => {
+        if (active) setCycleError(t("exportImport.cycle.errors.loadFailed"));
+      });
+    return () => { active = false; };
+  }, [masterKey, t]);
+
+  const resetCycleDialog = () => {
+    setCycleDialogOpen(false);
+    setCycleLabel("");
+    setCyclePassphrase("");
+    setCyclePassphraseConfirmation("");
+    setCycleError(null);
+    setPreparedCycle(null);
+    setDownloadedCycleFiles({ backup: false, report: false });
+    setSavedFilesConfirmed(false);
+    setResetConfirmation("");
+  };
+
+  const handlePrepareCycle = async (event: FormEvent) => {
+    event.preventDefault();
+    setCycleError(null);
+    if (cycleLabel.trim().length === 0) {
+      setCycleError(t("exportImport.cycle.errors.labelRequired"));
+      return;
+    }
+    if (cyclePassphrase.length < 8) {
+      setCycleError(t("exportImport.cycle.errors.passphraseTooShort"));
+      return;
+    }
+    if (cyclePassphrase !== cyclePassphraseConfirmation) {
+      setCycleError(t("exportImport.cycle.errors.passphraseMismatch"));
+      return;
+    }
+    setPreparingCycle(true);
+    try {
+      const prepared = await prepareCycleArchive(masterKey, cycleLabel, cyclePassphrase, {
+        locale: document.documentElement.lang || "en",
+      });
+      setPreparedCycle(prepared);
+      setCyclePassphrase("");
+      setCyclePassphraseConfirmation("");
+      toast.success(t("exportImport.cycle.prepared"));
+    } catch {
+      const message = t("exportImport.cycle.errors.prepareFailed");
+      setCycleError(message);
+      toast.error(message);
+    } finally {
+      setPreparingCycle(false);
+    }
+  };
+
+  const handleCycleDownload = (kind: "backup" | "report") => {
+    if (preparedCycle == null) return;
+    if (kind === "backup") {
+      downloadBlob(preparedCycle.backup, preparedCycle.backupFilename);
+    } else {
+      downloadBlob(preparedCycle.report, preparedCycle.reportFilename);
+    }
+    setDownloadedCycleFiles((current) => ({ ...current, [kind]: true }));
+  };
+
+  const handleCycleReset = async () => {
+    if (preparedCycle == null || !downloadedCycleFiles.backup || !downloadedCycleFiles.report ||
+        !savedFilesConfirmed || resetConfirmation !== "RESET") return;
+    setCycleError(null);
+    setResettingCycle(true);
+    try {
+      await closeFinancialCycle(masterKey, preparedCycle);
+      await seedDefaultCategories(masterKey);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["financialState"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
+      const [overview, history] = await Promise.all([getCycleOverview(), readCycleHistory(masterKey)]);
+      setCycleOverview(overview);
+      setCycleHistory(history);
+      resetCycleDialog();
+      toast.success(t("exportImport.cycle.resetSuccess"));
+    } catch (error) {
+      const changed = error instanceof Error && error.message.includes("data changed");
+      const message = t(changed ? "exportImport.cycle.errors.dataChanged" : "exportImport.cycle.errors.resetFailed");
+      setCycleError(message);
+      toast.error(message);
+    } finally {
+      setResettingCycle(false);
+    }
+  };
 
   const handleExport = async (format: "json" | "csv" | "xlsx") => {
     setExportError(null);
@@ -150,6 +269,11 @@ export default function ExportImportSection() {
         blob = file;
       }
       await importJSON(blob, masterKey, exportPassphrase);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["financialState"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
+      setCycleOverview(await getCycleOverview());
       {
         const message = t("exportImport.import.success");
         setImportResult({ ok: true, message });
@@ -168,6 +292,73 @@ export default function ExportImportSection() {
 
   return (
     <>
+      <Card className="border-ocean-primary/25">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Archive className="h-5 w-5 text-ocean-primary" />
+            {t("exportImport.cycle.title")}
+          </CardTitle>
+          <CardDescription>{t("exportImport.cycle.description")}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {cycleError != null && !cycleDialogOpen && (
+            <p role="alert" className="text-sm text-destructive">{cycleError}</p>
+          )}
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-3">
+            <div className="bg-card p-3">
+              <p className="text-xs text-muted-foreground">{t("exportImport.cycle.currentEvents")}</p>
+              <p className="mt-1 text-xl font-semibold tabular-nums">{cycleOverview?.activityCount ?? "—"}</p>
+            </div>
+            <div className="bg-card p-3">
+              <p className="text-xs text-muted-foreground">{t("exportImport.cycle.startedAt")}</p>
+              <p className="mt-1 text-sm font-semibold">{formatCycleDate(cycleOverview?.startedAt ?? null, document.documentElement.lang || "en")}</p>
+            </div>
+            <div className="col-span-2 bg-card p-3 sm:col-span-1">
+              <p className="text-xs text-muted-foreground">{t("exportImport.cycle.archivedCycles")}</p>
+              <p className="mt-1 text-xl font-semibold tabular-nums">{cycleHistory.length}</p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">{t("exportImport.cycle.keptSettings")}</p>
+            <Button
+              onClick={() => {
+                setCycleError(null);
+                setCycleDialogOpen(true);
+              }}
+              disabled={cycleOverview == null || cycleOverview.activityCount === 0}
+              className="shrink-0"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              {t("exportImport.cycle.action")}
+            </Button>
+          </div>
+
+          {cycleHistory.length > 0 && (
+            <div className="space-y-2 border-t border-border pt-4">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <History className="h-4 w-4 text-muted-foreground" />
+                {t("exportImport.cycle.historyTitle")}
+              </div>
+              <div className="divide-y divide-border rounded-md border border-border">
+                {cycleHistory.slice(0, 3).map((cycle) => (
+                  <div key={cycle.id} className="flex items-center justify-between gap-3 p-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{cycle.label}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {formatCycleDate(cycle.archivedAt, document.documentElement.lang || "en")} · {t("exportImport.cycle.eventCount", { count: cycle.eventCount })}
+                      </p>
+                    </div>
+                    <code className="shrink-0 text-[10px] text-muted-foreground" title={cycle.backupSha256}>
+                      {cycle.backupSha256.slice(0, 10)}…
+                    </code>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -272,6 +463,180 @@ export default function ExportImportSection() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog
+        open={cycleDialogOpen}
+        onOpenChange={(open) => {
+          if (!open && !preparingCycle && !resettingCycle) resetCycleDialog();
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 pr-8">
+              <Archive className="h-5 w-5 text-ocean-primary" />
+              {t("exportImport.cycle.dialogTitle")}
+            </DialogTitle>
+            <DialogDescription>{t("exportImport.cycle.dialogDescription")}</DialogDescription>
+          </DialogHeader>
+
+          {preparedCycle == null ? (
+            <form onSubmit={(event) => { void handlePrepareCycle(event); }} className="space-y-4">
+              <div className="grid gap-3 rounded-md border border-border bg-background p-3 sm:grid-cols-3">
+                {[
+                  ["01", t("exportImport.cycle.steps.backup")],
+                  ["02", t("exportImport.cycle.steps.report")],
+                  ["03", t("exportImport.cycle.steps.reset")],
+                ].map(([number, label]) => (
+                  <div key={number} className="flex items-start gap-2">
+                    <span className="text-xs font-semibold tabular-nums text-ocean-primary">{number}</span>
+                    <span className="text-xs leading-relaxed text-muted-foreground">{label}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cycle-label">{t("exportImport.cycle.label")}</Label>
+                <Input
+                  id="cycle-label"
+                  value={cycleLabel}
+                  onChange={(event) => setCycleLabel(event.target.value)}
+                  maxLength={80}
+                  placeholder={t("exportImport.cycle.labelPlaceholder")}
+                  autoFocus
+                  required
+                />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="cycle-passphrase">{t("exportImport.cycle.passphrase")}</Label>
+                  <Input
+                    id="cycle-passphrase"
+                    type="password"
+                    value={cyclePassphrase}
+                    onChange={(event) => setCyclePassphrase(event.target.value)}
+                    minLength={8}
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cycle-passphrase-confirmation">{t("exportImport.cycle.passphraseConfirmation")}</Label>
+                  <Input
+                    id="cycle-passphrase-confirmation"
+                    type="password"
+                    value={cyclePassphraseConfirmation}
+                    onChange={(event) => setCyclePassphraseConfirmation(event.target.value)}
+                    minLength={8}
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex items-start gap-2 rounded-md border border-amber bg-amber-wash p-3">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-400">{t("exportImport.cycle.passphraseHelp")}</p>
+              </div>
+              {cycleError != null && <p role="alert" className="text-sm text-destructive">{cycleError}</p>}
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={resetCycleDialog} disabled={preparingCycle}>
+                  {t("common.cancel")}
+                </Button>
+                <Button type="submit" disabled={preparingCycle}>
+                  {preparingCycle ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Archive className="mr-2 h-4 w-4" />}
+                  {preparingCycle ? t("exportImport.cycle.preparing") : t("exportImport.cycle.prepare")}
+                </Button>
+              </DialogFooter>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 rounded-md border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950/30">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+                <div>
+                  <p className="text-sm font-semibold text-green-800 dark:text-green-300">{t("exportImport.cycle.archiveReady")}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-green-700 dark:text-green-400">{t("exportImport.cycle.archiveReadyHelp")}</p>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-md border border-border p-3">
+                  <div className="flex items-start gap-3">
+                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-ocean-primary" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold">{t("exportImport.cycle.backupFile")}</p>
+                      <p className="mt-1 break-all text-xs text-muted-foreground">{preparedCycle.backupFilename}</p>
+                    </div>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" className="mt-3 w-full" onClick={() => handleCycleDownload("backup")}>
+                    {downloadedCycleFiles.backup ? <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" /> : <Download className="mr-2 h-4 w-4" />}
+                    {t("exportImport.cycle.downloadBackup")}
+                  </Button>
+                </div>
+                <div className="rounded-md border border-border p-3">
+                  <div className="flex items-start gap-3">
+                    <FileSpreadsheet className="mt-0.5 h-5 w-5 shrink-0 text-ocean-primary" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold">{t("exportImport.cycle.reportFile")}</p>
+                      <p className="mt-1 break-all text-xs text-muted-foreground">{preparedCycle.reportFilename}</p>
+                    </div>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" className="mt-3 w-full" onClick={() => handleCycleDownload("report")}>
+                    {downloadedCycleFiles.report ? <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" /> : <Download className="mr-2 h-4 w-4" />}
+                    {t("exportImport.cycle.downloadReport")}
+                  </Button>
+                </div>
+              </div>
+              <div className="rounded-md border border-border bg-background p-3">
+                <p className="text-xs font-medium">{t("exportImport.cycle.checksum")}</p>
+                <code className="mt-1 block break-all text-[11px] leading-relaxed text-muted-foreground">{preparedCycle.backupSha256}</code>
+              </div>
+
+              <div className="space-y-3 border-t border-border pt-4">
+                <div className="flex items-start gap-2">
+                  <input
+                    id="cycle-files-saved"
+                    type="checkbox"
+                    checked={savedFilesConfirmed}
+                    onChange={(event) => setSavedFilesConfirmed(event.target.checked)}
+                    disabled={!downloadedCycleFiles.backup || !downloadedCycleFiles.report}
+                    className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
+                  />
+                  <Label htmlFor="cycle-files-saved" className="text-sm font-normal leading-relaxed">
+                    {t("exportImport.cycle.savedFilesConfirmation")}
+                  </Label>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cycle-reset-confirmation">{t("exportImport.cycle.resetConfirmation")}</Label>
+                  <Input
+                    id="cycle-reset-confirmation"
+                    value={resetConfirmation}
+                    onChange={(event) => setResetConfirmation(event.target.value)}
+                    placeholder="RESET"
+                    autoComplete="off"
+                    disabled={!savedFilesConfirmed}
+                  />
+                </div>
+                <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-3">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                  <p className="text-xs leading-relaxed text-destructive">{t("exportImport.cycle.resetWarning")}</p>
+                </div>
+                {cycleError != null && <p role="alert" className="text-sm text-destructive">{cycleError}</p>}
+              </div>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={resetCycleDialog} disabled={resettingCycle}>
+                  {t("exportImport.cycle.keepCurrentCycle")}
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => { void handleCycleReset(); }}
+                  disabled={!downloadedCycleFiles.backup || !downloadedCycleFiles.report || !savedFilesConfirmed || resetConfirmation !== "RESET" || resettingCycle}
+                >
+                  {resettingCycle ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                  {resettingCycle ? t("exportImport.cycle.resetting") : t("exportImport.cycle.reset")}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Passphrase dialog for encrypted export/import */}
       <Dialog

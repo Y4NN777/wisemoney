@@ -821,6 +821,56 @@
     }
   },
   "exportImport": {
+    "cycle": {
+      "title": "Cycles and archives",
+      "description": "Close a period, keep a restorable backup and a readable statement, then start again with a clean financial space.",
+      "currentEvents": "Cycle actions",
+      "startedAt": "Cycle started",
+      "archivedCycles": "Closed cycles",
+      "keptSettings": "Resetting removes the current cycle’s accounts, transactions, budgets, and goals. Your passphrase, currency, exchange rates, and preferences stay in place.",
+      "action": "Archive and start again",
+      "historyTitle": "Closure receipts on this device",
+      "eventCount_one": "{{count}} event",
+      "eventCount_other": "{{count}} events",
+      "dialogTitle": "Close the current cycle",
+      "dialogDescription": "Reset stays locked until both files have been downloaded and you explicitly confirm the action.",
+      "steps": {
+        "backup": "Create an encrypted, restorable backup",
+        "report": "Create a readable XLSX statement",
+        "reset": "Confirm before opening a new cycle"
+      },
+      "label": "Cycle name",
+      "labelPlaceholder": "For example, Business 2026",
+      "passphrase": "Backup passphrase",
+      "passphraseConfirmation": "Confirm backup passphrase",
+      "passphraseHelp": "This passphrase protects the backup and is never stored. Keep it separately: without it, the .wmexport file cannot be restored.",
+      "prepare": "Prepare archive",
+      "preparing": "Generating archive…",
+      "prepared": "Cycle archive generated",
+      "archiveReady": "Both documents are ready",
+      "archiveReadyHelp": "Download the restorable backup and the statement separately. Both were generated from the same financial state.",
+      "backupFile": "Restorable backup",
+      "reportFile": "Cycle statement",
+      "downloadBackup": "Download backup",
+      "downloadReport": "Download XLSX statement",
+      "checksum": "Backup SHA-256 fingerprint",
+      "savedFilesConfirmation": "I confirm that I saved both files in a safe location.",
+      "resetConfirmation": "Type RESET to confirm",
+      "resetWarning": "This permanently removes the current cycle’s financial data from this device. Only the downloaded backup can restore it.",
+      "keepCurrentCycle": "Keep current cycle",
+      "reset": "Close and start again",
+      "resetting": "Closing cycle…",
+      "resetSuccess": "Cycle closed. A new financial space is ready.",
+      "errors": {
+        "loadFailed": "Could not load cycle information",
+        "labelRequired": "Give this cycle a name",
+        "passphraseTooShort": "The passphrase must contain at least 8 characters",
+        "passphraseMismatch": "The passphrases do not match",
+        "prepareFailed": "Could not generate a complete archive. No data was removed.",
+        "dataChanged": "The data changed after the files were generated. Generate a new archive before starting again.",
+        "resetFailed": "Cycle closure failed. The current cycle data is still available."
+      }
+    },
     "export": {
       "title": "Export",
       "description": "Download your financial data. JSON exports are lossless and can be re-imported.",
@@ -984,7 +1034,7 @@
       },
       "data": {
         "title": "Data and backup",
-        "description": "Export, restore, and move your private space"
+        "description": "Close a cycle, export, restore, or move your private space"
       },
       "ai": {
         "title": "Optional assistant services",

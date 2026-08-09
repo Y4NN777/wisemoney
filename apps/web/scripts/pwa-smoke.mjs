@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { chromium } from "playwright-core";
 
 const baseURL = process.env.WISEMONEY_SMOKE_URL ?? "http://127.0.0.1:4173";
@@ -258,6 +258,47 @@ try {
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).waitFor({ timeout: 90_000 });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
+
+  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByText("Data and backup", { exact: true }).click();
+  await appPage.getByRole("button", { name: "Archive and start again", exact: true }).click();
+  await appPage.getByLabel("Cycle name", { exact: true }).fill("Smoke cycle 2026");
+  await appPage.getByLabel("Backup passphrase", { exact: true }).fill("Smoke-Archive-Only-2026");
+  await appPage.getByLabel("Confirm backup passphrase", { exact: true }).fill("Smoke-Archive-Only-2026");
+  await appPage.getByRole("button", { name: "Prepare archive", exact: true }).click();
+  await appPage.getByText("Both documents are ready", { exact: true }).waitFor({ timeout: 90_000 });
+  await appPage.screenshot({ path: `${outputDir}/cycle-archive-ready.png`, fullPage: true });
+
+  const [backupDownload] = await Promise.all([
+    appPage.waitForEvent("download"),
+    appPage.getByRole("button", { name: "Download backup", exact: true }).click(),
+  ]);
+  assert.match(backupDownload.suggestedFilename(), /^wisemoney-smoke-cycle-2026-\d{4}-\d{2}-\d{2}\.wmexport$/);
+  const backupPath = await backupDownload.path();
+  assert.ok(backupPath, "cycle backup download has no local path");
+  const backupEnvelope = JSON.parse(await readFile(backupPath, "utf8"));
+  assert.equal(backupEnvelope.version, 2);
+  assert.equal(backupEnvelope.encoding, "base64");
+  assert.equal(typeof backupEnvelope.ciphertext, "string");
+
+  const [reportDownload] = await Promise.all([
+    appPage.waitForEvent("download"),
+    appPage.getByRole("button", { name: "Download XLSX statement", exact: true }).click(),
+  ]);
+  assert.match(reportDownload.suggestedFilename(), /^wisemoney-smoke-cycle-2026-\d{4}-\d{2}-\d{2}\.xlsx$/);
+  const reportPath = await reportDownload.path();
+  assert.ok(reportPath, "cycle XLSX download has no local path");
+  const reportBytes = await readFile(reportPath);
+  assert.equal(reportBytes.subarray(0, 4).toString("binary"), "PK\u0003\u0004");
+
+  await appPage.getByLabel("I confirm that I saved both files in a safe location.", { exact: true }).check();
+  await appPage.getByLabel("Type RESET to confirm", { exact: true }).fill("RESET");
+  await appPage.getByRole("button", { name: "Close and start again", exact: true }).click();
+  await appPage.getByText("Smoke cycle 2026", { exact: true }).waitFor({ timeout: 90_000 });
+  await appPage.getByText("Cycle actions", { exact: true }).locator("..").getByText("0", { exact: true }).waitFor();
+  await appPage.screenshot({ path: `${outputDir}/cycle-archive-history.png`, fullPage: true });
+  await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
 
   assert.deepEqual(appErrors, [], `app runtime errors:\n${appErrors.join("\n")}`);
   await appContext.close();

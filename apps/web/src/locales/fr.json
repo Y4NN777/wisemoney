@@ -821,6 +821,56 @@
     }
   },
   "exportImport": {
+    "cycle": {
+      "title": "Cycles et archives",
+      "description": "Clôturez une période, conservez un backup restaurable et un relevé lisible, puis recommencez avec un espace financier neuf.",
+      "currentEvents": "Actions du cycle",
+      "startedAt": "Cycle commencé le",
+      "archivedCycles": "Cycles clôturés",
+      "keptSettings": "La remise à zéro efface les comptes, transactions, budgets et objectifs du cycle actuel. Votre phrase secrète, votre devise, vos taux et vos réglages restent en place.",
+      "action": "Archiver et recommencer",
+      "historyTitle": "Reçus de clôture sur cet appareil",
+      "eventCount_one": "{{count}} événement",
+      "eventCount_other": "{{count}} événements",
+      "dialogTitle": "Clôturer le cycle actuel",
+      "dialogDescription": "Le reset reste verrouillé jusqu’au téléchargement des deux fichiers et à votre confirmation explicite.",
+      "steps": {
+        "backup": "Créer un backup chiffré et restaurable",
+        "report": "Créer un relevé XLSX lisible",
+        "reset": "Confirmer avant d’ouvrir un nouveau cycle"
+      },
+      "label": "Nom du cycle",
+      "labelPlaceholder": "Ex. Activité 2026",
+      "passphrase": "Phrase secrète du backup",
+      "passphraseConfirmation": "Confirmer la phrase secrète",
+      "passphraseHelp": "Cette phrase protège le backup et n’est jamais enregistrée. Conservez-la séparément : sans elle, le fichier .wmexport ne pourra pas être restauré.",
+      "prepare": "Préparer l’archive",
+      "preparing": "Génération de l’archive…",
+      "prepared": "Archive du cycle générée",
+      "archiveReady": "Les deux documents sont prêts",
+      "archiveReadyHelp": "Téléchargez séparément le backup restaurable et le relevé. Leur contenu a été généré depuis le même état financier.",
+      "backupFile": "Backup restaurable",
+      "reportFile": "Relevé du cycle",
+      "downloadBackup": "Télécharger le backup",
+      "downloadReport": "Télécharger le relevé XLSX",
+      "checksum": "Empreinte SHA-256 du backup",
+      "savedFilesConfirmation": "Je confirme avoir enregistré les deux fichiers dans un emplacement sûr.",
+      "resetConfirmation": "Saisissez RESET pour confirmer",
+      "resetWarning": "Cette action efface définitivement les données financières du cycle actuel sur cet appareil. Seul le backup téléchargé permet de les restaurer.",
+      "keepCurrentCycle": "Conserver le cycle actuel",
+      "reset": "Clôturer et recommencer",
+      "resetting": "Clôture du cycle…",
+      "resetSuccess": "Cycle clôturé. Un nouvel espace financier est prêt.",
+      "errors": {
+        "loadFailed": "Impossible de charger les informations des cycles",
+        "labelRequired": "Donnez un nom à ce cycle",
+        "passphraseTooShort": "La phrase secrète doit contenir au moins 8 caractères",
+        "passphraseMismatch": "Les phrases secrètes ne correspondent pas",
+        "prepareFailed": "Impossible de générer une archive complète. Aucune donnée n’a été effacée.",
+        "dataChanged": "Les données ont changé depuis la génération des fichiers. Générez une nouvelle archive avant de recommencer.",
+        "resetFailed": "La clôture a échoué. Les données du cycle actuel sont conservées."
+      }
+    },
     "export": {
       "title": "Exporter",
       "description": "Téléchargez vos données financières. Les exportations JSON sont sans perte et peuvent être réimportées.",
@@ -984,7 +1034,7 @@
       },
       "data": {
         "title": "Données et sauvegarde",
-        "description": "Exporter, restaurer ou déplacer votre espace privé"
+        "description": "Clôturer un cycle, exporter, restaurer ou déplacer votre espace privé"
       },
       "ai": {
         "title": "Services d’assistant optionnels",
