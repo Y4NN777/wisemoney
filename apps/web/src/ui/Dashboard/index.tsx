@@ -9,7 +9,6 @@ import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
-import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import {
   AlertTriangle, ArrowUp, ArrowDown, Wallet, TrendingUp, Target, Repeat,
   Info, ChevronLeft, ChevronRight, List, BarChart3,
@@ -37,29 +36,12 @@ function formatDate(ts: number): string {
   return new Date(ts).toLocaleDateString(document.documentElement.lang || undefined, { month: "short", day: "numeric" });
 }
 
-type TimeFilter = "day" | "week" | "month" | "all";
 type CashFlowPoint = {
   label: string;
   income: number;
   expenses: number;
   net: number;
 };
-
-function getTimeFilterBounds(filter: TimeFilter, now: number, periodStart: number, periodEnd: number): { start: number; end: number } {
-  switch (filter) {
-    case "day": {
-      const startOfDay = new Date(now).setHours(0, 0, 0, 0);
-      return { start: startOfDay, end: now };
-    }
-    case "week": {
-      return { start: now - 7 * 24 * 60 * 60 * 1000, end: now };
-    }
-    case "month":
-      return { start: periodStart, end: periodEnd };
-    case "all":
-      return { start: 0, end: now };
-  }
-}
 
 function computePrevPeriod(year: number, month: number): { year: number; month: number } {
   if (month === 1) return { year: year - 1, month: 12 };
@@ -240,12 +222,23 @@ function HealthRail({
   const cashflowScore = snapshot.periodIncome.minorUnits === 0
     ? 0
     : Math.max(0, Math.min(100, Math.round((snapshot.netCashFlow.minorUnits / snapshot.periodIncome.minorUnits) * 100)));
+  const hasBudgetStatus = activeBudgets.length > 0;
+  const hasGoalStatus = activeGoals.length > 0;
+  const hasIncomeShare = snapshot.periodIncome.minorUnits > 0;
+
+  if (!hasBudgetStatus && !hasGoalStatus && !hasIncomeShare) return null;
 
   return (
     <div className="grid gap-2 sm:grid-cols-3">
-      <HealthPill label={t("dashboard.budgetUse")} value={`${budgetAverage}%`} progress={Math.min(100, budgetAverage)} tone={activeBudgets.length === 0 ? "neutral" : budgetAverage > 90 ? "risk" : "normal"} />
-      <HealthPill label={t("dashboard.goalProgress")} value={`${goalAverage}%`} progress={Math.min(100, goalAverage)} tone={activeGoals.length === 0 ? "neutral" : "good"} />
-      <HealthPill label={t("dashboard.cashMargin")} value={`${cashflowScore}%`} progress={cashflowScore} tone={snapshot.periodIncome.minorUnits === 0 ? "neutral" : cashflowScore < 10 ? "risk" : "good"} footer={t("dashboard.cashMarginFooter")} />
+      {hasBudgetStatus && (
+        <HealthPill label={t("dashboard.budgetUse")} value={`${budgetAverage}%`} progress={Math.min(100, budgetAverage)} tone={budgetAverage > 90 ? "risk" : "normal"} />
+      )}
+      {hasGoalStatus && (
+        <HealthPill label={t("dashboard.goalProgress")} value={`${goalAverage}%`} progress={Math.min(100, goalAverage)} tone="good" />
+      )}
+      {hasIncomeShare && (
+        <HealthPill label={t("dashboard.cashMargin")} value={`${cashflowScore}%`} progress={cashflowScore} tone={cashflowScore < 10 ? "risk" : "good"} footer={t("dashboard.cashMarginFooter")} />
+      )}
     </div>
   );
 }
@@ -319,8 +312,6 @@ function amountInput(transaction: TransactionDisplay): string {
 function TransactionActivity({
   snapshot,
   canMutate,
-  timeFilter,
-  onTimeFilterChange,
   transactions,
   loading,
   transfers,
@@ -329,8 +320,6 @@ function TransactionActivity({
 }: {
   snapshot: FinancialStateSnapshot;
   canMutate: boolean;
-  timeFilter: TimeFilter;
-  onTimeFilterChange: (filter: TimeFilter) => void;
   transactions: TransactionDisplay[] | undefined;
   loading: boolean;
   transfers: FinancialStateSnapshot["transfers"];
@@ -341,7 +330,10 @@ function TransactionActivity({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 pb-3">
-        <CardTitle className="text-base">{t("dashboard.transactions")}</CardTitle>
+        <div>
+          <CardTitle className="text-base">{t("dashboard.transactions")}</CardTitle>
+          <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.transactionsPeriodContext")}</p>
+        </div>
         {canMutate && (
           <Button asChild variant="outline" size="sm">
             <Link to="/capture" search={{ tab: "transaction" }}>
@@ -352,14 +344,6 @@ function TransactionActivity({
         )}
       </CardHeader>
       <CardContent className="space-y-3">
-        <Tabs value={timeFilter} onValueChange={(value) => onTimeFilterChange(value as TimeFilter)}>
-          <TabsList className="grid w-full grid-cols-4 sm:w-[360px]">
-            <TabsTrigger value="day">{t("dashboard.filters.day")}</TabsTrigger>
-            <TabsTrigger value="week">{t("dashboard.filters.week")}</TabsTrigger>
-            <TabsTrigger value="month">{t("dashboard.filters.month")}</TabsTrigger>
-            <TabsTrigger value="all">{t("dashboard.filters.all")}</TabsTrigger>
-          </TabsList>
-        </Tabs>
         {loading ? (
           <div className="space-y-2">
             {Array.from({ length: 3 }).map((_, index) => <Skeleton key={index} className="h-12 w-full" />)}
@@ -514,10 +498,116 @@ function FirstTransactionDashboard({ snapshot, accountCount }: { snapshot: Finan
   );
 }
 
-function DashboardContent({ snapshot, canMutate }: { snapshot: FinancialStateSnapshot; canMutate: boolean }) {
+type PeriodComparisonSummary = {
+  incomeChange: PeriodAmountComparison;
+  expenseChange: PeriodAmountComparison;
+};
+
+function formatSignedMoney(minorUnits: number, currency: string): string {
+  if (minorUnits === 0) return formatMoney(0, currency);
+  return `${minorUnits > 0 ? "+" : "−"}${formatMoney(Math.abs(minorUnits), currency)}`;
+}
+
+function FinancialOverview({
+  snapshot,
+  isCurrentPeriod,
+  comparison,
+}: {
+  snapshot: FinancialStateSnapshot;
+  isCurrentPeriod: boolean;
+  comparison: PeriodComparisonSummary | null;
+}) {
+  const { t } = useTranslation();
+  const currency = snapshot.totalBalance.currency;
+  const activeAccountCount = snapshot.accounts.filter((account) => account.isActive).length;
+  const net = snapshot.netCashFlow.minorUnits;
+  const netTone = net === 0 ? "text-foreground" : net > 0 ? "text-green-600" : "text-red-500";
+
+  return (
+    <section aria-label={t("dashboard.balanceSummary")} className="grid gap-3 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
+      <Card className="border-ocean-primary/30">
+        <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
+          <div>
+            <p className="text-xs font-medium text-ocean-primary">{t("dashboard.allActiveAccounts")}</p>
+            <CardTitle className="mt-1 text-base">
+              {t(isCurrentPeriod ? "dashboard.availableToday" : "dashboard.balanceAtPeriodEnd")}
+            </CardTitle>
+          </div>
+          <Wallet className="h-5 w-5 shrink-0 text-ocean-primary" />
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-semibold tracking-tight tabular-nums">
+            {formatMoney(snapshot.totalBalance.minorUnits, currency)}
+          </p>
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            {t("dashboard.balanceContext", { count: activeAccountCount })}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">{t("dashboard.periodActivity")}</CardTitle>
+          <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.periodActivityContext")}</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid divide-y divide-border rounded-lg border border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            <div className="p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-medium text-muted-foreground">{t("dashboard.moneyReceived")}</p>
+                <ArrowDown className={`h-4 w-4 ${snapshot.periodIncome.minorUnits === 0 ? "text-muted-foreground" : "text-green-600"}`} />
+              </div>
+              <p className={`mt-1 text-xl font-semibold tabular-nums ${snapshot.periodIncome.minorUnits === 0 ? "text-foreground" : "text-green-600"}`}>
+                {formatSignedMoney(snapshot.periodIncome.minorUnits, currency)}
+              </p>
+              {comparison != null && (
+                <PeriodComparisonText comparison={comparison.incomeChange} invert={false} currency={currency} />
+              )}
+            </div>
+            <div className="p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-medium text-muted-foreground">{t("dashboard.moneySpent")}</p>
+                <ArrowUp className={`h-4 w-4 ${snapshot.periodExpenses.minorUnits === 0 ? "text-muted-foreground" : "text-red-500"}`} />
+              </div>
+              <p className={`mt-1 text-xl font-semibold tabular-nums ${snapshot.periodExpenses.minorUnits === 0 ? "text-foreground" : "text-red-500"}`}>
+                {formatSignedMoney(-snapshot.periodExpenses.minorUnits, currency)}
+              </p>
+              {comparison != null && (
+                <PeriodComparisonText comparison={comparison.expenseChange} invert currency={currency} />
+              )}
+            </div>
+            <div className="bg-ocean-wash/55 p-3">
+              <p className="text-xs font-medium text-muted-foreground">{t("dashboard.periodDifference")}</p>
+              <p className={`mt-1 text-xl font-semibold tabular-nums ${netTone}`}>
+                {formatSignedMoney(net, currency)}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.receivedMinusSpent")}</p>
+            </div>
+          </div>
+          <p className="rounded-md bg-accent/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+            {t("dashboard.periodEquation", {
+              income: formatSignedMoney(snapshot.periodIncome.minorUnits, currency),
+              expenses: formatMoney(snapshot.periodExpenses.minorUnits, currency),
+              difference: formatSignedMoney(net, currency),
+            })}
+          </p>
+        </CardContent>
+      </Card>
+    </section>
+  );
+}
+
+function DashboardContent({
+  snapshot,
+  canMutate,
+  periodComparison,
+}: {
+  snapshot: FinancialStateSnapshot;
+  canMutate: boolean;
+  periodComparison: PeriodComparisonSummary | null;
+}) {
   const { t } = useTranslation();
   const masterKey = useMasterKey();
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>("month");
   const [aiInsight, setAiInsight] = useState<AIResult | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiCapability, setAiCapability] = useState<AICapability | null>(null);
@@ -526,10 +616,8 @@ function DashboardContent({ snapshot, canMutate }: { snapshot: FinancialStateSna
   const updateTransaction = useUpdateTransaction();
   const deleteTransaction = useDeleteTransaction();
 
-  const { start: txStart, end: txEnd } = useMemo(
-    () => getTimeFilterBounds(timeFilter, snapshot.asOfTimestamp, snapshot.periodStart, snapshot.periodEnd),
-    [timeFilter, snapshot.asOfTimestamp, snapshot.periodStart, snapshot.periodEnd],
-  );
+  const txStart = snapshot.periodStart;
+  const txEnd = snapshot.periodEnd;
   const { data: transactions, isLoading: txLoading } = useTransactionsInRange(txStart, txEnd);
   const filteredTransfers = useMemo(
     () => snapshot.transfers.filter((transfer) => transfer.timestamp >= txStart && transfer.timestamp <= txEnd),
@@ -691,38 +779,11 @@ function DashboardContent({ snapshot, canMutate }: { snapshot: FinancialStateSna
         </section>
       )}
 
-      <section aria-label={t("dashboard.balanceSummary")} className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <SummaryCard
-          title={t("dashboard.totalBalance")}
-          value={formatMoney(snapshot.totalBalance.minorUnits, currency)}
-          icon={<Wallet className="h-4 w-4 text-muted-foreground" />}
-          footer={t("dashboard.accountCount", { count: snapshot.accounts.filter((account) => account.isActive).length })}
-        />
-        <SummaryCard
-          title={t("dashboard.income")}
-          value={formatMoney(snapshot.periodIncome.minorUnits, currency)}
-          icon={<ArrowDown className={`h-4 w-4 ${snapshot.periodIncome.minorUnits === 0 ? "text-muted-foreground" : "text-green-600"}`} />}
-          valueClass={snapshot.periodIncome.minorUnits === 0 ? undefined : "text-green-600"}
-        />
-        <SummaryCard
-          title={t("dashboard.expenses")}
-          value={formatMoney(snapshot.periodExpenses.minorUnits, currency)}
-          icon={<ArrowUp className={`h-4 w-4 ${snapshot.periodExpenses.minorUnits === 0 ? "text-muted-foreground" : "text-red-500"}`} />}
-          valueClass={snapshot.periodExpenses.minorUnits === 0 ? undefined : "text-red-500"}
-        />
-        <SummaryCard
-          title={t("dashboard.netCashFlow")}
-          value={formatMoney(snapshot.netCashFlow.minorUnits, currency)}
-          icon={<TrendingUp className={`h-4 w-4 ${snapshot.netCashFlow.minorUnits === 0 ? "text-muted-foreground" : snapshot.netCashFlow.minorUnits > 0 ? "text-green-600" : "text-red-500"}`} />}
-          valueClass={snapshot.netCashFlow.minorUnits === 0 ? undefined : snapshot.netCashFlow.minorUnits > 0 ? "text-green-600" : "text-red-500"}
-        />
-      </section>
+      <FinancialOverview snapshot={snapshot} isCurrentPeriod={canMutate} comparison={periodComparison} />
 
       <TransactionActivity
         snapshot={snapshot}
         canMutate={canMutate}
-        timeFilter={timeFilter}
-        onTimeFilterChange={setTimeFilter}
         transactions={transactions}
         loading={txLoading}
         transfers={filteredTransfers}
@@ -889,31 +950,30 @@ function DashboardContent({ snapshot, canMutate }: { snapshot: FinancialStateSna
         </Card>
       </section>
 
-      <section aria-label={t("dashboard.aiInsight")} className="max-w-xl">
-        {aiInsight != null ? (
-          <InsightCard insight={aiInsight} />
-        ) : (
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2 pb-2">
-              <Lightbulb className="h-4 w-4 text-muted-foreground" />
-              <CardTitle className="text-sm font-medium">{t("dashboard.aiInsight")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {aiCapability?.available !== true && (
-                <p className="mb-3 text-sm text-muted-foreground">{t("dashboard.aiUnavailable")}</p>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => { void handleAiInsight(); }}
-                disabled={aiLoading || aiCapability?.available !== true}
-              >
-                {aiLoading ? t("dashboard.analyzing") : t("dashboard.analyzePeriod")}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-      </section>
+      {(aiInsight != null || aiCapability?.available === true) && (
+        <section aria-label={t("dashboard.aiInsight")} className="max-w-xl">
+          {aiInsight != null ? (
+            <InsightCard insight={aiInsight} />
+          ) : (
+            <Card>
+              <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                <Lightbulb className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium">{t("dashboard.aiInsight")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { void handleAiInsight(); }}
+                  disabled={aiLoading}
+                >
+                  {aiLoading ? t("dashboard.analyzing") : t("dashboard.analyzePeriod")}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </section>
+      )}
 
       <Dialog open={transactionEdit != null} onOpenChange={(open) => { if (!open) setTransactionEdit(null); }}>
         <DialogContent>
@@ -1081,13 +1141,9 @@ export default function Dashboard() {
     return (
       <main aria-label={t("dashboard.title")} className="app-page">
         <Skeleton className="h-8 w-48" />
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="pb-2"><Skeleton className="h-4 w-24" /></CardHeader>
-              <CardContent><Skeleton className="h-8 w-32" /></CardContent>
-            </Card>
-          ))}
+        <div className="grid gap-3 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
+          <Skeleton className="h-40 w-full" />
+          <Skeleton className="h-40 w-full" />
         </div>
         <Card>
           <CardHeader><Skeleton className="h-5 w-32" /></CardHeader>
@@ -1116,12 +1172,6 @@ export default function Dashboard() {
           <h1 className="page-title">
             {t(`dashboard.months.${selectedMonth - 1}`)} {selectedYear}
           </h1>
-          {periodComparison != null && (
-            <div className="flex flex-wrap items-center gap-3 mt-1">
-              <PeriodBadge label={t("dashboard.income")} comparison={periodComparison.incomeChange} invert={false} currency={snapshot.baseCurrency} />
-              <PeriodBadge label={t("dashboard.expenses")} comparison={periodComparison.expenseChange} invert currency={snapshot.baseCurrency} />
-            </div>
-          )}
           <Button
             type="button"
             variant="ghost"
@@ -1148,19 +1198,17 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <DashboardContent snapshot={snapshot} canMutate={isCurrent} />
+      <DashboardContent snapshot={snapshot} canMutate={isCurrent} periodComparison={periodComparison} />
     </main>
   );
 }
 
-// ── Period comparison badge ──────────────────────────────────────────────
-function PeriodBadge({
-  label,
+// ── Period comparison ────────────────────────────────────────────────────
+function PeriodComparisonText({
   comparison,
   invert,
   currency,
 }: {
-  label: string;
   comparison: PeriodAmountComparison;
   invert: boolean;
   currency: string;
@@ -1182,9 +1230,9 @@ function PeriodBadge({
           ? t("dashboard.comparison.moreThanLastMonth", { amount: formatMoney(comparison.difference, currency) })
           : t("dashboard.comparison.lessThanLastMonth", { amount: formatMoney(comparison.difference, currency) });
   return (
-    <Badge variant="outline" className={`max-w-full whitespace-normal text-left leading-relaxed ${toneClass}`}>
-      {Icon != null && <Icon className="mr-1 inline h-3 w-3 shrink-0" />}
-      <span>{label}: {message}</span>
-    </Badge>
+    <p className={`mt-1 flex items-start gap-1 text-xs leading-relaxed ${toneClass}`}>
+      {Icon != null && <Icon className="mt-0.5 h-3 w-3 shrink-0" />}
+      <span>{message}</span>
+    </p>
   );
 }

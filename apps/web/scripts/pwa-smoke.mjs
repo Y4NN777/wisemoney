@@ -247,11 +247,21 @@ try {
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
   await appPage.getByText(/Smoke transfer motive/).waitFor();
+  const financialOverview = appPage.getByRole("region", { name: "Your money at a glance", exact: true });
+  await financialOverview.getByText("Money available today", { exact: true }).waitFor();
+  await financialOverview.getByText("Period activity", { exact: true }).waitFor();
+  await financialOverview.getByText("Money received", { exact: true }).waitFor();
+  await financialOverview.getByText("Money spent", { exact: true }).waitFor();
+  await financialOverview.getByText("Difference", { exact: true }).waitFor();
+  await appPage.getByText("Only activity from the month shown.", { exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Understand these figures", exact: true }).click();
   await appPage.getByText("Understand my figures", { exact: true }).waitFor();
   await appPage.getByText("+ and − before an amount", { exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Close", exact: true }).click();
   await appPage.screenshot({ path: `${outputDir}/transfer-history.png`, fullPage: true });
+  await appPage.setViewportSize({ width: 390, height: 844 });
+  await appPage.screenshot({ path: `${outputDir}/transfer-history-mobile.png`, fullPage: true });
+  await appPage.setViewportSize({ width: 1280, height: 900 });
 
   await appPage.getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();
