@@ -11,10 +11,30 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, ArrowUp, ArrowDown, Pencil, Wallet, Tags, Search, CreditCard, Trash2, Check, ChevronsUpDown } from "lucide-react";
 import { toast } from "sonner";
+import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
+import { parseCaptureSearch, Route, type CaptureTab } from "../../routes/capture.tsx";
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
+}
+
+function AccountRequired({ onManage }: { onManage: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <Card className="max-w-[720px] border-ocean-primary/25">
+      <CardContent className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <CardTitle className="text-base">{t("capture.prerequisite.accountTitle")}</CardTitle>
+          <p className="mt-1 max-w-xl text-sm text-muted-foreground">{t("capture.prerequisite.accountBody")}</p>
+        </div>
+        <Button type="button" className="shrink-0" onClick={onManage}>
+          <Plus className="mr-1 h-4 w-4" />
+          {t("capture.prerequisite.createAccount")}
+        </Button>
+      </CardContent>
+    </Card>
+  );
 }
 
 type AccountCurrencyOption = {
@@ -108,8 +128,7 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
     return (
       currency.code.toLowerCase().includes(normalized) ||
       currency.name.toLowerCase().includes(normalized) ||
-      currency.region.toLowerCase().includes(normalized) ||
-      currency.countries.toLowerCase().includes(normalized)
+      currency.region.toLowerCase().includes(normalized)
     );
   });
 
@@ -146,9 +165,6 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
       >
         <span className="min-w-0 flex-1">
           <span className="block truncate font-semibold">{selected != null ? `${selected.code} - ${selected.name}` : value}</span>
-          {selected?.countries != null && selected.countries.length > 0 && (
-            <span className="mt-0.5 block truncate text-xs text-muted-foreground">{selected.countries}</span>
-          )}
         </span>
         <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
       </button>
@@ -186,7 +202,6 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
                 >
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-semibold">{currency.code} - {currency.name}</span>
-                    {currency.countries.length > 0 && <span className="mt-0.5 block truncate text-xs leading-snug text-muted-foreground">{currency.countries}</span>}
                   </span>
                   <span className="flex shrink-0 items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs">
                     {currency.code === value && <Check className="h-3 w-3" />}
@@ -204,6 +219,12 @@ function AccountCurrencyPicker({ value, onValueChange }: { value: string; onValu
 
 export default function Capture() {
   const { t } = useTranslation();
+  const rawSearch: unknown = Route.useSearch();
+  const parsedSearch = parseCaptureSearch(
+    typeof rawSearch === "object" && rawSearch != null ? rawSearch as Record<string, unknown> : {},
+  );
+  const tab: CaptureTab = parsedSearch.tab ?? "transaction";
+  const navigate = Route.useNavigate();
   const { data: snapshot, isLoading } = useFinancialState();
   const recordTx = useRecordTransaction();
   const createCat = useCreateCategory();
@@ -284,8 +305,8 @@ export default function Capture() {
         setTransferError(null);
         toast.success(t("capture.transfer.recorded"));
       },
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.transfer.errors.failed");
+      onError: () => {
+        const message = t("capture.transfer.errors.failed");
         setTransferError(message);
         toast.error(message);
       },
@@ -309,8 +330,8 @@ export default function Capture() {
         setTxError(null);
         toast.success(t(direction === "income" ? "capture.transaction.incomeRecorded" : "capture.transaction.expenseRecorded"));
       },
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.transaction.errors.failed");
+      onError: () => {
+        const message = t("capture.transaction.errors.failed");
         setTxError(message);
         toast.error(message);
       },
@@ -328,8 +349,8 @@ export default function Capture() {
         setCreateCategoryOpen(false);
         toast.success(t("capture.manage.categoryCreated"), { description: categoryName });
       },
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.manage.errors.failed");
+      onError: () => {
+        const message = t("capture.manage.errors.failed");
         setCatError(message);
         toast.error(message);
       },
@@ -346,8 +367,8 @@ export default function Capture() {
         setRenameName("");
         toast.success(t("capture.manage.categoryRenamed"));
       },
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.manage.errors.renameCategoryFailed");
+      onError: () => {
+        const message = t("capture.manage.errors.renameCategoryFailed");
         setCatError(message);
         toast.error(message);
       },
@@ -359,8 +380,8 @@ export default function Capture() {
     if (!window.confirm(t("capture.manage.confirmArchiveCategory", { name: categoryName }))) return;
     archiveCat.mutate({ categoryId }, {
       onSuccess: () => toast.success(t("capture.manage.categoryArchived"), { description: categoryName }),
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.manage.errors.archiveCategoryFailed");
+      onError: () => {
+        const message = t("capture.manage.errors.archiveCategoryFailed");
         setCatError(message);
         toast.error(message);
       },
@@ -385,8 +406,8 @@ export default function Capture() {
         setCreateAccountOpen(false);
         toast.success(t("capture.manage.accountCreated"), { description: accountName });
       },
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.manage.errorsAccount.failed");
+      onError: () => {
+        const message = t("capture.manage.errorsAccount.failed");
         setAccountError(message);
         toast.error(message);
       },
@@ -404,8 +425,8 @@ export default function Capture() {
         setEditAccType("checking");
         toast.success(t("capture.manage.accountUpdated"));
       },
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.manage.errorsAccount.updateFailed");
+      onError: () => {
+        const message = t("capture.manage.errorsAccount.updateFailed");
         setAccountError(message);
         toast.error(message);
       },
@@ -417,8 +438,8 @@ export default function Capture() {
     if (!window.confirm(t("capture.manage.confirmArchiveAccount", { name: accountName }))) return;
     archiveAccount.mutate({ accountId }, {
       onSuccess: () => toast.success(t("capture.manage.accountArchived"), { description: accountName }),
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.manage.errorsAccount.archiveFailed");
+      onError: () => {
+        const message = t("capture.manage.errorsAccount.archiveFailed");
         setAccountError(message);
         toast.error(message);
       },
@@ -440,8 +461,8 @@ export default function Capture() {
         setGoalError(null);
         toast.success(t("capture.goal.recorded"));
       },
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : t("capture.goal.errors.failed");
+      onError: () => {
+        const message = t("capture.goal.errors.failed");
         setGoalError(message);
         toast.error(message);
       },
@@ -460,7 +481,7 @@ export default function Capture() {
   const categories = snapshot?.categories.filter((category) => !category.isArchived) ?? [];
   const accounts = snapshot?.accounts.filter((a) => a.isActive) ?? [];
   const activeGoals = snapshot?.goals.filter((g) => !g.isArchived) ?? [];
-  const filteredCategories = categories.filter((category) => category.name.toLowerCase().includes(catSearch.trim().toLowerCase()));
+  const filteredCategories = categories.filter((category) => categoryDisplayName(category, t).toLowerCase().includes(catSearch.trim().toLowerCase()));
   const filteredAccounts = accounts.filter((account) =>
     `${account.name} ${account.type} ${account.currency}`.toLowerCase().includes(accountSearch.trim().toLowerCase())
   );
@@ -468,17 +489,19 @@ export default function Capture() {
   const transactionCurrency = accounts.find((account) => account.id === accountId)?.currency ?? snapshot?.baseCurrency ?? "XOF";
   const transferCurrency = accounts.find((account) => account.id === transferFrom)?.currency ?? snapshot?.baseCurrency ?? "XOF";
   const goalCurrency = activeGoals.find((goal) => goal.id === goalId)?.targetAmount.currency ?? snapshot?.baseCurrency ?? "XOF";
+  const selectTab = (nextTab: CaptureTab) => {
+    void navigate({ search: { tab: nextTab }, replace: true });
+  };
 
   return (
     <main aria-label={t("capture.ariaLabel")} className="app-page">
       <div className="page-head">
         <div>
-          <p className="page-kicker">{t("capture.title")}</p>
           <h1 className="page-title">{t("capture.heading")}</h1>
         </div>
       </div>
 
-      <Tabs defaultValue="transaction">
+      <Tabs value={tab} onValueChange={(value) => selectTab(value as CaptureTab)}>
         <TabsList className="grid h-auto w-full grid-cols-2 gap-1 sm:grid-cols-4 lg:w-[560px]">
           <TabsTrigger value="transaction">{t("capture.tabs.transaction")}</TabsTrigger>
           <TabsTrigger value="transfer">{t("capture.tabs.transfer")}</TabsTrigger>
@@ -487,7 +510,10 @@ export default function Capture() {
         </TabsList>
 
         <TabsContent value="transaction">
-          <Card className="max-w-4xl">
+          {accounts.length === 0 ? (
+            <AccountRequired onManage={() => selectTab("manage")} />
+          ) : (
+          <Card className="max-w-[720px]">
             <CardHeader>
               <CardTitle className="text-base">{t("capture.transaction.title")}</CardTitle>
             </CardHeader>
@@ -561,7 +587,7 @@ export default function Capture() {
                         <SelectEmptyState>{t("capture.empty.categoriesManage")}</SelectEmptyState>
                       ) : (
                         categories.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                          <SelectItem key={c.id} value={c.id}>{categoryDisplayName(c, t)}</SelectItem>
                         ))
                       )}
                     </SelectContent>
@@ -585,10 +611,14 @@ export default function Capture() {
               </form>
             </CardContent>
           </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="transfer">
-          <Card className="max-w-4xl">
+          {accounts.length === 0 ? (
+            <AccountRequired onManage={() => selectTab("manage")} />
+          ) : (
+          <Card className="max-w-[720px]">
             <CardHeader>
               <CardTitle className="text-base">{t("capture.transfer.title")}</CardTitle>
             </CardHeader>
@@ -675,10 +705,11 @@ export default function Capture() {
               </form>
             </CardContent>
           </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="goal">
-          <Card className="max-w-4xl">
+          <Card className="max-w-[720px]">
             <CardHeader>
               <CardTitle className="text-base">{t("capture.goal.title")}</CardTitle>
             </CardHeader>
@@ -793,16 +824,18 @@ export default function Capture() {
                     <p className="empty-state">{t("capture.manage.noCategoryMatch")}</p>
                   ) : (
                     <ul className="grid gap-2 sm:grid-cols-2">
-                      {filteredCategories.map((c) => (
+                      {filteredCategories.map((c) => {
+                        const displayName = categoryDisplayName(c, t);
+                        return (
                         <li key={c.id} className="flex items-center justify-between rounded-lg border border-border bg-accent/35 px-3 py-2">
-                          <span className="min-w-0 truncate text-sm font-medium">{c.name}</span>
+                          <span className="min-w-0 truncate text-sm font-medium">{displayName}</span>
                           <div className="flex shrink-0 items-center gap-1">
                             <Button
                               type="button"
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
-                              aria-label={t("capture.manage.renameCategoryAria", { name: c.name })}
+                              aria-label={t("capture.manage.renameCategoryAria", { name: displayName })}
                               onClick={() => {
                                 setRenameDialog({ id: c.id, name: c.name });
                                 setRenameName(c.name);
@@ -815,15 +848,16 @@ export default function Capture() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-destructive hover:text-destructive"
-                              aria-label={t("capture.manage.archiveCategoryAria", { name: c.name })}
+                              aria-label={t("capture.manage.archiveCategoryAria", { name: displayName })}
                               disabled={archiveCat.isPending}
-                              onClick={() => handleArchiveCategory(c.id, c.name)}
+                              onClick={() => handleArchiveCategory(c.id, displayName)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </li>
-                      ))}
+                        );
+                      })}
                     </ul>
                   )}
                 </CardContent>

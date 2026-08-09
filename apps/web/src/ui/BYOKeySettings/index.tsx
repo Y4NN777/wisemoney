@@ -48,9 +48,9 @@ export default function BYOKeySettings() {
           status[provider.id] = { configured: records[index] != null };
         });
         if (active) setKeyStatus(status);
-      } catch (err) {
+      } catch {
         if (!active) return;
-        const message = err instanceof Error ? err.message : t("byoKey.errors.loadFailed");
+        const message = t("byoKey.errors.loadFailed");
         setError(message);
         toast.error(t("byoKey.errors.loadFailed"), { description: message });
       }
@@ -81,8 +81,8 @@ export default function BYOKeySettings() {
       setInputValues((prev) => ({ ...prev, [providerId]: "" }));
       setSaved(providerId);
       toast.success(t("byoKey.placeholders.configured"), { description: t(`byoKey.providers.${providerId}`) });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t("byoKey.errors.saveFailed");
+    } catch {
+      const message = t("byoKey.errors.saveFailed");
       setError(message);
       toast.error(message);
     } finally {

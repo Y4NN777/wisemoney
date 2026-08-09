@@ -2,41 +2,95 @@ import ExportImportSection from "../ExportImport/index.tsx";
 import BYOKeySettings from "../BYOKeySettings/index.tsx";
 import DevicesSection from "./DevicesSection.tsx";
 import CurrencySection from "./CurrencySection.tsx";
-import { Separator } from "../../components/ui/separator.tsx";
+import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
+import { Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck } from "lucide-react";
+import type { ReactNode } from "react";
+
+function SettingsPanel({
+  icon,
+  title,
+  description,
+  children,
+}: {
+  icon: ReactNode;
+  title: string;
+  description: string;
+  children: ReactNode;
+}) {
+  return (
+    <details className="group overflow-hidden rounded-lg border border-border bg-card">
+      <summary className="interactive-surface flex cursor-pointer list-none items-center gap-3 p-4">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
+          {icon}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold text-foreground">{title}</span>
+          <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{description}</span>
+        </span>
+        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+      </summary>
+      <div className="border-t border-border bg-background/45 p-3 sm:p-4">{children}</div>
+    </details>
+  );
+}
 
 export default function Settings() {
   const { t } = useTranslation();
   return (
-    <main aria-label={t("settings.title")} className="app-page">
+    <main aria-label={t("settings.title")} className="app-page max-w-4xl">
       <div className="page-head">
         <div>
-          <p className="page-kicker">{t("settings.system")}</p>
           <h1 className="page-title">{t("settings.title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("settings.description")}</p>
         </div>
       </div>
 
-      <section aria-label={t("settings.devices.title")} className="motion-enter">
-        <DevicesSection />
+      <section aria-label={t("settings.language.title")} className="motion-enter rounded-lg border border-border bg-card p-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
+              <Languages className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="text-sm font-semibold">{t("settings.language.title")}</h2>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("settings.language.description")}</p>
+            </div>
+          </div>
+          <LanguageSwitcher />
+        </div>
       </section>
 
-      <Separator />
-
-      <section aria-label={t("settings.currency.title")} className="motion-enter">
-        <CurrencySection />
-      </section>
-
-      <Separator />
-
-      <section aria-label={t("exportImport.export.title")} className="motion-enter">
-        <ExportImportSection />
-      </section>
-
-      <Separator />
-
-      <section aria-label={t("byoKey.title")} className="motion-enter">
-        <BYOKeySettings />
-      </section>
+      <div className="grid gap-3 motion-enter">
+        <SettingsPanel
+          icon={<Coins className="h-5 w-5" />}
+          title={t("settings.sections.money.title")}
+          description={t("settings.sections.money.description")}
+        >
+          <CurrencySection />
+        </SettingsPanel>
+        <SettingsPanel
+          icon={<DatabaseBackup className="h-5 w-5" />}
+          title={t("settings.sections.data.title")}
+          description={t("settings.sections.data.description")}
+        >
+          <ExportImportSection />
+        </SettingsPanel>
+        <SettingsPanel
+          icon={<Bot className="h-5 w-5" />}
+          title={t("settings.sections.ai.title")}
+          description={t("settings.sections.ai.description")}
+        >
+          <BYOKeySettings />
+        </SettingsPanel>
+        <SettingsPanel
+          icon={<ShieldCheck className="h-5 w-5" />}
+          title={t("settings.sections.security.title")}
+          description={t("settings.sections.security.description")}
+        >
+          <DevicesSection />
+        </SettingsPanel>
+      </div>
     </main>
   );
 }

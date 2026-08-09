@@ -1,69 +1,78 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
-import { Wallet, Target, Repeat, ArrowRight, HandCoins } from "lucide-react";
+import { AlertCircle, ArrowRight, HandCoins, Repeat, Target, Wallet } from "lucide-react";
+import { Skeleton } from "../../components/ui/skeleton.tsx";
+import { useFinancialState } from "../../hooks/useFinancialState.ts";
 
 export default function Planning() {
   const { t } = useTranslation();
+  const { data: snapshot, isLoading, error } = useFinancialState();
+
+  const items = snapshot == null ? [] : [
+    {
+      to: "/budgets" as const,
+      label: t("planning.links.budgets"),
+      status: t("planning.counts.budgets", { count: snapshot.budgets.filter((budget) => !budget.isArchived).length }),
+      icon: Wallet,
+    },
+    {
+      to: "/goals" as const,
+      label: t("planning.links.goals"),
+      status: t("planning.counts.goals", { count: snapshot.goals.filter((goal) => !goal.isArchived).length }),
+      icon: Target,
+    },
+    {
+      to: "/recurring" as const,
+      label: t("planning.links.recurring"),
+      status: t("planning.counts.recurring", { count: snapshot.recurringItems.filter((item) => !item.isArchived).length }),
+      icon: Repeat,
+    },
+    {
+      to: "/debts" as const,
+      label: t("planning.links.debts"),
+      status: t("planning.counts.debts", { count: snapshot.debtCredits.filter((item) => item.status !== "settled").length }),
+      icon: HandCoins,
+    },
+  ];
 
   return (
-    <main aria-label="Planning" className="app-page">
+    <main aria-label={t("planning.title")} className="app-page max-w-4xl">
       <div className="page-head">
         <div>
-          <p className="page-kicker">{t("planning.title")}</p>
-          <h1 className="page-title">{t("planning.cardTitle")}</h1>
+          <h1 className="page-title">{t("planning.title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("planning.cardDescription")}</p>
         </div>
       </div>
-      <Card className="max-w-3xl">
-        <CardHeader>
-          <CardTitle className="text-base">{t("planning.cardTitle")}</CardTitle>
-          <CardDescription>
-            {t("planning.cardDescription")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            to="/budgets"
-            className="interactive-surface flex min-h-24 flex-col justify-between rounded-lg border border-border bg-card p-3"
-          >
-            <span className="flex items-center gap-2">
-              <Wallet className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm font-medium">{t("planning.links.budgets")}</span>
-            </span>
-            <ArrowRight className="h-4 w-4 self-end text-muted-foreground" />
-          </Link>
-          <Link
-            to="/goals"
-            className="interactive-surface flex min-h-24 flex-col justify-between rounded-lg border border-border bg-card p-3"
-          >
-            <span className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm font-medium">{t("planning.links.goals")}</span>
-            </span>
-            <ArrowRight className="h-4 w-4 self-end text-muted-foreground" />
-          </Link>
-          <Link
-            to="/recurring"
-            className="interactive-surface flex min-h-24 flex-col justify-between rounded-lg border border-border bg-card p-3"
-          >
-            <span className="flex items-center gap-2">
-              <Repeat className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm font-medium">{t("planning.links.recurring")}</span>
-            </span>
-            <ArrowRight className="h-4 w-4 self-end text-muted-foreground" />
-          </Link>
-          <Link
-            to="/debts"
-            className="interactive-surface flex min-h-24 flex-col justify-between rounded-lg border border-border bg-card p-3"
-          >
-            <span className="flex items-center gap-2">
-              <HandCoins className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm font-medium">{t("planning.links.debts")}</span>
-            </span>
-            <ArrowRight className="h-4 w-4 self-end text-muted-foreground" />
-          </Link>
-        </CardContent>
-      </Card>
+
+      {isLoading ? (
+        <div className="grid gap-2 sm:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-16 w-full" />)}
+        </div>
+      ) : error != null || snapshot == null ? (
+        <div role="alert" className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          {t("planning.loadFailed")}
+        </div>
+      ) : (
+        <nav aria-label={t("planning.title")} className="grid gap-2 sm:grid-cols-2">
+          {items.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="interactive-surface flex min-h-16 items-center gap-3 rounded-lg border border-border bg-card px-4 py-3"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
+                <item.icon className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold">{item.label}</span>
+                <span className="mt-0.5 block text-xs text-muted-foreground">{item.status}</span>
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+            </Link>
+          ))}
+        </nav>
+      )}
     </main>
   );
 }

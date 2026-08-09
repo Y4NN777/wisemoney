@@ -13,6 +13,7 @@ import { Plus, Archive, AlertTriangle, Info } from "lucide-react";
 import { toast } from "sonner";
 import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
 import { useTranslation } from "react-i18next";
+import { categoryDisplayName } from "../../lib/categoryName.ts";
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -70,8 +71,8 @@ export default function Budgets() {
           setCreateError(null);
           toast.success(t("budgets.created"), { description: name });
         },
-        onError: (err) => {
-          const message = err instanceof Error ? err.message : t("budgets.errors.failed");
+        onError: () => {
+          const message = t("budgets.errors.failed");
           setCreateError(message);
           toast.error(message);
         },
@@ -99,7 +100,6 @@ export default function Budgets() {
     <main aria-label={t("budgets.title")} className="app-page">
       <div className="page-head">
         <div>
-          <p className="page-kicker">{t("planning.title")}</p>
           <h1 className="page-title">{t("budgets.title")}</h1>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -138,7 +138,7 @@ export default function Budgets() {
                       <SelectEmptyState>{t("common.noCategories")}</SelectEmptyState>
                     ) : (
                       categories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                        <SelectItem key={c.id} value={c.id}>{categoryDisplayName(c, t)}</SelectItem>
                       ))
                     )}
                   </SelectContent>
@@ -210,8 +210,8 @@ export default function Budgets() {
                         { budgetId: budget.id },
                         {
                           onSuccess: () => toast.success(t("budgets.archivedSuccess"), { description: budget.name }),
-                          onError: (err) => {
-                            const message = err instanceof Error ? err.message : t("budgets.errors.archiveFailed");
+                          onError: () => {
+                            const message = t("budgets.errors.archiveFailed");
                             toast.error(message);
                           },
                         },

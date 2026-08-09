@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef, type FormEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { requestInsight, requestRecommendation, requestPrediction, detectPatterns } from "../../pillars/intelligence/index.ts";
@@ -171,12 +172,12 @@ export default function Assistant() {
     try {
       const result = await sendConversationMessage("literacy", text, snapshot, masterKey);
       if (isUnavailable(result)) {
-        setChatMessages((prev) => [...prev, { role: "assistant", text: result.message }]);
+        setChatMessages((prev) => [...prev, { role: "assistant", text: aiUnavailableMessage }]);
       } else {
         setChatMessages((prev) => [...prev, { role: "assistant", text: result.text }]);
       }
-    } catch (err) {
-      setChatMessages((prev) => [...prev, { role: "assistant", text: err instanceof Error ? err.message : t("assistant.chat.error") }]);
+    } catch {
+      setChatMessages((prev) => [...prev, { role: "assistant", text: t("assistant.chat.error") }]);
     } finally {
       setChatSubmitting(false);
     }
@@ -223,8 +224,8 @@ export default function Assistant() {
           case "literacy":
             return;
         }
-        addToFeed(featureId, result);
-      } catch (error) {
+        addToFeed(featureId, isUnavailable(result) ? { ...result, message: aiUnavailableMessage } : result);
+      } catch {
         addToFeed(featureId, {
           unavailable: true,
           taskType: featureId === "prediction"
@@ -234,7 +235,7 @@ export default function Assistant() {
               : featureId === "literacy"
                 ? "teaching"
                 : "reasoning",
-          message: error instanceof Error ? error.message : t("assistant.chat.error"),
+          message: t("assistant.chat.error"),
         });
       } finally {
         setInsightLoading(null);
@@ -295,11 +296,11 @@ export default function Assistant() {
     <main aria-label={t("assistant.title")} className="app-page">
       <div className="page-head">
         <div>
-          <p className="page-kicker">{t("assistant.title")}</p>
           <h1 className="page-title">{t("assistant.heading")}</h1>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => setShowConsentSettings(true)} aria-label={t("assistant.consentSettings")}>
-          <Settings2 className="h-5 w-5" />
+        <Button variant="outline" size="sm" onClick={() => setShowConsentSettings(true)} aria-label={t("assistant.consentSettings")}>
+          <Settings2 className="mr-1 h-4 w-4" />
+          {t("assistant.consentSettings")}
         </Button>
       </div>
 
@@ -309,11 +310,10 @@ export default function Assistant() {
           <TabsTrigger value="chat"><BookOpen className="h-4 w-4 mr-1" />{t("assistant.tabs.learn")}</TabsTrigger>
         </TabsList>
 
+        {!aiAvailable && <AISetupNotice message={aiUnavailableMessage} />}
+
         <TabsContent value="insights" className="space-y-4">
-          {!aiAvailable && (
-            <AISetupNotice message={aiUnavailableMessage} />
-          )}
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {aiAvailable && <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {(["insight", "recommendation", "prediction", "pattern_detection"] as const).map((feat) => {
               const meta = FEATURE_META[feat];
               const loading = insightLoading === feat;
@@ -330,7 +330,7 @@ export default function Assistant() {
                 </Button>
               );
             })}
-          </div>
+          </div>}
 
           {insightFeed.length > 0 && (
             <section aria-label={t("assistant.title")} className="space-y-3">
@@ -368,14 +368,12 @@ export default function Assistant() {
             </section>
           )}
 
-          {insightFeed.length === 0 && insightLoading == null && (
-            <p className="empty-state">
-              {aiAvailable ? t("assistant.emptyInsights") : t("assistant.emptyPaused")}
-            </p>
+          {aiAvailable && insightFeed.length === 0 && insightLoading == null && (
+            <p className="empty-state">{t("assistant.emptyInsights")}</p>
           )}
+        </TabsContent>
 
-          <Separator />
-
+        <TabsContent value="chat" className="space-y-4">
           <Card className="max-w-4xl">
             <CardHeader>
               <CardTitle className="text-base">{t("assistant.conceptLibrary.title")}</CardTitle>
@@ -395,25 +393,21 @@ export default function Assistant() {
                 ))}
               </div>
               {conceptEntry != null && (
-                <div className="mt-4 rounded-lg bg-muted p-3">
-                  <h3 className="font-semibold text-sm mb-1">{conceptEntry.title}</h3>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{conceptEntry.body}</p>
+                <div className="mt-4 rounded-lg border border-border bg-background p-3">
+                  <h3 className="mb-1 text-sm font-semibold">{conceptEntry.title}</h3>
+                  <p className="whitespace-pre-wrap text-sm text-muted-foreground">{conceptEntry.body}</p>
                 </div>
               )}
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="chat">
-          <Card className="flex h-[60dvh] max-w-4xl flex-col">
+          {aiAvailable && <Card className="flex h-[60dvh] max-w-4xl flex-col">
             <CardHeader className="border-b pb-3">
               <CardTitle className="text-base">{t("assistant.chat.title")}</CardTitle>
-              <CardDescription>{aiAvailable ? t("assistant.chat.description") : t("assistant.chat.paused")}</CardDescription>
+              <CardDescription>{t("assistant.chat.description")}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto space-y-3 py-4">
-              {!aiAvailable ? (
-                <AISetupNotice message={aiUnavailableMessage} />
-              ) : chatMessages.length === 0 && (
+              {chatMessages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground space-y-2">
                   <BookOpen className="h-8 w-8" />
                   <p className="text-sm">{t("assistant.chat.emptyTitle")}</p>
@@ -456,7 +450,7 @@ export default function Assistant() {
                 </Button>
               </form>
             </div>
-          </Card>
+          </Card>}
         </TabsContent>
       </Tabs>
 
@@ -573,7 +567,7 @@ export default function Assistant() {
 function AISetupNotice({ message }: { message: string }) {
   const { t } = useTranslation();
   return (
-    <Card className="border-ocean-primary/30 bg-ocean-wash/70">
+    <Card className="mt-4 border-ocean-primary/30 bg-ocean-wash/70">
       <CardContent className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
           <Key className="mt-0.5 h-5 w-5 shrink-0 text-ocean-primary" />
@@ -583,7 +577,7 @@ function AISetupNotice({ message }: { message: string }) {
           </div>
         </div>
         <Button asChild size="sm" className="shrink-0">
-          <a href="/settings">{t("assistant.aiNoticeAction")}</a>
+          <Link to="/settings">{t("assistant.aiNoticeAction")}</Link>
         </Button>
       </CardContent>
     </Card>

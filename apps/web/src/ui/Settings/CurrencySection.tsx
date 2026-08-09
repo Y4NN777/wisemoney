@@ -250,20 +250,25 @@ function CurrencyOptionLabel({ code, compact = false }: { code: string; compact?
 }
 
 function CurrencySelect({ id, value, onValueChange, compact = false }: { id: string; value: string; onValueChange: (value: string) => void; compact?: boolean }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const selected = CURRENCY_OPTIONS.find((currency) => currency.code === value);
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (normalized.length === 0) return CURRENCY_OPTIONS;
+    let displayNames: Intl.DisplayNames | null = null;
+    try {
+      displayNames = new Intl.DisplayNames([i18n.resolvedLanguage ?? i18n.language], { type: "currency" });
+    } catch {
+      // Static names remain available in older browsers.
+    }
     return CURRENCY_OPTIONS.filter((currency) =>
       currency.code.toLowerCase().includes(normalized) ||
-      currency.name.toLowerCase().includes(normalized) ||
-      currency.region.toLowerCase().includes(normalized) ||
-      currency.countries.toLowerCase().includes(normalized)
+      (displayNames?.of(currency.code) ?? currency.name).toLowerCase().includes(normalized) ||
+      t(`settings.currency.regions.${currency.region}`).toLowerCase().includes(normalized)
     );
-  }, [query]);
+  }, [i18n.language, i18n.resolvedLanguage, query, t]);
 
   const grouped = useMemo(() => ({
     Africa: filtered.filter((currency) => currency.region === "Africa"),
@@ -321,12 +326,7 @@ function CurrencySelect({ id, value, onValueChange, compact = false }: { id: str
                       role="option"
                       aria-selected={currency.code === value}
                     >
-                      <span className="min-w-0">
-                        <CurrencyOptionLabel code={currency.code} />
-                        {currency.countries.length > 0 && (
-                          <span className="mt-0.5 block truncate text-xs text-muted-foreground">{currency.countries}</span>
-                        )}
-                      </span>
+                      <CurrencyOptionLabel code={currency.code} />
                       {currency.code === value && <Check className="h-4 w-4 text-ocean-primary" />}
                     </button>
                   ))}
@@ -349,7 +349,7 @@ type FxRateEntry = {
 };
 
 export default function CurrencySection() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const masterKey = useMasterKey();
   const queryClient = useQueryClient();
   const [rates, setRates] = useState<FxRateEntry[]>([]);
@@ -372,10 +372,8 @@ export default function CurrencySection() {
         rate: rate.rate,
         updated: rate.lastUpdated,
       })).sort((a, b) => a.id.localeCompare(b.id)));
-    } catch (err) {
-      toast.error(t("settings.currency.errors.loadFailed"), {
-        description: err instanceof Error ? err.message : t("common.unknown"),
-      });
+    } catch {
+      toast.error(t("settings.currency.errors.loadFailed"));
     } finally {
       setLoading(false);
     }
@@ -394,10 +392,8 @@ export default function CurrencySection() {
         toast.success(t("settings.currency.defaultChanged", { currency: value }), {
           description: t("settings.currency.defaultChangedBody"),
         });
-      } catch (error) {
-        toast.error(t("settings.currency.errors.failed"), {
-          description: error instanceof Error ? error.message : t("common.unknown"),
-        });
+      } catch {
+        toast.error(t("settings.currency.errors.failed"));
       }
     })();
   };
@@ -428,10 +424,8 @@ export default function CurrencySection() {
       setNewRate("");
       await refreshRates();
       await invalidateCurrencyQueries();
-    } catch (err) {
-      toast.error(t("settings.currency.errors.saveRateFailed"), {
-        description: err instanceof Error ? err.message : t("common.unknown"),
-      });
+    } catch {
+      toast.error(t("settings.currency.errors.saveRateFailed"));
     } finally {
       setSaving(false);
     }
@@ -443,10 +437,8 @@ export default function CurrencySection() {
       toast.success(t("settings.currency.rateRemoved"));
       await refreshRates();
       await invalidateCurrencyQueries();
-    } catch (err) {
-      toast.error(t("settings.currency.errors.removeRateFailed"), {
-        description: err instanceof Error ? err.message : t("common.unknown"),
-      });
+    } catch {
+      toast.error(t("settings.currency.errors.removeRateFailed"));
     }
   };
 
@@ -493,7 +485,7 @@ export default function CurrencySection() {
                   <div>
                     <p className="text-sm font-medium">{entry.id}</p>
                     <p className="text-xs text-muted-foreground">
-                      {t("settings.currency.pairDescription", { base: entry.base, quote: entry.quote })} &middot; {new Date(entry.updated).toLocaleString()}
+                      {t("settings.currency.pairDescription", { base: entry.base, quote: entry.quote })} &middot; {new Date(entry.updated).toLocaleString(i18n.resolvedLanguage ?? i18n.language)}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

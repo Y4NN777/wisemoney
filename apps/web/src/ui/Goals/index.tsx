@@ -65,8 +65,8 @@ export default function Goals() {
           setCreateError(null);
           toast.success(t("goals.created"), { description: goalName });
         },
-        onError: (err) => {
-          const message = err instanceof Error ? err.message : t("goals.errors.failed");
+        onError: () => {
+          const message = t("goals.errors.failed");
           setCreateError(message);
           toast.error(message);
         },
@@ -91,7 +91,6 @@ export default function Goals() {
     <main aria-label={t("goals.title")} className="app-page">
       <div className="page-head">
         <div>
-          <p className="page-kicker">{t("planning.title")}</p>
           <h1 className="page-title">{t("goals.title")}</h1>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -172,8 +171,8 @@ export default function Goals() {
                         { goalId: goal.id },
                         {
                           onSuccess: () => toast.success(t("goals.archivedSuccess"), { description: goal.name }),
-                          onError: (err) => {
-                            const message = err instanceof Error ? err.message : t("goals.errors.archiveFailed");
+                          onError: () => {
+                            const message = t("goals.errors.archiveFailed");
                             toast.error(message);
                           },
                         },
@@ -197,7 +196,7 @@ export default function Goals() {
                       <p className="text-xs text-muted-foreground">
                         {Math.round(prog.percentage)}% {t("goals.complete")}
                         {goal.targetDate != null && (
-                          <span> &middot; {t("goals.targetLabel")}: {new Date(goal.targetDate).toLocaleDateString()}</span>
+                          <span> &middot; {t("goals.targetLabel")}: {new Date(goal.targetDate).toLocaleDateString(document.documentElement.lang || undefined)}</span>
                         )}
                       </p>
                     </>
@@ -220,7 +219,7 @@ export default function Goals() {
                 <CardContent className="py-2 flex items-center justify-between">
                   <span className="text-sm">{goal.name}</span>
                   <span className="text-xs text-muted-foreground">
-                    Target: {formatMoney(goal.targetAmount.minorUnits, goal.targetAmount.currency)}
+                    {t("goals.targetLabel")}: {formatMoney(goal.targetAmount.minorUnits, goal.targetAmount.currency)}
                   </span>
                 </CardContent>
               </Card>

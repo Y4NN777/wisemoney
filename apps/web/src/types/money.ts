@@ -141,7 +141,8 @@ export function formatMoney(
 ): string {
   assertValidMoney(amount);
   const digits = currencyFractionDigits(amount.currency);
-  return new Intl.NumberFormat(locale, {
+  const displayLocale = locale ?? (typeof document === "undefined" ? undefined : document.documentElement.lang || undefined);
+  return new Intl.NumberFormat(displayLocale, {
     style: "currency",
     currency: amount.currency,
     minimumFractionDigits: digits,

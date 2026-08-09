@@ -228,8 +228,8 @@ export default function Debts() {
           resetForm();
           toast.success(kind === "debt" ? t("debts.toasts.debtCreated") : t("debts.toasts.receivableCreated"), { description: label });
         },
-        onError: (err) => {
-          const message = err instanceof Error ? err.message : t("debts.errors.createFailed");
+        onError: () => {
+          const message = t("debts.errors.createFailed");
           setCreateError(message);
           toast.error(message);
         },
@@ -242,8 +242,8 @@ export default function Debts() {
       { debtCreditId: id, status: nextStatus },
       {
         onSuccess: () => toast.success(t("debts.toasts.statusUpdated"), { description: label }),
-        onError: (err) => {
-          const message = err instanceof Error ? err.message : t("debts.errors.statusUpdateFailed");
+        onError: () => {
+          const message = t("debts.errors.statusUpdateFailed");
           toast.error(message);
         },
       },
@@ -265,7 +265,6 @@ export default function Debts() {
     <main aria-label={t("debts.aria")} className="app-page">
       <div className="page-head">
         <div>
-          <p className="page-kicker">{t("debts.kicker")}</p>
           <h1 className="page-title">{t("debts.title")}</h1>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

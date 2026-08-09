@@ -303,3 +303,14 @@ export function useTransactionsInRange(start: number, end: number) {
     staleTime: 30_000,
   });
 }
+
+export function useHasTransactions() {
+  const masterKey = useMasterKey();
+  const scope = masterKeyScope(masterKey);
+
+  return useQuery<boolean>({
+    queryKey: [...TRANSACTIONS_KEY, scope, "any"],
+    queryFn: async () => (await readTransactionsInRange(0, Number.MAX_SAFE_INTEGER, masterKey)).length > 0,
+    staleTime: 30_000,
+  });
+}
