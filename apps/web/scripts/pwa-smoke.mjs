@@ -249,7 +249,7 @@ try {
   await appPage.getByText(/Smoke transfer motive/).waitFor();
   const financialOverview = appPage.getByRole("region", { name: "Your money at a glance", exact: true });
   await financialOverview.getByText("Money available today", { exact: true }).waitFor();
-  await financialOverview.getByText("Period activity", { exact: true }).waitFor();
+  await financialOverview.getByText("August's Activity", { exact: true }).waitFor();
   await financialOverview.getByText("Money received", { exact: true }).waitFor();
   await financialOverview.getByText("Money spent", { exact: true }).waitFor();
   await financialOverview.getByText("Difference", { exact: true }).waitFor();

@@ -574,6 +574,14 @@ function FinancialOverview({
   const activeAccountCount = snapshot.accounts.filter((account) => account.isActive).length;
   const net = snapshot.netCashFlow.minorUnits;
   const netTone = net === 0 ? "text-foreground" : net > 0 ? "text-green-600" : "text-red-500";
+  const periodDate = new Date(snapshot.periodStart);
+  const locale = document.documentElement.lang || undefined;
+  const periodMonth = periodDate.toLocaleDateString(locale, { month: "long" });
+  const isFrench = document.documentElement.lang.toLowerCase().startsWith("fr");
+  const frenchElision = [3, 7, 9].includes(periodDate.getMonth());
+  const contextualMonth = isFrench
+    ? `${frenchElision ? "d’" : "de "}${periodMonth}`
+    : periodMonth;
 
   return (
     <section aria-label={t("dashboard.balanceSummary")} className="grid gap-3 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
@@ -599,8 +607,9 @@ function FinancialOverview({
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("dashboard.periodActivity")}</CardTitle>
-          <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.periodActivityContext")}</p>
+          <CardTitle className="text-base">
+            {t("dashboard.periodActivity", { month: contextualMonth })}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid divide-y divide-border rounded-lg border border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
@@ -975,10 +984,7 @@ function DashboardContent({
       <section aria-label={t("dashboard.analyticsOverview")} className="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.9fr)]">
         <Card className="interactive-surface metric-surface">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <div>
-              <CardTitle className="text-base">{t("dashboard.cashFlowTrend")}</CardTitle>
-              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.cashFlowTrendBody")}</p>
-            </div>
+            <CardTitle className="text-base">{t("dashboard.cashFlowTrend")}</CardTitle>
             <TrendingUp className="h-4 w-4 text-ocean-primary" />
           </CardHeader>
           <CardContent>
@@ -992,10 +998,7 @@ function DashboardContent({
 
         <Card className="interactive-surface">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <div>
-              <CardTitle className="text-base">{t("dashboard.spendingMix")}</CardTitle>
-              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.spendingMixBody")}</p>
-            </div>
+            <CardTitle className="text-base">{t("dashboard.spendingMix")}</CardTitle>
             <BarChart3 className="h-4 w-4 text-ocean-primary" />
           </CardHeader>
           <CardContent className="grid gap-5 md:grid-cols-[160px_minmax(0,1fr)] md:items-center">
