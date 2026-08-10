@@ -476,7 +476,20 @@
     "loadFailed": "Échec du chargement des données financières",
     "previousMonth": "Mois précédent",
     "nextMonth": "Mois suivant",
+    "monthNavigation": "Navigation par mois",
     "today": "Aujourd’hui",
+    "greeting": {
+      "morning": "Bonjour 👋",
+      "afternoon": "Bel après-midi 👋",
+      "evening": "Bonsoir 👋",
+      "messages": [
+        "Chaque petit pas compte.",
+        "Votre argent, vos choix, votre rythme.",
+        "Un coup d’œil, et vous voilà à jour.",
+        "On garde le cap, tranquillement.",
+        "Les chiffres sont là. À vous de jouer."
+      ]
+    },
     "comparison": {
       "newThisMonth": "nouveau ce mois",
       "noneThisMonth": "aucun ce mois",

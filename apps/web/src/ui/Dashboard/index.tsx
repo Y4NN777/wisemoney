@@ -27,6 +27,9 @@ import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
 import { comparePeriodAmounts, type PeriodAmountComparison } from "./periodComparison.ts";
+import { getDailyGreetingIndex, getGreetingTime } from "./dashboardGreeting.ts";
+
+const GREETING_MESSAGE_COUNT = 5;
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -547,6 +550,60 @@ function FirstTransactionDashboard({ snapshot, accountCount }: { snapshot: Finan
         </Card>
       </section>
     </main>
+  );
+}
+
+function DashboardPeriodHeader({
+  selectedYear,
+  selectedMonth,
+  isCurrent,
+  onPrevious,
+  onNext,
+  onCurrent,
+}: {
+  selectedYear: number;
+  selectedMonth: number;
+  isCurrent: boolean;
+  onPrevious: () => void;
+  onNext: () => void;
+  onCurrent: () => void;
+}) {
+  const { t } = useTranslation();
+  const today = new Date();
+  const greetingTime = getGreetingTime(today);
+  const greetingIndex = getDailyGreetingIndex(today, GREETING_MESSAGE_COUNT);
+  const isCurrentYear = selectedYear === today.getFullYear();
+
+  return (
+    <header className="flex flex-col gap-4 py-1 sm:flex-row sm:items-end sm:justify-between sm:py-2">
+      <div className="min-w-0">
+        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          {t(`dashboard.greeting.${greetingTime}`)}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t(`dashboard.greeting.messages.${greetingIndex}`)}
+        </p>
+      </div>
+
+      <nav aria-label={t("dashboard.monthNavigation")} className="flex shrink-0 items-center gap-2 self-end sm:self-auto">
+        {!isCurrent && (
+          <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-muted-foreground" onClick={onCurrent}>
+            {t("dashboard.today")}
+          </Button>
+        )}
+        <div className="flex h-9 items-center rounded-full border border-border bg-card p-0.5">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={onPrevious} aria-label={t("dashboard.previousMonth")}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="min-w-24 px-2 text-center text-sm font-medium" aria-live="polite">
+            {t(`dashboard.months.${selectedMonth - 1}`)}{isCurrentYear ? "" : ` ${selectedYear}`}
+          </span>
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={onNext} aria-label={t("dashboard.nextMonth")} disabled={isCurrent}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </nav>
+    </header>
   );
 }
 
@@ -1240,27 +1297,14 @@ export default function Dashboard() {
 
   return (
     <main aria-label={t("dashboard.title")} className="app-page">
-      {/* ── Period header ── */}
-      <div className="page-head">
-        <div>
-          <h1 className="page-title">
-            {t(`dashboard.months.${selectedMonth - 1}`)} {selectedYear}
-          </h1>
-        </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" onClick={goPrev} aria-label={t("dashboard.previousMonth")}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          {!isCurrent && (
-            <Button variant="ghost" size="sm" className="text-xs" onClick={goCurrent}>
-              {t("dashboard.today")}
-            </Button>
-          )}
-          <Button variant="ghost" size="icon" onClick={goNext} aria-label={t("dashboard.nextMonth")} disabled={isCurrent}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <DashboardPeriodHeader
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        isCurrent={isCurrent}
+        onPrevious={goPrev}
+        onNext={goNext}
+        onCurrent={goCurrent}
+      />
 
       <DashboardContent snapshot={snapshot} canMutate={isCurrent} periodComparison={periodComparison} />
     </main>

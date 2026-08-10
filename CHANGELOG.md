@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Traceable financial cycles** — added an optional cycle-closing workflow that
+  generates both a passphrase-protected, restorable backup and a readable XLSX
+  statement before reset can be confirmed. Closed-cycle receipts remain visible,
+  while vault credentials, currency, exchange rates, and preferences carry into
+  the new cycle.
+- **Financial literacy help** — expanded the bilingual Help Center with plain-language
+  explanations of income, expenses, balances, cash flow, positive/negative amounts,
+  and month-over-month comparisons without adding guidance clutter to the dashboard.
 - **Managed AI adapters** — aligned the edge with the active provider contract:
   OpenRouter Free and Gemini 3.6 Flash, with an optional DeepSeek V4 Flash
   adapter and tested cross-provider fallback. Removed the prohibited NVIDIA
@@ -40,6 +48,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Session-safe PWA updates** — defers service-worker activation and reload while
+  the private vault is open, preventing an in-app update from unexpectedly returning
+  the user to the locked shell and requiring the passphrase again.
+- **Money-movement semantics** — aligned income and expense arrow directions across
+  Capture and Dashboard so incoming money points down into the account and outgoing
+  money points up out of it.
 - **Financial projections** — made event replay deterministic for equal timestamps,
   fixed historical period boundaries and stale snapshots, applied transaction
   updates/deletions correctly, excluded validly archived accounts from current
@@ -107,6 +121,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Adaptive financial workflows** — Dashboard now focuses new users on account
+  creation or their first transaction before revealing analytics; Capture surfaces
+  missing prerequisites as direct actions; Assistant consolidates unavailable-AI
+  guidance; and Planning and Settings use denser, better-constrained layouts.
+- **Dashboard information hierarchy** — separated globally available money from
+  monthly activity, clarified received/spent/difference relationships, scoped
+  transaction filters to the transaction list, and removed redundant explanatory
+  copy and competing card subtitles.
+- **Dashboard welcome and period control** — replaced the large bordered month header
+  with an open greeting area and compact month switcher. Greetings follow the time
+  of day, rotate predictably once per day, and remain fully localized; the year only
+  appears when viewing a different year.
 - **Public docs** — updated the root README status/run instructions and rewrote
   `SECURITY.md` for public readability.
 - **Production defaults** — new local vaults default to XOF; forms and summaries

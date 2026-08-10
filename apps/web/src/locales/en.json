@@ -476,7 +476,20 @@
     "loadFailed": "Failed to load financial data",
     "previousMonth": "Previous month",
     "nextMonth": "Next month",
+    "monthNavigation": "Month navigation",
     "today": "Today",
+    "greeting": {
+      "morning": "Good morning 👋",
+      "afternoon": "Good afternoon 👋",
+      "evening": "Good evening 👋",
+      "messages": [
+        "Every small step counts.",
+        "Your money, your choices, your pace.",
+        "One quick look, and you’re up to date.",
+        "Steady progress, at your own pace.",
+        "The numbers are in. Your move."
+      ]
+    },
     "comparison": {
       "newThisMonth": "new this month",
       "noneThisMonth": "none this month",
