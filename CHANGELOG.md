@@ -48,6 +48,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Unlock language switching** — changing between English and French on the
+  passphrase screen now preserves the active unlock step instead of returning the
+  user to the home overview.
 - **Session-safe PWA updates** — defers service-worker activation and reload while
   the private vault is open, preventing an in-app update from unexpectedly returning
   the user to the locked shell and requiring the passphrase again.

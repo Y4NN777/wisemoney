@@ -50,6 +50,8 @@ type KeyUnlockProps = {
 export default function KeyUnlock({ onVaultUnlockedChange }: KeyUnlockProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const translationRef = useRef(t);
+  translationRef.current = t;
   const [flow, setFlow] = useState<Flow>("loading");
   const [error, setError] = useState<string | null>(null);
   const [masterKey, setMasterKey] = useState<MasterKey | null>(null);
@@ -92,14 +94,16 @@ export default function KeyUnlock({ onVaultUnlockedChange }: KeyUnlockProps) {
       }
     }).catch(() => {
       if (active) {
-        setError(t("keyUnlock.errors.localStorage"));
+        setError(translationRef.current("keyUnlock.errors.localStorage"));
         setFlow("landing");
       }
     });
     return () => {
       active = false;
     };
-  }, [t]);
+    // Vault discovery is a mount-only operation. Translation changes must not
+    // rerun it, because doing so resets the user's active unlock step.
+  }, []);
 
   let content: React.ReactNode;
 

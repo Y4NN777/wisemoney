@@ -4,6 +4,11 @@ import { chromium } from "playwright-core";
 
 const baseURL = process.env.WISEMONEY_SMOKE_URL ?? "http://127.0.0.1:4173";
 const outputDir = process.env.WISEMONEY_SMOKE_OUTPUT ?? "/tmp/wisemoney-playwright";
+const smokeDate = new Date();
+const smokeMonthName = smokeDate.toLocaleDateString("en", { month: "long" });
+const smokeMonthStart = new Date(smokeDate.getFullYear(), smokeDate.getMonth(), 1)
+  .toLocaleDateString("en", { month: "short", day: "numeric" });
+const smokePeriodEnd = smokeDate.toLocaleDateString("en", { month: "long", day: "numeric", year: "numeric" });
 await mkdir(outputDir, { recursive: true });
 
 const browser = await chromium.launch({
@@ -162,6 +167,21 @@ try {
   });
   await syncPage.goto(baseURL, { waitUntil: "networkidle" });
   await syncPage.getByRole("button", { name: "Open app", exact: true }).click();
+  await syncPage.getByLabel("Private passphrase", { exact: true }).waitFor();
+  await syncPage.getByRole("button", { name: "Français", exact: true }).click();
+  try {
+    await syncPage.getByLabel("Phrase privée", { exact: true }).waitFor({ timeout: 5_000 });
+  } catch (error) {
+    await syncPage.screenshot({ path: `${outputDir}/unlock-language-switch-failure.png`, fullPage: true });
+    throw new Error(`Language switch did not preserve the unlock screen. Body:\n${await syncPage.locator("body").innerText()}`, { cause: error });
+  }
+  assert.equal(
+    await syncPage.getByText("Ouvrir votre espace privé", { exact: true }).count(),
+    1,
+    "language switch left the passphrase unlock screen",
+  );
+  await syncPage.getByRole("button", { name: "English", exact: true }).click();
+  await syncPage.getByLabel("Private passphrase", { exact: true }).waitFor();
   await syncPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await syncPage.getByRole("button", { name: "Unlock", exact: true }).click();
   await syncPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
@@ -249,14 +269,14 @@ try {
   await appPage.getByText(/Smoke transfer motive/).waitFor();
   const financialOverview = appPage.getByRole("region", { name: "Your money at a glance", exact: true });
   await financialOverview.getByText("Money available today", { exact: true }).waitFor();
-  await financialOverview.getByText("August's Activity", { exact: true }).waitFor();
+  await financialOverview.getByText(`${smokeMonthName}'s Activity`, { exact: true }).waitFor();
   await financialOverview.getByText("Money received", { exact: true }).waitFor();
   await financialOverview.getByText("Money spent", { exact: true }).waitFor();
   await financialOverview.getByText("Difference", { exact: true }).waitFor();
   await appPage.getByRole("tab", { name: "All", exact: true }).click();
   await appPage.getByText(/^Through /).waitFor();
   await appPage.getByRole("tab", { name: "Month", exact: true }).click();
-  await appPage.getByText(/Aug 1 .* August 9, 2026/).waitFor();
+  await appPage.getByText(`${smokeMonthStart} – ${smokePeriodEnd}`, { exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Open help center", exact: true }).click();
   await appPage.getByText("Understand my figures", { exact: true }).click();
   await appPage.getByText("+ and − before an amount", { exact: true }).waitFor();
