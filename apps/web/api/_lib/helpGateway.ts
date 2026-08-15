@@ -1,4 +1,4 @@
-import { HELP_CORPUS } from "./helpCorpus.ts";
+import { HELP_CORPUS } from "./helpCorpus";
 
 declare const process: { env: Record<string, string | undefined> };
 

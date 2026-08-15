@@ -1,4 +1,4 @@
-import { isSameOriginRequest, json, sendMessage } from "../_lib/helpGateway.ts";
+import { isSameOriginRequest, json, sendMessage } from "../_lib/helpGateway";
 
 // The Web fetch export is Vercel's explicit Node.js Function signature for
 // framework-agnostic projects. A bare one-argument default function can be
