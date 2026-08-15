@@ -26,6 +26,11 @@ const FINANCIAL_EVENT_TYPES = [
   "transfer_created",
   "debt_credit_created",
   "debt_credit_status_updated",
+  "debt_credit_due_date_updated",
+  "planned_expense_created",
+  "planned_expense_updated",
+  "planned_expense_cancelled",
+  "planned_expense_completed",
 ] as const;
 
 export type FinancialEventType = (typeof FINANCIAL_EVENT_TYPES)[number];

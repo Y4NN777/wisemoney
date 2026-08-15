@@ -335,6 +335,20 @@
   }
 }
 
+@keyframes help-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+.help-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border: 1px solid rgba(0, 47, 167, 0.28);
+  border-radius: 50%;
+  border-top-color: #002fa7;
+  animation: help-orbit-spin 18s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 1ms !important;

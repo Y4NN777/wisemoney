@@ -117,10 +117,10 @@ function emptySnapshot(asOfEventId = "none", asOfTimestamp = 0): FinancialStateS
   const periodStart = new Date(date.getFullYear(), date.getMonth(), 1).getTime();
   const periodEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
   return {
-    version: 2,
+    version: 4,
     asOfEventId, asOfTimestamp,
     baseCurrency: "USD", currencyContextId: "USD", missingFxCurrencies: [],
-    accounts: [], categories: [], budgets: [], goals: [], recurringItems: [], debtCredits: [], transfers: [],
+    accounts: [], categories: [], budgets: [], goals: [], recurringItems: [], debtCredits: [], transfers: [], plannedExpenses: [],
     periodStart, periodEnd,
     totalBalance: { minorUnits: 0, currency: "USD" },
     periodIncome: { minorUnits: 0, currency: "USD" },
@@ -516,7 +516,305 @@ describe("replayFromInception", () => {
   });
 });
 
+describe("debt and receivable due-date projection", () => {
+  it("defaults legacy creations to no due date and replays subsequent updates", async () => {
+    const legacy = makeEvent({
+      id: "legacy-debt", timestamp: 100, type: "debt_credit_created",
+      payload: {
+        kind: "debt", partyName: "Bank", motive: "Equipment",
+        amount: { minorUnits: 50_000, currency: "XOF" }, date: 90, status: "pending",
+      },
+    });
+    const dated = makeEvent({
+      id: "dated-receivable", timestamp: 110, type: "debt_credit_created",
+      payload: {
+        kind: "receivable", partyName: "Client", motive: "Invoice",
+        amount: { minorUnits: 25_000, currency: "XOF" }, date: 95, status: "partial", dueDate: 500,
+      },
+    });
+    const addLegacyDueDate = makeEvent({
+      id: "add-due", timestamp: 120, type: "debt_credit_due_date_updated", entityId: "legacy-debt",
+      payload: { debtCreditId: "legacy-debt", dueDate: 400 },
+    });
+    const clearDueDate = makeEvent({
+      id: "clear-due", timestamp: 130, type: "debt_credit_due_date_updated", entityId: "dated-receivable",
+      payload: { debtCreditId: "dated-receivable", dueDate: null },
+    });
+
+    const initial = await replayFromInception([legacy, dated], mkKey, 115);
+    expect(initial.debtCredits).toEqual([
+      expect.objectContaining({ id: "legacy-debt", dueDate: null }),
+      expect.objectContaining({ id: "dated-receivable", dueDate: 500 }),
+    ]);
+
+    const updated = await replayFromInception([clearDueDate, addLegacyDueDate, dated, legacy], mkKey, 140);
+    expect(updated.debtCredits).toEqual([
+      expect.objectContaining({ id: "legacy-debt", dueDate: 400 }),
+      expect.objectContaining({ id: "dated-receivable", dueDate: null }),
+    ]);
+  });
+
+  it("rejects a due-date update for an unknown item", () => {
+    expect(() => validateDecryptedEventSequence([{
+      id: "missing-update", timestamp: 100, type: "debt_credit_due_date_updated",
+      payload: { debtCreditId: "missing", dueDate: 200 },
+    }])).toThrow(/missing debt or receivable/);
+  });
+});
+
+describe("planned expense projection", () => {
+  const category = makeEvent({
+    id: "category", timestamp: 100, type: "category_created", payload: { name: "Equipment" },
+  });
+  const account = makeEvent({
+    id: "account", timestamp: 110, type: "account_created",
+    payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 10_000, currency: "XOF" } },
+  });
+  const planned = makeEvent({
+    id: "planned", timestamp: 120, type: "planned_expense_created",
+    payload: {
+      label: "Laptop", estimatedAmount: { minorUnits: 2_000, currency: "XOF" },
+      categoryId: "category", priority: "high", dueDate: 500, note: "For work",
+    },
+  });
+
+  it("projects creation without affecting any financial aggregate", async () => {
+    const snapshot = await replayFromInception([category, account, planned], mkKey, 600);
+
+    expect(snapshot.version).toBe(4);
+    expect(snapshot.plannedExpenses).toEqual([{
+      id: "planned",
+      label: "Laptop",
+      estimatedAmount: { minorUnits: 2_000, currency: "XOF" },
+      categoryId: "category",
+      priority: "high",
+      dueDate: 500,
+      note: "For work",
+      status: "pending",
+      createdAt: 120,
+      updatedAt: 120,
+      completedAt: null,
+      cancelledAt: null,
+      transactionId: null,
+      completedAccountId: null,
+      actualAmount: null,
+    }]);
+    expect(snapshot.accounts[0]?.balance.minorUnits).toBe(10_000);
+    expect(snapshot.periodExpenses.minorUnits).toBe(0);
+    expect(snapshot.categoryTotals).toEqual({});
+  });
+
+  it("fully replaces editable fields while preserving creation metadata", async () => {
+    const otherCategory = makeEvent({
+      id: "other-category", timestamp: 130, type: "category_created", payload: { name: "Office" },
+    });
+    const update = makeEvent({
+      id: "planned-update", timestamp: 140, type: "planned_expense_updated", entityId: "planned",
+      payload: {
+        plannedExpenseId: "planned", label: "Desk", estimatedAmount: { minorUnits: 3_000, currency: "USD" },
+        categoryId: "other-category", priority: "low", dueDate: null, note: "Ergonomic",
+      },
+    });
+
+    const snapshot = await replayFromInception([update, planned, category, otherCategory], mkKey, 200);
+    expect(snapshot.plannedExpenses[0]).toMatchObject({
+      id: "planned", label: "Desk", estimatedAmount: { minorUnits: 3_000, currency: "USD" },
+      categoryId: "other-category", priority: "low", dueDate: null, note: "Ergonomic",
+      status: "pending", createdAt: 120, updatedAt: 140,
+    });
+  });
+
+  it("cancels without creating a transaction or changing balances", async () => {
+    const cancelled = makeEvent({
+      id: "cancel", timestamp: 130, type: "planned_expense_cancelled", entityId: "planned",
+      payload: { plannedExpenseId: "planned" },
+    });
+    const snapshot = await replayFromInception([category, account, planned, cancelled], mkKey, 200);
+
+    expect(snapshot.plannedExpenses[0]).toMatchObject({
+      status: "cancelled", updatedAt: 130, cancelledAt: 130, transactionId: null,
+    });
+    expect(snapshot.accounts[0]?.balance.minorUnits).toBe(10_000);
+    expect(snapshot.periodExpenses.minorUnits).toBe(0);
+  });
+
+  it("rejects every transition from a closed planned expense", () => {
+    const cancelled = {
+      id: "cancel", timestamp: 130, type: "planned_expense_cancelled" as const,
+      payload: { plannedExpenseId: "planned" },
+    };
+    expect(() => validateDecryptedEventSequence([
+      { id: "category", timestamp: 100, type: "category_created", payload: { name: "Equipment" } },
+      { id: "planned", timestamp: 120, type: "planned_expense_created", payload: plannedPayload() },
+      cancelled,
+      {
+        id: "update", timestamp: 140, type: "planned_expense_updated",
+        payload: { plannedExpenseId: "planned", ...plannedPayload(), priority: "medium" },
+      },
+    ])).toThrow(/not pending/);
+    expect(() => validateDecryptedEventSequence([
+      { id: "category", timestamp: 100, type: "category_created", payload: { name: "Equipment" } },
+      { id: "planned", timestamp: 120, type: "planned_expense_created", payload: plannedPayload() },
+      cancelled,
+      { id: "cancel-again", timestamp: 140, type: "planned_expense_cancelled", payload: { plannedExpenseId: "planned" } },
+    ])).toThrow(/not pending/);
+    expect(() => validateDecryptedEventSequence([
+      { id: "category", timestamp: 100, type: "category_created", payload: { name: "Equipment" } },
+      { id: "planned", timestamp: 120, type: "planned_expense_created", payload: plannedPayload() },
+      cancelled,
+      {
+        id: "complete-after-cancel", timestamp: 140, type: "planned_expense_completed",
+        payload: { plannedExpenseId: "planned", transactionId: "transaction", accountId: "account", actualAmount: { minorUnits: 2_000, currency: "XOF" }, occurredAt: 125 },
+      },
+    ])).toThrow(/not pending/);
+  });
+
+  it("keeps completed planned expenses immutable", () => {
+    const completedPrefix = [
+      { id: "category", timestamp: 100, type: "category_created" as const, payload: { name: "Equipment" } },
+      { id: "account", timestamp: 110, type: "account_created" as const, payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 10_000, currency: "XOF" } } },
+      { id: "planned", timestamp: 120, type: "planned_expense_created" as const, payload: plannedPayload() },
+      { id: "transaction", timestamp: 130, type: "transaction_created" as const, payload: { accountId: "account", categoryId: "category", amount: { minorUnits: 2_000, currency: "XOF" }, direction: "expense", occurredAt: 125 } },
+      { id: "complete", timestamp: 140, type: "planned_expense_completed" as const, payload: { plannedExpenseId: "planned", transactionId: "transaction", accountId: "account", actualAmount: { minorUnits: 2_000, currency: "XOF" }, occurredAt: 125 } },
+    ];
+    const forbidden = [
+      { id: "update", timestamp: 150, type: "planned_expense_updated" as const, payload: { plannedExpenseId: "planned", ...plannedPayload() } },
+      { id: "cancel", timestamp: 150, type: "planned_expense_cancelled" as const, payload: { plannedExpenseId: "planned" } },
+      { id: "complete-again", timestamp: 150, type: "planned_expense_completed" as const, payload: { plannedExpenseId: "planned", transactionId: "other", accountId: "account", actualAmount: { minorUnits: 2_000, currency: "XOF" }, occurredAt: 125 } },
+    ];
+
+    for (const event of forbidden) {
+      expect(() => validateDecryptedEventSequence([...completedPrefix, event])).toThrow(/not pending/);
+    }
+  });
+
+  it("blocks category archival only while a planned expense is pending", async () => {
+    const archive = makeEvent({
+      id: "archive", timestamp: 140, type: "category_archived", entityId: "category",
+      payload: { categoryId: "category" },
+    });
+    const pendingSnapshot = await replayFromInception([category, planned, archive], mkKey, 200);
+    expect(pendingSnapshot.categories[0]?.isArchived).toBe(false);
+
+    const cancelled = makeEvent({
+      id: "cancel", timestamp: 130, type: "planned_expense_cancelled", entityId: "planned",
+      payload: { plannedExpenseId: "planned" },
+    });
+    const cancelledSnapshot = await replayFromInception([category, planned, cancelled, archive], mkKey, 200);
+    expect(cancelledSnapshot.categories[0]?.isArchived).toBe(true);
+  });
+
+  it("completes from a matching expense transaction and uses occurredAt for aggregates", async () => {
+    const budget = makeEvent({
+      id: "budget", timestamp: 115, type: "budget_created",
+      payload: {
+        name: "Equipment", categoryId: "category", limit: { minorUnits: 5_000, currency: "XOF" },
+        periodMonth: "1970-01",
+      },
+    });
+    const transaction = makeEvent({
+      id: "transaction", timestamp: 10_000, type: "transaction_created",
+      payload: {
+        accountId: "account", categoryId: "category", amount: { minorUnits: 1_500, currency: "XOF" },
+        direction: "expense", occurredAt: 500, note: "Laptop", tags: ["planned-expense"], merchant: null,
+      },
+    });
+    const completed = makeEvent({
+      id: "complete", timestamp: 10_001, type: "planned_expense_completed", entityId: "planned",
+      payload: {
+        plannedExpenseId: "planned", transactionId: "transaction", accountId: "account",
+        actualAmount: { minorUnits: 1_500, currency: "XOF" }, occurredAt: 500,
+      },
+    });
+    const snapshot = await replayFromInception([completed, transaction, planned, budget, account, category], mkKey, 600);
+
+    expect(snapshot.plannedExpenses[0]).toMatchObject({
+      status: "completed", updatedAt: 10_001, completedAt: 500,
+      transactionId: "transaction", completedAccountId: "account",
+      actualAmount: { minorUnits: 1_500, currency: "XOF" },
+    });
+    expect(snapshot.accounts[0]?.balance.minorUnits).toBe(8_500);
+    expect(snapshot.periodExpenses.minorUnits).toBe(1_500);
+    expect(snapshot.categoryTotals.category?.minorUnits).toBe(1_500);
+    expect(snapshot.budgets[0]?.spent.minorUnits).toBe(1_500);
+    expect(snapshot.budgetProgress.budget?.spent.minorUnits).toBe(1_500);
+  });
+
+  it("does not block category archival after completion", async () => {
+    const transaction = makeEvent({
+      id: "transaction", timestamp: 130, type: "transaction_created",
+      payload: { accountId: "account", categoryId: "category", amount: { minorUnits: 2_000, currency: "XOF" }, direction: "expense", occurredAt: 125 },
+    });
+    const completed = makeEvent({
+      id: "complete", timestamp: 140, type: "planned_expense_completed",
+      payload: { plannedExpenseId: "planned", transactionId: "transaction", accountId: "account", actualAmount: { minorUnits: 2_000, currency: "XOF" }, occurredAt: 125 },
+    });
+    const archive = makeEvent({
+      id: "archive", timestamp: 150, type: "category_archived", payload: { categoryId: "category" },
+    });
+
+    const snapshot = await replayFromInception([category, account, planned, transaction, completed, archive], mkKey, 200);
+    expect(snapshot.categories[0]?.isArchived).toBe(true);
+  });
+
+  it("rejects completion when its transaction does not exactly match", () => {
+    expect(() => validateDecryptedEventSequence([
+      { id: "category", timestamp: 100, type: "category_created", payload: { name: "Equipment" } },
+      { id: "account", timestamp: 110, type: "account_created", payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 10_000, currency: "XOF" } } },
+      { id: "planned", timestamp: 120, type: "planned_expense_created", payload: plannedPayload() },
+      { id: "transaction", timestamp: 130, type: "transaction_created", payload: { accountId: "account", categoryId: "category", amount: { minorUnits: 1_000, currency: "XOF" }, direction: "expense", occurredAt: 125 } },
+      { id: "complete", timestamp: 140, type: "planned_expense_completed", payload: { plannedExpenseId: "planned", transactionId: "transaction", accountId: "account", actualAmount: { minorUnits: 2_000, currency: "XOF" }, occurredAt: 125 } },
+    ])).toThrow(/does not match/);
+  });
+
+  function plannedPayload(): FinancialEventPayload {
+    return {
+      label: "Laptop", estimatedAmount: { minorUnits: 2_000, currency: "XOF" },
+      categoryId: "category", priority: "high", dueDate: null, note: "For work",
+    };
+  }
+});
+
 describe("readTransactionsInRange", () => {
+  it("uses occurredAt as the business date and preserves it after updates", async () => {
+    fakeEvents.seed([
+      makeEvent({
+        id: "backdated", timestamp: 10_000, type: "transaction_created",
+        payload: {
+          accountId: "account-a", categoryId: "category-a", amount: { minorUnits: 100, currency: "USD" },
+          direction: "expense", occurredAt: 1_000,
+        },
+      }),
+      makeEvent({
+        id: "later-update", timestamp: 20_000, type: "transaction_updated",
+        payload: {
+          originalEventId: "backdated", accountId: "account-a", categoryId: "category-b",
+          amount: { minorUnits: 250, currency: "USD" }, direction: "expense",
+        },
+      }),
+    ]);
+
+    const transactions = await readTransactionsInRange(900, 1_100, mkKey);
+    expect(transactions).toHaveLength(1);
+    expect(transactions[0]).toMatchObject({
+      id: "backdated", timestamp: 1_000, categoryId: "category-b",
+      amount: { minorUnits: 250, currency: "USD" },
+    });
+    expect(await readTransactionsInRange(9_000, 11_000, mkKey)).toEqual([]);
+  });
+
+  it("keeps the structural timestamp for legacy transactions without occurredAt", async () => {
+    fakeEvents.seed([makeEvent({
+      id: "legacy", timestamp: 1_000, type: "transaction_created",
+      payload: {
+        accountId: "account-a", categoryId: "category-a", amount: { minorUnits: 100, currency: "USD" },
+        direction: "expense",
+      },
+    })]);
+
+    expect((await readTransactionsInRange(900, 1_100, mkKey))[0]?.timestamp).toBe(1_000);
+  });
+
   it("applies updates and deletions before returning active transactions", async () => {
     fakeEvents.seed([
       makeEvent({
@@ -693,13 +991,12 @@ describe("getSnapshot", () => {
     expect(result.accounts[0]?.name).toBe("Cash");
   });
 
-  it("replays snapshots from versions without a projection version", async () => {
+  it("invalidates a version 3 snapshot and rebuilds version 4 from the journal", async () => {
     fakeEvents.seed([makeEvent({
       id: "e1", timestamp: 1000, type: "account_created",
       payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 1000, currency: "USD" } },
     })]);
-    const legacy = { ...emptySnapshot("e1", 1000) } as Partial<FinancialStateSnapshot> & { version?: number };
-    delete legacy.version;
+    const legacy = { ...emptySnapshot("e1", 1000), version: 3, accounts: [] };
     await fakeSnapshotStore.put({
       id: "current", asOfEventId: "e1", asOfTimestamp: 1000,
       ciphertext: new TextEncoder().encode(JSON.stringify(legacy)), iv: new Uint8Array(12),
@@ -707,7 +1004,7 @@ describe("getSnapshot", () => {
 
     const result = await getSnapshot(mkKey);
 
-    expect(result.version).toBe(2);
+    expect(result.version).toBe(4);
     expect(result.accounts[0]?.name).toBe("Cash");
   });
 });

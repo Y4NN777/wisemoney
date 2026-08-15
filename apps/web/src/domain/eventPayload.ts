@@ -69,13 +69,16 @@ export function validateFinancialEventPayload(type: FinancialEventType, payload:
       const required = type === "transaction_updated"
         ? ["originalEventId", "accountId", "categoryId", "amount", "direction"]
         : ["accountId", "categoryId", "amount", "direction"];
-      shape(payload, required, ["note", "tags", "merchant"]);
+      shape(payload, required, type === "transaction_created"
+        ? ["note", "tags", "merchant", "occurredAt"]
+        : ["note", "tags", "merchant"]);
       if (type === "transaction_updated") text(payload.originalEventId, "originalEventId");
       text(payload.accountId, "accountId"); text(payload.categoryId, "categoryId");
       transactionMoney(payload.amount); direction(payload.direction);
       if ("note" in payload) nullableText(payload.note, "note");
       if ("merchant" in payload) nullableText(payload.merchant, "merchant");
       if ("tags" in payload && (!Array.isArray(payload.tags) || payload.tags.some((tag) => typeof tag !== "string"))) throw new Error("tags must be strings");
+      if ("occurredAt" in payload) timestamp(payload.occurredAt, "occurredAt");
       return;
     }
     case "transaction_deleted":
@@ -130,13 +133,41 @@ export function validateFinancialEventPayload(type: FinancialEventType, payload:
       return;
     }
     case "debt_credit_created":
-      shape(payload, ["kind", "partyName", "motive", "amount", "date", "status"]);
+      shape(payload, ["kind", "partyName", "motive", "amount", "date", "status"], ["dueDate"]);
       if (payload.kind !== "debt" && payload.kind !== "receivable") throw new Error("kind is invalid");
       text(payload.partyName, "partyName"); text(payload.motive, "motive"); money(payload.amount, "amount"); timestamp(payload.date, "date");
       if (payload.status !== "pending" && payload.status !== "partial" && payload.status !== "settled") throw new Error("status is invalid");
+      if (payload.dueDate !== undefined && payload.dueDate !== null) timestamp(payload.dueDate, "dueDate");
       return;
     case "debt_credit_status_updated":
       shape(payload, ["debtCreditId", "status"]); text(payload.debtCreditId, "debtCreditId");
       if (payload.status !== "pending" && payload.status !== "partial" && payload.status !== "settled") throw new Error("status is invalid");
+      return;
+    case "debt_credit_due_date_updated":
+      shape(payload, ["debtCreditId", "dueDate"]); text(payload.debtCreditId, "debtCreditId");
+      if (payload.dueDate !== null) timestamp(payload.dueDate, "dueDate");
+      return;
+    case "planned_expense_created":
+      shape(payload, ["label", "estimatedAmount", "categoryId", "priority", "dueDate", "note"]);
+      text(payload.label, "label"); money(payload.estimatedAmount, "estimatedAmount"); text(payload.categoryId, "categoryId");
+      if (payload.priority !== "low" && payload.priority !== "medium" && payload.priority !== "high") throw new Error("priority is invalid");
+      if (payload.dueDate !== null) timestamp(payload.dueDate, "dueDate");
+      if (typeof payload.note !== "string") throw new Error("note must be a string");
+      return;
+    case "planned_expense_updated":
+      shape(payload, ["plannedExpenseId", "label", "estimatedAmount", "categoryId", "priority", "dueDate", "note"]);
+      text(payload.plannedExpenseId, "plannedExpenseId"); text(payload.label, "label");
+      money(payload.estimatedAmount, "estimatedAmount"); text(payload.categoryId, "categoryId");
+      if (payload.priority !== "low" && payload.priority !== "medium" && payload.priority !== "high") throw new Error("priority is invalid");
+      if (payload.dueDate !== null) timestamp(payload.dueDate, "dueDate");
+      if (typeof payload.note !== "string") throw new Error("note must be a string");
+      return;
+    case "planned_expense_cancelled":
+      shape(payload, ["plannedExpenseId"]); text(payload.plannedExpenseId, "plannedExpenseId"); return;
+    case "planned_expense_completed":
+      shape(payload, ["plannedExpenseId", "transactionId", "accountId", "actualAmount", "occurredAt"]);
+      text(payload.plannedExpenseId, "plannedExpenseId"); text(payload.transactionId, "transactionId");
+      text(payload.accountId, "accountId"); money(payload.actualAmount, "actualAmount");
+      timestamp(payload.occurredAt, "occurredAt"); return;
   }
 }

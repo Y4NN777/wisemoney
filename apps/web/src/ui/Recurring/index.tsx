@@ -7,12 +7,15 @@ import { Label } from "../../components/ui/label.tsx";
 import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
-import { Plus, Repeat, CheckCircle2, Archive } from "lucide-react";
+import { Plus, Repeat, CheckCircle2, Archive, CalendarPlus } from "lucide-react";
 import { toast } from "sonner";
 import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
 import { formatLocalDateInput, parseLocalDateInput } from "../../lib/localDate.ts";
 import { useTranslation } from "react-i18next";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
+import { computeProjectedOccurrences } from "../../domain/financialState.ts";
+import { createReminderCalendar, downloadCalendarExport } from "../../calendar/ics.ts";
+import { useReminders } from "../../reminders/ReminderProvider.tsx";
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -23,7 +26,8 @@ function formatDate(ts: number): string {
 }
 
 export default function Recurring() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { settings: reminderSettings } = useReminders();
   const { data: snapshot, isLoading } = useFinancialState();
   const createItem = useCreateRecurringItem();
   const archiveItem = useArchiveRecurringItem();
@@ -281,6 +285,25 @@ export default function Recurring() {
                     {item.lastRealised != null && <span> &middot; {t("recurring.last")}: {formatDate(item.lastRealised)}</span>}
                   </span>
                   <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const nextOccurrence = computeProjectedOccurrences([item], Date.now())[0];
+                        if (nextOccurrence == null) return;
+                        downloadCalendarExport(createReminderCalendar({
+                          id: `recurring-${item.id}`,
+                          label: item.label,
+                          startsAt: nextOccurrence.dueDate,
+                          locale: i18n.language.toLowerCase().startsWith("fr") ? "fr" : "en",
+                          recurrence: { frequency: item.frequency },
+                          alarmMinutesBefore: reminderSettings.types.recurring_item.leadDays.map((day) => day * 24 * 60),
+                        }));
+                      }}
+                    >
+                      <CalendarPlus className="h-3 w-3 mr-1" />
+                      {t("reminders.calendar.add")}
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"

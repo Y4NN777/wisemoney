@@ -12,6 +12,27 @@ export type MoneyDTO = {
   readonly currency: string;
 };
 
+export type PlannedExpensePriority = "low" | "medium" | "high";
+export type PlannedExpenseStatus = "pending" | "completed" | "cancelled";
+
+export type PlannedExpenseState = {
+  id: string;
+  label: string;
+  estimatedAmount: MoneyDTO;
+  categoryId: string;
+  priority: PlannedExpensePriority;
+  dueDate: number | null;
+  note: string;
+  status: PlannedExpenseStatus;
+  createdAt: number;
+  updatedAt: number;
+  completedAt: number | null;
+  cancelledAt: number | null;
+  transactionId: string | null;
+  completedAccountId: string | null;
+  actualAmount: MoneyDTO | null;
+};
+
 type AccountState = {
   id: string;
   name: string;
@@ -73,6 +94,7 @@ export type DebtCreditState = {
   amount: MoneyDTO;
   date: number;
   status: DebtCreditStatus;
+  dueDate: number | null;
 };
 
 type TransferState = {
@@ -86,7 +108,7 @@ type TransferState = {
 };
 
 export type FinancialStateSnapshot = {
-  version: 2;
+  version: 4;
   asOfEventId: string;
   asOfTimestamp: number;
   baseCurrency: string;
@@ -100,6 +122,7 @@ export type FinancialStateSnapshot = {
   recurringItems: RecurringItemState[];
   debtCredits: DebtCreditState[];
   transfers: TransferState[];
+  plannedExpenses: PlannedExpenseState[];
 
   periodStart: number;
   periodEnd: number;
@@ -227,6 +250,7 @@ type Accumulator = {
   }>;
   recurringItems: Map<string, RecurringItemState>;
   debtCredits: Map<string, DebtCreditState>;
+  plannedExpenses: Map<string, PlannedExpenseState>;
   /** Transfers: debit fromAccount, credit toAccount (internal) or external */
   transfers: TransferState[];
 };
@@ -240,6 +264,7 @@ function createEmptyAccumulator(): Accumulator {
     goals: new Map(),
     recurringItems: new Map(),
     debtCredits: new Map(),
+    plannedExpenses: new Map(),
     transfers: [],
   };
 }
@@ -298,6 +323,7 @@ function applyPayload(
         categoryId: string;
         amount: { minorUnits: number; currency: string };
         direction: "income" | "expense";
+        occurredAt?: number;
       };
       const amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
       const account = required(acc.accounts.get(p.accountId), "account", p.accountId);
@@ -312,7 +338,7 @@ function applyPayload(
       }
       acc.transactions.set(eventId, {
         id: eventId,
-        timestamp,
+        timestamp: p.occurredAt ?? timestamp,
         accountId: p.accountId,
         categoryId: p.categoryId,
         amount,
@@ -405,7 +431,10 @@ function applyPayload(
       const hasActiveDependency =
         [...acc.categories.values()].some((item) => item.parentId === p.categoryId && !item.isArchived) ||
         [...acc.budgets.values()].some((item) => item.categoryId === p.categoryId && !item.isArchived) ||
-        [...acc.recurringItems.values()].some((item) => item.categoryId === p.categoryId && !item.isArchived);
+        [...acc.recurringItems.values()].some((item) => item.categoryId === p.categoryId && !item.isArchived) ||
+        [...acc.plannedExpenses.values()].some(
+          (item) => item.categoryId === p.categoryId && item.status === "pending"
+        );
       if (hasActiveDependency) break;
       category.isArchived = true;
       break;
@@ -552,6 +581,7 @@ function applyPayload(
         amount: { minorUnits: number; currency: string };
         date: number;
         status: DebtCreditStatus;
+        dueDate?: number | null;
       };
       acc.debtCredits.set(eventId, {
         id: eventId,
@@ -561,6 +591,7 @@ function applyPayload(
         amount: positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency }),
         date: p.date,
         status: p.status,
+        dueDate: p.dueDate ?? null,
       });
       break;
     }
@@ -571,6 +602,131 @@ function applyPayload(
       };
       const item = required(acc.debtCredits.get(p.debtCreditId), "debt or receivable", p.debtCreditId);
       item.status = p.status;
+      break;
+    }
+    case "debt_credit_due_date_updated": {
+      const p = payload as unknown as {
+        debtCreditId: string;
+        dueDate: number | null;
+      };
+      const item = required(acc.debtCredits.get(p.debtCreditId), "debt or receivable", p.debtCreditId);
+      item.dueDate = p.dueDate;
+      break;
+    }
+    case "planned_expense_created": {
+      const p = payload as unknown as {
+        label: string;
+        estimatedAmount: MoneyDTO;
+        categoryId: string;
+        priority: PlannedExpensePriority;
+        dueDate: number | null;
+        note: string;
+      };
+      const category = required(acc.categories.get(p.categoryId), "category", p.categoryId);
+      if (category.isArchived) throw new Error(`event ${eventId}: category ${p.categoryId} is archived`);
+      acc.plannedExpenses.set(eventId, {
+        id: eventId,
+        label: p.label,
+        estimatedAmount: { ...p.estimatedAmount },
+        categoryId: p.categoryId,
+        priority: p.priority,
+        dueDate: p.dueDate,
+        note: p.note,
+        status: "pending",
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        completedAt: null,
+        cancelledAt: null,
+        transactionId: null,
+        completedAccountId: null,
+        actualAmount: null,
+      });
+      break;
+    }
+    case "planned_expense_updated": {
+      const p = payload as unknown as {
+        plannedExpenseId: string;
+        label: string;
+        estimatedAmount: MoneyDTO;
+        categoryId: string;
+        priority: PlannedExpensePriority;
+        dueDate: number | null;
+        note: string;
+      };
+      const planned = required(
+        acc.plannedExpenses.get(p.plannedExpenseId),
+        "planned expense",
+        p.plannedExpenseId,
+      );
+      if (planned.status !== "pending") {
+        throw new Error(`event ${eventId}: planned expense ${p.plannedExpenseId} is not pending`);
+      }
+      const category = required(acc.categories.get(p.categoryId), "category", p.categoryId);
+      if (category.isArchived) throw new Error(`event ${eventId}: category ${p.categoryId} is archived`);
+      planned.label = p.label;
+      planned.estimatedAmount = { ...p.estimatedAmount };
+      planned.categoryId = p.categoryId;
+      planned.priority = p.priority;
+      planned.dueDate = p.dueDate;
+      planned.note = p.note;
+      planned.updatedAt = timestamp;
+      break;
+    }
+    case "planned_expense_cancelled": {
+      const p = payload as unknown as { plannedExpenseId: string };
+      const planned = required(
+        acc.plannedExpenses.get(p.plannedExpenseId),
+        "planned expense",
+        p.plannedExpenseId,
+      );
+      if (planned.status !== "pending") {
+        throw new Error(`event ${eventId}: planned expense ${p.plannedExpenseId} is not pending`);
+      }
+      planned.status = "cancelled";
+      planned.updatedAt = timestamp;
+      planned.cancelledAt = timestamp;
+      break;
+    }
+    case "planned_expense_completed": {
+      const p = payload as unknown as {
+        plannedExpenseId: string;
+        transactionId: string;
+        accountId: string;
+        actualAmount: MoneyDTO;
+        occurredAt: number;
+      };
+      const planned = required(
+        acc.plannedExpenses.get(p.plannedExpenseId),
+        "planned expense",
+        p.plannedExpenseId,
+      );
+      if (planned.status !== "pending") {
+        throw new Error(`event ${eventId}: planned expense ${p.plannedExpenseId} is not pending`);
+      }
+      const account = required(acc.accounts.get(p.accountId), "account", p.accountId);
+      const category = required(acc.categories.get(planned.categoryId), "category", planned.categoryId);
+      if (!account.isActive) throw new Error(`event ${eventId}: account ${p.accountId} is archived`);
+      if (category.isArchived) throw new Error(`event ${eventId}: category ${planned.categoryId} is archived`);
+      if (account.currency !== p.actualAmount.currency) {
+        throw new Error(`event ${eventId}: planned expense currency mismatch`);
+      }
+      const transaction = required(acc.transactions.get(p.transactionId), "transaction", p.transactionId);
+      if (
+        transaction.accountId !== p.accountId ||
+        transaction.categoryId !== planned.categoryId ||
+        transaction.direction !== "expense" ||
+        transaction.timestamp !== p.occurredAt ||
+        transaction.amount.minorUnits !== p.actualAmount.minorUnits ||
+        transaction.amount.currency !== p.actualAmount.currency
+      ) {
+        throw new Error(`event ${eventId}: completed transaction does not match planned expense`);
+      }
+      planned.status = "completed";
+      planned.updatedAt = timestamp;
+      planned.completedAt = p.occurredAt;
+      planned.transactionId = p.transactionId;
+      planned.completedAccountId = p.accountId;
+      planned.actualAmount = { ...p.actualAmount };
       break;
     }
   }
@@ -603,6 +759,7 @@ function computeSnapshot(
   const goalsList: GoalState[] = [];
   const recurringList: RecurringItemState[] = [];
   const debtCreditList: DebtCreditState[] = [];
+  const plannedExpenseList: PlannedExpenseState[] = [];
   const transactionsList = [...acc.transactions.values()];
   const transactionsByCategory = new Map<string, TransactionFold[]>();
   for (const transaction of transactionsList) {
@@ -676,6 +833,14 @@ function computeSnapshot(
 
   for (const item of acc.debtCredits.values()) {
     debtCreditList.push({ ...item, amount: { ...item.amount } });
+  }
+
+  for (const item of acc.plannedExpenses.values()) {
+    plannedExpenseList.push({
+      ...item,
+      estimatedAmount: { ...item.estimatedAmount },
+      actualAmount: item.actualAmount == null ? null : { ...item.actualAmount },
+    });
   }
 
   const periodTxs = transactionsList.filter(
@@ -763,7 +928,7 @@ function computeSnapshot(
   }
 
   return {
-    version: 2,
+    version: 4,
     asOfEventId,
     asOfTimestamp,
     baseCurrency,
@@ -777,6 +942,7 @@ function computeSnapshot(
     recurringItems: recurringList,
     debtCredits: debtCreditList,
     transfers: [...acc.transfers].sort((a, b) => b.timestamp - a.timestamp || b.id.localeCompare(a.id)),
+    plannedExpenses: plannedExpenseList,
 
     periodStart: start,
     periodEnd: end,
@@ -913,7 +1079,7 @@ export async function readTransactionsInRange(
     transactionTypes.map((type) =>
       db.financialEvents
         .where("[type+timestamp]")
-        .between([type, 0], [type, end], true, true)
+        .between([type, 0], [type, Number.MAX_SAFE_INTEGER], true, true)
         .toArray()
     )
   );
@@ -954,6 +1120,7 @@ export async function readTransactionsInRange(
         note?: string | null;
         tags?: string[];
         merchant?: string | null;
+        occurredAt?: number;
       };
       const originalEventId = transaction.originalEventId ?? event.id;
       const existing = transactions.get(originalEventId);
@@ -961,7 +1128,7 @@ export async function readTransactionsInRange(
 
       transactions.set(originalEventId, {
         id: originalEventId,
-        timestamp: existing?.timestamp ?? event.timestamp,
+        timestamp: existing?.timestamp ?? transaction.occurredAt ?? event.timestamp,
         accountId: transaction.accountId,
         categoryId: transaction.categoryId,
         amount: positiveMoney(transaction.amount),
@@ -996,7 +1163,7 @@ export async function isSnapshotFresh(
   snapshot: FinancialStateSnapshot,
   expectedCurrencyContextId?: string
 ): Promise<boolean> {
-  if (snapshot.version !== 2) return false;
+  if (snapshot.version !== 4) return false;
   const lastByTimestamp = await db.financialEvents
     .orderBy("timestamp")
     .last();
@@ -1051,7 +1218,7 @@ export async function getSnapshot(
     if (
       parsedSnapshot != null &&
       typeof parsedSnapshot === "object" &&
-      (parsedSnapshot as { version?: unknown }).version === 2
+      (parsedSnapshot as { version?: unknown }).version === 4
     ) {
       const snapshot = parsedSnapshot as FinancialStateSnapshot;
       const cachedBaseCurrency = snapshot.baseCurrency ?? snapshot.totalBalance.currency;

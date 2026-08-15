@@ -51,6 +51,7 @@ import {
   archiveRecurringItem,
   createDebtCredit,
   updateDebtCreditStatus,
+  updateDebtCreditDueDate,
   updateTransaction,
   deleteTransaction,
   realiseRecurringOccurrence,
@@ -68,6 +69,7 @@ function snapshot(overrides: Record<string, unknown> = {}): Record<string, unkno
     categories: [],
     budgets: [],
     recurringItems: [],
+    plannedExpenses: [],
     debtCredits: [],
     ...overrides,
     accounts: accounts.map((account) => ({
@@ -500,6 +502,7 @@ describe("createDebtCredit", () => {
       amount: { minorUnits: 15000, currency: "USD" },
       date: 1_720_000_000_000,
       status: "pending",
+      dueDate: 1_725_000_000_000,
       masterKey: mkKey,
     });
 
@@ -510,6 +513,7 @@ describe("createDebtCredit", () => {
       partyName: "Awa",
       motive: "Avance transport",
       status: "pending",
+      dueDate: 1_725_000_000_000,
     });
   });
 
@@ -525,6 +529,21 @@ describe("createDebtCredit", () => {
         masterKey: mkKey,
       }),
     ).rejects.toThrow(ValidationError);
+  });
+
+  it("normalizes an omitted due date to null and rejects invalid dates", async () => {
+    await createDebtCredit({
+      kind: "debt", partyName: "Koffi", motive: "Loan",
+      amount: { minorUnits: 20_000, currency: "USD" }, date: 1_720_000_000_000,
+      status: "pending", masterKey: mkKey,
+    });
+    expect(fakeAppendEvent.mock.calls[0]![0].payload).toMatchObject({ dueDate: null });
+
+    await expect(createDebtCredit({
+      kind: "debt", partyName: "Koffi", motive: "Loan",
+      amount: { minorUnits: 20_000, currency: "USD" }, date: 1_720_000_000_000,
+      status: "pending", dueDate: -1, masterKey: mkKey,
+    })).rejects.toThrow(ValidationError);
   });
 });
 
@@ -598,6 +617,46 @@ describe("updateDebtCreditStatus", () => {
       debtCreditId: "dc-1",
       status: "settled",
     });
+  });
+});
+
+describe("updateDebtCreditDueDate", () => {
+  it("emits an optimistic-concurrency-safe due-date update", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      debtCredits: [{ id: "dc-1", status: "pending", dueDate: null }],
+    }));
+
+    await updateDebtCreditDueDate({
+      debtCreditId: "dc-1",
+      dueDate: 1_800_000_000_000,
+      masterKey: mkKey,
+    });
+
+    expect(fakeAppendEvent.mock.calls[0]![0]).toMatchObject({
+      type: "debt_credit_due_date_updated",
+      entityId: "dc-1",
+      payload: { debtCreditId: "dc-1", dueDate: 1_800_000_000_000 },
+      expectedLastEventId: "snapshot-event",
+    });
+  });
+
+  it("allows clearing an existing due date", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      debtCredits: [{ id: "dc-1", status: "pending", dueDate: 1_800_000_000_000 }],
+    }));
+
+    await updateDebtCreditDueDate({ debtCreditId: "dc-1", dueDate: null, masterKey: mkKey });
+    expect(fakeAppendEvent.mock.calls[0]![0].payload).toEqual({ debtCreditId: "dc-1", dueDate: null });
+  });
+
+  it("rejects missing items and invalid due dates without writing", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot());
+
+    await expect(updateDebtCreditDueDate({ debtCreditId: "missing", dueDate: 1, masterKey: mkKey }))
+      .rejects.toThrow(ValidationError);
+    await expect(updateDebtCreditDueDate({ debtCreditId: "missing", dueDate: -1, masterKey: mkKey }))
+      .rejects.toThrow(ValidationError);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
   });
 });
 

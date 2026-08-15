@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { clearAllConsent, getConsentLevel, revokeConsent, setConsentLevel } from "./consentStore.ts";
+import { clearAllConsent, getConsentLevel, grantHelpProviderConsent, hasHelpProviderConsent, revokeConsent, setConsentLevel } from "./consentStore.ts";
 
 const values = new Map<string, string>();
 const storage: Record<string, unknown> = {
@@ -48,5 +48,21 @@ describe("consent store", () => {
     clearAllConsent();
     expect(values.get("unrelated")).toBe("keep");
     expect(getConsentLevel("literacy")).toBe("NotPrompted");
+  });
+});
+
+describe("help provider consent", () => {
+  it("requires the current version and stores no conversation content", () => {
+    expect(hasHelpProviderConsent()).toBe(false);
+    grantHelpProviderConsent();
+    expect(hasHelpProviderConsent()).toBe(true);
+    expect(localStorage.getItem("wisemoney.help.google-consent.v1")).not.toContain("question");
+  });
+
+  it("rejects old or corrupt records", () => {
+    localStorage.setItem("wisemoney.help.google-consent.v1", '{"version":0,"accepted":true}');
+    expect(hasHelpProviderConsent()).toBe(false);
+    localStorage.setItem("wisemoney.help.google-consent.v1", "not-json");
+    expect(hasHelpProviderConsent()).toBe(false);
   });
 });

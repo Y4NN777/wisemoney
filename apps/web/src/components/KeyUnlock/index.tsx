@@ -22,7 +22,7 @@ import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import Logo from "../../components/Logo.tsx";
-import HelpCenter from "../../components/HelpCenter.tsx";
+import HelpActions from "../../components/HelpActions.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -203,7 +203,7 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
         <header className="flex items-center justify-between border-b border-border py-3">
           <Logo className="h-8 w-auto" />
           <div className="flex items-center gap-2">
-            <HelpCenter navigation={false} />
+            <HelpActions />
             <LanguageSwitcher compact />
             <Button type="button" onClick={onStart} className="hidden h-9 px-4 sm:inline-flex">
               {hasVault ? t("keyUnlock.landing.openApp") : t("keyUnlock.landing.start")}

@@ -1,8 +1,8 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { Bell, CheckCircle2, Clock3, HandCoins, Plus, RefreshCw } from "lucide-react";
-import { useCreateDebtCredit, useFinancialState, useUpdateDebtCreditStatus } from "../../hooks/useFinancialState.ts";
+import { Bell, CalendarDays, CalendarPlus, CheckCircle2, Clock3, HandCoins, Plus, RefreshCw } from "lucide-react";
+import { useCreateDebtCredit, useFinancialState, useUpdateDebtCreditDueDate, useUpdateDebtCreditStatus } from "../../hooks/useFinancialState.ts";
 import type { DebtCreditKind, DebtCreditState, DebtCreditStatus } from "../../domain/financialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Button } from "../../components/ui/button.tsx";
@@ -14,6 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
 import { formatLocalDateInput, parseLocalDateInput } from "../../lib/localDate.ts";
+import { createReminderCalendar, downloadCalendarExport, type CalendarExport, type CalendarLocale } from "../../calendar/ics.ts";
+import { useReminders } from "../../reminders/ReminderProvider.tsx";
 
 const STATUS_BADGE_CLASS: Record<DebtCreditStatus, string> = {
   pending: "border-amber bg-amber-wash text-amber",
@@ -31,6 +33,98 @@ function todayInputValue(): string {
 
 function displayDate(timestamp: number, language: string): string {
   return new Date(timestamp).toLocaleDateString(language);
+}
+
+export function parseOptionalDueDate(value: string): number | null | undefined {
+  if (value === "") return null;
+  return parseLocalDateInput(value) ?? undefined;
+}
+
+export function createDebtCreditCalendar(
+  item: DebtCreditState,
+  locale: CalendarLocale,
+  alarmMinutesBefore: number | number[] = 10_080,
+): CalendarExport {
+  if (item.dueDate == null) throw new Error("Debt or receivable has no due date");
+  return createReminderCalendar({
+    id: `debt-credit-${item.id}`,
+    label: `${item.partyName}: ${item.motive}`,
+    startsAt: item.dueDate,
+    locale,
+    alarmMinutesBefore,
+  });
+}
+
+type DueDateEditorProps = {
+  item: DebtCreditState;
+  label: string;
+  noDueDate: string;
+  saveLabel: string;
+  invalidDate: string;
+  addToCalendarLabel: string;
+  locale: CalendarLocale;
+  alarmMinutesBefore: number[];
+  updating: boolean;
+  onSave: (id: string, dueDate: number | null, partyName: string) => void;
+};
+
+function DueDateEditor({ item, label, noDueDate, saveLabel, invalidDate, addToCalendarLabel, locale, alarmMinutesBefore, updating, onSave }: DueDateEditorProps) {
+  const [value, setValue] = useState(item.dueDate == null ? "" : formatLocalDateInput(new Date(item.dueDate)));
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setValue(item.dueDate == null ? "" : formatLocalDateInput(new Date(item.dueDate)));
+    setError(null);
+  }, [item.dueDate]);
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    const dueDate = parseOptionalDueDate(value);
+    if (dueDate === undefined) {
+      setError(invalidDate);
+      return;
+    }
+    setError(null);
+    onSave(item.id, dueDate, item.partyName);
+  };
+
+  return (
+    <form onSubmit={submit} className="border-t border-border pt-3">
+      <Label htmlFor={`debt-credit-due-${item.id}`} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <CalendarDays className="h-4 w-4" />
+        {label}
+      </Label>
+      <div className="mt-2 flex gap-2">
+        <Input
+          id={`debt-credit-due-${item.id}`}
+          type="date"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          aria-invalid={error != null}
+          aria-describedby={error == null ? undefined : `debt-credit-due-error-${item.id}`}
+          placeholder={noDueDate}
+          className="h-9"
+        />
+        <Button type="submit" size="sm" variant="outline" disabled={updating}>
+          {saveLabel}
+        </Button>
+      </div>
+      {value === "" && error == null && <p className="mt-1 text-xs text-muted-foreground">{noDueDate}</p>}
+      {error != null && <p id={`debt-credit-due-error-${item.id}`} role="alert" className="mt-1 text-xs text-destructive">{error}</p>}
+      {item.dueDate != null && (
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          className="mt-2 px-0 text-ocean-primary"
+          onClick={() => downloadCalendarExport(createDebtCreditCalendar(item, locale, alarmMinutesBefore))}
+        >
+          <CalendarPlus className="mr-1.5 h-4 w-4" />
+          {addToCalendarLabel}
+        </Button>
+      )}
+    </form>
+  );
 }
 
 function statusIcon(status: DebtCreditStatus) {
@@ -57,11 +151,19 @@ type DebtCreditColumnProps = {
   motiveLabel: string;
   amountLabel: string;
   dateLabel: string;
+  dueDateLabel: string;
+  noDueDate: string;
+  saveDueDateLabel: string;
+  invalidDueDate: string;
+  addToCalendarLabel: string;
+  alarmMinutesBefore: number[];
   statusAriaLabel: string;
   statusLabels: Record<DebtCreditStatus, string>;
   items: DebtCreditState[];
   onStatusChange: (id: string, status: DebtCreditStatus, label: string) => void;
+  onDueDateChange: (id: string, dueDate: number | null, label: string) => void;
   updating: boolean;
+  updatingDueDate: boolean;
 };
 
 function DebtCreditColumn({
@@ -71,13 +173,22 @@ function DebtCreditColumn({
   motiveLabel,
   amountLabel,
   dateLabel,
+  dueDateLabel,
+  noDueDate,
+  saveDueDateLabel,
+  invalidDueDate,
+  addToCalendarLabel,
+  alarmMinutesBefore,
   statusAriaLabel,
   statusLabels,
   items,
   onStatusChange,
+  onDueDateChange,
   updating,
+  updatingDueDate,
 }: DebtCreditColumnProps) {
   const { i18n } = useTranslation();
+  const calendarLocale: CalendarLocale = i18n.language.toLowerCase().startsWith("fr") ? "fr" : "en";
 
   return (
     <section className="space-y-3">
@@ -138,6 +249,19 @@ function DebtCreditColumn({
                     </SelectContent>
                   </Select>
                 </div>
+
+                <DueDateEditor
+                  item={item}
+                  label={dueDateLabel}
+                  noDueDate={noDueDate}
+                  saveLabel={saveDueDateLabel}
+                  invalidDate={invalidDueDate}
+                  addToCalendarLabel={addToCalendarLabel}
+                  locale={calendarLocale}
+                  alarmMinutesBefore={alarmMinutesBefore}
+                  updating={updatingDueDate}
+                  onSave={onDueDateChange}
+                />
               </CardContent>
             </Card>
           ))}
@@ -148,10 +272,14 @@ function DebtCreditColumn({
 }
 
 export default function Debts() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { settings: reminderSettings } = useReminders();
+  const debtAlarmMinutes = reminderSettings.types.debt_due.leadDays.map((day) => day * 24 * 60);
+  const receivableAlarmMinutes = reminderSettings.types.receivable_due.leadDays.map((day) => day * 24 * 60);
   const { data: snapshot, isLoading } = useFinancialState();
   const createDebtCredit = useCreateDebtCredit();
   const updateStatus = useUpdateDebtCreditStatus();
+  const updateDueDate = useUpdateDebtCreditDueDate();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [kind, setKind] = useState<DebtCreditKind>("receivable");
@@ -159,6 +287,7 @@ export default function Debts() {
   const [motive, setMotive] = useState("");
   const [amountStr, setAmountStr] = useState("");
   const [dateValue, setDateValue] = useState(todayInputValue());
+  const [dueDateValue, setDueDateValue] = useState("");
   const [status, setStatus] = useState<DebtCreditStatus>("pending");
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -185,6 +314,7 @@ export default function Debts() {
     setMotive("");
     setAmountStr("");
     setDateValue(todayInputValue());
+    setDueDateValue("");
     setStatus("pending");
     setCreateError(null);
   };
@@ -211,6 +341,11 @@ export default function Debts() {
       setCreateError(t("debts.errors.invalidDate"));
       return;
     }
+    const dueDate = parseOptionalDueDate(dueDateValue);
+    if (dueDate === undefined) {
+      setCreateError(t("debts.errors.invalidDueDate"));
+      return;
+    }
 
     const label = partyName.trim();
     createDebtCredit.mutate(
@@ -221,6 +356,7 @@ export default function Debts() {
         amount: { minorUnits, currency },
         date,
         status,
+        dueDate,
       },
       {
         onSuccess: () => {
@@ -246,6 +382,16 @@ export default function Debts() {
           const message = t("debts.errors.statusUpdateFailed");
           toast.error(message);
         },
+      },
+    );
+  };
+
+  const handleDueDateChange = (id: string, dueDate: number | null, label: string) => {
+    updateDueDate.mutate(
+      { debtCreditId: id, dueDate },
+      {
+        onSuccess: () => toast.success(t("debts.toasts.dueDateUpdated"), { description: label }),
+        onError: () => toast.error(t("debts.errors.dueDateUpdateFailed")),
       },
     );
   };
@@ -339,6 +485,16 @@ export default function Debts() {
                 </div>
               </div>
               <div className="space-y-2">
+                <Label htmlFor="debt-credit-due-date">{t("debts.fields.dueDate")}</Label>
+                <Input
+                  id="debt-credit-due-date"
+                  type="date"
+                  value={dueDateValue}
+                  onChange={(event) => setDueDateValue(event.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">{t("debts.noDueDateHint")}</p>
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="debt-credit-status">{t("debts.fields.status")}</Label>
                 <Select value={status} onValueChange={(value) => setStatus(value as DebtCreditStatus)}>
                   <SelectTrigger id="debt-credit-status">
@@ -414,6 +570,10 @@ export default function Debts() {
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{item.partyName}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{item.motive}</p>
+                    <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      {item.dueDate == null ? t("debts.noDueDate") : displayDate(item.dueDate, i18n.language)}
+                    </p>
                   </div>
                   <p className="shrink-0 text-sm font-semibold">
                     {formatMoney(item.amount.minorUnits, item.amount.currency)}
@@ -433,11 +593,19 @@ export default function Debts() {
           motiveLabel={t("debts.fields.motive")}
           amountLabel={t("debts.fields.amountShort")}
           dateLabel={t("debts.fields.date")}
+          dueDateLabel={t("debts.fields.dueDate")}
+          noDueDate={t("debts.noDueDate")}
+          saveDueDateLabel={t("debts.saveDueDate")}
+          invalidDueDate={t("debts.errors.invalidDueDate")}
+          addToCalendarLabel={t("debts.addToCalendar")}
+          alarmMinutesBefore={receivableAlarmMinutes}
           statusAriaLabel={t("debts.statusAria")}
           statusLabels={statusLabels}
           items={receivables}
           onStatusChange={handleStatusChange}
+          onDueDateChange={handleDueDateChange}
           updating={updateStatus.isPending}
+          updatingDueDate={updateDueDate.isPending}
         />
         <DebtCreditColumn
           title={t("debts.sections.debts")}
@@ -446,11 +614,19 @@ export default function Debts() {
           motiveLabel={t("debts.fields.motive")}
           amountLabel={t("debts.fields.amountShort")}
           dateLabel={t("debts.fields.date")}
+          dueDateLabel={t("debts.fields.dueDate")}
+          noDueDate={t("debts.noDueDate")}
+          saveDueDateLabel={t("debts.saveDueDate")}
+          invalidDueDate={t("debts.errors.invalidDueDate")}
+          addToCalendarLabel={t("debts.addToCalendar")}
+          alarmMinutesBefore={debtAlarmMinutes}
           statusAriaLabel={t("debts.statusAria")}
           statusLabels={statusLabels}
           items={debts}
           onStatusChange={handleStatusChange}
+          onDueDateChange={handleDueDateChange}
           updating={updateStatus.isPending}
+          updatingDueDate={updateDueDate.isPending}
         />
       </div>
     </main>

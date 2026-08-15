@@ -4,8 +4,10 @@ import DevicesSection from "./DevicesSection.tsx";
 import CurrencySection from "./CurrencySection.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
-import { Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck } from "lucide-react";
+import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
+import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
+import { useReminders } from "../../reminders/ReminderProvider.tsx";
 
 function SettingsPanel({
   icon,
@@ -37,6 +39,7 @@ function SettingsPanel({
 
 export default function Settings() {
   const { t } = useTranslation();
+  const reminders = useReminders();
   return (
     <main aria-label={t("settings.title")} className="app-page max-w-4xl">
       <div className="page-head">
@@ -62,6 +65,20 @@ export default function Settings() {
       </section>
 
       <div className="grid gap-3 motion-enter">
+        <SettingsPanel
+          icon={<BellRing className="h-5 w-5" />}
+          title={t("settings.sections.reminders.title")}
+          description={t("settings.sections.reminders.description")}
+        >
+          <ReminderSettingsSection
+            settings={reminders.settings}
+            permission={reminders.permission}
+            onChange={reminders.updateSettings}
+            onRequestPermission={reminders.requestPermission}
+            onTestNotification={reminders.testNotification}
+            onExportWeeklyCalendar={reminders.exportWeeklyCalendar}
+          />
+        </SettingsPanel>
         <SettingsPanel
           icon={<Coins className="h-5 w-5" />}
           title={t("settings.sections.money.title")}

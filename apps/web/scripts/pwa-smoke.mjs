@@ -108,6 +108,16 @@ try {
     assert.equal(response?.status(), 200, `${device.name}: home did not return 200`);
     await page.waitForFunction(() => !document.body.innerText.includes("Loading"), undefined, { timeout: 10_000 });
     await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
+    await page.getByRole("button", { name: "Open help", exact: true }).click();
+    await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
+    await page.getByRole("button", { name: "Open WiseMoney help assistant", exact: true }).click();
+    await page.getByRole("heading", { name: "Before using the help assistant", exact: true }).waitFor();
+    await page.getByText("Your question and optional image are sent to Google to generate the answer.", { exact: true }).waitFor();
+    await page.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByLabel("Quick search").fill("backup");
+    await page.getByText("Back up, import, export, and reset", { exact: true }).waitFor();
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}.png`, fullPage: true });
 
     const registration = await page.evaluate(async () => {
@@ -125,9 +135,11 @@ try {
 
     offline = true;
     await context.setOffline(true);
-    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.goto(`${baseURL}/help`, { waitUntil: "domcontentloaded" });
     await page.waitForFunction(() => !document.body.innerText.includes("Loading"), undefined, { timeout: 10_000 });
-    await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
+    await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
+    await page.getByLabel("Quick search").fill("offline");
+    await page.getByText("Offline use and troubleshooting", { exact: true }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}-offline.png`, fullPage: true });
 
     assert.deepEqual(errors, [], `${device.name} runtime errors:\n${errors.join("\n")}`);
@@ -277,10 +289,12 @@ try {
   await appPage.getByText(/^Through /).waitFor();
   await appPage.getByRole("tab", { name: "Month", exact: true }).click();
   await appPage.getByText(`${smokeMonthStart} – ${smokePeriodEnd}`, { exact: true }).waitFor();
-  await appPage.getByRole("button", { name: "Open help center", exact: true }).click();
-  await appPage.getByText("Understand my figures", { exact: true }).click();
-  await appPage.getByText("+ and − before an amount", { exact: true }).waitFor();
-  await appPage.getByRole("button", { name: "Close", exact: true }).click();
+  await appPage.getByRole("button", { name: "Open help", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
+  await appPage.getByLabel("Quick search").fill("total balance");
+  await appPage.getByText("Read the dashboard", { exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "Back", exact: true }).click();
+  await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
   await appPage.screenshot({ path: `${outputDir}/transfer-history.png`, fullPage: true });
   await appPage.setViewportSize({ width: 390, height: 844 });
   await appPage.screenshot({ path: `${outputDir}/transfer-history-mobile.png`, fullPage: true });

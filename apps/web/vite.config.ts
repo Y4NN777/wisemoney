@@ -9,6 +9,9 @@ export default defineConfig({
     tailwindcss(),
     react(),
     VitePWA({
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.ts",
       registerType: "prompt",
       injectAutoRegister: false,
       includeAssets: ["wisemoney-icon.svg", "logo.svg", "icons/wisemoney-icon-*.png"],
@@ -57,22 +60,8 @@ export default defineConfig({
           },
         ],
       },
-      workbox: {
-        // Offline-first: cache all navigation to index.html (INV-PERS-01).
-        navigateFallback: "/index.html",
-        cleanupOutdatedCaches: true,
+      injectManifest: {
         globPatterns: ["**/*.{js,css,html,wasm}"],
-        // hash-wasm Argon2id .wasm must be cached for offline unlock.
-        runtimeCaching: [
-          {
-            urlPattern: /\.wasm$/,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "wasm-cache",
-              expiration: { maxAgeSeconds: 60 * 60 * 24 * 30 },
-            },
-          },
-        ],
       },
     }),
   ],

@@ -687,6 +687,56 @@
         "updateFailed": "Échec de la mise à jour du compte",
         "archiveFailed": "Échec de l’archivage du compte"
       }
+    },
+    "plannedExpenses": {
+      "title": "Dépenses prévues",
+      "description": "Préparez des dépenses ponctuelles sans modifier les soldes avant la confirmation du paiement.",
+      "pendingSummary": "Dépenses prévues en attente",
+      "add": "Ajouter une dépense prévue",
+      "createTitle": "Ajouter une dépense prévue",
+      "createDescription": "Aucun compte ni aucune transaction n’est créé à ce stade.",
+      "editTitle": "Modifier la dépense prévue",
+      "completeTitle": "Marquer comme faite",
+      "completeWarning": "Cette action créera une transaction et mettra à jour vos soldes et budgets.",
+      "noDueDate": "Sans échéance",
+      "emptyPriority": "Aucune dépense en attente à ce niveau de priorité.",
+      "quickPriority": "Modifier la priorité de {{label}}",
+      "unknownCategory": "Catégorie inconnue",
+      "unknownAccount": "Compte inconnu",
+      "confirmCancel": "Annuler la dépense prévue « {{label}} » ? Aucune transaction ne sera créée.",
+      "noCompatibleAccount": "Aucun compte actif n’utilise {{currency}}. Le paiement ne peut pas encore être confirmé.",
+      "openAccounts": "Ouvrir la gestion des comptes",
+      "priorities": { "low": "Faible", "medium": "Moyenne", "high": "Haute" },
+      "priorityGroups": { "high": "Priorité haute", "medium": "Priorité moyenne", "low": "Priorité faible" },
+      "statuses": { "pending": "En attente", "completed": "Réalisée", "cancelled": "Annulée" },
+      "fields": {
+        "label": "Libellé", "estimatedAmount": "Montant estimé", "actualAmount": "Montant réel",
+        "currency": "Devise", "category": "Catégorie", "selectCategory": "Sélectionner une catégorie",
+        "priority": "Priorité", "dueDate": "Échéance (facultative)", "note": "Note (facultative)",
+        "account": "Compte", "selectAccount": "Sélectionner un compte", "occurredAt": "Date effective"
+      },
+      "actions": {
+        "edit": "Modifier", "complete": "Marquer comme faite", "cancel": "Annuler",
+        "create": "Ajouter la dépense prévue", "save": "Enregistrer les modifications", "saving": "Enregistrement…",
+        "completing": "Création de la transaction…", "confirmComplete": "Confirmer le paiement"
+      },
+      "success": {
+        "created": "Dépense prévue ajoutée", "updated": "Dépense prévue modifiée",
+        "priorityUpdated": "Priorité modifiée", "cancelled": "Dépense prévue annulée",
+        "completed": "Transaction créée et dépense prévue réalisée"
+      },
+      "errors": {
+        "labelRequired": "Saisissez un libellé.", "positiveAmount": "Saisissez un montant supérieur à zéro.",
+        "categoryRequired": "Sélectionnez une catégorie active.", "accountRequired": "Sélectionnez un compte actif compatible.",
+        "invalidDate": "Saisissez une date valide.", "createFailed": "Impossible d’ajouter la dépense prévue.",
+        "updateFailed": "Impossible de modifier la dépense prévue.", "cancelFailed": "Impossible d’annuler la dépense prévue.",
+        "completeFailed": "Le paiement n’a pas été enregistré. Aucune transaction n’a été créée."
+      },
+      "history": {
+        "title": "Historique", "empty": "Aucune dépense prévue réalisée ou annulée.",
+        "estimated": "Estimé", "actual": "Réel", "account": "Compte utilisé",
+        "completedAt": "Réalisée le", "cancelledAt": "Annulée le"
+      }
     }
   },
   "assistant": {
@@ -695,6 +745,7 @@
     "checkingSetup": "Vérification de la configuration de l'IA.",
     "setupRequiredByo": "Ajoutez une clé personnelle de fournisseur dans les paramètres pour utiliser l’assistant.",
     "setupRequiredEdge": "Ajoutez une clé personnelle de fournisseur ou connectez votre compte en ligne pour utiliser l’assistant.",
+    "smartFeaturesPreparing": "Cette fonctionnalité intelligente est en préparation. Vos données et toutes les fonctions normales de WiseMoney restent disponibles.",
     "emptyPaused": "Les fonctions d'IA sont en pause tant que vous n'avez pas configuré une clé de fournisseur ou connecté la passerelle gérée.",
     "aiNoticeTitle": "L'IA est facultative et non configurée",
     "aiNoticeAction": "Configurer les clés IA",
@@ -1042,7 +1093,8 @@
       "motive": "Motif",
       "amount": "Montant ({{currency}})",
       "amountShort": "Montant",
-      "date": "Date",
+      "date": "Date d’enregistrement",
+      "dueDate": "Échéance (facultative)",
       "status": "Statut"
     },
     "status": {
@@ -1051,6 +1103,10 @@
       "settled": "Soldé"
     },
     "statusAria": "Mettre à jour le statut de {{partyName}}",
+    "noDueDate": "Sans échéance",
+    "noDueDateHint": "Laissez vide si aucune date limite n’est prévue.",
+    "saveDueDate": "Enregistrer",
+    "addToCalendar": "Ajouter au calendrier",
     "metrics": {
       "unsettledReceivables": "Créances non soldées",
       "unsettledDebts": "Dettes non soldées",
@@ -1070,7 +1126,8 @@
     "toasts": {
       "receivableCreated": "Créance ajoutée",
       "debtCreated": "Dette ajoutée",
-      "statusUpdated": "Statut mis à jour"
+      "statusUpdated": "Statut mis à jour",
+      "dueDateUpdated": "Échéance mise à jour"
     },
     "errors": {
       "debtorRequired": "Nom du débiteur requis",
@@ -1078,8 +1135,77 @@
       "motiveRequired": "Motif requis",
       "invalidAmount": "Montant invalide",
       "invalidDate": "Date invalide",
+      "invalidDueDate": "Échéance invalide",
       "createFailed": "Échec de l'ajout",
-      "statusUpdateFailed": "Échec de la mise à jour du statut"
+      "statusUpdateFailed": "Échec de la mise à jour du statut",
+      "dueDateUpdateFailed": "Échec de la mise à jour de l’échéance"
+    }
+  },
+  "reminders": {
+    "types": {
+      "weekly_review": "Revue hebdomadaire",
+      "planned_expense": "Dépenses prévues",
+      "recurring_item": "Opérations récurrentes",
+      "budget_threshold": "Seuils de budget",
+      "debt_due": "Dettes à payer",
+      "receivable_due": "Créances à relancer"
+    },
+    "center": {
+      "open": "Ouvrir les rappels ({{count}} non lus)",
+      "title": "Rappels",
+      "description": "Les échéances utiles calculées sur cet appareil.",
+      "emptyTitle": "Rien ne demande votre attention",
+      "emptyBody": "Les prochains rappels apparaîtront ici après le déverrouillage de WiseMoney.",
+      "unread": "Non lu",
+      "noDate": "Revue périodique",
+      "dismiss": "Ignorer le rappel {{label}}",
+      "view": "Consulter {{label}}",
+      "localOnly": "Calculé localement"
+    },
+    "calendar": {
+      "add": "Ajouter au calendrier"
+    },
+    "settings": {
+      "enable": "Activer les rappels WiseMoney",
+      "privacy": "Les libellés peuvent apparaître sur l’écran verrouillé. Les montants, soldes et notes ne quittent jamais le coffre chiffré.",
+      "typesTitle": "Types de rappels",
+      "leadDays": "Jours d’anticipation",
+      "leadDaysHelp": "Séparez les jours par des virgules ; 0 correspond au jour de l’échéance.",
+      "weekday": "Jour de la revue",
+      "hour": "Heure de la revue",
+      "thresholds": "Seuils de budget",
+      "allowSystem": "Autoriser les notifications système",
+      "test": "Tester une notification",
+      "exportCalendar": "Ajouter la revue au calendrier",
+      "bestEffort": "Sans serveur, les notifications système peuvent être retardées lorsque la PWA est fermée. Le centre de rappels est actualisé à chaque ouverture ; le calendrier reste le canal le plus fiable.",
+      "permission": {
+        "default": "Autorisation non demandée",
+        "granted": "Notifications système autorisées",
+        "denied": "Notifications système bloquées",
+        "unsupported": "Notifications système indisponibles"
+      },
+      "typeHelp": {
+        "weekly_review": "Un rendez-vous régulier pour vérifier l’activité, les engagements et les priorités.",
+        "planned_expense": "Signale les dépenses prévues encore en attente avant leur échéance.",
+        "recurring_item": "Prépare la prochaine occurrence des éléments récurrents actifs.",
+        "budget_threshold": "Alerte une seule fois au plus haut seuil franchi pendant la période.",
+        "debt_due": "Rappelle les dettes non soldées qui possèdent une échéance.",
+        "receivable_due": "Rappelle les créances non soldées à relancer."
+      },
+      "weekdays": {
+        "0": "Dimanche", "1": "Lundi", "2": "Mardi", "3": "Mercredi",
+        "4": "Jeudi", "5": "Vendredi", "6": "Samedi"
+      }
+    },
+    "test": {
+      "title": "Rappel WiseMoney",
+      "body": "Les notifications locales fonctionnent sur cet appareil."
+    },
+    "messages": {
+      "permissionGranted": "Notifications système autorisées"
+    },
+    "errors": {
+      "rebuild": "Impossible d’actualiser les rappels locaux"
     }
   },
   "settings": {
@@ -1091,6 +1217,10 @@
       "description": "Modifie les libellés, les conseils, les dates et les noms de devises dans WiseMoney."
     },
     "sections": {
+      "reminders": {
+        "title": "Rappels et calendrier",
+        "description": "Échéances locales, notifications système et revue hebdomadaire"
+      },
       "money": {
         "title": "Argent et devise",
         "description": "Devise par défaut et taux de change"
@@ -1163,6 +1293,71 @@
         "saveRateFailed": "Échec de l’enregistrement du taux",
         "removeRateFailed": "Échec de la suppression du taux"
       }
+    }
+  },
+  "helpPage": {
+    "open": "Ouvrir l’aide",
+    "shortLabel": "Aide",
+    "back": "Retour",
+    "eyebrow": "Guide WiseMoney",
+    "title": "Trouvez votre chemin dans vos finances.",
+    "intro": "Douze parcours courts expliquent chaque fonction importante de WiseMoney. Recherchez localement, lisez hors ligne ou développez une étape quand vous en avez besoin.",
+    "paths": "parcours guidés, du démarrage au dépannage",
+    "searchLabel": "Recherche rapide",
+    "searchPlaceholder": "Essayez « installer », « virement » ou « sauvegarde »",
+    "contents": "Sur cette page",
+    "results": "Résultats d’aide",
+    "resultCount_one": "{{count}} parcours correspondant",
+    "resultCount_other": "{{count}} parcours correspondants",
+    "noResult": "Aucun parcours correspondant",
+    "noResultHint": "Essayez un mot plus court ou demandez à l’assistant d’aide.",
+    "install": {
+      "prompt": "Installer WiseMoney",
+      "instructions": "Voir les instructions d’installation",
+      "yourDevice": "Instructions pour cet appareil",
+      "ios": "Dans Safari, touchez Partager, puis Sur l’écran d’accueil. Les autres navigateurs iPhone ne proposent pas l’installation.",
+      "android": "Ouvrez le menu du navigateur et choisissez Installer l’application ou Ajouter à l’écran d’accueil. Si l’invite native est disponible, utilisez le bouton ci-dessous.",
+      "desktop": "Utilisez l’icône d’installation dans la barre d’adresse ou choisissez Installer WiseMoney dans le menu du navigateur.",
+      "installed": "WiseMoney est déjà installé sur cet appareil."
+    },
+    "chat": {
+      "open": "Ouvrir l’assistant d’aide WiseMoney",
+      "title": "Assistant d’aide WiseMoney",
+      "scope": "Questions sur l’utilisation de l’application",
+      "welcome": "Que souhaitez-vous faire dans WiseMoney ?",
+      "privacy": "Votre question et l’image facultative restent dans ce navigateur jusqu’à ce qu’une place soit disponible. Cet assistant ne peut pas lire votre coffre financier.",
+      "offline": "Le chat nécessite Internet — toute l’aide écrite reste disponible hors ligne.",
+      "placeholder": "Demandez comment utiliser WiseMoney",
+      "send": "Envoyer la question",
+      "writing": "Rédaction…",
+      "unavailable": "L’assistant d’aide WiseMoney est temporairement indisponible. Le guide écrit reste disponible.",
+      "queuePosition": "Position {{position}} dans la file",
+      "waitEstimate": "Attente estimée : environ {{seconds}} secondes",
+      "quota": "{{count}} unités d’aide restantes aujourd’hui",
+      "quotaReached": "Le quota d’aide local du jour est utilisé. Il se réouvre à minuit UTC.",
+      "reset": "réouverture à {{time}}",
+      "addImage": "Ajouter une image",
+      "removeImage": "Retirer l’image",
+      "imagePreview": "Aperçu de l’image sélectionnée",
+      "imageAttached": "Image jointe",
+      "imageCost": "L’image est redimensionnée et nettoyée avant l’envoi. Cette demande utilise 2 unités.",
+      "imageError": "Choisissez une image valide de moins de 10 Mo.",
+      "imageAttachedLabel": "Image jointe",
+      "consent": {
+        "title": "Avant d’utiliser l’assistant d’aide",
+        "body": "Cette confirmation concerne uniquement le chat d’aide. Votre coffre WiseMoney chiffré reste séparé.",
+        "google": "Votre question et l’image facultative sont envoyées à Google pour générer la réponse.",
+        "scope": "L’assistant explique WiseMoney et ne peut accéder ni au coffre, ni aux comptes, ni aux transactions, ni à l’écran.",
+        "sensitive": "N’incluez aucune information personnelle ou financière dans un message ou une image.",
+        "accept": "J’ai compris et je continue",
+        "review": "Relire les informations du chat d’aide"
+      }
+    },
+    "footer": {
+      "privateTitle": "Votre coffre reste séparé",
+      "privateBody": "L’aide écrite et le chat d’aide n’ouvrent ni n’inspectent vos comptes. L’analyse financière appartient à l’Assistant financier et suit toujours son propre consentement.",
+      "offlineTitle": "Le guide voyage avec l’application",
+      "offlineBody": "Après la mise en cache de cette version PWA, les douze parcours écrits restent lisibles sans réseau. Seul le chat attend Internet."
     }
   },
   "common": {

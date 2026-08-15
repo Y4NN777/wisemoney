@@ -1,6 +1,6 @@
 import type { MasterKey } from "@/crypto/envelope.ts";
 import { appendEvent, appendEvents } from "@/domain/eventStore.ts";
-import type { MoneyDTO } from "@/domain/financialState.ts";
+import type { MoneyDTO, PlannedExpensePriority } from "@/domain/financialState.ts";
 import { getSnapshot, readTransactionsInRange } from "@/domain/financialState.ts";
 
 import type { DebtCreditKind, DebtCreditStatus } from "@/domain/financialState.ts";
@@ -282,6 +282,278 @@ export async function recordTransaction(
 }
 
 // ---------------------------------------------------------------------------
+// planned expenses
+// ---------------------------------------------------------------------------
+
+const PLANNED_EXPENSE_PRIORITIES: readonly PlannedExpensePriority[] = [
+  "low",
+  "medium",
+  "high",
+];
+
+type PlannedExpenseFields = {
+  label: string;
+  estimatedAmount: MoneyDTO;
+  categoryId: string;
+  priority: PlannedExpensePriority;
+  dueDate?: number | null;
+  note?: string;
+};
+
+function validatePlannedExpenseFields(
+  params: PlannedExpenseFields,
+  activeCategoryIds: ReadonlySet<string>,
+): ValidationErrorDetail[] {
+  const errors: ValidationErrorDetail[] = [];
+  if (!params.label || params.label.trim().length === 0) {
+    errors.push({ field: "label", message: "Label is required" });
+  }
+  validateMoney("estimatedAmount", params.estimatedAmount, errors, { positive: true });
+  if (!params.categoryId || !activeCategoryIds.has(params.categoryId)) {
+    errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
+  }
+  if (!PLANNED_EXPENSE_PRIORITIES.includes(params.priority)) {
+    errors.push({ field: "priority", message: "Must be low, medium, or high" });
+  }
+  if (
+    params.dueDate != null &&
+    (!Number.isSafeInteger(params.dueDate) || params.dueDate < 0)
+  ) {
+    errors.push({ field: "dueDate", message: "Must be a Unix timestamp in milliseconds" });
+  }
+  return errors;
+}
+
+export type CreatePlannedExpenseParams = PlannedExpenseFields & {
+  masterKey: MasterKey;
+};
+
+export async function createPlannedExpense(
+  params: CreatePlannedExpenseParams,
+): Promise<string> {
+  const snapshot = await getSnapshot(params.masterKey);
+  const activeCategoryIds = new Set(
+    snapshot.categories
+      .filter((category) => !category.isArchived)
+      .map((category) => category.id),
+  );
+  const errors = validatePlannedExpenseFields(params, activeCategoryIds);
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  const id = uuid();
+  await appendEvent({
+    id,
+    timestamp: nowMs(),
+    type: "planned_expense_created",
+    entityId: id,
+    payload: {
+      label: params.label.trim(),
+      estimatedAmount: params.estimatedAmount,
+      categoryId: params.categoryId,
+      priority: params.priority,
+      dueDate: params.dueDate ?? null,
+      note: params.note ?? "",
+    },
+    masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
+  });
+
+  return id;
+}
+
+export type UpdatePlannedExpenseParams = PlannedExpenseFields & {
+  plannedExpenseId: string;
+  masterKey: MasterKey;
+};
+
+export async function updatePlannedExpense(
+  params: UpdatePlannedExpenseParams,
+): Promise<void> {
+  const snapshot = await getSnapshot(params.masterKey);
+  const plannedExpense = snapshot.plannedExpenses.find(
+    (candidate) => candidate.id === params.plannedExpenseId,
+  );
+  const activeCategoryIds = new Set(
+    snapshot.categories
+      .filter((category) => !category.isArchived)
+      .map((category) => category.id),
+  );
+  const errors = validatePlannedExpenseFields(params, activeCategoryIds);
+
+  if (!params.plannedExpenseId || params.plannedExpenseId.trim().length === 0) {
+    errors.push({ field: "plannedExpenseId", message: "Planned expense id is required" });
+  } else if (plannedExpense == null) {
+    errors.push({ field: "plannedExpenseId", message: "Planned expense not found (INV-EVT-03)" });
+  } else if (plannedExpense.status !== "pending") {
+    errors.push({ field: "plannedExpenseId", message: "Only pending planned expenses can be updated" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  await appendEvent({
+    id: uuid(),
+    timestamp: nowMs(),
+    type: "planned_expense_updated",
+    entityId: params.plannedExpenseId,
+    payload: {
+      plannedExpenseId: params.plannedExpenseId,
+      label: params.label.trim(),
+      estimatedAmount: params.estimatedAmount,
+      categoryId: params.categoryId,
+      priority: params.priority,
+      dueDate: params.dueDate ?? null,
+      note: params.note ?? "",
+    },
+    masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
+  });
+}
+
+export type CancelPlannedExpenseParams = {
+  plannedExpenseId: string;
+  masterKey: MasterKey;
+};
+
+export async function cancelPlannedExpense(
+  params: CancelPlannedExpenseParams,
+): Promise<void> {
+  const snapshot = await getSnapshot(params.masterKey);
+  const plannedExpense = snapshot.plannedExpenses.find(
+    (candidate) => candidate.id === params.plannedExpenseId,
+  );
+
+  if (!params.plannedExpenseId || params.plannedExpenseId.trim().length === 0) {
+    throw new ValidationError([{
+      field: "plannedExpenseId",
+      message: "Planned expense id is required",
+    }]);
+  }
+  if (plannedExpense == null) {
+    throw new ValidationError([{
+      field: "plannedExpenseId",
+      message: "Planned expense not found (INV-EVT-03)",
+    }]);
+  }
+  if (plannedExpense.status !== "pending") {
+    throw new ValidationError([{
+      field: "plannedExpenseId",
+      message: "Only pending planned expenses can be cancelled",
+    }]);
+  }
+
+  await appendEvent({
+    id: uuid(),
+    timestamp: nowMs(),
+    type: "planned_expense_cancelled",
+    entityId: params.plannedExpenseId,
+    payload: { plannedExpenseId: params.plannedExpenseId },
+    masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
+  });
+}
+
+export type CompletePlannedExpenseParams = {
+  plannedExpenseId: string;
+  accountId: string;
+  actualAmount: MoneyDTO;
+  occurredAt: number;
+  masterKey: MasterKey;
+};
+
+export async function completePlannedExpense(
+  params: CompletePlannedExpenseParams,
+): Promise<string> {
+  const snapshot = await getSnapshot(params.masterKey);
+  const errors: ValidationErrorDetail[] = [];
+  const plannedExpense = snapshot.plannedExpenses.find(
+    (candidate) => candidate.id === params.plannedExpenseId,
+  );
+  const account = snapshot.accounts.find(
+    (candidate) => candidate.id === params.accountId && candidate.isActive,
+  );
+
+  if (!params.plannedExpenseId || params.plannedExpenseId.trim().length === 0) {
+    errors.push({ field: "plannedExpenseId", message: "Planned expense id is required" });
+  } else if (plannedExpense == null) {
+    errors.push({ field: "plannedExpenseId", message: "Planned expense not found (INV-EVT-03)" });
+  } else if (plannedExpense.status !== "pending") {
+    errors.push({ field: "plannedExpenseId", message: "Only pending planned expenses can be completed" });
+  }
+  if (!params.accountId || account == null) {
+    errors.push({ field: "accountId", message: "Account not found (INV-EVT-03)" });
+  }
+  if (
+    plannedExpense != null &&
+    snapshot.categories.find(
+      (category) => category.id === plannedExpense.categoryId && !category.isArchived,
+    ) == null
+  ) {
+    errors.push({ field: "categoryId", message: "Category not found (INV-EVT-03)" });
+  }
+  validateMoney("actualAmount", params.actualAmount, errors, { positive: true });
+  if (account != null && params.actualAmount.currency !== account.currency) {
+    errors.push({ field: "actualAmount.currency", message: "Must match account currency" });
+  }
+  if (account != null && Number.isSafeInteger(params.actualAmount.minorUnits)) {
+    validateSafeResult(
+      "actualAmount",
+      applyTransactionAmount(account.balance.minorUnits, params.actualAmount.minorUnits, "expense"),
+      errors,
+    );
+  }
+  if (!Number.isSafeInteger(params.occurredAt) || params.occurredAt < 0) {
+    errors.push({ field: "occurredAt", message: "Must be a Unix timestamp in milliseconds" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  const transactionId = uuid();
+  const completionEventId = uuid();
+  const now = nowMs();
+  await appendEvents([
+    {
+      id: transactionId,
+      timestamp: now,
+      type: "transaction_created",
+      entityId: params.accountId,
+      payload: {
+        accountId: params.accountId,
+        categoryId: plannedExpense!.categoryId,
+        amount: params.actualAmount,
+        direction: "expense",
+        note: plannedExpense!.label,
+        tags: ["planned-expense"],
+        merchant: null,
+        occurredAt: params.occurredAt,
+      },
+      masterKey: params.masterKey,
+      expectedLastEventId: snapshot.asOfEventId,
+    },
+    {
+      id: completionEventId,
+      timestamp: now,
+      type: "planned_expense_completed",
+      entityId: params.plannedExpenseId,
+      payload: {
+        plannedExpenseId: params.plannedExpenseId,
+        transactionId,
+        accountId: params.accountId,
+        actualAmount: params.actualAmount,
+        occurredAt: params.occurredAt,
+      },
+      masterKey: params.masterKey,
+      expectedLastEventId: snapshot.asOfEventId,
+    },
+  ]);
+
+  return transactionId;
+}
+
+// ---------------------------------------------------------------------------
 // createCategory
 // ---------------------------------------------------------------------------
 
@@ -407,6 +679,14 @@ export async function archiveCategory(params: ArchiveCategoryParams): Promise<vo
     throw new ValidationError([{
       field: "categoryId",
       message: "This category is used by a recurring item and cannot be archived",
+    }]);
+  }
+  if (snapshot.plannedExpenses.some(
+    (item) => item.categoryId === params.categoryId && item.status === "pending",
+  )) {
+    throw new ValidationError([{
+      field: "categoryId",
+      message: "This category is used by a pending planned expense and cannot be archived",
     }]);
   }
 
@@ -930,6 +1210,7 @@ export type CreateDebtCreditParams = {
   amount: MoneyDTO;
   date: number;
   status: DebtCreditStatus;
+  dueDate?: number | null;
   masterKey: MasterKey;
 };
 
@@ -958,6 +1239,9 @@ export async function createDebtCredit(
   if (!DEBT_CREDIT_STATUSES.includes(params.status)) {
     errors.push({ field: "status", message: "Must be pending, partial, or settled" });
   }
+  if (params.dueDate != null && (!Number.isSafeInteger(params.dueDate) || params.dueDate < 0)) {
+    errors.push({ field: "dueDate", message: "Must be a Unix timestamp in milliseconds" });
+  }
   if (errors.length > 0) {
     throw new ValidationError(errors);
   }
@@ -975,6 +1259,7 @@ export async function createDebtCredit(
       amount: params.amount,
       date: params.date,
       status: params.status,
+      dueDate: params.dueDate ?? null,
     },
     masterKey: params.masterKey,
   });
@@ -1019,6 +1304,49 @@ export async function updateDebtCreditStatus(
     payload: {
       debtCreditId: params.debtCreditId,
       status: params.status,
+    },
+    masterKey: params.masterKey,
+    expectedLastEventId: snapshot.asOfEventId,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// updateDebtCreditDueDate
+// ---------------------------------------------------------------------------
+
+export type UpdateDebtCreditDueDateParams = {
+  debtCreditId: string;
+  dueDate: number | null;
+  masterKey: MasterKey;
+};
+
+export async function updateDebtCreditDueDate(
+  params: UpdateDebtCreditDueDateParams,
+): Promise<void> {
+  const errors: ValidationErrorDetail[] = [];
+  const snapshot = await getSnapshot(params.masterKey);
+  const item = snapshot.debtCredits.find((entry) => entry.id === params.debtCreditId);
+
+  if (!params.debtCreditId || params.debtCreditId.trim().length === 0) {
+    errors.push({ field: "debtCreditId", message: "Debt or receivable id is required" });
+  } else if (item == null) {
+    errors.push({ field: "debtCreditId", message: "Debt or receivable not found (INV-EVT-03)" });
+  }
+  if (params.dueDate != null && (!Number.isSafeInteger(params.dueDate) || params.dueDate < 0)) {
+    errors.push({ field: "dueDate", message: "Must be a Unix timestamp in milliseconds" });
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  await appendEvent({
+    id: uuid(),
+    timestamp: nowMs(),
+    type: "debt_credit_due_date_updated",
+    entityId: params.debtCreditId,
+    payload: {
+      debtCreditId: params.debtCreditId,
+      dueDate: params.dueDate,
     },
     masterKey: params.masterKey,
     expectedLastEventId: snapshot.asOfEventId,

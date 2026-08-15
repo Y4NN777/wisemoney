@@ -5,6 +5,8 @@
 // Add each VITE_* variable here so unknown keys are caught at compile time.
 interface ImportMetaEnv {
   readonly VITE_EDGE_BASE_URL: string | undefined;
+  readonly VITE_HELP_DAILY_UNITS: string | undefined;
+  readonly VITE_HELP_LOCAL_CONCURRENCY: string | undefined;
 }
 
 interface ImportMeta {

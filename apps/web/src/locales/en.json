@@ -687,6 +687,56 @@
         "updateFailed": "Failed to update account",
         "archiveFailed": "Failed to archive account"
       }
+    },
+    "plannedExpenses": {
+      "title": "Planned expenses",
+      "description": "Prepare one-off expenses without changing balances until you confirm payment.",
+      "pendingSummary": "Planned expenses pending",
+      "add": "Add a planned expense",
+      "createTitle": "Add a planned expense",
+      "createDescription": "No account or transaction is created at this stage.",
+      "editTitle": "Edit planned expense",
+      "completeTitle": "Mark as completed",
+      "completeWarning": "This action will create a transaction and update your balances and budgets.",
+      "noDueDate": "No due date",
+      "emptyPriority": "No pending expense at this priority.",
+      "quickPriority": "Change the priority of {{label}}",
+      "unknownCategory": "Unknown category",
+      "unknownAccount": "Unknown account",
+      "confirmCancel": "Cancel the planned expense “{{label}}”? No transaction will be created.",
+      "noCompatibleAccount": "No active account uses {{currency}}. Payment cannot be confirmed yet.",
+      "openAccounts": "Open account management",
+      "priorities": { "low": "Low", "medium": "Medium", "high": "High" },
+      "priorityGroups": { "high": "High priority", "medium": "Medium priority", "low": "Low priority" },
+      "statuses": { "pending": "Pending", "completed": "Completed", "cancelled": "Cancelled" },
+      "fields": {
+        "label": "Label", "estimatedAmount": "Estimated amount", "actualAmount": "Actual amount",
+        "currency": "Currency", "category": "Category", "selectCategory": "Select a category",
+        "priority": "Priority", "dueDate": "Due date (optional)", "note": "Note (optional)",
+        "account": "Account", "selectAccount": "Select an account", "occurredAt": "Effective date"
+      },
+      "actions": {
+        "edit": "Edit", "complete": "Mark as completed", "cancel": "Cancel",
+        "create": "Add planned expense", "save": "Save changes", "saving": "Saving…",
+        "completing": "Creating transaction…", "confirmComplete": "Confirm payment"
+      },
+      "success": {
+        "created": "Planned expense added", "updated": "Planned expense updated",
+        "priorityUpdated": "Priority updated", "cancelled": "Planned expense cancelled",
+        "completed": "Transaction created and planned expense completed"
+      },
+      "errors": {
+        "labelRequired": "Enter a label.", "positiveAmount": "Enter an amount greater than zero.",
+        "categoryRequired": "Select an active category.", "accountRequired": "Select a compatible active account.",
+        "invalidDate": "Enter a valid date.", "createFailed": "Could not add the planned expense.",
+        "updateFailed": "Could not update the planned expense.", "cancelFailed": "Could not cancel the planned expense.",
+        "completeFailed": "Payment was not recorded. No transaction was created."
+      },
+      "history": {
+        "title": "History", "empty": "No completed or cancelled planned expenses.",
+        "estimated": "Estimated", "actual": "Actual", "account": "Account used",
+        "completedAt": "Completed on", "cancelledAt": "Cancelled on"
+      }
     }
   },
   "assistant": {
@@ -695,6 +745,7 @@
     "checkingSetup": "Checking AI setup.",
     "setupRequiredByo": "Add a personal provider key in Settings to use the assistant.",
     "setupRequiredEdge": "Add a personal provider key or connect your online account to use the assistant.",
+    "smartFeaturesPreparing": "This smart feature is being prepared. Your records and all standard WiseMoney features remain available.",
     "emptyPaused": "AI features are paused until you configure a provider key or connect the managed service.",
     "aiNoticeTitle": "AI is optional and not configured",
     "aiNoticeAction": "Configure AI keys",
@@ -1042,7 +1093,8 @@
       "motive": "Motive",
       "amount": "Amount ({{currency}})",
       "amountShort": "Amount",
-      "date": "Date",
+      "date": "Record date",
+      "dueDate": "Due date (optional)",
       "status": "Status"
     },
     "status": {
@@ -1051,6 +1103,10 @@
       "settled": "Settled"
     },
     "statusAria": "Update status for {{partyName}}",
+    "noDueDate": "No due date",
+    "noDueDateHint": "Leave blank when there is no deadline.",
+    "saveDueDate": "Save",
+    "addToCalendar": "Add to calendar",
     "metrics": {
       "unsettledReceivables": "Unsettled receivables",
       "unsettledDebts": "Unsettled debts",
@@ -1070,7 +1126,8 @@
     "toasts": {
       "receivableCreated": "Receivable added",
       "debtCreated": "Debt added",
-      "statusUpdated": "Status updated"
+      "statusUpdated": "Status updated",
+      "dueDateUpdated": "Due date updated"
     },
     "errors": {
       "debtorRequired": "Debtor name is required",
@@ -1078,8 +1135,77 @@
       "motiveRequired": "Motive is required",
       "invalidAmount": "Invalid amount",
       "invalidDate": "Invalid date",
+      "invalidDueDate": "Invalid due date",
       "createFailed": "Failed to add",
-      "statusUpdateFailed": "Failed to update status"
+      "statusUpdateFailed": "Failed to update status",
+      "dueDateUpdateFailed": "Failed to update due date"
+    }
+  },
+  "reminders": {
+    "types": {
+      "weekly_review": "Weekly review",
+      "planned_expense": "Planned expenses",
+      "recurring_item": "Recurring items",
+      "budget_threshold": "Budget thresholds",
+      "debt_due": "Debts to pay",
+      "receivable_due": "Receivables to follow up"
+    },
+    "center": {
+      "open": "Open reminders ({{count}} unread)",
+      "title": "Reminders",
+      "description": "Useful deadlines calculated on this device.",
+      "emptyTitle": "Nothing needs your attention",
+      "emptyBody": "Upcoming reminders will appear here after WiseMoney is unlocked.",
+      "unread": "Unread",
+      "noDate": "Periodic review",
+      "dismiss": "Dismiss reminder {{label}}",
+      "view": "View {{label}}",
+      "localOnly": "Calculated locally"
+    },
+    "calendar": {
+      "add": "Add to calendar"
+    },
+    "settings": {
+      "enable": "Enable WiseMoney reminders",
+      "privacy": "Labels may appear on the lock screen. Amounts, balances, and notes never leave the encrypted vault.",
+      "typesTitle": "Reminder types",
+      "leadDays": "Days in advance",
+      "leadDaysHelp": "Separate days with commas; 0 means the due date.",
+      "weekday": "Review day",
+      "hour": "Review time",
+      "thresholds": "Budget thresholds",
+      "allowSystem": "Allow system notifications",
+      "test": "Test a notification",
+      "exportCalendar": "Add review to calendar",
+      "bestEffort": "Without a server, system notifications may be delayed while the PWA is closed. The reminder center refreshes whenever the app opens; the calendar remains the most reliable channel.",
+      "permission": {
+        "default": "Permission not requested",
+        "granted": "System notifications allowed",
+        "denied": "System notifications blocked",
+        "unsupported": "System notifications unavailable"
+      },
+      "typeHelp": {
+        "weekly_review": "A regular appointment to review activity, commitments, and priorities.",
+        "planned_expense": "Flags pending planned expenses before their due date.",
+        "recurring_item": "Prepares the next occurrence of active recurring items.",
+        "budget_threshold": "Alerts once at the highest threshold crossed during the period.",
+        "debt_due": "Reminds you about unsettled debts with a due date.",
+        "receivable_due": "Reminds you to follow up unsettled receivables."
+      },
+      "weekdays": {
+        "0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday",
+        "4": "Thursday", "5": "Friday", "6": "Saturday"
+      }
+    },
+    "test": {
+      "title": "WiseMoney reminder",
+      "body": "Local notifications work on this device."
+    },
+    "messages": {
+      "permissionGranted": "System notifications allowed"
+    },
+    "errors": {
+      "rebuild": "Could not refresh local reminders"
     }
   },
   "settings": {
@@ -1091,6 +1217,10 @@
       "description": "Changes labels, guidance, dates, and currency names throughout WiseMoney."
     },
     "sections": {
+      "reminders": {
+        "title": "Reminders and calendar",
+        "description": "Local deadlines, system notifications, and weekly review"
+      },
       "money": {
         "title": "Money and currency",
         "description": "Default currency and exchange rates"
@@ -1163,6 +1293,71 @@
         "saveRateFailed": "Failed to save rate",
         "removeRateFailed": "Failed to remove rate"
       }
+    }
+  },
+  "helpPage": {
+    "open": "Open help",
+    "shortLabel": "Help",
+    "back": "Back",
+    "eyebrow": "WiseMoney guide",
+    "title": "Find your way around your money.",
+    "intro": "Twelve short paths explain every important WiseMoney feature. Search locally, read offline, or open a step when you need more detail.",
+    "paths": "guided paths from setup to troubleshooting",
+    "searchLabel": "Quick search",
+    "searchPlaceholder": "Try “install”, “transfer”, or “backup”",
+    "contents": "On this page",
+    "results": "Help results",
+    "resultCount_one": "{{count}} matching path",
+    "resultCount_other": "{{count}} matching paths",
+    "noResult": "No matching path",
+    "noResultHint": "Try a shorter word or ask the help assistant.",
+    "install": {
+      "prompt": "Install WiseMoney",
+      "instructions": "View installation instructions",
+      "yourDevice": "Instructions for this device",
+      "ios": "In Safari, tap Share, then Add to Home Screen. Installation prompts are not available in other iPhone browsers.",
+      "android": "Open your browser menu and choose Install app or Add to Home screen. If a native prompt is available, use the button below.",
+      "desktop": "Use the install icon in the address bar or choose Install WiseMoney from your browser menu.",
+      "installed": "WiseMoney is already installed on this device."
+    },
+    "chat": {
+      "open": "Open WiseMoney help assistant",
+      "title": "WiseMoney help assistant",
+      "scope": "Questions about using the app",
+      "welcome": "What would you like to do in WiseMoney?",
+      "privacy": "Your question and optional image stay in this browser until a place is available. This assistant cannot read your financial vault.",
+      "offline": "Chat requires Internet — all written help remains available offline.",
+      "placeholder": "Ask how to use WiseMoney",
+      "send": "Send question",
+      "writing": "Writing…",
+      "unavailable": "The WiseMoney help assistant is temporarily unavailable. The written guide remains available.",
+      "queuePosition": "Position {{position}} in the queue",
+      "waitEstimate": "Estimated wait: about {{seconds}} seconds",
+      "quota": "{{count}} help units remaining today",
+      "quotaReached": "Today’s local help allowance is used. It reopens at midnight UTC.",
+      "reset": "resets at {{time}}",
+      "addImage": "Add an image",
+      "removeImage": "Remove image",
+      "imagePreview": "Selected image preview",
+      "imageAttached": "Image attached",
+      "imageCost": "The image is resized and cleaned before sending. This request uses 2 units.",
+      "imageError": "Choose a valid image smaller than 10 MB.",
+      "imageAttachedLabel": "Image attached",
+      "consent": {
+        "title": "Before using the help assistant",
+        "body": "This confirmation applies only to the help chat. Your encrypted WiseMoney vault remains separate.",
+        "google": "Your question and optional image are sent to Google to generate the answer.",
+        "scope": "The assistant explains how to use WiseMoney and cannot access your vault, accounts, transactions, or screen.",
+        "sensitive": "Do not include personal or financial information in a message or image.",
+        "accept": "I understand and continue",
+        "review": "Review help chat information"
+      }
+    },
+    "footer": {
+      "privateTitle": "Your vault remains separate",
+      "privateBody": "Written help and help chat do not open or inspect your accounts. Financial analysis belongs to the Financial Assistant and always follows its own consent flow.",
+      "offlineTitle": "The guide travels with the app",
+      "offlineBody": "After the PWA has cached this version, all twelve written paths stay readable without a network connection. Only chat waits for Internet."
     }
   },
   "common": {

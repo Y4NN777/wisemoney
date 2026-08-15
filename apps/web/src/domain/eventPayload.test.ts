@@ -25,6 +25,11 @@ const validPayloads: Record<FinancialEventType, FinancialEventPayload> = {
   transfer_created: { fromAccountId: "a", toAccountId: "b", externalDestination: null, amount: money, note: null },
   debt_credit_created: { kind: "receivable", partyName: "Client", motive: "Invoice", amount: money, date: 1, status: "pending" },
   debt_credit_status_updated: { debtCreditId: "d", status: "partial" },
+  debt_credit_due_date_updated: { debtCreditId: "d", dueDate: null },
+  planned_expense_created: { label: "Laptop", estimatedAmount: money, categoryId: "c", priority: "high", dueDate: null, note: "Work" },
+  planned_expense_updated: { plannedExpenseId: "p", label: "Laptop", estimatedAmount: money, categoryId: "c", priority: "medium", dueDate: 1, note: "Work" },
+  planned_expense_cancelled: { plannedExpenseId: "p" },
+  planned_expense_completed: { plannedExpenseId: "p", transactionId: "t", accountId: "a", actualAmount: money, occurredAt: 1 },
 };
 
 describe("financial event payload schemas", () => {
@@ -48,6 +53,58 @@ describe("financial event payload schemas", () => {
       amount: { minorUnits: -100, currency: "XOF" },
     })).not.toThrow();
   });
+
+  it("accepts occurredAt only on transaction creation", () => {
+    expect(() => validateFinancialEventPayload("transaction_created", {
+      ...validPayloads.transaction_created,
+      occurredAt: 1,
+    })).not.toThrow();
+    expect(() => validateFinancialEventPayload("transaction_updated", {
+      ...validPayloads.transaction_updated,
+      occurredAt: 1,
+    })).toThrow(/schema/);
+    expect(() => validateFinancialEventPayload("transaction_created", {
+      ...validPayloads.transaction_created,
+      occurredAt: -1,
+    })).toThrow(/timestamp/);
+  });
+
+  it("keeps legacy debt creation payloads valid and validates optional due dates", () => {
+    expect(() => validateFinancialEventPayload("debt_credit_created", validPayloads.debt_credit_created)).not.toThrow();
+    expect(() => validateFinancialEventPayload("debt_credit_created", {
+      ...validPayloads.debt_credit_created,
+      dueDate: null,
+    })).not.toThrow();
+    expect(() => validateFinancialEventPayload("debt_credit_created", {
+      ...validPayloads.debt_credit_created,
+      dueDate: 1_800_000_000_000,
+    })).not.toThrow();
+    expect(() => validateFinancialEventPayload("debt_credit_created", {
+      ...validPayloads.debt_credit_created,
+      dueDate: -1,
+    })).toThrow(/timestamp/);
+    expect(() => validateFinancialEventPayload("debt_credit_due_date_updated", {
+      debtCreditId: "d",
+      dueDate: 1.5,
+    })).toThrow(/timestamp/);
+  });
+
+  it.each([
+    ["planned_expense_created", { ...validPayloads.planned_expense_created, label: " " }],
+    ["planned_expense_created", { ...validPayloads.planned_expense_created, estimatedAmount: { minorUnits: 0, currency: "XOF" } }],
+    ["planned_expense_created", { ...validPayloads.planned_expense_created, estimatedAmount: { minorUnits: 1, currency: "xof" } }],
+    ["planned_expense_created", { ...validPayloads.planned_expense_created, categoryId: "" }],
+    ["planned_expense_created", { ...validPayloads.planned_expense_created, priority: "urgent" }],
+    ["planned_expense_created", { ...validPayloads.planned_expense_created, dueDate: -1 }],
+    ["planned_expense_created", { ...validPayloads.planned_expense_created, note: null }],
+    ["planned_expense_updated", { ...validPayloads.planned_expense_updated, plannedExpenseId: "" }],
+    ["planned_expense_cancelled", { ...validPayloads.planned_expense_cancelled, extra: true }],
+    ["planned_expense_completed", { ...validPayloads.planned_expense_completed, actualAmount: { minorUnits: -1, currency: "XOF" } }],
+    ["planned_expense_completed", { ...validPayloads.planned_expense_completed, occurredAt: 1.5 }],
+  ] satisfies Array<[FinancialEventType, FinancialEventPayload]>)
+    ("rejects invalid %s payloads", (type, payload) => {
+      expect(() => validateFinancialEventPayload(type, payload)).toThrow();
+    });
 
   it("rejects a structurally valid sequence with broken references", () => {
     expect(() => validateDecryptedEventSequence([{

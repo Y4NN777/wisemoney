@@ -138,6 +138,18 @@ importers:
       vitest:
         specifier: ^4.1.8
         version: 4.1.8(@vitest/coverage-v8@4.1.8)(vite@7.3.5(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0))
+      workbox-expiration:
+        specifier: ^7.4.0
+        version: 7.4.1
+      workbox-precaching:
+        specifier: ^7.4.0
+        version: 7.4.1
+      workbox-routing:
+        specifier: ^7.4.0
+        version: 7.4.1
+      workbox-strategies:
+        specifier: ^7.4.0
+        version: 7.4.1
 
 packages:
 

@@ -9,11 +9,12 @@ import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, Sel
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
-import { Plus, ArrowUp, ArrowDown, Pencil, Wallet, Tags, Search, CreditCard, Trash2, Check, ChevronsUpDown } from "lucide-react";
+import { Plus, ArrowUp, ArrowDown, Pencil, Wallet, Tags, Search, CreditCard, Trash2, Check, ChevronsUpDown, ListTodo } from "lucide-react";
 import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
 import { parseCaptureSearch, Route, type CaptureTab } from "../../routes/capture.tsx";
+import { PlannedExpensesSection } from "./PlannedExpensesSection.tsx";
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -486,6 +487,7 @@ export default function Capture() {
     `${account.name} ${account.type} ${account.currency}`.toLowerCase().includes(accountSearch.trim().toLowerCase())
   );
   const managedBalance = snapshot?.totalBalance ?? { minorUnits: 0, currency: snapshot?.baseCurrency ?? newAccCurrency };
+  const pendingPlannedExpenses = snapshot?.plannedExpenses.filter((item) => item.status === "pending").length ?? 0;
   const transactionCurrency = accounts.find((account) => account.id === accountId)?.currency ?? snapshot?.baseCurrency ?? "XOF";
   const transferCurrency = accounts.find((account) => account.id === transferFrom)?.currency ?? snapshot?.baseCurrency ?? "XOF";
   const goalCurrency = activeGoals.find((goal) => goal.id === goalId)?.targetAmount.currency ?? snapshot?.baseCurrency ?? "XOF";
@@ -759,7 +761,7 @@ export default function Capture() {
 
         <TabsContent value="manage">
           <div className="max-w-6xl space-y-3">
-            <section className="grid gap-3 sm:grid-cols-3" aria-label={t("capture.manage.summary")}>
+            <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label={t("capture.manage.summary")}>
               <div className="rounded-lg border border-border bg-card p-3">
                 <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><Wallet className="h-4 w-4" />{t("capture.manage.accounts")}</p>
                 <p className="mt-2 text-2xl font-semibold tabular-nums">{accounts.length}</p>
@@ -772,7 +774,20 @@ export default function Capture() {
                 <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><Tags className="h-4 w-4" />{t("capture.manage.customCategories")}</p>
                 <p className="mt-2 text-2xl font-semibold tabular-nums">{categories.length}</p>
               </div>
+              <div className="rounded-lg border border-primary/25 bg-card p-3">
+                <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><ListTodo className="h-4 w-4" />{t("capture.plannedExpenses.pendingSummary")}</p>
+                <p className="mt-2 text-2xl font-semibold tabular-nums">{pendingPlannedExpenses}</p>
+              </div>
             </section>
+
+            {snapshot && (
+              <PlannedExpensesSection
+                snapshot={snapshot}
+                onOpenAccounts={() => {
+                  window.setTimeout(() => document.getElementById("manage-accounts")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+                }}
+              />
+            )}
 
             <div className="grid gap-3 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
               <Card className="interactive-surface">
@@ -863,7 +878,7 @@ export default function Capture() {
                 </CardContent>
               </Card>
 
-              <Card className="interactive-surface">
+              <Card id="manage-accounts" className="interactive-surface scroll-mt-20">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between text-base">
                     {t("capture.manage.accounts")}

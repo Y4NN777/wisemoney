@@ -120,6 +120,31 @@ describe("lossless import", () => {
     expect(mockPersist).toHaveBeenCalledWith({ snapshot: true }, masterKey);
   });
 
+  it("restores planned expenses through journal validation and replay", async () => {
+    const plannedEvent = {
+      id: "planned-event-1",
+      timestamp: 1_700_000_000_000,
+      type: "planned_expense_created",
+      entityId: "planned-1",
+      payload: {
+        label: "Révision moto",
+        estimatedAmount: { minorUnits: 12_500, currency: "XOF" },
+        categoryId: "category-1",
+        priority: "high",
+        dueDate: null,
+        note: "",
+      },
+    };
+
+    await importJSON(exportBlob({ financialEvents: [plannedEvent] }), masterKey);
+
+    expect(mockValidatePayload).toHaveBeenCalledWith(plannedEvent.type, plannedEvent.payload);
+    expect(mockValidateSequence).toHaveBeenCalledWith([plannedEvent]);
+    expect(mockReplaceAllEvents).toHaveBeenCalledWith([{ ...plannedEvent, masterKey }]);
+    expect(mockReplay).toHaveBeenCalled();
+    expect(mockPersist).toHaveBeenCalledWith({ snapshot: true }, masterKey);
+  });
+
   it("validates encrypted envelope parameters before deriving or decrypting", async () => {
     const encrypted = new Blob([JSON.stringify({
       ciphertext: [1],
@@ -177,6 +202,61 @@ describe("lossless import", () => {
 });
 
 describe("human-readable exports", () => {
+  it("includes debt due-date updates in the lossless backup", async () => {
+    mockToArray.mockResolvedValueOnce([{
+      id: "debt-due-event",
+      timestamp: 1_700_000_000_000,
+      type: "debt_credit_due_date_updated",
+      entityId: "debt-1",
+      ciphertext: new Uint8Array([1]),
+      iv: new Uint8Array(12),
+    }]);
+    mockOpen.mockResolvedValueOnce(new TextEncoder().encode(JSON.stringify({
+      debtCreditId: "debt-1",
+      dueDate: 1_800_000_000_000,
+    })));
+
+    const document = JSON.parse(await (await exportJSON(masterKey, false)).text()) as {
+      financialEvents: Array<Record<string, unknown>>;
+    };
+
+    expect(document.financialEvents[0]).toMatchObject({
+      type: "debt_credit_due_date_updated",
+      payload: { debtCreditId: "debt-1", dueDate: 1_800_000_000_000 },
+    });
+  });
+
+  it("includes pending planned-expense events in the lossless backup", async () => {
+    mockToArray.mockResolvedValueOnce([{
+      id: "planned-event-1",
+      timestamp: 1_700_000_000_000,
+      type: "planned_expense_created",
+      entityId: "planned-1",
+      ciphertext: new Uint8Array([1]),
+      iv: new Uint8Array(12),
+    }]);
+    mockOpen.mockResolvedValueOnce(new TextEncoder().encode(JSON.stringify({
+      label: "Révision moto",
+      estimatedAmount: { minorUnits: 12_500, currency: "XOF" },
+      categoryId: "category-1",
+      priority: "high",
+      dueDate: null,
+      note: "",
+    })));
+
+    const document = JSON.parse(await (await exportJSON(masterKey, false)).text()) as {
+      financialEvents: Array<Record<string, unknown>>;
+    };
+
+    expect(document.financialEvents).toHaveLength(1);
+    expect(document.financialEvents[0]).toMatchObject({
+      id: "planned-event-1",
+      type: "planned_expense_created",
+      entityId: "planned-1",
+      payload: { label: "Révision moto", priority: "high" },
+    });
+  });
+
   it("includes currency settings in lossless version 2 exports", async () => {
     mockLoadCurrencyContext.mockResolvedValue({
       baseCurrency: "EUR",

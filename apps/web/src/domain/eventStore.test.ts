@@ -92,7 +92,13 @@ vi.mock("@/crypto/envelope.ts", () => ({
   seal: fakeSeal,
 }));
 
-import { appendEvent, appendEvents, replaceAllEvents, readAllEvents, readEventsSince, AppendEventError } from "./eventStore.ts";
+import { appendEvent, appendEvents, replaceAllEvents, readAllEvents, readEventsSince, AppendEventError, isFinancialEventType } from "./eventStore.ts";
+
+describe("financial event types", () => {
+  it("recognizes debt due-date updates for journal restore", () => {
+    expect(isFinancialEventType("debt_credit_due_date_updated")).toBe(true);
+  });
+});
 
 function makeMasterKey(): MasterKey {
   return { _brand: "MasterKey" as const, key: null as unknown as CryptoKey };

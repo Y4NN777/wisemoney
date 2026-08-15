@@ -1,7 +1,7 @@
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
 import { LayoutDashboard, MessageSquare, PlusCircle, ClipboardList, Settings as SettingsIcon } from "lucide-react";
 import Logo from "../components/Logo.tsx";
-import HelpCenter from "../components/HelpCenter.tsx";
+import HelpActions from "../components/HelpActions.tsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 
@@ -42,7 +42,7 @@ function RootLayout() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <HelpCenter />
+            <HelpActions />
             <LanguageSwitcher compact />
           </div>
         </div>

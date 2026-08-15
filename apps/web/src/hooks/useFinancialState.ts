@@ -4,8 +4,23 @@ import Dexie, { type ObservabilitySet } from "dexie";
 import { useMasterKey } from "../lib/masterKeyContext.ts";
 import { getSnapshot, replayUpTo, readTransactionsInRange } from "../domain/financialState.ts";
 import type { TransactionDisplay } from "../domain/financialState.ts";
-import { recordTransaction, updateTransaction, deleteTransaction, createAccount, updateAccount, archiveAccount, createCategory, renameCategory, archiveCategory, createGoal, recordGoalContribution, createBudget, archiveBudget, archiveGoal, createRecurringItem, archiveRecurringItem, realiseRecurringOccurrence, recordTransfer, createDebtCredit, updateDebtCreditStatus } from "../pillars/state/index.ts";
-import type { RecordTransactionParams, UpdateTransactionParams, DeleteTransactionParams, CreateAccountParams, UpdateAccountParams, ArchiveAccountParams, CreateCategoryParams, RenameCategoryParams, ArchiveCategoryParams, CreateGoalParams, RecordGoalContributionParams, CreateBudgetParams, ArchiveBudgetParams, ArchiveGoalParams, CreateRecurringItemParams, ArchiveRecurringItemParams, RealiseRecurringOccurrenceParams, RecordTransferParams, CreateDebtCreditParams, UpdateDebtCreditStatusParams } from "../pillars/state/index.ts";
+import {
+  recordTransaction, updateTransaction, deleteTransaction, createAccount, updateAccount,
+  archiveAccount, createCategory, renameCategory, archiveCategory, createGoal,
+  recordGoalContribution, createBudget, archiveBudget, archiveGoal, createRecurringItem,
+  archiveRecurringItem, realiseRecurringOccurrence, recordTransfer, createDebtCredit,
+  updateDebtCreditStatus, updateDebtCreditDueDate, createPlannedExpense, updatePlannedExpense,
+  cancelPlannedExpense, completePlannedExpense,
+} from "../pillars/state/index.ts";
+import type {
+  RecordTransactionParams, UpdateTransactionParams, DeleteTransactionParams,
+  CreateAccountParams, UpdateAccountParams, ArchiveAccountParams, CreateCategoryParams,
+  RenameCategoryParams, ArchiveCategoryParams, CreateGoalParams, RecordGoalContributionParams,
+  CreateBudgetParams, ArchiveBudgetParams, ArchiveGoalParams, CreateRecurringItemParams,
+  ArchiveRecurringItemParams, RealiseRecurringOccurrenceParams, RecordTransferParams,
+  CreateDebtCreditParams, UpdateDebtCreditStatusParams, UpdateDebtCreditDueDateParams, CreatePlannedExpenseParams,
+  UpdatePlannedExpenseParams, CancelPlannedExpenseParams, CompletePlannedExpenseParams,
+} from "../pillars/state/index.ts";
 import type { FinancialStateSnapshot } from "../domain/financialState.ts";
 import type { MasterKey } from "../crypto/envelope.ts";
 
@@ -275,6 +290,61 @@ export function useUpdateDebtCreditStatus() {
   return useMutation({
     mutationFn: (params: Omit<UpdateDebtCreditStatusParams, "masterKey">) =>
       updateDebtCreditStatus({ ...params, masterKey }),
+    onSettled: () => invalidateFinancialData(queryClient),
+  });
+}
+
+export function useUpdateDebtCreditDueDate() {
+  const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: Omit<UpdateDebtCreditDueDateParams, "masterKey">) =>
+      updateDebtCreditDueDate({ ...params, masterKey }),
+    onSettled: () => invalidateFinancialData(queryClient),
+  });
+}
+
+export function useCreatePlannedExpense() {
+  const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: Omit<CreatePlannedExpenseParams, "masterKey">) =>
+      createPlannedExpense({ ...params, masterKey }),
+    onSettled: () => invalidateFinancialData(queryClient),
+  });
+}
+
+export function useUpdatePlannedExpense() {
+  const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: Omit<UpdatePlannedExpenseParams, "masterKey">) =>
+      updatePlannedExpense({ ...params, masterKey }),
+    onSettled: () => invalidateFinancialData(queryClient),
+  });
+}
+
+export function useCancelPlannedExpense() {
+  const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: Omit<CancelPlannedExpenseParams, "masterKey">) =>
+      cancelPlannedExpense({ ...params, masterKey }),
+    onSettled: () => invalidateFinancialData(queryClient),
+  });
+}
+
+export function useCompletePlannedExpense() {
+  const masterKey = useMasterKey();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: Omit<CompletePlannedExpenseParams, "masterKey">) =>
+      completePlannedExpense({ ...params, masterKey }),
     onSettled: () => invalidateFinancialData(queryClient),
   });
 }

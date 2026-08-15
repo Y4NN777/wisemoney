@@ -5,6 +5,10 @@ import KeyUnlock from "./components/KeyUnlock/index.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 import { useTranslation } from "react-i18next";
 import { getPwaUpdateDisposition, shouldReloadAfterControllerChange } from "./pwa/updatePolicy.ts";
+import HelpPage from "./help/HelpPage.tsx";
+import { HELP_NAVIGATION_EVENT, isHelpPath } from "./help/navigation.ts";
+import { PwaInstallProvider } from "./pwa/install.tsx";
+import { notifyReminderQueueUpdated, registerReminderPeriodicSync } from "./pwa/reminderQueue.ts";
 
 const UPDATE_TOAST_ID = "wisemoney-update-ready";
 
@@ -20,6 +24,10 @@ function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
     immediate: true,
     onRegisteredSW(_swScriptUrl, registration) {
       setRegistration(registration ?? null);
+      if (registration != null) {
+        notifyReminderQueueUpdated(registration);
+        void registerReminderPeriodicSync(registration);
+      }
     },
     onNeedReload() {
       if (shouldReloadAfterControllerChange(vaultUnlockedRef.current)) {
@@ -74,11 +82,26 @@ function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
 
 export default function App() {
   const [vaultUnlocked, setVaultUnlocked] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(() => isHelpPath());
+
+  useEffect(() => {
+    const updateRoute = () => setHelpOpen(isHelpPath());
+    window.addEventListener("popstate", updateRoute);
+    window.addEventListener(HELP_NAVIGATION_EVENT, updateRoute);
+    return () => {
+      window.removeEventListener("popstate", updateRoute);
+      window.removeEventListener(HELP_NAVIGATION_EVENT, updateRoute);
+    };
+  }, []);
+
   return (
-    <>
+    <PwaInstallProvider>
       <Toaster />
       <PwaUpdateHandler vaultUnlocked={vaultUnlocked} />
-      <KeyUnlock onVaultUnlockedChange={setVaultUnlocked} />
-    </>
+      <div hidden={helpOpen} aria-hidden={helpOpen}>
+        <KeyUnlock onVaultUnlockedChange={setVaultUnlocked} />
+      </div>
+      {helpOpen && <HelpPage />}
+    </PwaInstallProvider>
   );
 }

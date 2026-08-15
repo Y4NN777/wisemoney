@@ -2,6 +2,7 @@ import type { MasterKey } from "@/crypto/envelope.ts";
 import { open, seal } from "@/crypto/envelope.ts";
 import { db } from "@/db/schema.ts";
 import { getSnapshot, readTransactionsInRange } from "@/domain/financialState.ts";
+import type { DebtCreditState, PlannedExpenseState } from "@/domain/financialState.ts";
 import { compareFinancialEvents } from "@/domain/eventStore.ts";
 import { formatMoney } from "@/types/money.ts";
 import { exportJSON } from "./index.ts";
@@ -41,6 +42,8 @@ type CycleArchiveOptions = {
 type ReportLabels = {
   summary: string;
   transactions: string;
+  plannedExpenses: string;
+  debtCredits: string;
   accounts: string;
   budgets: string;
   goals: string;
@@ -84,12 +87,30 @@ type ReportLabels = {
   target: string;
   accumulated: string;
   targetDate: string;
+  label: string;
+  priority: string;
+  estimatedAmount: string;
+  dueDate: string;
+  actualAmount: string;
+  completedAt: string;
+  partyName: string;
+  motive: string;
+  receivable: string;
+  debt: string;
+  partial: string;
+  settled: string;
+  pending: string;
+  completed: string;
+  cancelled: string;
+  low: string;
+  medium: string;
+  high: string;
 };
 
 function labelsFor(locale: string): ReportLabels {
   if (locale.toLowerCase().startsWith("fr")) {
     return {
-      summary: "Synthèse", transactions: "Transactions", accounts: "Comptes", budgets: "Budgets", goals: "Objectifs",
+      summary: "Synthèse", transactions: "Transactions", plannedExpenses: "Dépenses prévues", debtCredits: "Dettes & Créances", accounts: "Comptes", budgets: "Budgets", goals: "Objectifs",
       budget: "Budget", goal: "Objectif",
       field: "Champ", value: "Valeur", archiveName: "Nom du cycle", archiveId: "Identifiant de l’archive",
       generatedAt: "Archive générée le", cycleStart: "Début du cycle", cycleEnd: "Fin du cycle",
@@ -100,11 +121,15 @@ function labelsFor(locale: string): ReportLabels {
       amount: "Montant", convertedAmount: "Montant en devise principale", currency: "Devise", status: "Statut",
       active: "Actif", archived: "Archivé", type: "Type", initialBalance: "Solde initial", currentBalance: "Solde actuel",
       period: "Période", limit: "Limite", spent: "Dépensé", target: "Cible", accumulated: "Accumulation",
-      targetDate: "Date cible",
+      targetDate: "Date cible", label: "Libellé", priority: "Priorité", estimatedAmount: "Montant estimé",
+      dueDate: "Échéance", actualAmount: "Montant réel", completedAt: "Date de réalisation",
+      partyName: "Personne", motive: "Motif", receivable: "Créance", debt: "Dette", partial: "Partiellement payé", settled: "Soldé",
+      pending: "En attente", completed: "Réalisée", cancelled: "Annulée",
+      low: "Faible", medium: "Moyenne", high: "Haute",
     };
   }
   return {
-    summary: "Summary", transactions: "Transactions", accounts: "Accounts", budgets: "Budgets", goals: "Goals",
+    summary: "Summary", transactions: "Transactions", plannedExpenses: "Planned expenses", debtCredits: "Debts & Receivables", accounts: "Accounts", budgets: "Budgets", goals: "Goals",
     budget: "Budget", goal: "Goal",
     field: "Field", value: "Value", archiveName: "Cycle name", archiveId: "Archive ID", generatedAt: "Archive generated at",
     cycleStart: "Cycle start", cycleEnd: "Cycle end", eventCount: "Journal events", checksum: "Backup SHA-256",
@@ -114,6 +139,10 @@ function labelsFor(locale: string): ReportLabels {
     tags: "Tags", amount: "Amount", convertedAmount: "Amount in base currency", currency: "Currency", status: "Status",
     active: "Active", archived: "Archived", type: "Type", initialBalance: "Initial balance", currentBalance: "Current balance",
     period: "Period", limit: "Limit", spent: "Spent", target: "Target", accumulated: "Accumulated", targetDate: "Target date",
+    label: "Label", priority: "Priority", estimatedAmount: "Estimated amount", dueDate: "Due date",
+    actualAmount: "Actual amount", completedAt: "Completion date", pending: "Pending", completed: "Completed",
+    partyName: "Person", motive: "Motive", receivable: "Receivable", debt: "Debt", partial: "Partially paid", settled: "Settled",
+    cancelled: "Cancelled", low: "Low", medium: "Medium", high: "High",
   };
 }
 
@@ -133,6 +162,95 @@ function valueRows(rows: Array<Array<string | number>>) {
 function formatDate(timestamp: number | null, locale: string): string {
   if (timestamp == null) return "—";
   return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(timestamp);
+}
+
+function formatCalendarDate(timestamp: number | null, locale: string): string {
+  if (timestamp == null) return "—";
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(timestamp);
+}
+
+export function createPlannedExpenseReportSheet(
+  plannedExpenses: readonly PlannedExpenseState[],
+  locale: string,
+) {
+  const labels = labelsFor(locale);
+  const rows = plannedExpenses.map((plannedExpense) => [
+    plannedExpense.label,
+    labels[plannedExpense.priority],
+    formatMoney(plannedExpense.estimatedAmount, locale),
+    formatDate(plannedExpense.dueDate, locale),
+    labels[plannedExpense.status],
+    plannedExpense.actualAmount == null ? "—" : formatMoney(plannedExpense.actualAmount, locale),
+    formatDate(plannedExpense.completedAt, locale),
+  ]);
+
+  return {
+    sheet: labels.plannedExpenses,
+    data: [
+      headerRow([
+        labels.label,
+        labels.priority,
+        labels.estimatedAmount,
+        labels.dueDate,
+        labels.status,
+        labels.actualAmount,
+        labels.completedAt,
+      ]),
+      ...valueRows(rows),
+    ],
+    columns: [
+      { width: 34 },
+      { width: 14 },
+      { width: 22 },
+      { width: 22 },
+      { width: 16 },
+      { width: 22 },
+      { width: 22 },
+    ],
+    showGridLines: false,
+  };
+}
+
+export function createDebtCreditReportSheet(
+  debtCredits: readonly DebtCreditState[],
+  locale: string,
+) {
+  const labels = labelsFor(locale);
+  const rows = debtCredits.map((item) => [
+    labels[item.kind],
+    item.partyName,
+    item.motive,
+    formatMoney(item.amount, locale),
+    formatCalendarDate(item.date, locale),
+    formatCalendarDate(item.dueDate, locale),
+    labels[item.status],
+  ]);
+
+  return {
+    sheet: labels.debtCredits,
+    data: [
+      headerRow([
+        labels.type,
+        labels.partyName,
+        labels.motive,
+        labels.amount,
+        labels.date,
+        labels.dueDate,
+        labels.status,
+      ]),
+      ...valueRows(rows),
+    ],
+    columns: [
+      { width: 18 },
+      { width: 28 },
+      { width: 36 },
+      { width: 22 },
+      { width: 22 },
+      { width: 22 },
+      { width: 20 },
+    ],
+    showGridLines: false,
+  };
 }
 
 function slugify(value: string): string {
@@ -278,6 +396,8 @@ async function createCycleReport(
       columns: [{ width: 22 }, { width: 12 }, { width: 24 }, { width: 24 }, { width: 22 }, { width: 36 }, { width: 24 }, { width: 20 }, { width: 26 }, { width: 38 }],
       showGridLines: false,
     },
+    createPlannedExpenseReportSheet(snapshot.plannedExpenses, locale),
+    createDebtCreditReportSheet(snapshot.debtCredits, locale),
     {
       sheet: labels.accounts,
       data: [headerRow([labels.account, labels.type, labels.currency, labels.initialBalance, labels.currentBalance, labels.status]), ...valueRows(accountRows)],
@@ -343,9 +463,20 @@ export async function prepareCycleArchive(
 
 export async function closeFinancialCycle(
   masterKey: MasterKey,
-  receipt: CycleArchiveReceipt,
+  receipt: PreparedCycleArchive,
 ): Promise<void> {
   if (!isCycleReceipt(receipt)) throw new Error("cycleArchive: invalid receipt");
+  if (!(receipt.backup instanceof Blob) || receipt.backup.size === 0 ||
+      await sha256(receipt.backup) !== receipt.backupSha256) {
+    throw new Error("cycleArchive: invalid backup");
+  }
+  if (!(receipt.report instanceof Blob) || receipt.report.size === 0) {
+    throw new Error("cycleArchive: invalid XLSX report");
+  }
+  const reportSignature = new Uint8Array(await receipt.report.slice(0, 4).arrayBuffer());
+  if (String.fromCharCode(...reportSignature) !== "PK\u0003\u0004") {
+    throw new Error("cycleArchive: invalid XLSX report");
+  }
   const storedReceipt: CycleArchiveReceipt = {
     version: receipt.version,
     id: receipt.id,

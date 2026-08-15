@@ -147,7 +147,9 @@ export default function Assistant() {
   const managedMode = aiCapability?.mode === "managed";
   const aiUnavailableMessage = aiCapability == null
     ? t("assistant.checkingSetup")
-    : aiCapability.reason === "edge-auth-required"
+    : !aiCapability.edgeConfigured && !aiCapability.byoConfigured
+      ? t("assistant.smartFeaturesPreparing")
+      : aiCapability.reason === "edge-auth-required"
       ? t("assistant.setupRequiredEdge")
       : t("assistant.setupRequiredByo");
 
@@ -313,7 +315,7 @@ export default function Assistant() {
         {!aiAvailable && <AISetupNotice message={aiUnavailableMessage} />}
 
         <TabsContent value="insights" className="space-y-4">
-          {aiAvailable && <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {(["insight", "recommendation", "prediction", "pattern_detection"] as const).map((feat) => {
               const meta = FEATURE_META[feat];
               const loading = insightLoading === feat;
@@ -330,7 +332,7 @@ export default function Assistant() {
                 </Button>
               );
             })}
-          </div>}
+          </div>
 
           {insightFeed.length > 0 && (
             <section aria-label={t("assistant.title")} className="space-y-3">
@@ -401,7 +403,7 @@ export default function Assistant() {
             </CardContent>
           </Card>
 
-          {aiAvailable && <Card className="flex h-[60dvh] max-w-4xl flex-col">
+          <Card className={`flex h-[60dvh] max-w-4xl flex-col ${aiAvailable ? "" : "opacity-60"}`} aria-disabled={!aiAvailable}>
             <CardHeader className="border-b pb-3">
               <CardTitle className="text-base">{t("assistant.chat.title")}</CardTitle>
               <CardDescription>{t("assistant.chat.description")}</CardDescription>
@@ -450,7 +452,7 @@ export default function Assistant() {
                 </Button>
               </form>
             </div>
-          </Card>}
+          </Card>
         </TabsContent>
       </Tabs>
 

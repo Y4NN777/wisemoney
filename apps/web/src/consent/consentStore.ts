@@ -18,6 +18,8 @@
 type ConsentLevel = "NotPrompted" | "Redacted" | "FullGranted";
 
 const STORAGE_KEY_PREFIX = "wisemoney:consent:";
+const HELP_PROVIDER_CONSENT_KEY = "wisemoney.help.google-consent.v1";
+const HELP_PROVIDER_CONSENT_VERSION = 1;
 
 /**
  * Get the current consent level for a feature.
@@ -69,4 +71,24 @@ export function clearAllConsent(): void {
   for (const key of keys) {
     localStorage.removeItem(key);
   }
+  localStorage.removeItem(HELP_PROVIDER_CONSENT_KEY);
+}
+
+/** Versioned disclosure acceptance for the public Google-powered help chat. */
+export function hasHelpProviderConsent(storage: Pick<Storage, "getItem"> = localStorage): boolean {
+  try {
+    const raw = storage.getItem(HELP_PROVIDER_CONSENT_KEY);
+    if (raw == null) return false;
+    const parsed = JSON.parse(raw) as { version?: unknown; accepted?: unknown };
+    return parsed.version === HELP_PROVIDER_CONSENT_VERSION && parsed.accepted === true;
+  } catch {
+    return false;
+  }
+}
+
+export function grantHelpProviderConsent(storage: Pick<Storage, "setItem"> = localStorage): void {
+  storage.setItem(HELP_PROVIDER_CONSENT_KEY, JSON.stringify({
+    version: HELP_PROVIDER_CONSENT_VERSION,
+    accepted: true,
+  }));
 }

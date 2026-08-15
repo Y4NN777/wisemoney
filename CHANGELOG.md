@@ -20,6 +20,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Local reminders and calendar exports** — migrated the PWA to a custom
+  `injectManifest` service worker that preserves offline navigation and WASM
+  caching while opportunistically processing a deduplicated, expiring IndexedDB
+  reminder queue. Added private-by-design ICS exports for individual dated or
+  recurring reminders and a four-week rotating weekly review, with bilingual
+  copy, display alarms, and no financial amounts.
+
+- **Planned expenses** — added a prioritized, event-sourced list for one-off
+  purchases that stays separate from transactions and recurring items. Pending
+  entries do not affect balances or financial aggregates; completing one atomically
+  creates its actual expense transaction, while cycle XLSX statements retain the
+  planning audit trail.
+
+- **Public bilingual help and isolated help assistant** — replaced the help sheet
+  with an offline-ready `/help` guide covering twelve searchable product journeys,
+  added platform-aware PWA installation controls, and introduced a session-only
+  Gemma help chat behind a browser-local TypeScript quota and cross-tab admission
+  queue. Questions and cleaned, resized images remain in the browser until local
+  admission; the stateless help gateway is separate from the financial Go edge
+  and calls the free Google Gemini API directly. A versioned first-use disclosure
+  explains the external processing boundary, and failed requests are refunded by
+  the client without adding a server-side store.
+
 - **Traceable financial cycles** — added an optional cycle-closing workflow that
   generates both a passphrase-protected, restorable backup and a readable XLSX
   statement before reset can be confirmed. Closed-cycle receipts remain visible,
