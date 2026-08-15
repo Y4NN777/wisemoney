@@ -4,6 +4,8 @@ import Logo from "../components/Logo.tsx";
 import HelpActions from "../components/HelpActions.tsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
+import ReminderCenter, { type ReminderViewModel } from "../components/ReminderCenter.tsx";
+import { ReminderProvider, useReminders } from "../reminders/ReminderProvider.tsx";
 
 const navItems = [
   { to: "/", labelKey: "nav.dashboard", icon: LayoutDashboard, exact: true },
@@ -14,11 +16,44 @@ const navItems = [
 ] as const;
 
 export const Route = createRootRoute({
-  component: RootLayout,
+  component: RootWithReminders,
 });
+
+function RootWithReminders() {
+  return <ReminderProvider><RootLayout /></ReminderProvider>;
+}
+
+function reminderUrgency(type: ReminderViewModel["type"], dueAt: number, now = Date.now()): ReminderViewModel["urgency"] {
+  if (type === "weekly_review" || type === "budget_threshold") return "info";
+  const due = new Date(dueAt);
+  const today = new Date(now);
+  due.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  if (due.getTime() < today.getTime()) return "overdue";
+  if (due.getTime() === today.getTime()) return "today";
+  return "upcoming";
+}
 
 function RootLayout() {
   const { t } = useTranslation();
+  const navigate = Route.useNavigate();
+  const { reminders, markRead, dismiss } = useReminders();
+  const reminderViews: ReminderViewModel[] = reminders.map((reminder) => ({
+    id: reminder.id,
+    type: reminder.type,
+    label: reminder.label,
+    dueAt: reminder.dueAt,
+    read: reminder.readAt != null,
+    urgency: reminderUrgency(reminder.type, reminder.dueAt),
+  }));
+
+  const openReminder = (reminder: ReminderViewModel) => {
+    if (reminder.type === "planned_expense") void navigate({ to: "/capture", search: { tab: "manage" } });
+    else if (reminder.type === "recurring_item") void navigate({ to: "/recurring" });
+    else if (reminder.type === "budget_threshold") void navigate({ to: "/budgets" });
+    else if (reminder.type === "debt_due" || reminder.type === "receivable_due") void navigate({ to: "/debts" });
+    else void navigate({ to: "/" });
+  };
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -42,6 +77,7 @@ function RootLayout() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
+            <ReminderCenter reminders={reminderViews} onMarkRead={markRead} onDismiss={dismiss} onOpenReminder={openReminder} />
             <HelpActions />
             <LanguageSwitcher compact />
           </div>
