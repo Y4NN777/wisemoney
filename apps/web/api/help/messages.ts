@@ -1,4 +1,4 @@
-import { isSameOriginRequest, json, sendMessage } from "../_lib/helpGateway";
+import { isSameOriginRequest, json, sendMessage } from "./_helpGateway";
 
 // Named HTTP method exports use Vercel's unambiguous Web Handler contract and
 // avoid the legacy two-argument Node handler adapter used by some Vite builds.

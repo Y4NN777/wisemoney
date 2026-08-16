@@ -48,4 +48,3 @@ export const HELP_CORPUS: Record<string, { en: string; fr: string }> = {
     fr: "L’aide écrite, les comptes, la saisie, les budgets et les rapports locaux fonctionnent hors ligne après mise en cache. Le chat exige Internet.",
   },
 };
-

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { extractGeminiDeltas, isSameOriginRequest, sendMessage } from "./helpGateway.ts";
+import { extractGeminiDeltas, isSameOriginRequest, sendMessage } from "./_helpGateway.ts";
 
 const ORIGINAL_ENV = { ...process.env };
 
