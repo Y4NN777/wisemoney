@@ -77,6 +77,14 @@ try {
   }
   await migrationContext.close();
 
+  const reducedMotionContext = await browser.newContext({ reducedMotion: "reduce" });
+  const reducedMotionPage = await reducedMotionContext.newPage();
+  await reducedMotionPage.goto(`${baseURL}/help`, { waitUntil: "networkidle" });
+  const orbitAnimation = await reducedMotionPage.locator(".help-orbit").evaluate((element) =>
+    getComputedStyle(element, "::after").animationName);
+  assert.equal(orbitAnimation, "none", "reduced motion did not stop the looping help animation");
+  await reducedMotionContext.close();
+
   for (const device of [
     { name: "desktop", viewport: { width: 1440, height: 1000 } },
     { name: "mobile", viewport: { width: 390, height: 844 }, isMobile: true },
@@ -110,8 +118,19 @@ try {
     await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
     await page.getByRole("button", { name: "Open help", exact: true }).click();
     await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
-    await page.getByRole("button", { name: "Open WiseMoney help assistant", exact: true }).click();
-    await page.getByRole("heading", { name: "Before using the help assistant", exact: true }).waitFor();
+    await page.getByRole("button", { name: device.name === "mobile" ? "Ask WiseBot" : "Open WiseBot", exact: true }).click();
+    const wiseBotDialog = page.getByRole("dialog", { name: "WiseBot", exact: true });
+    await wiseBotDialog.waitFor();
+    const wiseBotBox = await wiseBotDialog.boundingBox();
+    assert.ok(wiseBotBox != null, `${device.name}: WiseBot dialog has no layout box`);
+    if (device.name === "mobile") {
+      assert.ok(Math.abs(wiseBotBox.width - device.viewport.width) <= 1, "mobile: WiseBot is not full width");
+      assert.ok(Math.abs(wiseBotBox.height - device.viewport.height) <= 1, "mobile: WiseBot is not full height");
+    } else {
+      assert.ok(wiseBotBox.width <= 410, "desktop: WiseBot exceeded its floating-panel width");
+    }
+    await page.screenshot({ path: `${outputDir}/${device.name}-wisebot.png`, fullPage: true });
+    await page.getByRole("heading", { name: "Before using WiseBot", exact: true }).waitFor();
     await page.getByText("Your question and optional image are sent to Google to generate the answer.", { exact: true }).waitFor();
     await page.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Quick search").fill("backup");
@@ -226,6 +245,11 @@ try {
     await appPage.getByRole("button", { name: "Create Account", exact: true }).click();
     await appPage.getByText(name, { exact: true }).first().waitFor();
   }
+  await appPage.getByRole("tab", { name: "Categories", exact: true }).click();
+  await appPage.getByPlaceholder("Search categories", { exact: true }).waitFor();
+  await appPage.getByRole("link", { name: "Planning", exact: true }).click();
+  await appPage.getByRole("link", { name: /^Planned expenses/ }).click();
+  await appPage.getByRole("heading", { name: "Planned expenses", exact: true }).waitFor();
   await appPage.getByRole("link", { name: "Planning", exact: true }).click();
   await appPage.getByRole("link", { name: /Recurring/ }).click();
   await appPage.getByRole("heading", { name: "Recurring", exact: true }).waitFor();

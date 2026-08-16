@@ -101,7 +101,9 @@ export default function App() {
       <div hidden={helpOpen} aria-hidden={helpOpen}>
         <KeyUnlock onVaultUnlockedChange={setVaultUnlocked} />
       </div>
-      {helpOpen && <HelpPage />}
+      <div hidden={!helpOpen} aria-hidden={!helpOpen}>
+        <HelpPage visible={helpOpen} vaultUnlocked={vaultUnlocked} />
+      </div>
     </PwaInstallProvider>
   );
 }

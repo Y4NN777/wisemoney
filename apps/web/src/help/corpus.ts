@@ -89,7 +89,7 @@ const fr: HelpSection[] = [
     steps: [
       "Créez un budget par catégorie : le pourcentage utilisé compare les dépenses à votre limite.",
       "Créez un objectif avec un montant cible, puis ajoutez des contributions depuis Saisie.",
-      "Une dépense prévue prépare un achat ponctuel et ne touche aucun solde tant que vous ne la marquez pas comme faite; elle crée alors une transaction réelle.",
+      "Dans Planification, ouvrez Dépenses prévues pour préparer un achat ponctuel; aucun solde ne change avant sa réalisation, qui crée alors une transaction réelle.",
       "Un élément récurrent sert aux revenus ou paiements qui reviennent; réalisez chaque occurrence lorsqu’elle arrive à échéance.",
     ],
     keywords: ["budget", "objectif", "épargne", "dépense prévue", "ponctuelle", "récurrent", "transaction", "abonnement", "limite"],
@@ -121,10 +121,10 @@ const fr: HelpSection[] = [
   },
   {
     id: "intelligence",
-    title: "Aide Gemma et Assistant financier",
-    summary: "Le chat de cette page explique WiseMoney; l’Assistant financier analyse vos données seulement avec votre accord.",
+    title: "WiseBot et Assistant financier",
+    summary: "WiseBot explique l’utilisation de WiseMoney; l’Assistant financier analyse vos données seulement avec votre accord.",
     steps: [
-      "Demandez au chat d’aide où trouver une fonction ou comment l’utiliser; il ne reçoit aucune donnée financière du coffre.",
+      "Demandez à WiseBot où trouver une fonction ou comment l’utiliser; il ne reçoit aucune donnée financière du coffre.",
       "Pour une prédiction, une recommandation ou une explication de vos chiffres, ouvrez l’Assistant financier après déverrouillage.",
       "Les fonctions financières intelligentes peuvent être temporairement grisées; les comptes, saisies et calculs locaux continuent de fonctionner.",
     ],
@@ -137,7 +137,7 @@ const fr: HelpSection[] = [
     summary: "Les données financières restent chiffrées sur l’appareil; les services intelligents sont séparés et consentis.",
     steps: [
       "Verrouillez WiseMoney lorsque vous avez terminé sur un appareil partagé.",
-      "Le chat d’aide n’accède ni au coffre ni à l’écran et n’enregistre pas la conversation sur le serveur.",
+      "WiseBot n’accède ni au coffre ni à l’écran et n’enregistre pas la conversation sur le serveur.",
       "Une image n’est envoyée qu’après votre ajout manuel et votre admission dans la file; vous pouvez la retirer avant l’envoi.",
     ],
     keywords: ["confidentialité", "chiffrement", "données", "image", "consentement", "verrouiller"],
@@ -146,10 +146,10 @@ const fr: HelpSection[] = [
   {
     id: "hors-ligne",
     title: "Hors ligne et dépannage",
-    summary: "L’aide écrite et les fonctions locales restent disponibles; le chat et les services en ligne attendent la connexion.",
+    summary: "L’aide écrite et les fonctions locales restent disponibles; WiseBot et les services en ligne attendent la connexion.",
     steps: [
       "Installez WiseMoney et ouvrez-le une première fois en ligne pour mettre les fichiers essentiels en cache.",
-      "Sans réseau, continuez les saisies, comptes, budgets et consultations; le chat se réactive automatiquement au retour d’Internet.",
+      "Sans réseau, continuez les saisies, comptes, budgets et consultations; WiseBot se réactive automatiquement au retour d’Internet.",
       "Si une page ne se met pas à jour, fermez puis rouvrez l’application. N’effacez pas les données du navigateur sans sauvegarde récente.",
     ],
     keywords: ["offline", "internet", "connexion", "cache", "panne", "erreur", "dépannage"],
@@ -190,7 +190,7 @@ const en: HelpSection[] = [
   },
   {
     id: "planification", title: "Budgets, goals, and planning", summary: "Set limits, track savings, and prepare one-off expenses or payments that come back regularly.",
-    steps: ["Create a category budget: percentage used compares spending with your limit.", "Create a goal with a target amount, then add contributions from Capture.", "A planned expense prepares a one-off purchase and affects no balance until you mark it completed; that action creates an actual transaction.", "A recurring item represents income or payments that repeat; realize each occurrence when it becomes due."],
+    steps: ["Create a category budget: percentage used compares spending with your limit.", "Create a goal with a target amount, then add contributions from Capture.", "In Planning, open Planned expenses to prepare a one-off purchase; no balance changes until completion creates an actual transaction.", "A recurring item represents income or payments that repeat; realize each occurrence when it becomes due."],
     keywords: ["budget", "goal", "saving", "planned expense", "one-off", "recurring", "transaction", "subscription", "limit"], features: ["budgets", "goals", "planned-expenses", "recurring"],
   },
   {
@@ -204,18 +204,18 @@ const en: HelpSection[] = [
     keywords: ["backup", "import", "export", "xlsx", "csv", "reset", "cycle"], features: ["backup", "import", "export", "cycle-reset"],
   },
   {
-    id: "intelligence", title: "Gemma help and the Financial Assistant", summary: "This page’s chat explains WiseMoney; the Financial Assistant analyzes your data only with your consent.",
-    steps: ["Ask help chat where to find a feature or how to use it; it receives no financial records from the vault.", "For predictions, recommendations, or explanations of your figures, open Financial Assistant after unlocking.", "Financial smart features may be temporarily disabled; accounts, capture, and local calculations keep working."],
+    id: "intelligence", title: "WiseBot and the Financial Assistant", summary: "WiseBot explains how to use WiseMoney; the Financial Assistant analyzes your data only with your consent.",
+    steps: ["Ask WiseBot where to find a feature or how to use it; it receives no financial records from the vault.", "For predictions, recommendations, or explanations of your figures, open Financial Assistant after unlocking.", "Financial smart features may be temporarily disabled; accounts, capture, and local calculations keep working."],
     keywords: ["ai", "gemma", "chat", "assistant", "prediction", "recommendation", "advice"], features: ["help-chat", "financial-assistant", "predictions", "recommendations"],
   },
   {
     id: "securite", title: "Security and privacy", summary: "Financial records stay encrypted on the device; smart services are separate and consent-based.",
-    steps: ["Lock WiseMoney when you finish on a shared device.", "Help chat cannot access the vault or screen and does not store the conversation on the server.", "An image is sent only after you add it manually and are admitted to the queue; you can remove it before sending."],
+    steps: ["Lock WiseMoney when you finish on a shared device.", "WiseBot cannot access the vault or screen and does not store the conversation on the server.", "An image is sent only after you add it manually and are admitted to the queue; you can remove it before sending."],
     keywords: ["privacy", "encryption", "data", "image", "consent", "lock"], features: ["privacy", "encryption", "consent"],
   },
   {
-    id: "hors-ligne", title: "Offline use and troubleshooting", summary: "Written help and local features remain available; chat and online services wait for a connection.",
-    steps: ["Install WiseMoney and open it online once so essential files can be cached.", "Offline, keep using capture, accounts, budgets, and reports; chat returns automatically with Internet.", "If a page does not refresh, close and reopen the app. Do not clear browser data without a recent backup."],
+    id: "hors-ligne", title: "Offline use and troubleshooting", summary: "Written help and local features remain available; WiseBot and online services wait for a connection.",
+    steps: ["Install WiseMoney and open it online once so essential files can be cached.", "Offline, keep using capture, accounts, budgets, and reports; WiseBot returns automatically with Internet.", "If a page does not refresh, close and reopen the app. Do not clear browser data without a recent backup."],
     keywords: ["offline", "internet", "connection", "cache", "failure", "error", "troubleshooting"], features: ["offline", "troubleshooting"],
   },
 ];

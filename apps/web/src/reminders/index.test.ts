@@ -376,7 +376,7 @@ describe("queue persistence and inbox", () => {
       id: reminders[0]!.id,
       label: "School fees",
       locale: "fr",
-      href: "/capture?tab=manage",
+      href: "/planned-expenses",
     }]);
     expect(local.writes).toHaveLength(1);
     const persisted = local.writes[0]!.value;

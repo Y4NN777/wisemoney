@@ -613,6 +613,7 @@
       }
     },
     "manage": {
+      "sectionsLabel": "Capture organization",
       "summary": "Management summary",
       "accounts": "Accounts",
       "managedBalance": "Managed balance",
@@ -1060,6 +1061,7 @@
     "links": {
       "budgets": "Budgets",
       "goals": "Goals",
+      "plannedExpenses": "Planned expenses",
       "recurring": "Recurring Transactions",
       "debts": "Debts & Receivables"
     },
@@ -1068,6 +1070,8 @@
       "budgets_other": "{{count}} active budgets",
       "goals_one": "{{count}} active goal",
       "goals_other": "{{count}} active goals",
+      "plannedExpenses_one": "{{count}} pending expense",
+      "plannedExpenses_other": "{{count}} pending expenses",
       "recurring_one": "{{count}} recurring item",
       "recurring_other": "{{count}} recurring items",
       "debts_one": "{{count}} unsettled item",
@@ -1310,7 +1314,7 @@
     "resultCount_one": "{{count}} matching path",
     "resultCount_other": "{{count}} matching paths",
     "noResult": "No matching path",
-    "noResultHint": "Try a shorter word or ask the help assistant.",
+    "noResultHint": "Try a shorter word or ask WiseBot.",
     "install": {
       "prompt": "Install WiseMoney",
       "instructions": "View installation instructions",
@@ -1321,16 +1325,22 @@
       "installed": "WiseMoney is already installed on this device."
     },
     "chat": {
-      "open": "Open WiseMoney help assistant",
-      "title": "WiseMoney help assistant",
+      "open": "Open WiseBot",
+      "title": "WiseBot",
       "scope": "Questions about using the app",
+      "mobileTitle": "A question about WiseMoney?",
+      "mobileDescription": "WiseBot helps you find a feature and understand how to use it.",
+      "askWiseBot": "Ask WiseBot",
+      "newConversation": "New conversation",
+      "stop": "Stop response",
       "welcome": "What would you like to do in WiseMoney?",
       "privacy": "Your question and optional image stay in this browser until a place is available. This assistant cannot read your financial vault.",
-      "offline": "Chat requires Internet — all written help remains available offline.",
+      "offline": "WiseBot requires Internet — all written help remains available offline.",
+      "offlineFallback": "WiseBot is waiting for a connection. These guides remain available offline.",
       "placeholder": "Ask how to use WiseMoney",
       "send": "Send question",
       "writing": "Writing…",
-      "unavailable": "The WiseMoney help assistant is temporarily unavailable. The written guide remains available.",
+      "unavailable": "WiseBot is temporarily unavailable. The written guide remains available.",
       "queuePosition": "Position {{position}} in the queue",
       "waitEstimate": "Estimated wait: about {{seconds}} seconds",
       "quota": "{{count}} help units remaining today",
@@ -1344,20 +1354,20 @@
       "imageError": "Choose a valid image smaller than 10 MB.",
       "imageAttachedLabel": "Image attached",
       "consent": {
-        "title": "Before using the help assistant",
-        "body": "This confirmation applies only to the help chat. Your encrypted WiseMoney vault remains separate.",
+        "title": "Before using WiseBot",
+        "body": "This confirmation applies only to WiseBot. Your encrypted WiseMoney vault remains separate.",
         "google": "Your question and optional image are sent to Google to generate the answer.",
-        "scope": "The assistant explains how to use WiseMoney and cannot access your vault, accounts, transactions, or screen.",
+        "scope": "WiseBot explains how to use WiseMoney and cannot access your vault, accounts, transactions, or screen.",
         "sensitive": "Do not include personal or financial information in a message or image.",
         "accept": "I understand and continue",
-        "review": "Review help chat information"
+        "review": "Review WiseBot information"
       }
     },
     "footer": {
       "privateTitle": "Your vault remains separate",
-      "privateBody": "Written help and help chat do not open or inspect your accounts. Financial analysis belongs to the Financial Assistant and always follows its own consent flow.",
+      "privateBody": "Written help and WiseBot do not open or inspect your accounts. Financial analysis belongs to the Financial Assistant and always follows its own consent flow.",
       "offlineTitle": "The guide travels with the app",
-      "offlineBody": "After the PWA has cached this version, all twelve written paths stay readable without a network connection. Only chat waits for Internet."
+      "offlineBody": "After the PWA has cached this version, all twelve written paths stay readable without a network connection. Only WiseBot waits for Internet."
     }
   },
   "common": {

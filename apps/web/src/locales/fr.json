@@ -613,6 +613,7 @@
       }
     },
     "manage": {
+      "sectionsLabel": "Organisation de la saisie",
       "summary": "Résumé de la gestion",
       "accounts": "Comptes",
       "managedBalance": "Solde géré",
@@ -1060,6 +1061,7 @@
     "links": {
       "budgets": "Budgets",
       "goals": "Objectifs",
+      "plannedExpenses": "Dépenses prévues",
       "recurring": "Transactions récurrentes",
       "debts": "Dettes & Créances"
     },
@@ -1068,6 +1070,8 @@
       "budgets_other": "{{count}} budgets actifs",
       "goals_one": "{{count}} objectif actif",
       "goals_other": "{{count}} objectifs actifs",
+      "plannedExpenses_one": "{{count}} dépense en attente",
+      "plannedExpenses_other": "{{count}} dépenses en attente",
       "recurring_one": "{{count}} élément récurrent",
       "recurring_other": "{{count}} éléments récurrents",
       "debts_one": "{{count}} élément non soldé",
@@ -1310,7 +1314,7 @@
     "resultCount_one": "{{count}} parcours correspondant",
     "resultCount_other": "{{count}} parcours correspondants",
     "noResult": "Aucun parcours correspondant",
-    "noResultHint": "Essayez un mot plus court ou demandez à l’assistant d’aide.",
+    "noResultHint": "Essayez un mot plus court ou demandez à WiseBot.",
     "install": {
       "prompt": "Installer WiseMoney",
       "instructions": "Voir les instructions d’installation",
@@ -1321,16 +1325,22 @@
       "installed": "WiseMoney est déjà installé sur cet appareil."
     },
     "chat": {
-      "open": "Ouvrir l’assistant d’aide WiseMoney",
-      "title": "Assistant d’aide WiseMoney",
+      "open": "Ouvrir WiseBot",
+      "title": "WiseBot",
       "scope": "Questions sur l’utilisation de l’application",
+      "mobileTitle": "Une question sur WiseMoney ?",
+      "mobileDescription": "WiseBot vous aide à trouver une fonction et à comprendre comment l’utiliser.",
+      "askWiseBot": "Demander à WiseBot",
+      "newConversation": "Nouvelle conversation",
+      "stop": "Arrêter la réponse",
       "welcome": "Que souhaitez-vous faire dans WiseMoney ?",
       "privacy": "Votre question et l’image facultative restent dans ce navigateur jusqu’à ce qu’une place soit disponible. Cet assistant ne peut pas lire votre coffre financier.",
-      "offline": "Le chat nécessite Internet — toute l’aide écrite reste disponible hors ligne.",
+      "offline": "WiseBot nécessite Internet — toute l’aide écrite reste disponible hors ligne.",
+      "offlineFallback": "WiseBot attend la connexion. Ces parcours restent disponibles hors ligne.",
       "placeholder": "Demandez comment utiliser WiseMoney",
       "send": "Envoyer la question",
       "writing": "Rédaction…",
-      "unavailable": "L’assistant d’aide WiseMoney est temporairement indisponible. Le guide écrit reste disponible.",
+      "unavailable": "WiseBot est temporairement indisponible. Le guide écrit reste disponible.",
       "queuePosition": "Position {{position}} dans la file",
       "waitEstimate": "Attente estimée : environ {{seconds}} secondes",
       "quota": "{{count}} unités d’aide restantes aujourd’hui",
@@ -1344,20 +1354,20 @@
       "imageError": "Choisissez une image valide de moins de 10 Mo.",
       "imageAttachedLabel": "Image jointe",
       "consent": {
-        "title": "Avant d’utiliser l’assistant d’aide",
-        "body": "Cette confirmation concerne uniquement le chat d’aide. Votre coffre WiseMoney chiffré reste séparé.",
+        "title": "Avant d’utiliser WiseBot",
+        "body": "Cette confirmation concerne uniquement WiseBot. Votre coffre WiseMoney chiffré reste séparé.",
         "google": "Votre question et l’image facultative sont envoyées à Google pour générer la réponse.",
-        "scope": "L’assistant explique WiseMoney et ne peut accéder ni au coffre, ni aux comptes, ni aux transactions, ni à l’écran.",
+        "scope": "WiseBot explique WiseMoney et ne peut accéder ni au coffre, ni aux comptes, ni aux transactions, ni à l’écran.",
         "sensitive": "N’incluez aucune information personnelle ou financière dans un message ou une image.",
         "accept": "J’ai compris et je continue",
-        "review": "Relire les informations du chat d’aide"
+        "review": "Relire les informations de WiseBot"
       }
     },
     "footer": {
       "privateTitle": "Votre coffre reste séparé",
-      "privateBody": "L’aide écrite et le chat d’aide n’ouvrent ni n’inspectent vos comptes. L’analyse financière appartient à l’Assistant financier et suit toujours son propre consentement.",
+      "privateBody": "L’aide écrite et WiseBot n’ouvrent ni n’inspectent vos comptes. L’analyse financière appartient à l’Assistant financier et suit toujours son propre consentement.",
       "offlineTitle": "Le guide voyage avec l’application",
-      "offlineBody": "Après la mise en cache de cette version PWA, les douze parcours écrits restent lisibles sans réseau. Seul le chat attend Internet."
+      "offlineBody": "Après la mise en cache de cette version PWA, les douze parcours écrits restent lisibles sans réseau. Seul WiseBot attend Internet."
     }
   },
   "common": {

@@ -9,6 +9,7 @@ import { Route as budgetsRoute } from "./routes/budgets.tsx";
 import { Route as goalsRoute } from "./routes/goals.tsx";
 import { Route as recurringRoute } from "./routes/recurring.tsx";
 import { Route as debtsRoute } from "./routes/debts.tsx";
+import { Route as plannedExpensesRoute } from "./routes/plannedExpenses.tsx";
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -20,6 +21,7 @@ const routeTree = rootRoute.addChildren([
   goalsRoute,
   recurringRoute,
   debtsRoute,
+  plannedExpensesRoute,
 ]);
 
 export const router = createRouter({ routeTree });

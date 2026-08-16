@@ -1,4 +1,4 @@
-import { ArrowLeft, Download, Search, ShieldCheck, WifiOff } from "lucide-react";
+import { ArrowLeft, Bot, Download, Search, ShieldCheck, WifiOff } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import HelpChat from "./HelpChat.tsx";
@@ -9,9 +9,10 @@ import { getHelpSections, searchHelpSections } from "./corpus.ts";
 import { closeHelp } from "./navigation.ts";
 import { usePwaInstall } from "../pwa/install.tsx";
 
-export default function HelpPage() {
+export default function HelpPage({ visible, vaultUnlocked }: { visible: boolean; vaultUnlocked: boolean }) {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState("");
+  const [wiseBotOpenRequest, setWiseBotOpenRequest] = useState(0);
   const searchRef = useRef<HTMLInputElement | null>(null);
   const install = usePwaInstall();
   const sections = useMemo(() => getHelpSections(i18n.resolvedLanguage ?? i18n.language), [i18n.language, i18n.resolvedLanguage]);
@@ -21,9 +22,10 @@ export default function HelpPage() {
     const id = decodeURIComponent(window.location.hash.slice(1));
     if (id.length === 0) return;
     window.requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: "start" }));
-  }, []);
+  }, [visible]);
 
   useEffect(() => {
+    if (!visible) return;
     const handleShortcut = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
@@ -36,7 +38,7 @@ export default function HelpPage() {
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, []);
+  }, [visible]);
 
   const platformInstruction = t(`helpPage.install.${install.platform}`);
 
@@ -78,6 +80,23 @@ export default function HelpPage() {
                 <div className="absolute bottom-[20%] right-[16%] h-3 w-3 border border-[#002fa7] bg-white" />
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="border-b border-black/15 bg-[#002fa7] text-white sm:hidden">
+          <div className="px-4 py-5">
+            <Bot className="h-6 w-6" />
+            <h2 className="mt-4 text-xl font-bold">{t("helpPage.chat.mobileTitle")}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-white/75">{t("helpPage.chat.mobileDescription")}</p>
+            <Button
+              type="button"
+              variant="secondary"
+              className="mt-4 min-h-12 w-full justify-between rounded-none border border-white bg-white text-[#002fa7]"
+              onClick={() => setWiseBotOpenRequest((request) => request + 1)}
+            >
+              {t("helpPage.chat.askWiseBot")}
+              <ArrowLeft className="h-4 w-4 rotate-180" />
+            </Button>
           </div>
         </section>
 
@@ -197,7 +216,7 @@ export default function HelpPage() {
         </section>
       </main>
 
-      <HelpChat sections={sections} />
+      <HelpChat sections={sections} openRequest={wiseBotOpenRequest} vaultUnlocked={vaultUnlocked} />
     </div>
   );
 }

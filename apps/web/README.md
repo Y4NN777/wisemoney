@@ -6,8 +6,8 @@ thin auth + AI proxy only (ARCHITECTURE §1).
 The web app is live at `https://wisemoney.y7labs.studio/`, hosted through Vercel.
 Managed financial calls require a deployed edge URL; until the edge is deployed,
 use `VITE_EDGE_BASE_URL=http://localhost:8080` for local managed-mode development.
-The public help assistant uses separate Vercel functions and never calls the Go
-financial edge.
+The public WiseBot product-help assistant uses separate Vercel functions and
+never calls the Go financial edge.
 
 ## Prerequisites
 
@@ -83,7 +83,8 @@ the user not to include personal or financial information.
 - All financial data lives in IndexedDB (Dexie), encrypted AES-GCM (INV-PERS-02).
 - Money is integer minor units everywhere — no floats (INV-MON-01).
 - The event log is append-only and is the single source of truth (INV-EVT-01/02).
-- Planned expenses are one-off intentions stored in that journal. They remain
+- Planned expenses are one-off intentions managed from Planning and stored in
+  that journal. They remain
   separate from actual transactions and from repeating recurring items, and affect
   balances only when completion creates an expense transaction.
 - The custom `injectManifest` service worker precaches the offline shell and WASM

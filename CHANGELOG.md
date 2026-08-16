@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **WiseBot mobile help and clearer money setup** — branded the isolated product
+  help chat as WiseBot, added a full-screen, safe-area-aware mobile conversation
+  with in-memory session continuity and offline guide fallbacks, and fixed reduced
+  motion so looping indicators stop instead of accelerating. Capture management
+  now switches cleanly between accounts and categories, while planned expenses
+  live in their own Planning destination with compatible reminder links.
+
 - **Local reminders and calendar exports** — migrated the PWA to a custom
   `injectManifest` service worker that preserves offline navigation and WASM
   caching while opportunistically processing a deduplicated, expiring IndexedDB

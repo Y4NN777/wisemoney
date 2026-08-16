@@ -48,7 +48,7 @@ function RootLayout() {
   }));
 
   const openReminder = (reminder: ReminderViewModel) => {
-    if (reminder.type === "planned_expense") void navigate({ to: "/capture", search: { tab: "manage" } });
+    if (reminder.type === "planned_expense") void navigate({ to: "/planned-expenses" });
     else if (reminder.type === "recurring_item") void navigate({ to: "/recurring" });
     else if (reminder.type === "budget_threshold") void navigate({ to: "/budgets" });
     else if (reminder.type === "debt_due" || reminder.type === "receivable_due") void navigate({ to: "/debts" });

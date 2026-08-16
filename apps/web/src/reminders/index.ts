@@ -375,7 +375,7 @@ function compareQueueEntries(left: ReminderQueueEntry, right: ReminderQueueEntry
 
 function reminderHref(type: ReminderType): string {
   switch (type) {
-    case "planned_expense": return "/capture?tab=manage";
+    case "planned_expense": return "/planned-expenses";
     case "recurring_item": return "/recurring";
     case "budget_threshold": return "/budgets";
     case "debt_due":

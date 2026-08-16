@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { AlertCircle, ArrowRight, HandCoins, Repeat, Target, Wallet } from "lucide-react";
+import { AlertCircle, ArrowRight, HandCoins, ListTodo, Repeat, Target, Wallet } from "lucide-react";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
 
@@ -20,6 +20,12 @@ export default function Planning() {
       label: t("planning.links.goals"),
       status: t("planning.counts.goals", { count: snapshot.goals.filter((goal) => !goal.isArchived).length }),
       icon: Target,
+    },
+    {
+      to: "/planned-expenses" as const,
+      label: t("planning.links.plannedExpenses"),
+      status: t("planning.counts.plannedExpenses", { count: snapshot.plannedExpenses.filter((item) => item.status === "pending").length }),
+      icon: ListTodo,
     },
     {
       to: "/recurring" as const,

@@ -62,3 +62,4 @@ describe("compatibleAccountIds", () => {
     expect(compatibleAccountIds(accounts, "XOF")).toEqual(["xof"]);
   });
 });
+

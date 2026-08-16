@@ -506,3 +506,4 @@ export function PlannedExpensesSection({
     </Card>
   );
 }
+

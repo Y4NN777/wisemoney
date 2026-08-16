@@ -501,7 +501,7 @@ function DashboardSetup() {
           <h2 className="mt-3 text-xl font-semibold tracking-tight">{t("dashboard.setup.title")}</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{t("dashboard.setup.body")}</p>
           <Button asChild className="mt-5 w-full sm:w-auto">
-            <Link to="/capture" search={{ tab: "manage" }}>
+            <Link to="/capture" search={{ tab: "manage", section: "accounts" }}>
               <PlusCircle className="mr-2 h-4 w-4" />
               {t("dashboard.setup.action")}
             </Link>
