@@ -135,6 +135,17 @@ try {
     await page.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Quick search").fill("backup");
     await page.getByText("Back up, import, export, and reset", { exact: true }).waitFor();
+    await page.getByRole("button", { name: "See what’s new", exact: true }).click();
+    await page.getByRole("heading", { name: "What’s new", exact: true }).waitFor();
+    await page.getByText("1.0.0", { exact: true }).first().waitFor();
+    await page.getByRole("combobox", { name: "Choose language", exact: true }).click();
+    await page.getByRole("option", { name: "Français", exact: true }).click();
+    await page.getByRole("heading", { name: "Nouveautés", exact: true }).waitFor();
+    await page.screenshot({ path: `${outputDir}/${device.name}-updates-fr.png`, fullPage: true });
+    await page.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+    await page.getByRole("option", { name: "English", exact: true }).click();
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
     await page.getByRole("button", { name: "Back", exact: true }).click();
     await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}.png`, fullPage: true });
@@ -160,6 +171,9 @@ try {
     await page.getByLabel("Quick search").fill("offline");
     await page.getByText("Offline use and troubleshooting", { exact: true }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}-offline.png`, fullPage: true });
+    await page.goto(`${baseURL}/updates`, { waitUntil: "domcontentloaded" });
+    await page.getByRole("heading", { name: "What’s new", exact: true }).waitFor();
+    await page.getByText("1.0.0", { exact: true }).first().waitFor();
 
     assert.deepEqual(errors, [], `${device.name} runtime errors:\n${errors.join("\n")}`);
     await context.close();

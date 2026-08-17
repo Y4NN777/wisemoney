@@ -73,6 +73,10 @@ jobs:
         # package.json, preventing silent manifest/lockfile skew from landing.
         run: pnpm install --frozen-lockfile
 
+      - name: Verify release metadata
+        # Keeps package versions, the public bilingual notes, and CHANGELOG aligned.
+        run: pnpm release:check
+
       - name: Typecheck
         # tsc --noEmit over apps/web. Zero TS errors required.
         # Runs via the workspace package script to stay consistent with local dev.

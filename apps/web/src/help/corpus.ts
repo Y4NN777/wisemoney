@@ -36,9 +36,10 @@ const fr: HelpSection[] = [
   },
   {
     id: "installation",
-    title: "Installer l’application",
-    summary: "Ajoutez WiseMoney à l’écran d’accueil pour l’ouvrir en plein écran et mieux l’utiliser hors ligne.",
+    title: "Installer WiseMoney sur cet appareil",
+    summary: "WiseMoney s’installe depuis votre navigateur et apparaît sur l’écran d’accueil comme vos autres applications.",
     steps: [
+      "Il n’y a pas de boutique à ouvrir : l’installation ajoute simplement WiseMoney à cet appareil depuis votre navigateur.",
       "Android : ouvrez le menu de Chrome, puis choisissez Installer l’application ou Ajouter à l’écran d’accueil.",
       "iPhone ou iPad : dans Safari, touchez Partager, puis Sur l’écran d’accueil.",
       "Ordinateur : utilisez l’icône d’installation dans la barre d’adresse ou le menu de Chrome, Edge ou Safari.",
@@ -169,8 +170,8 @@ const en: HelpSection[] = [
     keywords: ["password", "passphrase", "fingerprint", "face", "pin", "webauthn"], features: ["passphrase", "device-unlock"],
   },
   {
-    id: "installation", title: "Install the app", summary: "Add WiseMoney to your home screen for full-screen access and more reliable offline use.",
-    steps: ["Android: open Chrome’s menu, then choose Install app or Add to Home screen.", "iPhone or iPad: in Safari, tap Share, then Add to Home Screen.", "Computer: use the install icon in the address bar or the Chrome, Edge, or Safari menu."],
+    id: "installation", title: "Install WiseMoney on this device", summary: "WiseMoney installs from your browser and appears on the home screen like your other apps.",
+    steps: ["There is no app store to open: installation simply adds WiseMoney to this device from your browser.", "Android: open Chrome’s menu, then choose Install app or Add to Home screen.", "iPhone or iPad: in Safari, tap Share, then Add to Home Screen.", "Computer: use the install icon in the address bar or the Chrome, Edge, or Safari menu."],
     keywords: ["pwa", "android", "iphone", "ios", "desktop", "computer", "home screen"], features: ["pwa-install"],
   },
   {

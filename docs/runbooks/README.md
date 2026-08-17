@@ -24,6 +24,7 @@
 | [key-and-secrets.md](./key-and-secrets.md) | Managing the JWT signing key, consent signing key, provider keys, and DB credentials. | Active local template; production SOPS/age process pending |
 | [provider-terms-verification.md](./provider-terms-verification.md) | Launch-blocker verification of AI provider data-handling terms. | Verified 2026-06-05 — pending legal sign-off + consent-UI naming |
 | [dependency-scanning.md](./dependency-scanning.md) | Installing osv-scanner; manifest and binary scanning; reading results; toolchain pitfalls. | Active |
+| [releases.md](./releases.md) | Versioning, staged Vercel promotion, GitHub Releases, and rollback. | Active from v1.0.0 |
 
 ---
 

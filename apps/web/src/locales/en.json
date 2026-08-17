@@ -3,8 +3,16 @@
     "name": "WiseMoney",
     "loading": "Loading…",
     "updateAvailable": "Update available",
-    "updateDescription": "You can keep working. The update will install when you lock or reopen WiseMoney.",
-    "continue": "Continue"
+    "updateDescription": "The new version is ready. Updating now will reload WiseMoney and lock your space.",
+    "updateNow": "Update now",
+    "updateLater": "Later",
+    "updateInstalling": "Updating…",
+    "updateInstallingDescription": "WiseMoney will restart automatically.",
+    "updateInstalled": "WiseMoney is up to date",
+    "updateInstalledDescription": "The new version is installed.",
+    "viewUpdates": "See what’s new",
+    "updateFailed": "Update interrupted",
+    "updateFailedDescription": "Try again from the next update notice."
   },
   "language": {
     "choose": "Choose language",
@@ -1181,7 +1189,7 @@
       "allowSystem": "Allow system notifications",
       "test": "Test a notification",
       "exportCalendar": "Add review to calendar",
-      "bestEffort": "Without a server, system notifications may be delayed while the PWA is closed. The reminder center refreshes whenever the app opens; the calendar remains the most reliable channel.",
+      "bestEffort": "Without a server, system notifications may arrive late while WiseMoney is closed. The reminder center refreshes whenever the app opens; adding the due date to your calendar remains the most reliable option.",
       "permission": {
         "default": "Permission not requested",
         "granted": "System notifications allowed",
@@ -1219,6 +1227,11 @@
     "language": {
       "title": "App language",
       "description": "Changes labels, guidance, dates, and currency names throughout WiseMoney."
+    },
+    "about": {
+      "title": "About WiseMoney",
+      "version": "Version {{version}}",
+      "action": "See what’s new"
     },
     "sections": {
       "reminders": {
@@ -1299,6 +1312,20 @@
       }
     }
   },
+  "updatesPage": {
+    "back": "Back",
+    "eyebrow": "First official release",
+    "title": "What’s new",
+    "current": "Current version",
+    "official": "Official",
+    "highlights": "What you can do",
+    "history": "Version history",
+    "historyDescription": "Every published version remains available here.",
+    "technicalDetails": "Technical details",
+    "needHelp": "Need a hand?",
+    "needHelpDescription": "The guide explains each journey step by step.",
+    "openHelp": "Open the guide"
+  },
   "helpPage": {
     "open": "Open help",
     "shortLabel": "Help",
@@ -1364,10 +1391,15 @@
       }
     },
     "footer": {
-      "privateTitle": "Your vault remains separate",
-      "privateBody": "Written help and WiseBot do not open or inspect your accounts. Financial analysis belongs to the Financial Assistant and always follows its own consent flow.",
-      "offlineTitle": "The guide travels with the app",
-      "offlineBody": "After the PWA has cached this version, all twelve written paths stay readable without a network connection. Only WiseBot waits for Internet."
+      "privateTitle": "Your accounts stay private",
+      "privateBody": "The guide and WiseBot explain how to use WiseMoney without opening your accounts or reading your transactions. The Financial Assistant analyzes your information only after you explicitly agree.",
+      "offlineTitle": "Help remains available without Internet",
+      "offlineBody": "Once WiseMoney has been opened on this device, all twelve guide paths remain available without a connection. WiseBot needs Internet."
+    },
+    "updates": {
+      "title": "Discover what’s new",
+      "description": "See what each WiseMoney version brings you.",
+      "action": "See what’s new"
     }
   },
   "common": {

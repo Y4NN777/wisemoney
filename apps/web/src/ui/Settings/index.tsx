@@ -4,10 +4,13 @@ import DevicesSection from "./DevicesSection.tsx";
 import CurrencySection from "./CurrencySection.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
-import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck } from "lucide-react";
+import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
+import { Button } from "../../components/ui/button.tsx";
+import { openUpdates } from "../../releases/navigation.ts";
+import { PRODUCT_VERSION } from "../../releases/releaseNotes.ts";
 
 function SettingsPanel({
   icon,
@@ -108,6 +111,25 @@ export default function Settings() {
           <DevicesSection />
         </SettingsPanel>
       </div>
+
+      <section aria-label={t("settings.about.title")} className="motion-enter border-t border-border pt-4">
+        <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
+              <Sparkles className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="text-sm font-semibold">{t("settings.about.title")}</h2>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                {t("settings.about.version", { version: PRODUCT_VERSION })}
+              </p>
+            </div>
+          </div>
+          <Button type="button" variant="outline" className="shrink-0" onClick={() => openUpdates(PRODUCT_VERSION)}>
+            {t("settings.about.action")}
+          </Button>
+        </div>
+      </section>
     </main>
   );
 }

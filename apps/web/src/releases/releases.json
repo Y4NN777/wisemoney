@@ -1,0 +1,81 @@
+[
+  {
+    "version": "1.0.0",
+    "releasedAt": "2026-08-17",
+    "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.0.0",
+    "content": {
+      "fr": {
+        "title": "Votre argent, plus clair au quotidien",
+        "summary": "Cette première version officielle réunit le suivi, la planification et la sauvegarde de vos finances dans un espace privé qui fonctionne sur vos appareils.",
+        "highlights": [
+          {
+            "id": "track",
+            "title": "Suivez ce qui entre et ce qui sort",
+            "body": "Regroupez vos comptes, revenus, dépenses et transferts. Le tableau de bord met en évidence vos soldes et votre activité du mois sans noyer l’essentiel."
+          },
+          {
+            "id": "plan",
+            "title": "Préparez ce qui vient",
+            "body": "Budgets, objectifs, opérations récurrentes, dépenses prévues, dettes et créances vivent dans un même espace de planification, avec des échéances quand elles sont utiles."
+          },
+          {
+            "id": "remind",
+            "title": "Gardez les échéances en vue",
+            "body": "WiseMoney peut préparer des rappels sur cet appareil et ajouter vos échéances au calendrier, sans y inscrire vos montants ni vos soldes."
+          },
+          {
+            "id": "protect",
+            "title": "Gardez le contrôle de vos données",
+            "body": "Votre espace financier est chiffré sur l’appareil. Vous choisissez quand le verrouiller, le sauvegarder, le restaurer ou partager des informations avec un service d’assistance optionnel."
+          },
+          {
+            "id": "understand",
+            "title": "Comprenez avant de décider",
+            "body": "Le guide bilingue explique les fonctions et les notions financières. WiseBot répond aux questions sur WiseMoney ; l’Assistant financier reste séparé et demande votre accord avant toute analyse."
+          },
+          {
+            "id": "carry",
+            "title": "Emportez WiseMoney avec vous",
+            "body": "L’interface s’adapte au téléphone et à l’ordinateur. Une fois ouverte sur l’appareil, l’application et son guide principal restent accessibles sans connexion."
+          }
+        ]
+      },
+      "en": {
+        "title": "Clearer money decisions, every day",
+        "summary": "This first official release brings financial tracking, planning, and backups together in a private space that works across your devices.",
+        "highlights": [
+          {
+            "id": "track",
+            "title": "See what comes in and goes out",
+            "body": "Bring accounts, income, expenses, and transfers together. The dashboard keeps balances and monthly activity visible without burying the essentials."
+          },
+          {
+            "id": "plan",
+            "title": "Prepare for what comes next",
+            "body": "Budgets, goals, recurring items, planned expenses, debts, and receivables share one planning space, with due dates where they are useful."
+          },
+          {
+            "id": "remind",
+            "title": "Keep useful dates in view",
+            "body": "WiseMoney can prepare reminders on this device and add due dates to your calendar without including amounts or balances."
+          },
+          {
+            "id": "protect",
+            "title": "Stay in control of your data",
+            "body": "Your financial space is encrypted on the device. You choose when to lock, back up, restore, or share information with an optional assistant service."
+          },
+          {
+            "id": "understand",
+            "title": "Understand before you decide",
+            "body": "The bilingual guide explains features and financial concepts. WiseBot answers questions about WiseMoney; the Financial Assistant remains separate and asks before analyzing your information."
+          },
+          {
+            "id": "carry",
+            "title": "Take WiseMoney with you",
+            "body": "The interface adapts to phones and computers. Once opened on a device, the application and its main guide remain available without a connection."
+          }
+        ]
+      }
+    }
+  }
+]

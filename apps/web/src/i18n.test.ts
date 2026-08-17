@@ -23,4 +23,15 @@ describe("localization resources", () => {
   it("does not ship blank French translations", () => {
     expect(leafValues(fr).every((value) => value.trim().length > 0)).toBe(true);
   });
+
+  it("keeps implementation jargon out of user-facing offline guidance", () => {
+    for (const resource of [en, fr]) {
+      const guidance = [
+        resource.helpPage.footer.privateBody,
+        resource.helpPage.footer.offlineBody,
+        resource.reminders.settings.bestEffort,
+      ].join(" ");
+      expect(guidance).not.toMatch(/\bPWA\b/i);
+    }
+  });
 });

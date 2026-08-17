@@ -29,4 +29,13 @@ describe("help corpus", () => {
     expect(searchHelpSections(sections, "astronomy telescope")).toEqual([]);
     expect(searchHelpSections(sections, "backup telescope")).toEqual([]);
   });
+
+  it("explains installation without requiring technical PWA vocabulary", () => {
+    for (const locale of ["en", "fr"]) {
+      const installation = getHelpSections(locale).find(({ id }) => id === "installation");
+      expect(installation).toBeDefined();
+      expect([installation?.title, installation?.summary, ...(installation?.steps ?? [])].join(" ")).not.toMatch(/\bPWA\b/i);
+      expect(installation?.summary).toMatch(/browser|navigateur/);
+    }
+  });
 });

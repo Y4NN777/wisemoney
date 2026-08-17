@@ -1,13 +1,15 @@
-import { ArrowLeft, Bot, Download, Search, ShieldCheck, WifiOff } from "lucide-react";
+import { ArrowLeft, Bot, Download, Search, ShieldCheck, Sparkles, WifiOff } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import HelpChat from "./HelpChat.tsx";
 import Logo from "../components/Logo.tsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
 import { Button } from "../components/ui/button.tsx";
+import { Input } from "../components/ui/input.tsx";
 import { getHelpSections, searchHelpSections } from "./corpus.ts";
 import { closeHelp } from "./navigation.ts";
 import { usePwaInstall } from "../pwa/install.tsx";
+import { openUpdates } from "../releases/navigation.ts";
 
 export default function HelpPage({ visible, vaultUnlocked }: { visible: boolean; vaultUnlocked: boolean }) {
   const { t, i18n } = useTranslation();
@@ -105,18 +107,18 @@ export default function HelpPage({ visible, vaultUnlocked }: { visible: boolean;
             <label htmlFor="help-search" className="flex items-center border-b border-black/15 px-4 py-4 text-sm font-bold lg:border-b-0 lg:border-r lg:px-8">
               {t("helpPage.searchLabel")}
             </label>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#002fa7] sm:left-6" />
-              <input
+            <div className="relative bg-white p-2 sm:p-3">
+              <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#002fa7] sm:left-6" />
+              <Input
                 ref={searchRef}
                 id="help-search"
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("helpPage.searchPlaceholder")}
-                className="h-16 w-full border-0 bg-white pl-12 pr-16 text-base outline-none sm:pl-14"
+                className="h-12 border-black/20 bg-white pl-10 pr-14 text-base shadow-none hover:border-[#002fa7]/50 focus-visible:border-[#002fa7] focus-visible:ring-[#002fa7]"
               />
-              <kbd className="pointer-events-none absolute right-4 top-1/2 hidden -translate-y-1/2 border border-black/20 bg-[#f7f7f8] px-2 py-1 text-[11px] text-black/55 sm:block">⌘ K</kbd>
+              <kbd className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 border border-black/20 bg-[#f7f7f8] px-2 py-1 text-[11px] text-black/55 sm:block">⌘ K</kbd>
             </div>
           </div>
         </section>
@@ -212,6 +214,18 @@ export default function HelpPage({ visible, vaultUnlocked }: { visible: boolean;
               <h2 className="mt-8 text-2xl font-bold">{t("helpPage.footer.offlineTitle")}</h2>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/75">{t("helpPage.footer.offlineBody")}</p>
             </div>
+          </div>
+        </section>
+
+        <section className="border-b border-black/15 bg-white">
+          <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+            <div>
+              <h2 className="text-lg font-bold">{t("helpPage.updates.title")}</h2>
+              <p className="mt-1 text-sm text-black/60">{t("helpPage.updates.description")}</p>
+            </div>
+            <Button type="button" variant="outline" className="min-h-11 rounded-none" onClick={() => openUpdates()}>
+              <Sparkles className="h-4 w-4" /> {t("helpPage.updates.action")}
+            </Button>
           </div>
         </section>
       </main>

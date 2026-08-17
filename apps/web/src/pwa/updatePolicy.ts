@@ -14,6 +14,55 @@ export function getPwaUpdateDisposition(
   return vaultUnlocked ? "defer" : "activate";
 }
 
-export function shouldReloadAfterControllerChange(vaultUnlocked: boolean): boolean {
-  return !vaultUnlocked;
+export function shouldReloadAfterControllerChange(
+  vaultUnlocked: boolean,
+  updateApproved = false,
+): boolean {
+  return updateApproved || !vaultUnlocked;
+}
+
+const UPDATE_RELOAD_MARKER = "wisemoney:pwa-update-reload";
+
+type SessionStorage = Pick<Storage, "getItem" | "removeItem" | "setItem">;
+
+function resolveSessionStorage(storage?: SessionStorage): SessionStorage | null {
+  if (storage != null) return storage;
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+export function markPwaUpdateReload(storage?: SessionStorage): boolean {
+  const target = resolveSessionStorage(storage);
+  if (target == null) return false;
+  try {
+    target.setItem(UPDATE_RELOAD_MARKER, "1");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function clearPwaUpdateReload(storage?: SessionStorage): void {
+  const target = resolveSessionStorage(storage);
+  if (target == null) return;
+  try {
+    target.removeItem(UPDATE_RELOAD_MARKER);
+  } catch {
+    // The update remains functional when session storage is unavailable.
+  }
+}
+
+export function consumePwaUpdateReload(storage?: SessionStorage): boolean {
+  const target = resolveSessionStorage(storage);
+  if (target == null) return false;
+  try {
+    const marked = target.getItem(UPDATE_RELOAD_MARKER) === "1";
+    if (marked) target.removeItem(UPDATE_RELOAD_MARKER);
+    return marked;
+  } catch {
+    return false;
+  }
 }

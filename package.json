@@ -1,6 +1,6 @@
 {
   "name": "wisemoney",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Local-first personal-finance PWA — AI guidance + financial literacy",
   "packageManager": "pnpm@9.15.9",
@@ -24,6 +24,7 @@
     "dev": "pnpm --filter @wisemoney/web dev",
     "build": "pnpm --filter @wisemoney/web build",
     "lint": "pnpm -r --if-present lint",
+    "release:check": "node scripts/check-release.mjs",
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test"
   }
