@@ -26,7 +26,7 @@ migrate -database "$DATABASE_URL" -path ./services/edge/migrations up
 migrate -database "$DATABASE_URL" -path ./services/edge/migrations down 1
 ```
 
-### Run locally (requires Go 1.25.12 and a running Postgres)
+### Run locally (requires Go 1.25.13 and a running Postgres)
 
 ```sh
 # Copy .env.example to .env, fill in values, then:

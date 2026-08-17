@@ -6,12 +6,12 @@
 # ---------------------------------------------------------------------------
 # Stage 1: builder
 # ---------------------------------------------------------------------------
-FROM golang:1.25.12-bookworm AS builder
+FROM golang:1.25.13-bookworm AS builder
 
 WORKDIR /src
 
 # Forbid surprise toolchain auto-download: the builder image is already
-# 1.25.12, which satisfies the `toolchain go1.25.12` directive in go.mod.
+# 1.25.13, which satisfies the `toolchain go1.25.13` directive in go.mod.
 # Keeping GOTOOLCHAIN=local makes the build hermetic — any toolchain mismatch
 # fails loudly here rather than silently fetching a different binary at runtime.
 ENV GOTOOLCHAIN=local

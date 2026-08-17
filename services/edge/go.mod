@@ -2,7 +2,7 @@ module github.com/y4nn/wisemoney/services/edge
 
 go 1.25.0
 
-toolchain go1.25.12 // pin patched build toolchain: clears GO-2026-5856 and prior stdlib advisories
+toolchain go1.25.13 // pin patched build toolchain: clears GO-2026-5026/-5972/-6088/-6089/-6090/-6218
 
 require (
 	github.com/go-chi/chi/v5 v5.2.4 // GO-2025-3770 (open redirect) + GO-2026-4316

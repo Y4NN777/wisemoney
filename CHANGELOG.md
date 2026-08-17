@@ -82,7 +82,7 @@ from an earlier public release.
   validation, bounded provider attempts, trusted-proxy handling, rate limits,
   body limits, and hardened database and Go dependencies.
 - **Supply-chain baseline** — pinned CI actions, frozen dependency installation,
-  OSV scanning, production builds, and current patched Go and JavaScript
-  dependency lines form required release gates.
+  OSV scanning, production builds, Go 1.25.13 with the August 2026 standard
+  library security fixes, and Nano ID 3.3.18 form required release gates.
 
 [1.0.0]: https://github.com/Y4NN777/wisemoney/releases/tag/v1.0.0
