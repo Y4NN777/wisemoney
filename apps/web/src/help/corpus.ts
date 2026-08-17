@@ -64,11 +64,13 @@ const fr: HelpSection[] = [
     title: "Transactions et virements",
     summary: "Enregistrez revenus, dépenses et virements; modifiez ou supprimez une saisie depuis l’historique.",
     steps: [
-      "Dans Saisie, choisissez le type de mouvement, le compte, la catégorie, le montant et la date.",
-      "Un revenu augmente un compte; une dépense le diminue; un virement déplace l’argent entre deux comptes.",
-      "Depuis l’historique du tableau de bord, ouvrez une transaction pour la corriger ou la supprimer.",
+      "Pour un revenu ou une dépense, ouvrez Saisie > Transaction, puis choisissez le sens, le compte, la catégorie, le montant et la date.",
+      "Pour déplacer de l’argent entre deux comptes, ouvrez Saisie > Virement, choisissez le compte source et le compte destinataire, saisissez le montant puis touchez Enregistrer le virement. Les deux comptes doivent être actifs et utiliser la même devise.",
+      "Le virement débite immédiatement le compte source et crédite le compte destinataire. Retrouvez-le dans Tableau de bord > Activité, sous Transferts, pour la période sélectionnée; la ligne affiche les comptes, la date, le montant et la note éventuelle.",
+      "Pour un envoi hors de WiseMoney, laissez le compte destinataire vide et renseignez Destination externe; seul le compte source est alors débité.",
+      "Depuis l’historique du tableau de bord, ouvrez un revenu ou une dépense pour le corriger ou le supprimer. Les virements ne disposent pas de cette action.",
     ],
-    keywords: ["revenu", "dépense", "virement", "catégorie", "modifier", "supprimer"],
+    keywords: ["revenu", "dépense", "virement", "transfert", "compte à compte", "catégorie", "modifier", "supprimer", "suivre"],
     features: ["transactions", "transfers", "categories"],
   },
   {
@@ -181,8 +183,8 @@ const en: HelpSection[] = [
   },
   {
     id: "transactions", title: "Transactions and transfers", summary: "Record income, expenses, and transfers; edit or delete an entry from history.",
-    steps: ["In Capture, choose the movement type, account, category, amount, and date.", "Income increases an account; an expense decreases it; a transfer moves money between two accounts.", "From Dashboard history, open a transaction to correct or delete it."],
-    keywords: ["income", "expense", "transfer", "category", "edit", "delete"], features: ["transactions", "transfers", "categories"],
+    steps: ["For income or an expense, open Capture > Transaction, then choose the direction, account, category, amount, and date.", "To move money between two accounts, open Capture > Transfer, choose the source and destination accounts, enter the amount, then select Record Transfer. Both accounts must be active and use the same currency.", "The transfer immediately debits the source account and credits the destination account. Find it in Dashboard > Activity, under Transfers, for the selected period; the row shows the accounts, date, amount, and optional note.", "For money sent outside WiseMoney, leave the destination account empty and enter an External destination; only the source account is debited.", "From Dashboard history, open an income or expense to correct or delete it. Transfers do not have that action."],
+    keywords: ["income", "expense", "transfer", "account to account", "category", "edit", "delete", "track"], features: ["transactions", "transfers", "categories"],
   },
   {
     id: "tableau-de-bord", title: "Read the dashboard", summary: "Compare available balance, income, expenses, and the difference for the selected period.",
@@ -257,7 +259,38 @@ export function searchHelpSections(sections: HelpSection[], query: string): Help
     .map(({ section }) => section);
 }
 
-export function findRelevantHelpSections(sections: HelpSection[], question: string, limit = 3): HelpSection[] {
-  const matches = searchHelpSections(sections, question);
-  return (matches.length > 0 ? matches : sections).slice(0, limit);
+export function findRelevantHelpSections(
+  sections: HelpSection[],
+  question: string,
+  limit = 3,
+  fallbackIds: string[] = [],
+): HelpSection[] {
+  const stopWords = new Set([
+    "about", "avec", "avoir", "comment", "dans", "does", "faire", "from", "have", "how", "mais", "moyen",
+    "pour", "peut", "plus", "quoi", "some", "that", "the", "this", "tout", "une", "vous", "what", "with",
+    "est", "sont", "des", "les", "mes", "mon", "sur", "and", "can", "are", "your",
+  ]);
+  const terms = normalizeSearchText(question)
+    .split(/[^a-z0-9]+/)
+    .filter((term) => term.length >= 3 && !stopWords.has(term));
+  const fallback = fallbackIds
+    .flatMap((id) => sections.find((section) => section.id === id) ?? [])
+    .slice(0, limit);
+  if (terms.length === 0) return (fallback.length > 0 ? fallback : sections).slice(0, limit);
+
+  const ranked = sections
+    .map((section) => {
+      const title = normalizeSearchText(section.title);
+      const keywords = normalizeSearchText(section.keywords.join(" "));
+      const body = normalizeSearchText([section.summary, ...section.steps].join(" "));
+      const score = terms.reduce((total, term) => total
+        + (title.includes(term) ? 5 : 0)
+        + (keywords.includes(term) ? 4 : 0)
+        + (body.includes(term) ? 1 : 0), 0);
+      return { section, score };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  return (ranked.length > 0 ? ranked.map(({ section }) => section) : fallback.length > 0 ? fallback : sections).slice(0, limit);
 }

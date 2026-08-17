@@ -1,6 +1,6 @@
 {
   "name": "@wisemoney/web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "WiseMoney PWA client — local-first personal finance with AI guidance",
   "type": "module",

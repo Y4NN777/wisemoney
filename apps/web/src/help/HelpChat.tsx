@@ -11,6 +11,7 @@ import {
 } from "./chatClient.ts";
 import { firstImageFromClipboard, sanitizeHelpImage } from "./image.ts";
 import { grantHelpProviderConsent, hasHelpProviderConsent } from "../consent/consentStore.ts";
+import HelpMessageMarkdown from "./HelpMessageMarkdown.tsx";
 import {
   LocalAdmissionError,
   beginLocalTicket,
@@ -143,7 +144,9 @@ export default function HelpChat({
       return;
     }
 
-    const selectedSections = findRelevantHelpSections(sections, question);
+    const previousSectionIds = [...messages].reverse().find((message) =>
+      message.role === "assistant" && message.sectionIds != null)?.sectionIds ?? [];
+    const selectedSections = findRelevantHelpSections(sections, question, 3, previousSectionIds);
     const priorHistory = messages.map(({ role, text }) => ({ role, text }));
     const image = imageDataUrl;
     const userMessage: DisplayMessage = {
@@ -307,9 +310,9 @@ export default function HelpChat({
             )}
             {!showConsent && messages.map((message) => (
               <article key={message.id} className={message.role === "user" ? "ml-8 border border-ocean-primary bg-ocean-primary p-3 text-sm text-white" : "mr-5 border-l-2 border-ocean-primary bg-neutral-100 p-3 text-sm"}>
-                <p className="whitespace-pre-wrap leading-relaxed">
-                  {message.text || (submitting ? t("helpPage.chat.writing") : t("helpPage.chat.unavailable"))}
-                </p>
+                {message.role === "assistant" && message.text.length > 0
+                  ? <HelpMessageMarkdown text={message.text} />
+                  : <p className="whitespace-pre-wrap leading-relaxed">{message.text || (submitting ? t("helpPage.chat.writing") : t("helpPage.chat.unavailable"))}</p>}
                 {message.imageAttached === true && <p className="mt-2 text-xs text-white/75">{t("helpPage.chat.imageAttached")}</p>}
                 {message.role === "assistant" && message.text.length > 0 && message.sectionIds != null && (
                   <div className="mt-3 flex flex-wrap gap-1.5 border-t border-foreground/10 pt-2">

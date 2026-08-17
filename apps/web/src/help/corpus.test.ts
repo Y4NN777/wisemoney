@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   REQUIRED_HELP_FEATURES,
+  findRelevantHelpSections,
   getHelpSections,
   normalizeSearchText,
   searchHelpSections,
@@ -37,5 +38,14 @@ describe("help corpus", () => {
       expect([installation?.title, installation?.summary, ...(installation?.steps ?? [])].join(" ")).not.toMatch(/\bPWA\b/i);
       expect(installation?.summary).toMatch(/browser|navigateur/);
     }
+  });
+
+  it("retrieves transfers from a natural question and keeps that context for a follow-up", () => {
+    const sections = getHelpSections("fr");
+    const first = findRelevantHelpSections(sections, "On peut faire un transfert de compte à compte et le suivre ?");
+    expect(first[0]?.id).toBe("transactions");
+
+    const followUp = findRelevantHelpSections(sections, "Mais comment le faire exactement ?", 3, first.map(({ id }) => id));
+    expect(followUp[0]?.id).toBe("transactions");
   });
 });
