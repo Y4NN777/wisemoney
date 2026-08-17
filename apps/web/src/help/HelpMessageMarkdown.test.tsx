@@ -12,11 +12,12 @@ describe("WiseBot Markdown", () => {
   });
 
   it("renders supported Markdown without injecting provider HTML", () => {
-    const html = renderToStaticMarkup(<HelpMessageMarkdown text={"1. Ouvrez **Saisie**.\n2. Touchez `Virement`.\n\n<script>alert(1)</script>"} />);
+    const html = renderToStaticMarkup(<HelpMessageMarkdown text={"1. Ouvrez **Saisie**.\n2. Touchez `Virement`.\n\n*Note : les comptes utilisent la même devise.*\n\n<script>alert(1)</script>"} />);
 
     expect(html).toContain("<ol");
     expect(html).toContain("<strong");
     expect(html).toContain("<code");
+    expect(html).toContain("<em>");
     expect(html).not.toContain("**Saisie**");
     expect(html).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
   });

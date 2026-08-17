@@ -42,9 +42,12 @@ export function parseHelpMarkdown(source: string): MarkdownBlock[] {
 }
 
 function inlineMarkdown(text: string): ReactNode[] {
-  return text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).filter(Boolean).map((part, index) => {
+  return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g).filter(Boolean).map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return <strong key={index} className="font-semibold text-foreground">{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith("*") && part.endsWith("*")) {
+      return <em key={index}>{part.slice(1, -1)}</em>;
     }
     if (part.startsWith("`") && part.endsWith("`")) {
       return <code key={index} className="border border-foreground/15 bg-white px-1 py-0.5 text-[0.9em]">{part.slice(1, -1)}</code>;
