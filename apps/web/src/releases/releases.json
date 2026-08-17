@@ -1,44 +1,5 @@
 [
   {
-    "version": "1.0.1",
-    "releasedAt": "2026-08-17",
-    "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.0.1",
-    "content": {
-      "fr": {
-        "title": "WiseBot connaît mieux WiseMoney",
-        "summary": "Ce correctif rend les réponses de WiseBot plus précises, conserve le sujet des questions de suivi et présente clairement les étapes.",
-        "highlights": [
-          {
-            "id": "wisebot-context",
-            "title": "Des réponses ancrées dans le bon parcours",
-            "body": "WiseBot s’appuie désormais sur le guide complet de WiseMoney, place le sujet demandé en priorité et conserve ce contexte lorsque vous posez une question de suivi."
-          },
-          {
-            "id": "wisebot-format",
-            "title": "Des étapes plus faciles à suivre",
-            "body": "Les procédures demandent les noms exacts des pages, onglets, champs et boutons. Les listes, le texte important et les courts éléments techniques sont maintenant affichés proprement."
-          }
-        ]
-      },
-      "en": {
-        "title": "WiseBot knows WiseMoney better",
-        "summary": "This update makes WiseBot answers more precise, preserves the subject across follow-up questions, and presents steps clearly.",
-        "highlights": [
-          {
-            "id": "wisebot-context",
-            "title": "Answers grounded in the right workflow",
-            "body": "WiseBot now uses the complete WiseMoney guide, puts the requested topic first, and keeps that context when you ask a follow-up question."
-          },
-          {
-            "id": "wisebot-format",
-            "title": "Steps that are easier to follow",
-            "body": "Procedures request the exact page, tab, field, and button names. Lists, important text, and short technical elements are now displayed cleanly."
-          }
-        ]
-      }
-    }
-  },
-  {
     "version": "1.0.0",
     "releasedAt": "2026-08-17",
     "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.0.0",

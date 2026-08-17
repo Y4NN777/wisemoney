@@ -5,22 +5,6 @@ All notable changes to WiseMoney are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.1] - 2026-08-17
-
-### Fixed
-
-- **WiseBot knowledge** — the product assistant now uses the complete canonical
-  help guide instead of a separate set of short summaries, while trusted
-  server-side content remains isolated from browser-provided text.
-- **Conversation context** — natural questions retrieve the relevant workflow,
-  and short follow-ups keep the previously selected topic instead of falling
-  back to generic onboarding.
-- **Procedural answers** — WiseBot is instructed to use exact WiseMoney page,
-  tab, field, and button names, state where results can be checked, and avoid
-  inventing unsupported capabilities.
-- **Message formatting** — safe, limited Markdown renders numbered and bulleted
-  steps, emphasis, and inline code without interpreting provider HTML.
-
 ## [1.0.0] - 2026-08-17
 
 WiseMoney 1.0.0 is the first official release. It establishes the complete
@@ -84,7 +68,9 @@ from an earlier public release.
   operations preserve prior vault metadata.
 - **Help presentation** — the search field now uses the shared WiseMoney input
   treatment and privacy/offline explanations avoid ambiguous consent or
-  implementation jargon.
+  implementation jargon. WiseBot uses the complete canonical guide, retains
+  the selected topic across follow-up questions, requests exact procedural
+  steps, and safely renders lists and emphasis.
 
 ### Security
 
@@ -101,5 +87,4 @@ from an earlier public release.
   OSV scanning, production builds, Go 1.25.13 with the August 2026 standard
   library security fixes, and Nano ID 3.3.18 form required release gates.
 
-[1.0.1]: https://github.com/Y4NN777/wisemoney/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Y4NN777/wisemoney/releases/tag/v1.0.0
