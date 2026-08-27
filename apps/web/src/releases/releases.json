@@ -36,7 +36,7 @@
           {
             "id": "carry",
             "title": "Emportez WiseMoney avec vous",
-            "body": "L’interface claire, sombre ou automatique s’adapte au téléphone et à l’ordinateur. Une fois ouverte sur l’appareil, l’application et son guide principal restent accessibles sans connexion."
+            "body": "L’interface claire, sombre ou automatique reste cohérente dès l’accueil et s’adapte au téléphone avec une navigation compacte. Une fois ouverte sur l’appareil, l’application et son guide principal restent accessibles sans connexion."
           }
         ]
       },
@@ -72,7 +72,7 @@
           {
             "id": "carry",
             "title": "Take WiseMoney with you",
-            "body": "The light, dark, or automatic interface adapts to phones and computers. Once opened on a device, the application and its main guide remain available without a connection."
+            "body": "The light, dark, or automatic interface stays consistent from the landing page onward and adapts to phones with compact navigation. Once opened on a device, the application and its main guide remain available without a connection."
           }
         ]
       }

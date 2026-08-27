@@ -116,6 +116,25 @@ try {
     assert.equal(response?.status(), 200, `${device.name}: home did not return 200`);
     await page.waitForFunction(() => !document.body.innerText.includes("Loading"), undefined, { timeout: 10_000 });
     await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
+    await page.evaluate(() => localStorage.setItem("wisemoney.theme.preference.v1", "dark"));
+    await page.reload({ waitUntil: "networkidle" });
+    await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
+    const darkLandingBackground = await page.locator(".landing-grid").evaluate((element) =>
+      getComputedStyle(element).backgroundImage);
+    assert.match(darkLandingBackground, /rgba\(32, 41, 67/,
+      `${device.name}: landing still uses the light theme glow in dark mode`);
+    assert.doesNotMatch(darkLandingBackground, /rgba\(237, 241, 255/,
+      `${device.name}: light landing glow leaked into dark mode`);
+    const darkPrimaryAction = await page.getByRole("button", { name: "Start", exact: true }).last().evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { background: style.backgroundColor, foreground: style.color };
+    });
+    assert.deepEqual(darkPrimaryAction, { background: "rgb(0, 47, 167)", foreground: "rgb(255, 255, 255)" },
+      `${device.name}: dark theme primary action drifted from WiseMoney blue`);
+    await page.screenshot({ path: `${outputDir}/${device.name}-landing-dark.png`, fullPage: true });
+    await page.evaluate(() => localStorage.setItem("wisemoney.theme.preference.v1", "light"));
+    await page.reload({ waitUntil: "networkidle" });
+    await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
     await page.getByRole("button", { name: "Open help", exact: true }).click();
     await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
     await page.getByRole("button", { name: device.name === "mobile" ? "Ask WiseBot" : "Open WiseBot", exact: true }).click();
@@ -230,6 +249,17 @@ try {
   await syncPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await syncPage.getByRole("button", { name: "Unlock", exact: true }).click();
   await syncPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
+  await syncPage.setViewportSize({ width: 390, height: 844 });
+  await syncPage.getByRole("combobox", { name: "Choose language", exact: true }).click();
+  await syncPage.getByRole("option", { name: "Français", exact: true }).click();
+  const compactDashboardLink = syncPage.getByRole("link", { name: "Tableau de bord", exact: true });
+  await compactDashboardLink.waitFor();
+  assert.equal((await compactDashboardLink.textContent())?.trim(), "Accueil",
+    "French bottom navigation did not use the compact dashboard label");
+  await syncPage.screenshot({ path: `${outputDir}/bottom-navigation-fr.png`, fullPage: true });
+  await syncPage.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+  await syncPage.getByRole("option", { name: "English", exact: true }).click();
+  await syncPage.setViewportSize({ width: 1280, height: 900 });
   await syncPage.getByRole("link", { name: "Planning", exact: true }).click();
   await syncPage.getByRole("link", { name: /^Debts & Receivables/ }).click();
   await syncPage.getByRole("heading", { name: "Debts & Receivables", exact: true }).waitFor();

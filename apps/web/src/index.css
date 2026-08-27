@@ -58,6 +58,9 @@
   --border: rgba(16, 24, 32, 0.12);
   --input: rgba(16, 24, 32, 0.16);
   --ring: var(--ocean-primary);
+  --landing-grid-line: rgba(0, 47, 167, 0.08);
+  --landing-glow: rgba(237, 241, 255, 0.92);
+  --landing-wash: rgba(237, 241, 255, 0.68);
 
   /* ---------- Focus ring ---------- */
   --ring-offset: 2px;
@@ -157,8 +160,8 @@
   --card-foreground: #f7f7f8;
   --popover: #191c22;
   --popover-foreground: #f7f7f8;
-  --primary: var(--ocean-light);        /* lighter accent for dark mode */
-  --primary-foreground: #101216;
+  --primary: #002fa7;
+  --primary-foreground: #ffffff;
   --secondary: #20242c;
   --secondary-foreground: var(--ocean-dark);
   --muted: #232730;
@@ -178,6 +181,9 @@
   --border: #333842;
   --input: #404650;
   --ring: var(--ocean-light);
+  --landing-grid-line: rgba(143, 167, 255, 0.10);
+  --landing-glow: rgba(32, 41, 67, 0.78);
+  --landing-wash: rgba(32, 41, 67, 0.44);
 
   /* Ink in dark mode uses white-at-opacity */
   --ink-90: rgba(255, 255, 255, 0.90);
@@ -316,10 +322,10 @@
 
   .landing-grid {
     background:
-      linear-gradient(to right, rgba(0, 47, 167, 0.08) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0, 47, 167, 0.08) 1px, transparent 1px),
-      radial-gradient(circle at 18% 18%, rgba(237, 241, 255, 0.92), transparent 30rem),
-      linear-gradient(180deg, rgba(237, 241, 255, 0.68), rgba(247, 247, 248, 0) 34rem),
+      linear-gradient(to right, var(--landing-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--landing-grid-line) 1px, transparent 1px),
+      radial-gradient(circle at 18% 18%, var(--landing-glow), transparent 30rem),
+      linear-gradient(180deg, var(--landing-wash), transparent 34rem),
       var(--background);
     background-size: 32px 32px, 32px 32px, auto, auto, auto;
   }

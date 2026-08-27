@@ -58,6 +58,10 @@ from an earlier public release.
 
 ### Fixed
 
+- **Theme and mobile navigation consistency** — the public landing page now
+  uses a dark-specific grid and wash instead of leaking light-theme gradients,
+  primary actions keep the WiseMoney blue in both themes, and the French bottom
+  navigation uses the compact “Accueil” label without shortening page titles.
 - **Visible update lifecycle** — deployed versions are checked on launch,
   foreground, reconnect, and at a short interval; the user can install now or
   later, sees installation progress, and receives confirmation after reload.

@@ -8,11 +8,11 @@ import ReminderCenter, { type ReminderViewModel } from "../components/ReminderCe
 import { ReminderProvider, useReminders } from "../reminders/ReminderProvider.tsx";
 
 const navItems = [
-  { to: "/", labelKey: "nav.dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/capture", labelKey: "nav.capture", icon: PlusCircle, exact: false },
-  { to: "/assistant", labelKey: "nav.assistant", icon: MessageSquare, exact: false },
-  { to: "/planning", labelKey: "nav.planning", icon: ClipboardList, exact: false },
-  { to: "/settings", labelKey: "nav.settings", icon: SettingsIcon, exact: false },
+  { to: "/", labelKey: "nav.dashboard", compactLabelKey: "nav.dashboardShort", icon: LayoutDashboard, exact: true },
+  { to: "/capture", labelKey: "nav.capture", compactLabelKey: "nav.capture", icon: PlusCircle, exact: false },
+  { to: "/assistant", labelKey: "nav.assistant", compactLabelKey: "nav.assistant", icon: MessageSquare, exact: false },
+  { to: "/planning", labelKey: "nav.planning", compactLabelKey: "nav.planning", icon: ClipboardList, exact: false },
+  { to: "/settings", labelKey: "nav.settings", compactLabelKey: "nav.settings", icon: SettingsIcon, exact: false },
 ] as const;
 
 export const Route = createRootRoute({
@@ -101,13 +101,14 @@ function RootLayout() {
             <Link
               key={item.to}
               to={item.to}
+              aria-label={t(item.labelKey)}
               activeOptions={{ exact: item.exact }}
               className="flex h-full min-w-16 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-muted-foreground transition-[background-color,color,transform] duration-200 active:scale-95"
               activeProps={{ className: "text-ocean-dark bg-ocean-wash/80" }}
             >
               <item.icon className="h-5 w-5" />
               <span className="text-[11px] leading-tight font-medium">
-                {t(item.labelKey)}
+                {t(item.compactLabelKey)}
               </span>
             </Link>
           ))}
