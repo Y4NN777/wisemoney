@@ -65,6 +65,9 @@ from an earlier public release.
   uses a dark-specific grid and wash instead of leaking light-theme gradients,
   primary actions keep the WiseMoney blue in both themes, and the French bottom
   navigation uses the compact “Accueil” label without shortening page titles.
+  Language controls also keep the brand blue, while the mobile unlock header
+  uses a compact selector and an arrow-only back action without repeating the
+  logo above the form.
 - **Visible update lifecycle** — deployed versions are checked on launch,
   foreground, reconnect, and at a short interval; the user can install now or
   later, sees installation progress, and receives confirmation after reload.

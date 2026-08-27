@@ -68,25 +68,25 @@
       "toggleRegisterAction": "Register"
     },
     "unlock": {
-      "aria": "Unlock WiseMoney",
-      "title": "Open your private space",
-      "descriptionPassphrase": "Enter your private passphrase to access your financial records",
+      "aria": "Open WiseMoney",
+      "title": "Open WiseMoney",
       "passphrase": "Private passphrase",
-      "unlocking": "Unlocking…",
-      "unlock": "Unlock",
+      "unlocking": "Opening…",
+      "unlock": "Open",
       "errors": {
         "passphraseRequired": "Passphrase is required",
         "incorrectPassphrase": "Incorrect passphrase",
         "unlockFailed": "Unlock failed"
       },
-      "webauthnDescription": "Use your face, fingerprint, or security key to access your financial records",
-      "webauthnButton": "Use face, fingerprint, or security key",
-      "webauthnAuthenticating": "Authenticating…",
+      "deviceUnlockHint": "Use this device’s screen lock.",
+      "usePassphrase": "Use my private passphrase",
+      "webauthnAuthenticating": "Opening…",
       "webauthnErrors": {
         "notConfigured": "Device unlock is not configured",
         "failed": "Device unlock failed"
       }
     },
+    "back": "Back",
     "backToOverview": "Back to overview",
     "setup": {
       "aria": "Set up private space",

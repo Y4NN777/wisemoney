@@ -68,25 +68,25 @@
       "toggleRegisterAction": "S'inscrire"
     },
     "unlock": {
-      "aria": "Déverrouiller WiseMoney",
-      "title": "Ouvrir votre espace privé",
-      "descriptionPassphrase": "Entrez votre phrase privée pour accéder à vos données financières",
+      "aria": "Ouvrir WiseMoney",
+      "title": "Ouvrir WiseMoney",
       "passphrase": "Phrase privée",
-      "unlocking": "Déverrouillage…",
-      "unlock": "Déverrouiller",
+      "unlocking": "Ouverture…",
+      "unlock": "Ouvrir",
       "errors": {
         "passphraseRequired": "La phrase de chiffrement est requise",
         "incorrectPassphrase": "Phrase de chiffrement incorrecte",
         "unlockFailed": "Échec du déverrouillage"
       },
-      "webauthnDescription": "Utilisez votre visage, votre empreinte ou une clé de sécurité pour accéder à vos données financières",
-      "webauthnButton": "Utiliser visage, empreinte ou clé de sécurité",
-      "webauthnAuthenticating": "Authentification…",
+      "deviceUnlockHint": "Utilisez le déverrouillage de cet appareil.",
+      "usePassphrase": "Utiliser ma phrase privée",
+      "webauthnAuthenticating": "Ouverture…",
       "webauthnErrors": {
         "notConfigured": "Le déverrouillage de l'appareil n'est pas configuré",
         "failed": "Échec du déverrouillage de l'appareil"
       }
     },
+    "back": "Retour",
     "backToOverview": "Retour à la présentation",
     "setup": {
       "aria": "Configuration de l'espace privé",

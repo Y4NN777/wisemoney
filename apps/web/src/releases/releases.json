@@ -26,7 +26,7 @@
           {
             "id": "protect",
             "title": "Gardez le contrôle de vos données",
-            "body": "Votre espace financier est chiffré sur l’appareil. Vous choisissez quand le verrouiller, le sauvegarder, le restaurer ou partager des informations avec un service d’assistance optionnel."
+            "body": "Votre espace financier est chiffré sur l’appareil. Vous l’ouvrez avec le déverrouillage de l’appareil ou votre phrase privée, puis choisissez quand le verrouiller, le sauvegarder, le restaurer ou partager des informations avec un service d’assistance optionnel."
           },
           {
             "id": "understand",
@@ -62,7 +62,7 @@
           {
             "id": "protect",
             "title": "Stay in control of your data",
-            "body": "Your financial space is encrypted on the device. You choose when to lock, back up, restore, or share information with an optional assistant service."
+            "body": "Your financial space is encrypted on the device. Open it with the device screen lock or your private passphrase, then choose when to lock, back up, restore, or share information with an optional assistant service."
           },
           {
             "id": "understand",

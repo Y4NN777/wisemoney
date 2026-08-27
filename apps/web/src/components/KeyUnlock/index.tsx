@@ -16,7 +16,7 @@ import { router } from "../../router.ts";
 import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContext.ts";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
-import { ArrowLeft, ArrowRight, Bot, CalendarClock, ChevronDown, ChevronUp, Download, Eye, EyeOff, ShieldCheck, Upload, WalletCards, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, CalendarClock, ChevronDown, ChevronUp, Download, Eye, EyeOff, LockOpen, ShieldCheck, Upload, WalletCards, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -155,6 +155,7 @@ export default function KeyUnlock({ onVaultUnlockedChange }: KeyUnlockProps) {
     content = (
       <WebAuthnUnlock
         onBack={() => setFlow("landing")}
+        onUsePassphrase={() => setFlow("unlock-passphrase")}
         onUnlock={openVault}
         error={error}
         setError={setError}
@@ -541,10 +542,17 @@ function AuthTopBar({ onBack }: { onBack: () => void }) {
     <header className="mx-auto flex w-full max-w-5xl items-center justify-between border-b border-border py-3">
       <Logo className="h-8 w-auto" />
       <div className="flex items-center gap-2">
-        <LanguageSwitcher />
-        <Button type="button" variant="ghost" onClick={onBack} className="gap-2">
+        <LanguageSwitcher compact />
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onBack}
+          className="h-9 w-9 gap-2 px-0 sm:w-auto sm:px-4"
+          aria-label={t("keyUnlock.backToOverview")}
+          title={t("keyUnlock.backToOverview")}
+        >
           <ArrowLeft className="h-4 w-4" />
-          {t("keyUnlock.backToOverview")}
+          <span className="hidden sm:inline">{t("keyUnlock.back")}</span>
         </Button>
       </div>
     </header>
@@ -908,18 +916,13 @@ function PassphraseUnlock({ onBack, onUnlock, error, setError }: PassphraseUnloc
   return (
     <main aria-label={t("keyUnlock.unlock.aria")} className="flex min-h-dvh flex-col bg-background p-4">
       <AuthTopBar onBack={onBack} />
-      <div className="flex flex-1 flex-col items-center justify-center gap-5">
-      <Logo className="w-48 h-auto" />
-      <Card className="metric-surface w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>{t("keyUnlock.unlock.title")}</CardTitle>
-          <CardDescription>{t("keyUnlock.unlock.descriptionPassphrase")}</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <div className="flex flex-1 items-center justify-center py-8">
+        <section className="w-full max-w-sm border-y border-border py-6">
+          <h1 className="text-2xl font-semibold tracking-normal">{t("keyUnlock.unlock.title")}</h1>
           {error != null && (
-            <p role="alert" className="text-destructive text-sm mb-4">{error}</p>
+            <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>
           )}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="unlock-passphrase">{t("keyUnlock.unlock.passphrase")}</Label>
               <Input
@@ -936,8 +939,7 @@ function PassphraseUnlock({ onBack, onUnlock, error, setError }: PassphraseUnloc
               {submitting ? t("keyUnlock.unlock.unlocking") : t("keyUnlock.unlock.unlock")}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </section>
       </div>
     </main>
   );
@@ -945,12 +947,13 @@ function PassphraseUnlock({ onBack, onUnlock, error, setError }: PassphraseUnloc
 
 type WebAuthnUnlockProps = {
   onBack: () => void;
+  onUsePassphrase: () => void;
   onUnlock: (masterKey: MasterKey) => Promise<void>;
   error: string | null;
   setError: (e: string | null) => void;
 };
 
-function WebAuthnUnlock({ onBack, onUnlock, error, setError }: WebAuthnUnlockProps) {
+function WebAuthnUnlock({ onBack, onUsePassphrase, onUnlock, error, setError }: WebAuthnUnlockProps) {
   const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
 
@@ -987,27 +990,31 @@ function WebAuthnUnlock({ onBack, onUnlock, error, setError }: WebAuthnUnlockPro
   return (
     <main aria-label={t("keyUnlock.unlock.aria")} className="flex min-h-dvh flex-col bg-background p-4">
       <AuthTopBar onBack={onBack} />
-      <div className="flex flex-1 flex-col items-center justify-center gap-5">
-      <Logo className="w-48 h-auto" />
-      <Card className="metric-surface w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>{t("keyUnlock.unlock.title")}</CardTitle>
-          <CardDescription>{t("keyUnlock.unlock.webauthnDescription")}</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <div className="flex flex-1 items-center justify-center py-8">
+        <section className="w-full max-w-sm border-y border-border py-6">
+          <h1 className="text-2xl font-semibold tracking-normal">{t("keyUnlock.unlock.title")}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{t("keyUnlock.unlock.deviceUnlockHint")}</p>
           {error != null && (
-            <p role="alert" className="text-destructive text-sm mb-4">{error}</p>
+            <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>
           )}
           <Button
             type="button"
             onClick={handleUnlock}
             disabled={submitting}
-            className="w-full"
+            className="mt-6 w-full"
           >
-            {submitting ? t("keyUnlock.unlock.webauthnAuthenticating") : t("keyUnlock.unlock.webauthnButton")}
+            <LockOpen className="h-4 w-4" />
+            {submitting ? t("keyUnlock.unlock.webauthnAuthenticating") : t("keyUnlock.unlock.unlock")}
           </Button>
-        </CardContent>
-      </Card>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onUsePassphrase}
+            className="mt-2 w-full text-muted-foreground"
+          >
+            {t("keyUnlock.unlock.usePassphrase")}
+          </Button>
+        </section>
       </div>
     </main>
   );

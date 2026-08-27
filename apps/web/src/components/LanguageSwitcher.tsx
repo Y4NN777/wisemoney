@@ -30,7 +30,7 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
       <Select value={currentLanguage} onValueChange={changeLanguage}>
         <SelectTrigger className="h-9 w-[76px] gap-1 px-2 shadow-none" aria-label={t("language.choose")}>
           <span className="flex items-center gap-1.5">
-            <Languages className="h-4 w-4 shrink-0 text-ocean-primary" aria-hidden="true" />
+            <Languages className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <span className="text-xs font-semibold uppercase">{currentLanguage}</span>
           </span>
         </SelectTrigger>
@@ -49,7 +49,7 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
       role="group"
       aria-label={t("language.choose")}
     >
-      <Languages className="mx-1 h-4 w-4 shrink-0 text-ocean-primary" aria-hidden="true" />
+      <Languages className="mx-1 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
       {languages.map((language) => (
         <button
           key={language.code}
@@ -57,7 +57,7 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
           onClick={() => changeLanguage(language.code)}
           className={`min-h-8 rounded px-2 text-xs font-semibold transition-colors ${
             currentLanguage === language.code
-              ? "bg-ocean-primary text-white"
+              ? "bg-primary text-primary-foreground"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"
           }`}
           aria-pressed={currentLanguage === language.code}

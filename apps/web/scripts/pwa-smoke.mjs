@@ -131,6 +131,10 @@ try {
     });
     assert.deepEqual(darkPrimaryAction, { background: "rgb(0, 47, 167)", foreground: "rgb(255, 255, 255)" },
       `${device.name}: dark theme primary action drifted from WiseMoney blue`);
+    const darkLanguageIcon = await page.getByRole("combobox", { name: "Choose language", exact: true })
+      .locator("svg").first().evaluate((element) => getComputedStyle(element).color);
+    assert.equal(darkLanguageIcon, "rgb(0, 47, 167)",
+      `${device.name}: language switcher drifted from WiseMoney blue`);
     await page.screenshot({ path: `${outputDir}/${device.name}-landing-dark.png`, fullPage: true });
     await page.evaluate(() => localStorage.setItem("wisemoney.theme.preference.v1", "light"));
     await page.reload({ waitUntil: "networkidle" });
@@ -241,7 +245,8 @@ try {
   await syncPage.goto(baseURL, { waitUntil: "networkidle" });
   await syncPage.getByRole("button", { name: "Open app", exact: true }).click();
   await syncPage.getByLabel("Private passphrase", { exact: true }).waitFor();
-  await syncPage.getByRole("button", { name: "Français", exact: true }).click();
+  await syncPage.getByRole("combobox", { name: "Choose language", exact: true }).click();
+  await syncPage.getByRole("option", { name: "Français", exact: true }).click();
   try {
     await syncPage.getByLabel("Phrase privée", { exact: true }).waitFor({ timeout: 5_000 });
   } catch (error) {
@@ -249,14 +254,15 @@ try {
     throw new Error(`Language switch did not preserve the unlock screen. Body:\n${await syncPage.locator("body").innerText()}`, { cause: error });
   }
   assert.equal(
-    await syncPage.getByText("Ouvrir votre espace privé", { exact: true }).count(),
+    await syncPage.getByText("Ouvrir WiseMoney", { exact: true }).count(),
     1,
     "language switch left the passphrase unlock screen",
   );
-  await syncPage.getByRole("button", { name: "English", exact: true }).click();
+  await syncPage.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+  await syncPage.getByRole("option", { name: "English", exact: true }).click();
   await syncPage.getByLabel("Private passphrase", { exact: true }).waitFor();
   await syncPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
-  await syncPage.getByRole("button", { name: "Unlock", exact: true }).click();
+  await syncPage.getByRole("button", { name: "Open", exact: true }).click();
   await syncPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
   await syncPage.setViewportSize({ width: 390, height: 844 });
   await syncPage.getByRole("combobox", { name: "Choose language", exact: true }).click();
@@ -416,13 +422,30 @@ try {
   assert.equal(await appPage.locator('meta[name="theme-color"]').getAttribute("content"), "#111318", "dark theme-color was not applied");
   assert.equal(await appPage.evaluate(() => localStorage.getItem("wisemoney.theme.preference.v1")), "dark", "dark theme choice was not persisted");
   await appPage.screenshot({ path: `${outputDir}/settings-dark.png`, fullPage: true });
-  await appPage.getByRole("radio", { name: "Light", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();
   await appPage.getByLabel("Private passphrase", { exact: true }).waitFor();
+  await appPage.setViewportSize({ width: 390, height: 844 });
+  const unlockBackButton = appPage.getByRole("button", { name: "Back to overview", exact: true });
+  const unlockBackBox = await unlockBackButton.boundingBox();
+  assert.ok(unlockBackBox != null && unlockBackBox.width <= 40,
+    "mobile unlock back action did not collapse to its arrow");
+  assert.equal(await unlockBackButton.locator("span").isVisible(), false,
+    "mobile unlock back label remained visible");
+  const unlockLanguageBox = await appPage.getByRole("combobox", { name: "Choose language", exact: true }).boundingBox();
+  assert.ok(unlockLanguageBox != null && unlockLanguageBox.width <= 80,
+    "mobile unlock language switcher is not compact");
+  assert.equal(await appPage.locator('main svg[aria-label="WiseMoney logo"]').count(), 1,
+    "unlock screen repeats the WiseMoney logo");
+  assert.equal(await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true,
+    "mobile unlock header has horizontal overflow");
+  await appPage.screenshot({ path: `${outputDir}/unlock-mobile-dark.png`, fullPage: true });
   await appPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
-  await appPage.getByRole("button", { name: "Unlock", exact: true }).click();
+  await appPage.getByRole("button", { name: "Open", exact: true }).click();
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).waitFor({ timeout: 90_000 });
+  await appPage.setViewportSize({ width: 1280, height: 900 });
+  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByRole("radio", { name: "Light", exact: true }).click();
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
 
