@@ -323,6 +323,19 @@ try {
   await financialOverview.getByText("Money received", { exact: true }).waitFor();
   await financialOverview.getByText("Money spent", { exact: true }).waitFor();
   await financialOverview.getByText("Difference", { exact: true }).waitFor();
+  await appPage.getByText("Balance evolution", { exact: true }).first().waitFor();
+  await appPage.getByText("Money in and money out", { exact: true }).first().waitFor();
+  await appPage.getByText("Spending mix", { exact: true }).first().waitFor();
+  await appPage.locator('a[href^="/operations"]').first().click();
+  await appPage.getByRole("heading", { name: "All operations", exact: true }).waitFor();
+  await appPage.getByPlaceholder("Label, account, or category", { exact: true }).fill("Smoke retained transaction");
+  await appPage.getByText("Smoke retained transaction", { exact: true }).waitFor();
+  await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
+  await appPage.getByRole("combobox", { name: "Account shown", exact: true }).click();
+  await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
+  await appPage.getByText("Balance for this account. Commitments that are not assigned to an account remain in the global view.", { exact: true }).waitFor();
+  await appPage.getByRole("combobox", { name: "Account shown", exact: true }).click();
+  await appPage.getByRole("option", { name: "All accounts", exact: true }).click();
   await appPage.getByRole("tab", { name: "All", exact: true }).click();
   await appPage.getByText(/^Through /).waitFor();
   await appPage.getByRole("tab", { name: "Month", exact: true }).click();
@@ -334,11 +347,37 @@ try {
   await appPage.getByRole("button", { name: "Back", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
   await appPage.screenshot({ path: `${outputDir}/transfer-history.png`, fullPage: true });
+  await appPage.setViewportSize({ width: 320, height: 720 });
+  assert.equal(await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "320px dashboard has horizontal page overflow");
+  await appPage.screenshot({ path: `${outputDir}/dashboard-320.png`, fullPage: true });
+  for (const viewport of [
+    { width: 375, height: 812 },
+    { width: 768, height: 1024 },
+    { width: 1024, height: 768 },
+    { width: 1440, height: 1000 },
+    { width: 844, height: 390 },
+  ]) {
+    await appPage.setViewportSize(viewport);
+    assert.equal(
+      await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      true,
+      `${viewport.width}x${viewport.height} dashboard has horizontal page overflow`,
+    );
+  }
   await appPage.setViewportSize({ width: 390, height: 844 });
+  await appPage.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
+  assert.equal(await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "dashboard overflows with 200% root text size");
+  await appPage.evaluate(() => { document.documentElement.style.fontSize = ""; });
   await appPage.screenshot({ path: `${outputDir}/transfer-history-mobile.png`, fullPage: true });
   await appPage.setViewportSize({ width: 1280, height: 900 });
 
   await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByRole("radio", { name: "Dark", exact: true }).click();
+  assert.equal(await appPage.locator("html").evaluate((element) => element.classList.contains("dark")), true, "dark theme was not applied");
+  assert.equal(await appPage.locator('meta[name="theme-color"]').getAttribute("content"), "#111318", "dark theme-color was not applied");
+  assert.equal(await appPage.evaluate(() => localStorage.getItem("wisemoney.theme.preference.v1")), "dark", "dark theme choice was not persisted");
+  await appPage.screenshot({ path: `${outputDir}/settings-dark.png`, fullPage: true });
+  await appPage.getByRole("radio", { name: "Light", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();
   await appPage.getByLabel("Private passphrase", { exact: true }).waitFor();

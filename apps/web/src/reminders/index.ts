@@ -25,6 +25,8 @@ export type ReminderSettings = {
   version: 1;
   /** Explicit user opt-in. No reminder is produced while false. */
   enabled: boolean;
+  /** Optional cue while the app is open; background sound remains OS-controlled. */
+  foregroundSound: boolean;
   types: Record<ReminderType, ReminderTypeSettings>;
   /** Sunday = 0, Saturday = 6. */
   weeklyReview: {
@@ -65,6 +67,7 @@ export const REMINDERS_CHANGED_EVENT = "wisemoney:reminders-changed";
 export const DEFAULT_REMINDER_SETTINGS: ReminderSettings = {
   version: 1,
   enabled: false,
+  foregroundSound: false,
   types: {
     weekly_review: { enabled: true, leadDays: [0] },
     planned_expense: { enabled: true, leadDays: [7, 3, 0] },
@@ -98,6 +101,7 @@ function cloneDefaultSettings(): ReminderSettings {
   return {
     ...DEFAULT_REMINDER_SETTINGS,
     enabled: DEFAULT_REMINDER_SETTINGS.enabled,
+    foregroundSound: DEFAULT_REMINDER_SETTINGS.foregroundSound,
     types: Object.fromEntries(REMINDER_TYPES.map((type) => [
       type,
       {
@@ -122,6 +126,7 @@ function normaliseSettings(value: unknown): ReminderSettings {
   if (value == null || typeof value !== "object" || Array.isArray(value)) return defaults;
   const candidate = value as Record<string, unknown>;
   defaults.enabled = typeof candidate.enabled === "boolean" ? candidate.enabled : defaults.enabled;
+  defaults.foregroundSound = typeof candidate.foregroundSound === "boolean" ? candidate.foregroundSound : defaults.foregroundSound;
   const candidateTypes = candidate.types != null && typeof candidate.types === "object"
     ? candidate.types as Record<string, unknown>
     : {};

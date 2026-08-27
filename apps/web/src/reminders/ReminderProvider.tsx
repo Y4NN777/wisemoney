@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import i18n from "../i18n.ts";
 import { createWeeklyReviewCalendar, downloadCalendarExport } from "../calendar/ics.ts";
@@ -14,6 +14,7 @@ import {
   type InAppReminder,
   type ReminderSettings,
 } from "./index.ts";
+import { hasNewDueReminder, playForegroundNotificationCue } from "../notifications/feedback.ts";
 
 type PermissionState = NotificationPermission | "unsupported";
 
@@ -48,6 +49,7 @@ export function ReminderProvider({ children }: { children: ReactNode }) {
   const { data: snapshot } = useFinancialState();
   const [settings, setSettings] = useState(loadReminderSettings);
   const [reminders, setReminders] = useState(() => loadReminderInbox());
+  const knownReminderIds = useRef(new Set(reminders.map((reminder) => reminder.id)));
   const [permission, setPermission] = useState<PermissionState>(notificationPermission);
 
   const refreshInbox = useCallback(() => setReminders(loadReminderInbox()), []);
@@ -67,7 +69,13 @@ export function ReminderProvider({ children }: { children: ReactNode }) {
     let active = true;
     void rebuildReminderQueue(snapshot, { settings })
       .then(() => {
-        if (active) refreshInbox();
+        if (!active) return;
+        const next = loadReminderInbox();
+        if (settings.foregroundSound && hasNewDueReminder(knownReminderIds.current, next)) {
+          playForegroundNotificationCue();
+        }
+        knownReminderIds.current = new Set(next.map((reminder) => reminder.id));
+        setReminders(next);
       })
       .catch(() => {
         if (active) toast.error(i18n.t("reminders.errors.rebuild"));
@@ -93,14 +101,17 @@ export function ReminderProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const testNotification = useCallback(async () => {
-    if (notificationPermission() !== "granted" || !("serviceWorker" in navigator)) return;
-    const registration = await navigator.serviceWorker.ready;
-    await registration.showNotification(i18n.t("reminders.test.title"), {
-      body: i18n.t("reminders.test.body"),
-      icon: "/icons/wisemoney-icon-192.png",
-      tag: "wisemoney-reminder-test",
-    });
-  }, []);
+    if (settings.foregroundSound) playForegroundNotificationCue();
+    if (notificationPermission() === "granted" && "serviceWorker" in navigator) {
+      const registration = await navigator.serviceWorker.ready;
+      await registration.showNotification(i18n.t("reminders.test.title"), {
+        body: i18n.t("reminders.test.body"),
+        icon: "/icons/wisemoney-icon-192.png",
+        tag: "wisemoney-reminder-test",
+      });
+    }
+    toast.success(i18n.t("reminders.messages.feedbackTested"));
+  }, [settings.foregroundSound]);
 
   const exportWeeklyCalendar = useCallback(() => {
     const locale = i18n.language.toLowerCase().startsWith("fr") ? "fr" : "en";

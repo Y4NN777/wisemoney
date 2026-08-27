@@ -14,7 +14,7 @@
   --ocean-primary:    #002fa7;
   --ocean-secondary:  #002fa7;
   --ocean-dark:       #002fa7;
-  --ocean-light:      #002fa7;
+  --ocean-light:      #8fa7ff;
   --ocean-wash:       #edf1ff;
   --sage:             #2f7d57;
   --sage-wash:        #e7f4ec;
@@ -47,6 +47,14 @@
   --accent-foreground: var(--ocean-dark);
   --destructive: #c2410c;
   --destructive-foreground: #ffffff;
+  --positive: #2f6b4f;
+  --positive-wash: #e7f4ec;
+  --negative: #9a3412;
+  --negative-wash: #fff0e8;
+  --attention: #9a5b13;
+  --attention-wash: #fff3d8;
+  --information: #315fb8;
+  --information-wash: #edf1ff;
   --border: rgba(16, 24, 32, 0.12);
   --input: rgba(16, 24, 32, 0.16);
   --ring: var(--ocean-primary);
@@ -139,24 +147,36 @@
 
 /* ---------- DARK mode — same palette, inverted surfaces ---------- */
 .dark {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --card: #1e293b;
-  --card-foreground: #f8fafc;
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
+  --ocean-primary: #8fa7ff;
+  --ocean-secondary: #8fa7ff;
+  --ocean-dark: #d8e0ff;
+  --ocean-wash: #202943;
+  --background: #111318;
+  --foreground: #f7f7f8;
+  --card: #191c22;
+  --card-foreground: #f7f7f8;
+  --popover: #191c22;
+  --popover-foreground: #f7f7f8;
   --primary: var(--ocean-light);        /* lighter accent for dark mode */
-  --primary-foreground: #0f172a;
-  --secondary: #1e293b;
-  --secondary-foreground: var(--ocean-wash);
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  --accent: #1e293b;
-  --accent-foreground: var(--ocean-wash);
-  --destructive: #7f1d1d;
+  --primary-foreground: #101216;
+  --secondary: #20242c;
+  --secondary-foreground: var(--ocean-dark);
+  --muted: #232730;
+  --muted-foreground: #a7adb8;
+  --accent: #20242c;
+  --accent-foreground: var(--ocean-dark);
+  --destructive: #d78362;
   --destructive-foreground: #f8fafc;
-  --border: #334155;
-  --input: #334155;
+  --positive: #82b89b;
+  --positive-wash: #1c3026;
+  --negative: #e09a7e;
+  --negative-wash: #35231f;
+  --attention: #d3a45f;
+  --attention-wash: #332a1d;
+  --information: #9ab0ff;
+  --information-wash: #202943;
+  --border: #333842;
+  --input: #404650;
   --ring: var(--ocean-light);
 
   /* Ink in dark mode uses white-at-opacity */
@@ -187,6 +207,14 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-positive: var(--positive);
+  --color-positive-wash: var(--positive-wash);
+  --color-negative: var(--negative);
+  --color-negative-wash: var(--negative-wash);
+  --color-attention: var(--attention);
+  --color-attention-wash: var(--attention-wash);
+  --color-information: var(--information);
+  --color-information-wash: var(--information-wash);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

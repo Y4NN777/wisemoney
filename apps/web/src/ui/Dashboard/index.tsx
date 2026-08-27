@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { useDeleteTransaction, useFinancialState, useHasTransactions, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
+import { useDeleteTransaction, useFinancialOperations, useFinancialState, useHasTransactions, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Progress } from "../../components/ui/progress.tsx";
@@ -14,7 +14,7 @@ import {
   AlertTriangle, ArrowUp, ArrowDown, Wallet, TrendingUp, Target, Repeat,
   Info, ChevronLeft, ChevronRight, List, BarChart3,
   Lightbulb, ArrowRightLeft, Pencil, Trash2,
-  PlusCircle,
+  PlusCircle, CalendarDays,
 } from "lucide-react";
 import type { FinancialStateSnapshot, TransactionDisplay } from "../../domain/financialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
@@ -28,6 +28,20 @@ import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
 import { comparePeriodAmounts, type PeriodAmountComparison } from "./periodComparison.ts";
 import { getDailyGreetingIndex, getGreetingTime } from "./dashboardGreeting.ts";
+import DashboardAttention from "../../components/DashboardAttention.tsx";
+import {
+  selectAccountDistribution,
+  selectAccountOperations,
+  selectAccountTransactions,
+  selectAvailableAfterCommitments,
+  selectBalanceTimeline,
+  selectCashFlowTimeline,
+  selectExpensesByCategory,
+  selectPeriodTransactions,
+  selectUpcomingCommitments,
+  type CashFlowPoint,
+  type BalancePoint,
+} from "../../analytics/dashboard.ts";
 
 const GREETING_MESSAGE_COUNT = 5;
 
@@ -40,12 +54,6 @@ function formatDate(ts: number): string {
 }
 
 type TransactionFilter = "day" | "week" | "month" | "all";
-type CashFlowPoint = {
-  label: string;
-  income: number;
-  expenses: number;
-  net: number;
-};
 
 function getTransactionFilterBounds(
   filter: TransactionFilter,
@@ -92,13 +100,13 @@ function computePrevPeriod(year: number, month: number): { year: number; month: 
 }
 
 // ── Spending breakdown bar ─────────────────────────────────────────────
-function SpendingBar({ label, amount, total, currency }: { label: string; amount: number; total: number; currency: string }) {
+function SpendingBar({ label, amount, total, currency, categoryId, accountId, start, end }: { label: string; amount: number; total: number; currency: string; categoryId: string; accountId: string | null; start: number; end: number }) {
   const pct = total > 0 ? (amount / total) * 100 : 0;
   return (
-    <div className="space-y-1.5">
+    <Link to="/operations" search={{ categoryId, accountId: accountId ?? undefined, start, end }} className="interactive-surface block space-y-1.5 border-l border-transparent py-1 pl-2 hover:border-primary">
       <div className="flex items-center justify-between text-sm">
         <span className="truncate pr-2 font-medium">{label}</span>
-        <span className="shrink-0 text-muted-foreground">{formatMoney(amount, currency)}</span>
+        <span className="shrink-0 text-muted-foreground">{formatMoney(amount, currency)} · {Math.round(pct)}%</span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-muted">
         <div
@@ -106,46 +114,13 @@ function SpendingBar({ label, amount, total, currency }: { label: string; amount
           style={{ width: `${Math.min(pct, 100)}%` }}
         />
       </div>
-    </div>
+    </Link>
   );
 }
 
-function buildCashFlowSeries(transactions: TransactionDisplay[] | undefined, start: number, end: number): CashFlowPoint[] {
-  const dayMs = 24 * 60 * 60 * 1000;
-  const spanDays = Math.max(1, Math.ceil((end - start) / dayMs));
-  const bucketCount = Math.min(10, Math.max(5, spanDays));
-  const bucketMs = Math.max(dayMs, Math.ceil((end - start) / bucketCount));
-
-  const buckets: CashFlowPoint[] = Array.from({ length: bucketCount }, (_, i) => {
-    const bucketStart = start + i * bucketMs;
-    return {
-      label: new Date(bucketStart).toLocaleDateString(document.documentElement.lang || undefined, { month: "short", day: "numeric" }),
-      income: 0,
-      expenses: 0,
-      net: 0,
-    };
-  });
-
-  for (const tx of transactions ?? []) {
-    const index = Math.min(bucketCount - 1, Math.max(0, Math.floor((tx.timestamp - start) / bucketMs)));
-    const bucket = buckets[index];
-    if (bucket == null) continue;
-    if (tx.displayAmount == null) continue;
-    const value = Math.abs(tx.displayAmount.minorUnits);
-    if (tx.direction === "income") {
-      bucket.income += value;
-      bucket.net += value;
-    } else {
-      bucket.expenses += value;
-      bucket.net -= value;
-    }
-  }
-
-  return buckets;
-}
-
-function CashFlowTrendChart({ points, currency }: { points: CashFlowPoint[]; currency: string }) {
+function CashFlowTrendChart({ points, currency, accountId }: { points: CashFlowPoint[]; currency: string; accountId: string | null }) {
   const { t } = useTranslation();
+  const locale = document.documentElement.lang || undefined;
   const maxAmount = Math.max(1, ...points.flatMap((p) => [p.income, p.expenses, Math.abs(p.net)]));
   const width = 360;
   const height = 180;
@@ -165,26 +140,28 @@ function CashFlowTrendChart({ points, currency }: { points: CashFlowPoint[]; cur
         <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t("dashboard.cashFlowTrend")} className="h-full w-full">
           <defs>
             <linearGradient id="incomeGradient" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="var(--sage)" stopOpacity="0.92" />
-              <stop offset="100%" stopColor="var(--sage)" stopOpacity="0.42" />
+              <stop offset="0%" stopColor="var(--positive)" stopOpacity="0.82" />
+              <stop offset="100%" stopColor="var(--positive)" stopOpacity="0.30" />
             </linearGradient>
             <linearGradient id="expenseGradient" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="var(--amber)" stopOpacity="0.46" />
-              <stop offset="100%" stopColor="var(--amber)" stopOpacity="0.88" />
+              <stop offset="0%" stopColor="var(--negative)" stopOpacity="0.30" />
+              <stop offset="100%" stopColor="var(--negative)" stopOpacity="0.82" />
             </linearGradient>
           </defs>
           <line x1={padding} x2={width - padding} y1={baseline} y2={baseline} stroke="var(--border)" strokeWidth="1" />
           {points.map((point, index) => {
             const x = padding + index * step + step / 2;
+            const label = new Date(point.start).toLocaleDateString(locale, { month: "short", day: "numeric" });
             const incomeHeight = (point.income / maxAmount) * barArea;
             const expenseHeight = (point.expenses / maxAmount) * barArea;
             return (
-              <g key={`${point.label}-${index}`}>
+              <g key={`${point.start}-${index}`} tabIndex={0} aria-label={t("dashboard.chartPoint", { date: label, income: formatMoney(point.income, currency), expenses: formatMoney(point.expenses, currency), net: formatMoney(point.net, currency) })}>
+                <title>{t("dashboard.chartPoint", { date: label, income: formatMoney(point.income, currency), expenses: formatMoney(point.expenses, currency), net: formatMoney(point.net, currency) })}</title>
                 <rect x={x - 9} y={baseline - incomeHeight} width="8" height={Math.max(2, incomeHeight)} rx="3" fill="url(#incomeGradient)" />
                 <rect x={x + 1} y={baseline} width="8" height={Math.max(2, expenseHeight)} rx="3" fill="url(#expenseGradient)" />
                 {(index === 0 || index === points.length - 1) && (
                   <text x={x} y={height - 9} textAnchor="middle" fontSize="10" fill="var(--muted-foreground)">
-                    {point.label}
+                    {label}
                   </text>
                 )}
               </g>
@@ -196,10 +173,19 @@ function CashFlowTrendChart({ points, currency }: { points: CashFlowPoint[]; cur
         </svg>
       </div>
       <div className="grid grid-cols-3 gap-2 text-xs">
-        <ChartLegend label={t("dashboard.income")} value={formatMoney(points.reduce((s, p) => s + p.income, 0), currency)} className="bg-sage" />
-        <ChartLegend label={t("dashboard.expenses")} value={formatMoney(points.reduce((s, p) => s + p.expenses, 0), currency)} className="bg-amber" />
+        <ChartLegend label={t("dashboard.income")} value={formatMoney(points.reduce((s, p) => s + p.income, 0), currency)} className="bg-positive" />
+        <ChartLegend label={t("dashboard.expenses")} value={formatMoney(points.reduce((s, p) => s + p.expenses, 0), currency)} className="bg-negative" />
         <ChartLegend label={t("dashboard.net")} value={formatMoney(points.reduce((s, p) => s + p.net, 0), currency)} className="bg-ocean-primary" />
       </div>
+      <details className="border-t border-border pt-2 text-xs">
+        <summary className="cursor-pointer font-medium text-muted-foreground">{t("dashboard.chartTable")}</summary>
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-96 text-left">
+            <thead><tr className="border-b border-border"><th className="py-2">{t("operations.date")}</th><th>{t("dashboard.income")}</th><th>{t("dashboard.expenses")}</th><th>{t("dashboard.net")}</th></tr></thead>
+            <tbody>{points.map((point) => <tr key={point.start} className="border-b border-border/70"><td className="py-2"><Link className="font-medium text-ocean-primary underline-offset-2 hover:underline" to="/operations" search={{ start: point.start, end: point.end, accountId: accountId ?? undefined }}>{new Date(point.start).toLocaleDateString(locale)}</Link></td><td>{formatMoney(point.income, currency)}</td><td>{formatMoney(point.expenses, currency)}</td><td>{formatMoney(point.net, currency)}</td></tr>)}</tbody>
+          </table>
+        </div>
+      </details>
     </div>
   );
 }
@@ -216,32 +202,48 @@ function ChartLegend({ label, value, className }: { label: string; value: string
   );
 }
 
-function SpendingMixChart({
-  items,
-  total,
-  currency,
-}: {
-  items: Array<{ id: string; name: string; total: { minorUnits: number; currency: string } }>;
-  total: number;
-  currency: string;
-}) {
+function BalanceTrendChart({ points, currency, periodStart, accountId }: { points: BalancePoint[]; currency: string; periodStart: number; accountId: string | null }) {
   const { t } = useTranslation();
-  const palette = ["#002fa7", "#3455b8", "#6579c7", "#96a2d8", "#bbc3e5", "#d9def3"];
-  let cursor = 0;
-  const stops = items.slice(0, 6).map((item, index) => {
-    const pct = total > 0 ? (item.total.minorUnits / total) * 100 : 0;
-    const start = cursor;
-    cursor += pct;
-    return `${palette[index % palette.length]} ${start}% ${cursor}%`;
-  });
-  const background = stops.length > 0 ? `conic-gradient(${stops.join(", ")})` : "var(--muted)";
-
+  const locale = document.documentElement.lang || undefined;
+  const width = 520;
+  const height = 190;
+  const paddingX = 28;
+  const paddingY = 24;
+  const values = points.map((point) => point.balance);
+  const min = Math.min(...values, 0);
+  const max = Math.max(...values, 1);
+  const span = Math.max(1, max - min);
+  const coordinates = points.map((point, index) => ({
+    ...point,
+    x: paddingX + (index / Math.max(1, points.length - 1)) * (width - paddingX * 2),
+    y: paddingY + ((max - point.balance) / span) * (height - paddingY * 2),
+  }));
   return (
-    <div className="mx-auto grid h-36 w-36 place-items-center rounded-full" style={{ background }}>
-      <div className="grid h-20 w-20 place-items-center rounded-full border border-border bg-card text-center">
-        <span className="text-[10px] font-medium uppercase text-muted-foreground">{t("dashboard.total")}</span>
-        <span className="text-sm font-semibold tabular-nums">{formatMoney(total, currency)}</span>
+    <div className="space-y-3">
+      <div className="h-52 overflow-hidden border border-border bg-card">
+        <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t("dashboard.balanceTrend")} className="h-full w-full">
+          <line x1={paddingX} x2={width - paddingX} y1={height - paddingY} y2={height - paddingY} stroke="var(--border)" />
+          <polyline points={coordinates.map((point) => `${point.x},${point.y}`).join(" ")} fill="none" stroke="var(--ocean-primary)" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter" />
+          {coordinates.map((point) => {
+            const date = new Date(point.timestamp).toLocaleDateString(locale, { month: "short", day: "numeric" });
+            const label = t("dashboard.balancePoint", { date, balance: formatMoney(point.balance, currency) });
+            return <circle key={point.timestamp} cx={point.x} cy={point.y} r="4" fill="var(--card)" stroke="var(--ocean-primary)" strokeWidth="2" tabIndex={0} aria-label={label}><title>{label}</title></circle>;
+          })}
+        </svg>
       </div>
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="text-xs text-muted-foreground">{t("dashboard.balanceTrendHelp")}</p>
+        <p className="text-sm font-semibold tabular-nums">{formatMoney(points.at(-1)?.balance ?? 0, currency)}</p>
+      </div>
+      <details className="border-t border-border pt-2 text-xs">
+        <summary className="cursor-pointer font-medium text-muted-foreground">{t("dashboard.chartTable")}</summary>
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-80 text-left">
+            <thead><tr className="border-b border-border"><th className="py-2">{t("operations.date")}</th><th>{t("dashboard.totalBalance")}</th></tr></thead>
+            <tbody>{points.map((point) => <tr key={point.timestamp} className="border-b border-border/70"><td className="py-2"><Link className="font-medium text-ocean-primary underline-offset-2 hover:underline" to="/operations" search={{ start: periodStart, end: point.timestamp, accountId: accountId ?? undefined }}>{new Date(point.timestamp).toLocaleDateString(locale)}</Link></td><td>{formatMoney(point.balance, currency)}</td></tr>)}</tbody>
+          </table>
+        </div>
+      </details>
     </div>
   );
 }
@@ -274,7 +276,7 @@ function HealthRail({
   return (
     <div className="grid gap-2 sm:grid-cols-3">
       {hasBudgetStatus && (
-        <HealthPill label={t("dashboard.budgetUse")} value={`${budgetAverage}%`} progress={Math.min(100, budgetAverage)} tone={budgetAverage > 90 ? "risk" : "normal"} />
+        <HealthPill label={t("dashboard.budgetUse")} value={`${budgetAverage}%`} progress={Math.min(100, budgetAverage)} tone={budgetAverage >= 90 ? "risk" : "normal"} />
       )}
       {hasGoalStatus && (
         <HealthPill label={t("dashboard.goalProgress")} value={`${goalAverage}%`} progress={Math.min(100, goalAverage)} tone="good" />
@@ -378,16 +380,21 @@ function TransactionActivity({
   const { t } = useTranslation();
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between gap-3 pb-3">
+      <CardHeader className="flex flex-col items-start justify-between gap-2 pb-3 sm:flex-row sm:items-center">
         <CardTitle className="text-base">{t("dashboard.transactions")}</CardTitle>
+        <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/operations">{t("dashboard.viewAll")}</Link>
+          </Button>
         {canMutate && (
-          <Button asChild variant="outline" size="sm">
+          <Button asChild variant="outline" size="sm" className="min-w-0 whitespace-normal">
             <Link to="/capture" search={{ tab: "transaction" }}>
               <PlusCircle className="mr-1 h-4 w-4" />
               {t("dashboard.addTransaction")}
             </Link>
           </Button>
         )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-3">
         <Tabs value={filter} onValueChange={(value) => onFilterChange(value as TransactionFilter)}>
@@ -411,7 +418,7 @@ function TransactionActivity({
               return (
                 <li key={transaction.id} className="flex items-center justify-between border-b py-2 last:border-0">
                   <div className="flex min-w-0 items-center gap-2">
-                    <div className={`h-2 w-2 shrink-0 rounded-full ${isIncome ? "bg-green-500" : "bg-red-500"}`} />
+                    <div className={`h-2 w-2 shrink-0 rounded-full ${isIncome ? "bg-positive" : "bg-negative"}`} />
                     <div className="min-w-0">
                       <p className="truncate text-sm">{category == null ? t("common.unknown") : categoryDisplayName(category, t)}</p>
                       <p className="text-xs text-muted-foreground">
@@ -420,7 +427,7 @@ function TransactionActivity({
                     </div>
                   </div>
                   <div className="ml-2 flex shrink-0 items-center gap-1">
-                    <span className={`text-sm font-medium ${isIncome ? "text-green-600" : "text-red-500"}`}>
+                    <span className={`text-sm font-medium ${isIncome ? "text-positive" : "text-negative"}`}>
                       {isIncome ? "+" : "-"}{formatMoney(Math.abs(transaction.amount.minorUnits), transaction.amount.currency)}
                     </span>
                     {canMutate && (
@@ -560,6 +567,9 @@ function DashboardPeriodHeader({
   onPrevious,
   onNext,
   onCurrent,
+  accounts,
+  selectedAccountId,
+  onAccountChange,
 }: {
   selectedYear: number;
   selectedMonth: number;
@@ -567,6 +577,9 @@ function DashboardPeriodHeader({
   onPrevious: () => void;
   onNext: () => void;
   onCurrent: () => void;
+  accounts: FinancialStateSnapshot["accounts"];
+  selectedAccountId: string;
+  onAccountChange: (accountId: string) => void;
 }) {
   const { t } = useTranslation();
   const today = new Date();
@@ -585,7 +598,16 @@ function DashboardPeriodHeader({
         </p>
       </div>
 
-      <nav aria-label={t("dashboard.monthNavigation")} className="flex shrink-0 items-center gap-2 self-end sm:self-auto">
+      <nav aria-label={t("dashboard.dashboardControls")} className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2 self-end sm:w-auto sm:self-auto">
+        {accounts.length > 1 && (
+          <Select value={selectedAccountId} onValueChange={onAccountChange}>
+            <SelectTrigger className="h-9 w-full min-w-40 sm:w-auto" aria-label={t("dashboard.accountFilter")}><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("dashboard.allAccounts")}</SelectItem>
+              {accounts.map((account) => <SelectItem key={account.id} value={account.id}>{account.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        )}
         {!isCurrent && (
           <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-muted-foreground" onClick={onCurrent}>
             {t("dashboard.today")}
@@ -621,16 +643,19 @@ function FinancialOverview({
   snapshot,
   isCurrentPeriod,
   comparison,
+  accountName,
 }: {
   snapshot: FinancialStateSnapshot;
   isCurrentPeriod: boolean;
   comparison: PeriodComparisonSummary | null;
+  accountName: string | null;
 }) {
   const { t } = useTranslation();
   const currency = snapshot.totalBalance.currency;
   const activeAccountCount = snapshot.accounts.filter((account) => account.isActive).length;
   const net = snapshot.netCashFlow.minorUnits;
-  const netTone = net === 0 ? "text-foreground" : net > 0 ? "text-green-600" : "text-red-500";
+  const netTone = net === 0 ? "text-foreground" : net > 0 ? "text-positive" : "text-negative";
+  const afterCommitments = accountName == null ? selectAvailableAfterCommitments(snapshot) : null;
   const periodDate = new Date(snapshot.periodStart);
   const locale = document.documentElement.lang || undefined;
   const periodMonth = periodDate.toLocaleDateString(locale, { month: "long" });
@@ -641,11 +666,11 @@ function FinancialOverview({
     : periodMonth;
 
   return (
-    <section aria-label={t("dashboard.balanceSummary")} className="grid gap-3 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
-      <Card className="border-ocean-primary/30">
+    <section aria-label={t("dashboard.balanceSummary")} className="situation-line grid gap-px overflow-hidden border border-border bg-border lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
+      <Card className="rounded-none border-0">
         <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
           <div>
-            <p className="text-xs font-medium text-ocean-primary">{t("dashboard.allActiveAccounts")}</p>
+            <p className="text-xs font-medium text-ocean-primary">{accountName ?? t("dashboard.allActiveAccounts")}</p>
             <CardTitle className="mt-1 text-base">
               {t(isCurrentPeriod ? "dashboard.availableToday" : "dashboard.balanceAtPeriodEnd")}
             </CardTitle>
@@ -653,16 +678,27 @@ function FinancialOverview({
           <Wallet className="h-5 w-5 shrink-0 text-ocean-primary" />
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-semibold tracking-tight tabular-nums">
+          <p className="break-words text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl">
             {formatMoney(snapshot.totalBalance.minorUnits, currency)}
           </p>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            {t("dashboard.balanceContext", { count: activeAccountCount })}
+            {accountName == null
+              ? t("dashboard.balanceContext", { count: activeAccountCount })
+              : t("dashboard.selectedAccountContext")}
           </p>
+          {afterCommitments != null && afterCommitments.minorUnits !== snapshot.totalBalance.minorUnits && (
+            <div className="mt-4 border-t border-border pt-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <p className="text-xs font-medium text-muted-foreground">{t("dashboard.afterCommitments")}</p>
+                <p className="text-base font-semibold tabular-nums">{formatMoney(afterCommitments.minorUnits, afterCommitments.currency)}</p>
+              </div>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{t("dashboard.afterCommitmentsHelp")}</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-none border-0">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">
             {t("dashboard.periodActivity", { month: contextualMonth })}
@@ -673,9 +709,9 @@ function FinancialOverview({
             <div className="p-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-medium text-muted-foreground">{t("dashboard.moneyReceived")}</p>
-                <ArrowDown className={`h-4 w-4 ${snapshot.periodIncome.minorUnits === 0 ? "text-muted-foreground" : "text-green-600"}`} />
+                <ArrowDown className={`h-4 w-4 ${snapshot.periodIncome.minorUnits === 0 ? "text-muted-foreground" : "text-positive"}`} />
               </div>
-              <p className={`mt-1 text-xl font-semibold tabular-nums ${snapshot.periodIncome.minorUnits === 0 ? "text-foreground" : "text-green-600"}`}>
+              <p className={`mt-1 text-xl font-semibold tabular-nums ${snapshot.periodIncome.minorUnits === 0 ? "text-foreground" : "text-positive"}`}>
                 {formatSignedMoney(snapshot.periodIncome.minorUnits, currency)}
               </p>
               {comparison != null && (
@@ -685,9 +721,9 @@ function FinancialOverview({
             <div className="p-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-medium text-muted-foreground">{t("dashboard.moneySpent")}</p>
-                <ArrowUp className={`h-4 w-4 ${snapshot.periodExpenses.minorUnits === 0 ? "text-muted-foreground" : "text-red-500"}`} />
+                <ArrowUp className={`h-4 w-4 ${snapshot.periodExpenses.minorUnits === 0 ? "text-muted-foreground" : "text-negative"}`} />
               </div>
-              <p className={`mt-1 text-xl font-semibold tabular-nums ${snapshot.periodExpenses.minorUnits === 0 ? "text-foreground" : "text-red-500"}`}>
+              <p className={`mt-1 text-xl font-semibold tabular-nums ${snapshot.periodExpenses.minorUnits === 0 ? "text-foreground" : "text-negative"}`}>
                 {formatSignedMoney(-snapshot.periodExpenses.minorUnits, currency)}
               </p>
               {comparison != null && (
@@ -715,14 +751,36 @@ function FinancialOverview({
   );
 }
 
+function DashboardQuickActions() {
+  const { t } = useTranslation();
+  return (
+    <nav aria-label={t("dashboard.quickActions")} className="grid grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-4">
+      <Button asChild variant="ghost" className="h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4">
+        <Link to="/capture" search={{ tab: "transaction", direction: "expense" }}><ArrowUp className="mr-2 h-4 w-4 text-negative" />{t("dashboard.addExpense")}</Link>
+      </Button>
+      <Button asChild variant="ghost" className="h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4">
+        <Link to="/capture" search={{ tab: "transaction", direction: "income" }}><ArrowDown className="mr-2 h-4 w-4 text-positive" />{t("dashboard.addIncome")}</Link>
+      </Button>
+      <Button asChild variant="ghost" className="h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4">
+        <Link to="/capture" search={{ tab: "transfer" }}><ArrowRightLeft className="mr-2 h-4 w-4 text-ocean-primary" />{t("dashboard.makeTransfer")}</Link>
+      </Button>
+      <Button asChild variant="ghost" className="h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4">
+        <Link to="/planned-expenses"><CalendarDays className="mr-2 h-4 w-4 text-ocean-primary" />{t("dashboard.planExpense")}</Link>
+      </Button>
+    </nav>
+  );
+}
+
 function DashboardContent({
   snapshot,
   canMutate,
   periodComparison,
+  selectedAccountId,
 }: {
   snapshot: FinancialStateSnapshot;
   canMutate: boolean;
   periodComparison: PeriodComparisonSummary | null;
+  selectedAccountId: string;
 }) {
   const { t } = useTranslation();
   const masterKey = useMasterKey();
@@ -737,26 +795,53 @@ function DashboardContent({
 
   const periodStart = snapshot.periodStart;
   const periodEnd = snapshot.periodEnd;
-  const { data: periodTransactions, isLoading: periodTransactionsLoading } = useTransactionsInRange(periodStart, periodEnd);
+  const { data: allTransactions, isLoading: periodTransactionsLoading } = useTransactionsInRange(0, snapshot.asOfTimestamp);
+  const { data: allOperations, isLoading: periodOperationsLoading } = useFinancialOperations();
+  const periodTransactions = useMemo(
+    () => selectPeriodTransactions(allTransactions ?? [], { start: periodStart, end: periodEnd }),
+    [allTransactions, periodEnd, periodStart],
+  );
+  const periodOperations = useMemo(
+    () => (allOperations ?? []).filter((operation) => operation.timestamp >= periodStart && operation.timestamp <= periodEnd),
+    [allOperations, periodEnd, periodStart],
+  );
+  const selectedAccount = selectedAccountId === "all"
+    ? null
+    : snapshot.accounts.find((account) => account.id === selectedAccountId && account.isActive) ?? null;
+  const accountId = selectedAccount?.id ?? null;
+  const scopedPeriodTransactions = useMemo(
+    () => selectAccountTransactions(periodTransactions, accountId),
+    [accountId, periodTransactions],
+  );
+  const scopedPeriodOperations = useMemo(
+    () => selectAccountOperations(periodOperations, accountId),
+    [accountId, periodOperations],
+  );
   const transactionBounds = useMemo(
     () => getTransactionFilterBounds(transactionFilter, snapshot.asOfTimestamp, periodStart, periodEnd),
     [transactionFilter, snapshot.asOfTimestamp, periodStart, periodEnd],
   );
-  const { data: listTransactions, isLoading: listTransactionsLoading } = useTransactionsInRange(
-    transactionBounds.start,
-    transactionBounds.end,
+  const listTransactions = useMemo(
+    () => selectAccountTransactions(selectPeriodTransactions(allTransactions ?? [], transactionBounds), accountId),
+    [accountId, allTransactions, transactionBounds],
   );
+  const listTransactionsLoading = periodTransactionsLoading;
   const filteredTransfers = useMemo(
     () => snapshot.transfers.filter(
-      (transfer) => transfer.timestamp >= transactionBounds.start && transfer.timestamp <= transactionBounds.end,
+      (transfer) => transfer.timestamp >= transactionBounds.start &&
+        transfer.timestamp <= transactionBounds.end &&
+        (accountId == null || transfer.fromAccountId === accountId || transfer.toAccountId === accountId),
     ),
-    [snapshot.transfers, transactionBounds.end, transactionBounds.start],
+    [accountId, snapshot.transfers, transactionBounds.end, transactionBounds.start],
   );
-  const transactionFilterContext = transactionFilter === "all"
+  const dateFilterContext = transactionFilter === "all"
     ? t("dashboard.transactionsAllContext", { date: formatFilterDate(transactionBounds.end) })
     : t("dashboard.transactionsRangeContext", {
       range: formatFilterRange(transactionBounds.start, transactionBounds.end),
     });
+  const transactionFilterContext = selectedAccount == null
+    ? dateFilterContext
+    : t("dashboard.accountTransactionsContext", { account: selectedAccount.name, period: dateFilterContext });
 
   useEffect(() => {
     let active = true;
@@ -775,42 +860,53 @@ function DashboardContent({
   const categories = snapshot.categories;
   const activeBudgets = snapshot.budgets.filter((b) => !b.isArchived);
   const activeGoals = snapshot.goals.filter((g) => !g.isArchived);
+  const accountDistribution = useMemo(() => selectAccountDistribution(snapshot), [snapshot]);
+  const upcomingCommitments = useMemo(() => selectUpcomingCommitments(snapshot), [snapshot]);
+  const overviewSnapshot = useMemo((): FinancialStateSnapshot => {
+    if (selectedAccount == null) return snapshot;
+    const income = scopedPeriodTransactions.reduce(
+      (sum, transaction) => sum + (transaction.direction === "income" ? Math.abs(transaction.amount.minorUnits) : 0),
+      0,
+    );
+    const expenses = scopedPeriodTransactions.reduce(
+      (sum, transaction) => sum + (transaction.direction === "expense" ? Math.abs(transaction.amount.minorUnits) : 0),
+      0,
+    );
+    return {
+      ...snapshot,
+      baseCurrency: selectedAccount.currency,
+      accounts: [selectedAccount],
+      totalBalance: selectedAccount.balance,
+      periodIncome: { minorUnits: income, currency: selectedAccount.currency },
+      periodExpenses: { minorUnits: expenses, currency: selectedAccount.currency },
+      netCashFlow: { minorUnits: income - expenses, currency: selectedAccount.currency },
+    };
+  }, [scopedPeriodTransactions, selectedAccount, snapshot]);
 
   const categorySpending = useMemo(() => {
-    const ex = categories
-      .map((c) => ({
-        id: c.id,
-        name: categoryDisplayName(c, t),
-        total: snapshot.categoryTotals[c.id],
-      }))
-      .filter((c): c is typeof c & { total: NonNullable<typeof c.total> } => c.total != null && c.total.minorUnits > 0)
-      .sort((a, b) => b.total.minorUnits - a.total.minorUnits);
-    const totalExpenses = ex.reduce((s, c) => s + c.total.minorUnits, 0);
-    return { items: ex, total: totalExpenses, currency: ex[0]?.total.currency ?? snapshot.baseCurrency };
-  }, [categories, snapshot.baseCurrency, snapshot.categoryTotals, t]);
+    const items = selectExpensesByCategory(scopedPeriodTransactions, { start: periodStart, end: periodEnd }, overviewSnapshot.baseCurrency)
+      .map((item) => {
+        const category = categories.find((candidate) => candidate.id === item.categoryId);
+        return { ...item, name: category == null ? t("common.unknown") : categoryDisplayName(category, t) };
+      });
+    return { items, total: items.reduce((sum, item) => sum + item.amount.minorUnits, 0), currency: overviewSnapshot.baseCurrency };
+  }, [categories, overviewSnapshot.baseCurrency, periodEnd, periodStart, scopedPeriodTransactions, t]);
 
   const cashFlowSeries = useMemo(
-    () => buildCashFlowSeries(periodTransactions, periodStart, periodEnd),
-    [periodTransactions, periodStart, periodEnd],
+    () => selectCashFlowTimeline(scopedPeriodTransactions, { start: periodStart, end: periodEnd }, 8),
+    [scopedPeriodTransactions, periodStart, periodEnd],
   );
-
-  // budget alerts
-  const budgetAlerts = activeBudgets
-    .map((b) => {
-      const prog = snapshot.budgetProgress[b.id];
-      if (prog == null) return null;
-      const cat = snapshot.categories.find((c) => c.id === b.categoryId);
-      return { budget: b, progress: prog, categoryName: cat == null ? t("common.unknown") : categoryDisplayName(cat, t) };
-    })
-    .filter((x): x is NonNullable<typeof x> => x != null)
-    .filter((x) => x.progress.percentage >= 80);
+  const balanceSeries = useMemo(
+    () => selectBalanceTimeline(overviewSnapshot.totalBalance, scopedPeriodOperations, { start: periodStart, end: periodEnd }, 10, accountId ?? undefined),
+    [accountId, overviewSnapshot.totalBalance, periodEnd, periodStart, scopedPeriodOperations],
+  );
 
   // load AI insight
   const handleAiInsight = async () => {
     if (aiLoading || aiCapability?.available !== true) return;
     setAiLoading(true);
     try {
-      const result = await requestInsight("insight", snapshot, masterKey);
+      const result = await requestInsight("insight", overviewSnapshot, masterKey);
       setAiInsight(result);
     } catch {
       setAiInsight({
@@ -823,7 +919,8 @@ function DashboardContent({
     }
   };
 
-  const currency = snapshot.totalBalance.currency;
+  const currency = overviewSnapshot.totalBalance.currency;
+  const asOfDayStart = new Date(snapshot.asOfTimestamp).setHours(0, 0, 0, 0);
 
   const saveTransaction = async () => {
     if (transactionEdit == null) return;
@@ -863,77 +960,69 @@ function DashboardContent({
 
   return (
     <div className="space-y-4">
-      {snapshot.missingFxCurrencies.length > 0 && (
-        <Card className="border-amber bg-amber-wash">
-          <CardContent className="flex items-start gap-3 pt-4">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
-            <div>
-              <p className="text-sm font-medium text-amber-800 dark:text-amber-300">{t("dashboard.missingFxTitle")}</p>
-              <p className="text-xs text-amber-700 dark:text-amber-400">
-                {t("dashboard.missingFxBody", {
-                  currencies: snapshot.missingFxCurrencies.join(", "),
-                  baseCurrency: snapshot.baseCurrency,
-                })}
-              </p>
+      <FinancialOverview
+        snapshot={overviewSnapshot}
+        isCurrentPeriod={canMutate}
+        comparison={selectedAccount == null ? periodComparison : null}
+        accountName={selectedAccount?.name ?? null}
+      />
+
+      {canMutate && <DashboardQuickActions />}
+
+      <DashboardAttention snapshot={snapshot} />
+
+      <section aria-label={t("dashboard.analyticsOverview")} className="grid gap-3 xl:grid-cols-2">
+        <Card className="interactive-surface metric-surface xl:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-base">{t("dashboard.balanceTrend")}</CardTitle>
+            <Button asChild variant="ghost" size="sm"><Link to="/operations" search={accountId == null ? {} : { accountId }}>{t("dashboard.viewAll")}</Link></Button>
+          </CardHeader>
+          <CardContent>
+            {periodOperationsLoading ? <Skeleton className="h-52 w-full" /> : <BalanceTrendChart points={balanceSeries} currency={currency} periodStart={periodStart} accountId={accountId} />}
+          </CardContent>
+        </Card>
+        <Card className="interactive-surface metric-surface">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-base">{t("dashboard.cashFlowTrend")}</CardTitle>
+            <TrendingUp className="h-4 w-4 text-ocean-primary" />
+          </CardHeader>
+          <CardContent>
+            {periodTransactionsLoading ? (
+              <Skeleton className="h-48 w-full" />
+            ) : (
+              <CashFlowTrendChart points={cashFlowSeries} currency={currency} accountId={accountId} />
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="interactive-surface">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-base">{t("dashboard.spendingMix")}</CardTitle>
+            <BarChart3 className="h-4 w-4 text-ocean-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {categorySpending.items.length > 0 ? (
+                categorySpending.items.slice(0, 6).map((category) => (
+                  <SpendingBar
+                    key={category.categoryId}
+                    label={category.name}
+                    amount={category.amount.minorUnits}
+                    total={categorySpending.total}
+                    currency={category.amount.currency}
+                    categoryId={category.categoryId}
+                    accountId={accountId}
+                    start={periodStart}
+                    end={periodEnd}
+                  />
+                ))
+              ) : (
+                <p className="py-8 text-center text-sm text-muted-foreground">{t("dashboard.categoryNone")}</p>
+              )}
             </div>
           </CardContent>
         </Card>
-      )}
-      {/* ── Alerts ── */}
-      {(snapshot.netCashFlow.minorUnits < 0 || budgetAlerts.some((a) => a.progress.percentage >= 100)) && (
-        <section aria-label={t("dashboard.alerts")} className="space-y-2">
-          {snapshot.netCashFlow.minorUnits < 0 && (
-            <Card className="border-amber bg-amber-wash">
-              <CardContent className="flex items-start gap-3 pt-4">
-                <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-amber-800 dark:text-amber-300">{t("dashboard.negativeCashFlow")}</p>
-                  <p className="text-xs text-amber-700 dark:text-amber-400">
-                    {t("dashboard.negativeCashFlowBody", { amount: formatMoney(Math.abs(snapshot.netCashFlow.minorUnits), currency) })}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-          {budgetAlerts
-            .filter((a) => a.progress.percentage >= 100)
-            .map((a) => (
-            <Card key={a.budget.id} className="border-destructive bg-destructive/10">
-                <CardContent className="flex items-start gap-3 pt-4">
-                  <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-red-800 dark:text-red-300">{t("dashboard.budgetExceeded")}</p>
-                    <p className="text-xs text-red-700 dark:text-red-400">
-                      {t("dashboard.budgetExceededBody", { name: a.budget.name, amount: formatMoney(a.progress.limit.minorUnits, a.progress.limit.currency) })}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-        </section>
-      )}
-
-      <FinancialOverview snapshot={snapshot} isCurrentPeriod={canMutate} comparison={periodComparison} />
-
-      <TransactionActivity
-        snapshot={snapshot}
-        canMutate={canMutate}
-        filter={transactionFilter}
-        onFilterChange={setTransactionFilter}
-        filterContext={transactionFilterContext}
-        transactions={listTransactions}
-        loading={listTransactionsLoading}
-        transfers={filteredTransfers}
-        onEdit={(transaction) => setTransactionEdit({
-          transaction,
-          categoryId: transaction.categoryId,
-          direction: transaction.direction,
-          amount: amountInput(transaction),
-          note: transaction.note,
-        })}
-        onDelete={setTransactionToDelete}
-      />
-
+      </section>
 
       <HealthRail
         activeBudgets={activeBudgets}
@@ -944,9 +1033,8 @@ function DashboardContent({
 
 
       {/* ── Two-column layout on desktop ── */}
-      <section className="grid gap-3 lg:grid-cols-2">
-        {/* Upcoming recurring */}
-        {snapshot.projectedRecurring.length > 0 && (
+      <section className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+        {upcomingCommitments.length > 0 && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="text-base">{t("dashboard.upcoming")}</CardTitle>
@@ -954,15 +1042,50 @@ function DashboardContent({
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                {snapshot.projectedRecurring.slice(0, 5).map((item, i) => (
-                  <li key={i} className="flex items-center justify-between py-1">
-                    <span className="text-sm">{item.label}</span>
-                    <span className="text-sm font-medium">
-                      {formatMoney(item.amount.minorUnits, item.amount.currency)}
-                    </span>
+                {upcomingCommitments.slice(0, 5).map((item) => (
+                  <li key={item.id} className="border-b border-border py-2 last:border-b-0">
+                    <Link
+                      to={item.kind === "planned_expense" ? "/planned-expenses" : item.kind === "recurring_expense" ? "/recurring" : "/debts"}
+                      className="interactive-surface flex items-center justify-between gap-3"
+                    >
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-medium">{item.label}</span>
+                        <span className="mt-0.5 block text-xs text-muted-foreground">
+                          {t(`dashboard.commitmentKinds.${item.kind}`)}
+                          {item.dueAt == null
+                            ? ""
+                            : ` · ${item.dueAt < asOfDayStart ? t("dashboard.overdueDate", { date: formatDate(item.dueAt) }) : formatDate(item.dueAt)}`}
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-sm font-semibold tabular-nums">{formatMoney(item.amount.minorUnits, item.amount.currency)}</span>
+                    </Link>
                   </li>
                 ))}
               </ul>
+            </CardContent>
+          </Card>
+        )}
+
+        {selectedAccount == null && accountDistribution.length > 1 && (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <CardTitle className="text-base">{t("dashboard.accountDistribution")}</CardTitle>
+              <Wallet className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {accountDistribution.slice(0, 6).map((account) => (
+                <div key={account.accountId} className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-3 text-sm">
+                    <span className="truncate font-medium">{account.name}</span>
+                    <span className="shrink-0 tabular-nums text-muted-foreground">{formatMoney(account.amount.minorUnits, account.amount.currency)}</span>
+                  </div>
+                  {account.share == null ? (
+                    <p className="text-[11px] text-muted-foreground">{t("dashboard.accountShareUnavailable")}</p>
+                  ) : (
+                    <div className="h-1.5 overflow-hidden bg-muted"><div className="h-full bg-ocean-primary" style={{ width: `${Math.min(100, account.share)}%` }} /></div>
+                  )}
+                </div>
+              ))}
             </CardContent>
           </Card>
         )}
@@ -980,7 +1103,15 @@ function DashboardContent({
                 if (prog == null) return null;
                 const cat = snapshot.categories.find((c) => c.id === budget.categoryId);
                 const overspent = prog.percentage > 100;
-                const nearingLimit = prog.percentage >= 80 && !overspent;
+                const limitReached = prog.percentage === 100;
+                const nearingLimit = prog.percentage >= 70 && !limitReached && !overspent;
+                const budgetStatus = overspent
+                  ? t("dashboard.budgetStates.exceeded")
+                  : limitReached
+                    ? t("dashboard.budgetStates.reached")
+                    : nearingLimit
+                      ? t("dashboard.budgetStates.watch")
+                      : t("dashboard.budgetStates.within");
                 return (
                   <div key={budget.id} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
@@ -989,20 +1120,20 @@ function DashboardContent({
                         <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal shrink-0">
                           {cat?.name ?? t("common.unknown")}
                         </Badge>
-                        {nearingLimit && <Info className="h-3 w-3 text-amber-500 shrink-0" />}
-                        {overspent && <AlertTriangle className="h-3 w-3 text-destructive shrink-0" />}
+                        {(nearingLimit || limitReached) && <Info className="h-3 w-3 text-attention shrink-0" />}
+                        {overspent && <AlertTriangle className="h-3 w-3 text-negative shrink-0" />}
                       </span>
-                      <span className={overspent ? "text-destructive font-medium" : nearingLimit ? "text-amber-600 font-medium" : "text-muted-foreground"}>
+                      <span className={overspent ? "text-negative font-medium" : nearingLimit ? "text-attention font-medium" : "text-muted-foreground"}>
                         {formatMoney(prog.spent.minorUnits, prog.spent.currency)} / {formatMoney(prog.limit.minorUnits, prog.limit.currency)}
                       </span>
                     </div>
                     <Progress
                       value={Math.min(prog.percentage, 100)}
-                      className={overspent ? "bg-red-200 [&>div]:bg-destructive" : nearingLimit ? "bg-amber-200 [&>div]:bg-amber-500" : ""}
+                      className={overspent ? "bg-negative-wash [&>div]:bg-negative" : nearingLimit || limitReached ? "bg-attention-wash [&>div]:bg-attention" : ""}
                     />
-                    {nearingLimit && !overspent && (
-                      <p className="text-xs text-amber-600">{t("dashboard.remaining", { percentage: Math.round(100 - prog.percentage) })}</p>
-                    )}
+                    <p className={`text-xs ${overspent ? "text-negative" : nearingLimit || limitReached ? "text-attention" : "text-muted-foreground"}`}>
+                      {budgetStatus}{nearingLimit ? ` · ${t("dashboard.remaining", { percentage: Math.round(100 - prog.percentage) })}` : ""}
+                    </p>
                   </div>
                 );
               })}
@@ -1038,48 +1169,24 @@ function DashboardContent({
         </Card>
       )}
 
-      <section aria-label={t("dashboard.analyticsOverview")} className="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.9fr)]">
-        <Card className="interactive-surface metric-surface">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">{t("dashboard.cashFlowTrend")}</CardTitle>
-            <TrendingUp className="h-4 w-4 text-ocean-primary" />
-          </CardHeader>
-          <CardContent>
-            {periodTransactionsLoading ? (
-              <Skeleton className="h-48 w-full" />
-            ) : (
-              <CashFlowTrendChart points={cashFlowSeries} currency={currency} />
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="interactive-surface">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">{t("dashboard.spendingMix")}</CardTitle>
-            <BarChart3 className="h-4 w-4 text-ocean-primary" />
-          </CardHeader>
-          <CardContent className="grid gap-5 md:grid-cols-[160px_minmax(0,1fr)] md:items-center">
-            <div className="hidden md:block">
-              <SpendingMixChart items={categorySpending.items} total={categorySpending.total} currency={categorySpending.currency} />
-            </div>
-            <div className="space-y-3">
-              {categorySpending.items.length > 0 ? (
-                categorySpending.items.slice(0, 6).map((category) => (
-                  <SpendingBar
-                    key={category.id}
-                    label={category.name}
-                    amount={category.total.minorUnits}
-                    total={categorySpending.total}
-                    currency={category.total.currency}
-                  />
-                ))
-              ) : (
-                <p className="py-8 text-center text-sm text-muted-foreground">{t("dashboard.categoryNone")}</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+      <TransactionActivity
+        snapshot={snapshot}
+        canMutate={canMutate}
+        filter={transactionFilter}
+        onFilterChange={setTransactionFilter}
+        filterContext={transactionFilterContext}
+        transactions={listTransactions}
+        loading={listTransactionsLoading}
+        transfers={filteredTransfers}
+        onEdit={(transaction) => setTransactionEdit({
+          transaction,
+          categoryId: transaction.categoryId,
+          direction: transaction.direction,
+          amount: amountInput(transaction),
+          note: transaction.note,
+        })}
+        onDelete={setTransactionToDelete}
+      />
 
       {(aiInsight != null || aiCapability?.available === true) && (
         <section aria-label={t("dashboard.aiInsight")} className="max-w-xl">
@@ -1198,6 +1305,7 @@ export default function Dashboard() {
   const now = new Date();
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
+  const [selectedAccountId, setSelectedAccountId] = useState("all");
   const isCurrent = selectedYear === now.getFullYear() && selectedMonth === now.getMonth() + 1;
 
   const currentQuery = useFinancialState();
@@ -1295,6 +1403,10 @@ export default function Dashboard() {
     );
   }
 
+  const effectiveSelectedAccountId = selectedAccountId === "all" || snapshot.accounts.some(
+    (account) => account.id === selectedAccountId && account.isActive,
+  ) ? selectedAccountId : "all";
+
   return (
     <main aria-label={t("dashboard.title")} className="app-page">
       <DashboardPeriodHeader
@@ -1304,9 +1416,12 @@ export default function Dashboard() {
         onPrevious={goPrev}
         onNext={goNext}
         onCurrent={goCurrent}
+        accounts={currentQuery.data.accounts.filter((account) => account.isActive)}
+        selectedAccountId={effectiveSelectedAccountId}
+        onAccountChange={setSelectedAccountId}
       />
 
-      <DashboardContent snapshot={snapshot} canMutate={isCurrent} periodComparison={periodComparison} />
+      <DashboardContent snapshot={snapshot} canMutate={isCurrent} periodComparison={periodComparison} selectedAccountId={effectiveSelectedAccountId} />
     </main>
   );
 }
@@ -1326,7 +1441,7 @@ function PeriodComparisonText({
   const upward = comparison.kind === "new" || comparison.kind === "increase";
   const downward = comparison.kind === "stopped" || comparison.kind === "decrease";
   const isGood = comparison.kind === "same" ? null : invert ? downward : upward;
-  const toneClass = isGood == null ? "text-muted-foreground" : isGood ? "text-green-600" : "text-red-500";
+  const toneClass = isGood == null ? "text-muted-foreground" : isGood ? "text-positive" : "text-negative";
   const Icon = comparison.kind === "same" ? null : upward ? ArrowUp : ArrowDown;
   const message = comparison.kind === "new"
     ? t("dashboard.comparison.newThisMonth")

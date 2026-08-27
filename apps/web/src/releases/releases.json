@@ -11,7 +11,7 @@
           {
             "id": "track",
             "title": "Suivez ce qui entre et ce qui sort",
-            "body": "Regroupez vos comptes, revenus, dépenses et transferts. Le tableau de bord met en évidence vos soldes et votre activité du mois sans noyer l’essentiel."
+            "body": "Regroupez vos comptes, revenus, dépenses et transferts. Le tableau de bord relie soldes, évolution, catégories et alertes contrôlables ; la vue Toutes les opérations permet de retrouver chaque mouvement."
           },
           {
             "id": "plan",
@@ -36,7 +36,7 @@
           {
             "id": "carry",
             "title": "Emportez WiseMoney avec vous",
-            "body": "L’interface s’adapte au téléphone et à l’ordinateur. Une fois ouverte sur l’appareil, l’application et son guide principal restent accessibles sans connexion."
+            "body": "L’interface claire, sombre ou automatique s’adapte au téléphone et à l’ordinateur. Une fois ouverte sur l’appareil, l’application et son guide principal restent accessibles sans connexion."
           }
         ]
       },
@@ -47,7 +47,7 @@
           {
             "id": "track",
             "title": "See what comes in and goes out",
-            "body": "Bring accounts, income, expenses, and transfers together. The dashboard keeps balances and monthly activity visible without burying the essentials."
+            "body": "Bring accounts, income, expenses, and transfers together. The dashboard connects balances, trends, categories, and controllable alerts; All operations lets you trace every movement."
           },
           {
             "id": "plan",
@@ -72,7 +72,7 @@
           {
             "id": "carry",
             "title": "Take WiseMoney with you",
-            "body": "The interface adapts to phones and computers. Once opened on a device, the application and its main guide remain available without a connection."
+            "body": "The light, dark, or automatic interface adapts to phones and computers. Once opened on a device, the application and its main guide remain available without a connection."
           }
         ]
       }

@@ -102,6 +102,7 @@ describe("reminder settings", () => {
     const settings = loadReminderSettings(new MemoryStorage());
 
     expect(settings.enabled).toBe(false);
+    expect(settings.foregroundSound).toBe(false);
     expect(Object.values(settings.types).every((entry) => entry.enabled)).toBe(true);
     expect(settings.types.planned_expense.leadDays).toEqual([7, 3, 0]);
     expect(settings.budgetThresholds).toEqual([70, 90, 100]);

@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#002fa7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f7f8" data-wisemoney-theme />
     <meta name="description" content="WiseMoney — local-first personal finance" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -16,6 +15,18 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/icons/wisemoney-icon-512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/wisemoney-icon-180.png" />
     <title>WiseMoney</title>
+    <script>
+      (() => {
+        try {
+          const preference = localStorage.getItem("wisemoney.theme.preference.v1");
+          const dark = preference === "dark" || (preference !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", dark);
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+          document.querySelector('meta[name="theme-color"]').content = dark ? "#111318" : "#f7f7f8";
+        } catch { /* System theme remains the safe default. */ }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

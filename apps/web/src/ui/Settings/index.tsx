@@ -4,13 +4,14 @@ import DevicesSection from "./DevicesSection.tsx";
 import CurrencySection from "./CurrencySection.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
-import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck, Sparkles } from "lucide-react";
+import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck, Sparkles, SunMoon } from "lucide-react";
 import type { ReactNode } from "react";
 import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { openUpdates } from "../../releases/navigation.ts";
 import { PRODUCT_VERSION } from "../../releases/releaseNotes.ts";
+import ThemeSettings from "../../components/ThemeSettings.tsx";
 
 function SettingsPanel({
   icon,
@@ -64,6 +65,21 @@ export default function Settings() {
             </div>
           </div>
           <LanguageSwitcher />
+        </div>
+      </section>
+
+      <section aria-label={t("settings.appearance.title")} className="motion-enter rounded-lg border border-border bg-card p-4">
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] sm:items-center">
+          <div className="flex items-start gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
+              <SunMoon className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="text-sm font-semibold">{t("settings.appearance.title")}</h2>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("settings.appearance.description")}</p>
+            </div>
+          </div>
+          <ThemeSettings />
         </div>
       </section>
 

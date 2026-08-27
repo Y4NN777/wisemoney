@@ -19,9 +19,10 @@ from an earlier public release.
 - **Daily money management** — accounts, income and expense transactions,
   transfers, editing, deletion, category management, multi-currency display,
   and locally managed exchange rates.
-- **Dashboard and financial history** — current balances, monthly activity,
-  period comparisons, transaction filtering, adaptive first-use guidance, and
-  deterministic event-sourced projections.
+- **Dashboard and financial history** — current and per-account balances,
+  monthly activity, period comparisons, balance and cash-flow trends, category
+  breakdowns, controllable alerts, adaptive first-use guidance, and a unified,
+  searchable view of all financial operations.
 - **Planning tools** — budgets, savings goals, recurring items, one-off planned
   expenses, and debt/receivable tracking with optional due dates.
 - **Local reminders and calendars** — weekly reviews, due-date and budget
@@ -44,6 +45,9 @@ from an earlier public release.
 - **Simpler information architecture** — Capture focuses on entering money,
   Planning groups forward-looking work, Settings progressively discloses
   advanced controls, and WiseBot uses a focused mobile conversation.
+- **Calmer visual system** — semantic status colors replace saturated red and
+  green treatments, while light, dark, and device-controlled themes share the
+  same restrained dashboard hierarchy.
 - **Clearer financial language** — balances, received/spent values, movements,
   consent boundaries, offline behavior, and reminder reliability use direct
   French and English wording intended for non-technical users.
@@ -62,7 +66,8 @@ from an earlier public release.
   dialogs.
 - **Projection integrity** — event replay, period boundaries, archived entities,
   recurring anchors, transaction changes, category totals, transfers, currency
-  conversion, and safe-integer arithmetic are deterministic and validated.
+  conversion, recurring-realisation deduplication, and safe-integer arithmetic
+  are deterministic and validated.
 - **Concurrency and recovery** — stale journal writes are rejected, cross-tab
   changes invalidate affected queries, imports restore atomically, and failed
   operations preserve prior vault metadata.

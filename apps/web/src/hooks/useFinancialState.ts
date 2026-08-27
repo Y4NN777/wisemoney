@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Dexie, { type ObservabilitySet } from "dexie";
 import { useMasterKey } from "../lib/masterKeyContext.ts";
 import { getSnapshot, replayUpTo, readTransactionsInRange } from "../domain/financialState.ts";
+import { readFinancialOperationsInRange } from "../domain/financialOperations.ts";
 import type { TransactionDisplay } from "../domain/financialState.ts";
 import {
   recordTransaction, updateTransaction, deleteTransaction, createAccount, updateAccount,
@@ -26,6 +27,7 @@ import type { MasterKey } from "../crypto/envelope.ts";
 
 const SNAPSHOT_KEY = ["financialState"] as const;
 const TRANSACTIONS_KEY = ["transactions"] as const;
+const OPERATIONS_KEY = ["financialOperations"] as const;
 const masterKeyScopes = new WeakMap<MasterKey, string>();
 
 function masterKeyScope(masterKey: MasterKey): string {
@@ -40,6 +42,7 @@ async function invalidateFinancialData(queryClient: ReturnType<typeof useQueryCl
   await Promise.all([
     queryClient.invalidateQueries({ queryKey: SNAPSHOT_KEY }),
     queryClient.invalidateQueries({ queryKey: TRANSACTIONS_KEY }),
+    queryClient.invalidateQueries({ queryKey: OPERATIONS_KEY }),
   ]);
 }
 
@@ -370,6 +373,26 @@ export function useTransactionsInRange(start: number, end: number) {
   return useQuery<TransactionDisplay[]>({
     queryKey: ["transactions", scope, start, end],
     queryFn: () => readTransactionsInRange(start, end, masterKey),
+    staleTime: 30_000,
+  });
+}
+
+export function useFinancialOperationsInRange(start: number, end: number) {
+  const masterKey = useMasterKey();
+  const scope = masterKeyScope(masterKey);
+  return useQuery({
+    queryKey: ["financialOperations", scope, start, end],
+    queryFn: () => readFinancialOperationsInRange(start, end, masterKey),
+    staleTime: 30_000,
+  });
+}
+
+export function useFinancialOperations() {
+  const masterKey = useMasterKey();
+  const scope = masterKeyScope(masterKey);
+  return useQuery({
+    queryKey: [...OPERATIONS_KEY, scope, "all"],
+    queryFn: () => readFinancialOperationsInRange(0, Number.MAX_SAFE_INTEGER, masterKey),
     staleTime: 30_000,
   });
 }

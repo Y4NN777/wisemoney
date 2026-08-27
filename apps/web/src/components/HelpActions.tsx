@@ -25,8 +25,8 @@ export default function HelpActions({ compact = false }: HelpActionsProps) {
       <Button
         type="button"
         variant="outline"
-        size="sm"
-        className="gap-2"
+        size={compact ? "icon" : "sm"}
+        className={compact ? "h-9 w-9" : "gap-2"}
         onClick={() => openHelp()}
         aria-label={t("helpPage.open")}
       >

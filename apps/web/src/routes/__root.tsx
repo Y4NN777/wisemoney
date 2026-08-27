@@ -58,11 +58,11 @@ function RootLayout() {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-background/88 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 md:px-5">
+        <div className="mx-auto flex min-h-14 w-full max-w-7xl flex-wrap items-center justify-between gap-1 px-2 py-2 sm:px-5">
           <Link to="/" className="flex items-center gap-3">
             <Logo className="h-7 w-auto" />
           </Link>
-          <nav aria-label={t("nav.mainAria")} className="hidden items-center gap-1 md:flex">
+          <nav aria-label={t("nav.mainAria")} className="hidden items-center gap-1 lg:flex">
             {navItems.map((item) => (
               <Link
                 key={item.to}
@@ -76,15 +76,15 @@ function RootLayout() {
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-1 sm:gap-2">
             <ReminderCenter reminders={reminderViews} onMarkRead={markRead} onDismiss={dismiss} onOpenReminder={openReminder} />
-            <HelpActions />
+            <HelpActions compact />
             <LanguageSwitcher compact />
           </div>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 pb-20 pt-4 md:px-6 md:pb-8 md:pt-6">
+      <main className="flex-1 overflow-y-auto px-4 pb-20 pt-4 md:px-6 md:pt-6 lg:pb-8">
         <div className="mx-auto w-full max-w-7xl">
           <Outlet />
         </div>
@@ -93,7 +93,7 @@ function RootLayout() {
       {/* Mobile bottom nav */}
       <nav
         aria-label={t("nav.primaryAria")}
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/94 shadow-[0_-8px_24px_rgba(16,24,32,0.08)] backdrop-blur-xl md:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/94 shadow-[0_-8px_24px_rgba(16,24,32,0.08)] backdrop-blur-xl lg:hidden"
         style={{ paddingBottom: "var(--safe-area-bottom)" }}
       >
         <div className="mx-auto flex h-16 max-w-lg items-center justify-around">

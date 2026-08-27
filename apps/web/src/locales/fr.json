@@ -403,6 +403,20 @@
       "action": "Enregistrer la première transaction"
     },
     "alerts": "Alertes",
+    "attention": {
+      "title": "À surveiller",
+      "description": "Les éléments utiles qui demandent votre attention.",
+      "allTitle": "Tout ce qui est à surveiller",
+      "viewAll": "Tout voir ({{count}})",
+      "budgetApproaching": "Budget proche de sa limite",
+      "budgetThresholdBody": "« {{name}} » a atteint {{percentage}} % de sa limite.",
+      "markRead": "Marquer comme lu",
+      "snooze": "Me le rappeler demain",
+      "dismiss": "Masquer",
+      "open": "Consulter",
+      "snoozed": "Rappel reporté à demain.",
+      "dismissed": "Alerte masquée."
+    },
     "aiInsight": "Analyse IA",
     "viaProvider": "via {{provider}}",
     "budgetUse": "Utilisation du budget",
@@ -427,6 +441,11 @@
     "recentTransactions": "Transactions récentes",
     "noTransactions": "Aucune transaction cette période",
     "viewAll": "Tout voir",
+    "quickActions": "Actions rapides",
+    "addExpense": "Ajouter une dépense",
+    "addIncome": "Ajouter un revenu",
+    "makeTransfer": "Faire un transfert",
+    "planExpense": "Prévoir une dépense",
     "budgetStatus": "État des budgets",
     "spent": "dépensé",
     "limit": "limite",
@@ -447,12 +466,20 @@
     "budgetExceededBody": "« {{name}} » a dépassé son budget de {{amount}}.",
     "analyticsOverview": "Aperçu analytique",
     "cashFlowTrend": "Entrées et sorties d’argent",
+    "balanceTrend": "Évolution du solde",
+    "balanceTrendHelp": "Solde reconstruit à partir des opérations de la période. Les transferts entre vos comptes restent neutres.",
+    "balancePoint": "{{date}} : solde {{balance}}",
+    "chartPoint": "{{date}} : {{income}} reçus, {{expenses}} dépensés, différence {{net}}",
+    "chartTable": "Afficher les données du graphique",
     "spendingMix": "Répartition des dépenses",
     "balanceSummary": "Votre argent en bref",
     "totalBalance": "Solde total",
     "allActiveAccounts": "Tous les comptes actifs",
+    "selectedAccountContext": "Solde propre à ce compte. Les engagements non rattachés à un compte restent dans la vue globale.",
     "availableToday": "Argent disponible aujourd’hui",
     "balanceAtPeriodEnd": "Solde à la fin de la période",
+    "afterCommitments": "Estimation après engagements",
+    "afterCommitmentsHelp": "Solde actuel moins les dépenses prévues, récurrentes et dettes actives dans la même devise.",
     "balanceContext_one": "Somme des soldes de {{count}} compte actif. Ce chiffre est séparé de l’activité de la période.",
     "balanceContext_other": "Somme des soldes de {{count}} comptes actifs. Ce chiffre est séparé de l’activité de la période.",
     "periodActivity": "Activité {{month}}",
@@ -469,10 +496,26 @@
     "analyzePeriod": "Analyser cette période",
     "insightLoadFailed": "Impossible de charger l’analyse pour le moment.",
     "upcoming": "À venir",
+    "overdueDate": "en retard depuis le {{date}}",
+    "accountDistribution": "Répartition par compte",
+    "accountShareUnavailable": "Part non calculée : ce compte utilise une autre devise.",
+    "commitmentKinds": {
+      "planned_expense": "Dépense prévue",
+      "recurring_expense": "Dépense récurrente",
+      "debt": "À payer",
+      "receivable": "À recevoir"
+    },
     "remaining": "{{percentage}} % restant",
+    "budgetStates": {
+      "within": "Dans les limites",
+      "watch": "À surveiller",
+      "reached": "Limite atteinte",
+      "exceeded": "Budget dépassé"
+    },
     "transactions": "Transactions",
     "transactionsRangeContext": "{{range}}",
     "transactionsAllContext": "Jusqu’au {{date}}",
+    "accountTransactionsContext": "{{account}} · {{period}}",
     "addTransaction": "Ajouter une transaction",
     "noActivityTitle": "Aucune activité sur cette période",
     "transfers": "Transferts",
@@ -485,6 +528,9 @@
     "previousMonth": "Mois précédent",
     "nextMonth": "Mois suivant",
     "monthNavigation": "Navigation par mois",
+    "dashboardControls": "Période et compte du tableau de bord",
+    "accountFilter": "Compte affiché",
+    "allAccounts": "Tous les comptes",
     "today": "Aujourd’hui",
     "greeting": {
       "morning": "Bonjour 👋",
@@ -536,6 +582,45 @@
       "deleteFailed": "Impossible de supprimer la transaction."
     },
     "months": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+  },
+  "operations": {
+    "title": "Toutes les opérations",
+    "description": "Retrouvez les mouvements qui expliquent vos soldes, vos objectifs et vos échéances.",
+    "summary": "Résumé des opérations filtrées",
+    "income": "Revenus",
+    "expenses": "Dépenses",
+    "net": "Différence",
+    "filters": "Filtres",
+    "search": "Rechercher",
+    "searchPlaceholder": "Libellé, compte ou catégorie",
+    "type": "Type d’opération",
+    "account": "Compte",
+    "category": "Catégorie",
+    "allTypes": "Tous les types",
+    "allAccounts": "Tous les comptes",
+    "allCategories": "Toutes les catégories",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "clearFilters": "Effacer les filtres",
+    "results_one": "{{count}} opération",
+    "results_other": "{{count}} opérations",
+    "neutralHelp": "Les transferts n’affectent pas la différence.",
+    "daySubtotal": "Différence du jour : {{amount}}",
+    "loadMore": "Afficher {{count}} opérations de plus",
+    "loadFailed": "Impossible de charger les opérations",
+    "emptyTitle": "Aucune opération trouvée",
+    "emptyBody": "Modifiez les filtres ou enregistrez un nouveau mouvement.",
+    "date": "Date",
+    "amount": "Montant",
+    "details": "Détails",
+    "kinds": {
+      "income": "Revenu",
+      "expense": "Dépense",
+      "planned_expense": "Dépense prévue réalisée",
+      "transfer": "Transfert",
+      "goal_contribution": "Contribution à un objectif",
+      "recurring_realisation": "Occurrence récurrente réalisée"
+    }
   },
   "capture": {
     "title": "Saisie",
@@ -1188,6 +1273,9 @@
       "thresholds": "Seuils de budget",
       "allowSystem": "Autoriser les notifications système",
       "test": "Tester une notification",
+      "testFeedback": "Tester le retour",
+      "foregroundSound": "Son lorsque WiseMoney est ouvert",
+      "soundHelp": "Un son discret peut être joué dans l’application. Lorsque WiseMoney est fermé, le son dépend des réglages du téléphone et du navigateur.",
       "exportCalendar": "Ajouter la revue au calendrier",
       "bestEffort": "Sans serveur, les notifications système peuvent arriver en retard lorsque WiseMoney est fermé. Le centre de rappels se met à jour à chaque ouverture ; ajouter l’échéance au calendrier reste le moyen le plus fiable.",
       "permission": {
@@ -1214,7 +1302,8 @@
       "body": "Les notifications locales fonctionnent sur cet appareil."
     },
     "messages": {
-      "permissionGranted": "Notifications système autorisées"
+      "permissionGranted": "Notifications système autorisées",
+      "feedbackTested": "Test envoyé avec les réglages actuels"
     },
     "errors": {
       "rebuild": "Impossible d’actualiser les rappels locaux"
@@ -1224,6 +1313,16 @@
     "system": "Système",
     "title": "Paramètres",
     "description": "Choisissez d’abord l’essentiel. Ouvrez les autres sections seulement quand vous en avez besoin.",
+    "appearance": {
+      "title": "Apparence",
+      "description": "Choisissez un affichage clair, sombre ou adapté automatiquement à votre appareil.",
+      "choice": "Choix de l’apparence",
+      "options": {
+        "system": "Système",
+        "light": "Clair",
+        "dark": "Sombre"
+      }
+    },
     "language": {
       "title": "Langue de l’application",
       "description": "Modifie les libellés, les conseils, les dates et les noms de devises dans WiseMoney."
@@ -1419,6 +1518,7 @@
     "success": "Succès",
     "noData": "Aucune donnée",
     "retry": "Réessayer",
+    "undo": "Annuler",
     "unknown": "Inconnu",
     "yes": "Oui",
     "no": "Non",

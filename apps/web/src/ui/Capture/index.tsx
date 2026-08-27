@@ -46,7 +46,7 @@ export default function Capture() {
   const recordGoalContrib = useRecordGoalContribution();
   const recordTransfer = useRecordTransfer();
 
-  const [direction, setDirection] = useState<"expense" | "income">("expense");
+  const [direction, setDirection] = useState<"expense" | "income">(parsedSearch.direction ?? "expense");
   const [amountStr, setAmountStr] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [accountId, setAccountId] = useState("");

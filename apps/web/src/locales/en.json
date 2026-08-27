@@ -403,6 +403,20 @@
       "action": "Record first transaction"
     },
     "alerts": "Alerts",
+    "attention": {
+      "title": "Keep an eye on",
+      "description": "Useful items that need your attention.",
+      "allTitle": "Everything to keep an eye on",
+      "viewAll": "View all ({{count}})",
+      "budgetApproaching": "Budget close to its limit",
+      "budgetThresholdBody": "“{{name}}” has reached {{percentage}}% of its limit.",
+      "markRead": "Mark as read",
+      "snooze": "Remind me tomorrow",
+      "dismiss": "Hide",
+      "open": "View",
+      "snoozed": "Reminder postponed until tomorrow.",
+      "dismissed": "Alert hidden."
+    },
     "aiInsight": "AI insight",
     "viaProvider": "via {{provider}}",
     "budgetUse": "Budget use",
@@ -427,6 +441,11 @@
     "recentTransactions": "Recent Transactions",
     "noTransactions": "No transactions this period",
     "viewAll": "View All",
+    "quickActions": "Quick actions",
+    "addExpense": "Add an expense",
+    "addIncome": "Add income",
+    "makeTransfer": "Make a transfer",
+    "planExpense": "Plan an expense",
     "budgetStatus": "Budget Status",
     "spent": "spent",
     "limit": "limit",
@@ -447,12 +466,20 @@
     "budgetExceededBody": "\"{{name}}\" exceeded its budget of {{amount}}.",
     "analyticsOverview": "Analytics overview",
     "cashFlowTrend": "Money in and money out",
+    "balanceTrend": "Balance evolution",
+    "balanceTrendHelp": "Balance reconstructed from the period’s operations. Transfers between your accounts remain neutral.",
+    "balancePoint": "{{date}}: balance {{balance}}",
+    "chartPoint": "{{date}}: {{income}} received, {{expenses}} spent, difference {{net}}",
+    "chartTable": "Show chart data",
     "spendingMix": "Spending mix",
     "balanceSummary": "Your money at a glance",
     "totalBalance": "Total balance",
     "allActiveAccounts": "All active accounts",
+    "selectedAccountContext": "Balance for this account. Commitments that are not assigned to an account remain in the global view.",
     "availableToday": "Money available today",
     "balanceAtPeriodEnd": "Balance at the end of the period",
+    "afterCommitments": "Estimate after commitments",
+    "afterCommitmentsHelp": "Current balance minus active planned expenses, recurring expenses, and debts in the same currency.",
     "balanceContext_one": "Combined balance of {{count}} active account. This figure is separate from the period activity.",
     "balanceContext_other": "Combined balance of {{count}} active accounts. This figure is separate from the period activity.",
     "periodActivity": "{{month}}'s Activity",
@@ -469,10 +496,26 @@
     "analyzePeriod": "Analyze this period",
     "insightLoadFailed": "Could not load insight right now.",
     "upcoming": "Upcoming",
+    "overdueDate": "overdue since {{date}}",
+    "accountDistribution": "Distribution by account",
+    "accountShareUnavailable": "Share not calculated: this account uses another currency.",
+    "commitmentKinds": {
+      "planned_expense": "Planned expense",
+      "recurring_expense": "Recurring expense",
+      "debt": "To pay",
+      "receivable": "To receive"
+    },
     "remaining": "{{percentage}}% remaining",
+    "budgetStates": {
+      "within": "Within limit",
+      "watch": "Keep an eye on it",
+      "reached": "Limit reached",
+      "exceeded": "Budget exceeded"
+    },
     "transactions": "Transactions",
     "transactionsRangeContext": "{{range}}",
     "transactionsAllContext": "Through {{date}}",
+    "accountTransactionsContext": "{{account}} · {{period}}",
     "addTransaction": "Add transaction",
     "noActivityTitle": "No activity in this range",
     "transfers": "Transfers",
@@ -485,6 +528,9 @@
     "previousMonth": "Previous month",
     "nextMonth": "Next month",
     "monthNavigation": "Month navigation",
+    "dashboardControls": "Dashboard period and account",
+    "accountFilter": "Account shown",
+    "allAccounts": "All accounts",
     "today": "Today",
     "greeting": {
       "morning": "Good morning 👋",
@@ -536,6 +582,45 @@
       "deleteFailed": "Could not delete transaction."
     },
     "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+  },
+  "operations": {
+    "title": "All operations",
+    "description": "Find the movements that explain your balances, goals, and upcoming items.",
+    "summary": "Filtered operations summary",
+    "income": "Income",
+    "expenses": "Expenses",
+    "net": "Difference",
+    "filters": "Filters",
+    "search": "Search",
+    "searchPlaceholder": "Label, account, or category",
+    "type": "Operation type",
+    "account": "Account",
+    "category": "Category",
+    "allTypes": "All types",
+    "allAccounts": "All accounts",
+    "allCategories": "All categories",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "clearFilters": "Clear filters",
+    "results_one": "{{count}} operation",
+    "results_other": "{{count}} operations",
+    "neutralHelp": "Transfers do not affect the difference.",
+    "daySubtotal": "Day difference: {{amount}}",
+    "loadMore": "Show {{count}} more operations",
+    "loadFailed": "Could not load operations",
+    "emptyTitle": "No operations found",
+    "emptyBody": "Change the filters or record a new movement.",
+    "date": "Date",
+    "amount": "Amount",
+    "details": "Details",
+    "kinds": {
+      "income": "Income",
+      "expense": "Expense",
+      "planned_expense": "Completed planned expense",
+      "transfer": "Transfer",
+      "goal_contribution": "Goal contribution",
+      "recurring_realisation": "Completed recurring occurrence"
+    }
   },
   "capture": {
     "title": "Capture",
@@ -1188,6 +1273,9 @@
       "thresholds": "Budget thresholds",
       "allowSystem": "Allow system notifications",
       "test": "Test a notification",
+      "testFeedback": "Test feedback",
+      "foregroundSound": "Sound while WiseMoney is open",
+      "soundHelp": "A quiet sound can play inside the app. When WiseMoney is closed, sound depends on your phone and browser settings.",
       "exportCalendar": "Add review to calendar",
       "bestEffort": "Without a server, system notifications may arrive late while WiseMoney is closed. The reminder center refreshes whenever the app opens; adding the due date to your calendar remains the most reliable option.",
       "permission": {
@@ -1214,7 +1302,8 @@
       "body": "Local notifications work on this device."
     },
     "messages": {
-      "permissionGranted": "System notifications allowed"
+      "permissionGranted": "System notifications allowed",
+      "feedbackTested": "Test sent with your current settings"
     },
     "errors": {
       "rebuild": "Could not refresh local reminders"
@@ -1224,6 +1313,16 @@
     "system": "System",
     "title": "Settings",
     "description": "Choose the essentials first. Open the other sections only when you need them.",
+    "appearance": {
+      "title": "Appearance",
+      "description": "Choose a light, dark, or automatic appearance that follows your device.",
+      "choice": "Appearance choice",
+      "options": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      }
+    },
     "language": {
       "title": "App language",
       "description": "Changes labels, guidance, dates, and currency names throughout WiseMoney."
@@ -1419,6 +1518,7 @@
     "success": "Success",
     "noData": "No data",
     "retry": "Retry",
+    "undo": "Undo",
     "unknown": "Unknown",
     "yes": "Yes",
     "no": "No",

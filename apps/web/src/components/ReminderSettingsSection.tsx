@@ -1,4 +1,4 @@
-import { BellRing, CalendarPlus, ShieldCheck } from "lucide-react";
+import { BellRing, CalendarPlus, ShieldCheck, Volume2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { ReminderSettings, ReminderType } from "../reminders/index.ts";
 import { Button } from "./ui/button.tsx";
@@ -75,6 +75,18 @@ export default function ReminderSettingsSection({
           <ShieldCheck className="h-4 w-4 text-ocean-primary" />
           {t(`reminders.settings.permission.${permission}`)}
         </span>
+      </section>
+
+      <section className="grid gap-3 border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+        <div>
+          <SettingToggle
+            checked={settings.foregroundSound}
+            label={t("reminders.settings.foregroundSound")}
+            onChange={(foregroundSound) => onChange({ ...settings, foregroundSound })}
+          />
+          <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">{t("reminders.settings.soundHelp")}</p>
+        </div>
+        <Volume2 className="h-5 w-5 text-ocean-primary" />
       </section>
 
       <section aria-label={t("reminders.settings.typesTitle")} className="divide-y divide-border border border-border bg-card">
@@ -160,9 +172,9 @@ export default function ReminderSettingsSection({
             {t("reminders.settings.allowSystem")}
           </Button>
         )}
-        <Button type="button" variant="outline" disabled={permission !== "granted"} onClick={() => void onTestNotification()}>
+        <Button type="button" variant="outline" disabled={permission !== "granted" && !settings.foregroundSound} onClick={() => void onTestNotification()}>
           <BellRing className="h-4 w-4" />
-          {t("reminders.settings.test")}
+          {t("reminders.settings.testFeedback")}
         </Button>
         <Button type="button" variant="outline" onClick={onExportWeeklyCalendar}>
           <CalendarPlus className="h-4 w-4" />
