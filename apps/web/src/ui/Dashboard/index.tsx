@@ -27,7 +27,12 @@ import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
 import { comparePeriodAmounts, type PeriodAmountComparison } from "./periodComparison.ts";
-import { getDailyGreetingIndex, getGreetingTime } from "./dashboardGreeting.ts";
+import {
+  GREETING_MESSAGE_COUNT,
+  getDailyGreetingIndex,
+  getGreetingTime,
+  getNextGreetingRefreshAt,
+} from "./dashboardGreeting.ts";
 import DashboardAttention from "../../components/DashboardAttention.tsx";
 import {
   selectAccountDistribution,
@@ -42,8 +47,6 @@ import {
   type CashFlowPoint,
   type BalancePoint,
 } from "../../analytics/dashboard.ts";
-
-const GREETING_MESSAGE_COUNT = 5;
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -582,7 +585,42 @@ function DashboardPeriodHeader({
   onAccountChange: (accountId: string) => void;
 }) {
   const { t } = useTranslation();
-  const today = new Date();
+  const [today, setToday] = useState(() => new Date());
+
+  useEffect(() => {
+    let timerId: number | undefined;
+    let active = true;
+
+    const scheduleNextRefresh = () => {
+      if (!active) return;
+      window.clearTimeout(timerId);
+
+      const now = new Date();
+      const nextRefresh = getNextGreetingRefreshAt(now);
+      const delay = Math.max(0, nextRefresh.getTime() - now.getTime() + 100);
+
+      timerId = window.setTimeout(() => {
+        setToday(new Date());
+        scheduleNextRefresh();
+      }, delay);
+    };
+
+    const refreshWhenVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      setToday(new Date());
+      scheduleNextRefresh();
+    };
+
+    scheduleNextRefresh();
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timerId);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
+  }, []);
+
   const greetingTime = getGreetingTime(today);
   const greetingIndex = getDailyGreetingIndex(today, GREETING_MESSAGE_COUNT);
   const isCurrentYear = selectedYear === today.getFullYear();

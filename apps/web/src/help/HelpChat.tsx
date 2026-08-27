@@ -267,7 +267,7 @@ export default function HelpChat({
 
           <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3" aria-live="polite">
             {showConsent && (
-              <section className="border border-ocean-primary bg-[#edf1ff] p-3 text-left" aria-label={t("helpPage.chat.consent.title")}>
+              <section className="border border-ocean-primary bg-ocean-wash p-3 text-left" aria-label={t("helpPage.chat.consent.title")}>
                 <div className="flex items-start gap-2">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-ocean-primary" />
                   <div>

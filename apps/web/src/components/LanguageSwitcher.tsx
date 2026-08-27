@@ -8,8 +8,8 @@ type LanguageSwitcherProps = {
 };
 
 const languages = [
-  { code: "en", labelKey: "language.english", shortLabel: "EN" },
-  { code: "fr", labelKey: "language.french", shortLabel: "FR" },
+  { code: "en", labelKey: "language.english" },
+  { code: "fr", labelKey: "language.french" },
 ] as const;
 
 export default function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
@@ -31,7 +31,7 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
         <SelectTrigger className="h-9 w-[76px] gap-1 px-2 shadow-none" aria-label={t("language.choose")}>
           <span className="flex items-center gap-1.5">
             <Languages className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-            <span className="text-xs font-semibold uppercase">{currentLanguage}</span>
+            <span className="text-xs font-semibold">{currentLanguage}</span>
           </span>
         </SelectTrigger>
         <SelectContent align="end">

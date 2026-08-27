@@ -1,6 +1,6 @@
 /* ========================================================================
    WiseMoney — Design System
-   Swiss information design with neutral surfaces, Helvetica, Yves Klein Blue,
+   Swiss information design with neutral surfaces, Helvetica, WiseMoney Blue,
    hairline rules, and restrained semantic color.
    ======================================================================== */
 
@@ -8,14 +8,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ---------- Swiss accent system: Yves Klein Blue + quiet blue wash ---------- */
+/* ---------- Swiss accent system: WiseMoney brand blue + quiet blue wash ---------- */
 
 :root {
-  --ocean-primary:    #002fa7;
-  --ocean-secondary:  #002fa7;
-  --ocean-dark:       #002fa7;
-  --ocean-light:      #8fa7ff;
-  --ocean-wash:       #edf1ff;
+  --ocean-primary:    #0077b6;
+  --ocean-secondary:  #0077b6;
+  --ocean-dark:       #005f91;
+  --ocean-light:      #00b4d8;
+  --ocean-wash:       #e6f5fa;
   --sage:             #2f7d57;
   --sage-wash:        #e7f4ec;
   --amber:            #b76b16;
@@ -38,6 +38,7 @@
   --popover: #ffffff;
   --popover-foreground: #101820;
   --primary: var(--ocean-primary);
+  --primary-hover: var(--ocean-dark);
   --primary-foreground: #ffffff;
   --secondary: var(--ocean-wash);
   --secondary-foreground: var(--ocean-dark);
@@ -53,18 +54,18 @@
   --negative-wash: #fff0e8;
   --attention: #9a5b13;
   --attention-wash: #fff3d8;
-  --information: #315fb8;
-  --information-wash: #edf1ff;
+  --information: #0077b6;
+  --information-wash: #e6f5fa;
   --border: rgba(16, 24, 32, 0.12);
   --input: rgba(16, 24, 32, 0.16);
   --ring: var(--ocean-primary);
-  --landing-grid-line: rgba(0, 47, 167, 0.08);
-  --landing-glow: rgba(237, 241, 255, 0.92);
-  --landing-wash: rgba(237, 241, 255, 0.68);
+  --landing-grid-line: rgba(0, 119, 182, 0.08);
+  --landing-glow: rgba(230, 245, 250, 0.92);
+  --landing-wash: rgba(230, 245, 250, 0.68);
 
   /* ---------- Focus ring ---------- */
   --ring-offset: 2px;
-  --ring-shadow: 0 0 0 3px rgba(0, 47, 167, 0.30);
+  --ring-shadow: 0 0 0 3px rgba(0, 119, 182, 0.30);
 
   /* ---------- Typography ---------- */
   --font-display: 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
@@ -150,17 +151,19 @@
 
 /* ---------- DARK mode — same palette, inverted surfaces ---------- */
 .dark {
-  --ocean-primary: #8fa7ff;
-  --ocean-secondary: #8fa7ff;
-  --ocean-dark: #d8e0ff;
-  --ocean-wash: #202943;
+  --ocean-primary: #00b4d8;
+  --ocean-secondary: #00b4d8;
+  --ocean-dark: #7dd3ed;
+  --ocean-light: #00b4d8;
+  --ocean-wash: #16303a;
   --background: #111318;
   --foreground: #f7f7f8;
   --card: #191c22;
   --card-foreground: #f7f7f8;
   --popover: #191c22;
   --popover-foreground: #f7f7f8;
-  --primary: #002fa7;
+  --primary: #0077b6;
+  --primary-hover: #005f91;
   --primary-foreground: #ffffff;
   --secondary: #20242c;
   --secondary-foreground: var(--ocean-dark);
@@ -176,14 +179,14 @@
   --negative-wash: #35231f;
   --attention: #d3a45f;
   --attention-wash: #332a1d;
-  --information: #9ab0ff;
-  --information-wash: #202943;
+  --information: #4db6db;
+  --information-wash: #16303a;
   --border: #333842;
   --input: #404650;
   --ring: var(--ocean-light);
-  --landing-grid-line: rgba(143, 167, 255, 0.10);
-  --landing-glow: rgba(32, 41, 67, 0.78);
-  --landing-wash: rgba(32, 41, 67, 0.44);
+  --landing-grid-line: rgba(0, 180, 216, 0.10);
+  --landing-glow: rgba(22, 48, 58, 0.78);
+  --landing-wash: rgba(22, 48, 58, 0.44);
 
   /* Ink in dark mode uses white-at-opacity */
   --ink-90: rgba(255, 255, 255, 0.90);
@@ -204,6 +207,7 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -377,9 +381,9 @@
   content: "";
   position: absolute;
   inset: 18%;
-  border: 1px solid rgba(0, 47, 167, 0.28);
+  border: 1px solid rgba(0, 119, 182, 0.28);
   border-radius: 50%;
-  border-top-color: #002fa7;
+  border-top-color: #0077b6;
   animation: help-orbit-spin 18s linear infinite;
 }
 

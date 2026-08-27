@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import en from "./locales/en.json";
 import fr from "./locales/fr.json";
+import { GREETING_MESSAGE_COUNT } from "./ui/Dashboard/dashboardGreeting.ts";
 
 function leafKeys(value: unknown, prefix = ""): string[] {
   if (value == null || typeof value !== "object" || Array.isArray(value)) return [prefix];
@@ -28,6 +29,11 @@ describe("localization resources", () => {
     expect(fr.nav.dashboardShort).toBe("Accueil");
     expect(fr.nav.dashboardShort.length).toBeLessThan(fr.nav.dashboard.length);
     expect(en.nav.dashboardShort).toBe("Home");
+  });
+
+  it("ships a two-week greeting rotation in both languages", () => {
+    expect(fr.dashboard.greeting.messages).toHaveLength(GREETING_MESSAGE_COUNT);
+    expect(en.dashboard.greeting.messages).toHaveLength(GREETING_MESSAGE_COUNT);
   });
 
   it("keeps implementation jargon out of user-facing offline guidance", () => {
