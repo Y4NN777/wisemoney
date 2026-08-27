@@ -104,10 +104,31 @@
     },
     "landing": {
       "aria": "Présentation de WiseMoney",
-      "kicker": "Une application de gestion financière qui fonctionne sur votre appareil",
-      "title": "WiseMoney commence sur votre appareil, pas par un mur de connexion.",
-      "body": "Créez d'abord votre espace de gestion financière privé : tableau de bord, saisie rapide des dépenses, budgets, objectifs, paiements récurrents, exports et paramètres s'ouvrent depuis un espace protégé.",
-      "existingVault": "Un espace privé existe déjà dans ce navigateur. Ouvrez-le pour continuer avec vos données enregistrées.",
+      "kicker": "Votre argent, sur votre appareil",
+      "title": "Gérez votre argent. Gardez le contrôle.",
+      "body": "Comptes, budgets et échéances restent réunis sur cet appareil.",
+      "existingVault": "Votre espace privé est prêt sur cet appareil.",
+      "overviewAria": "Ce que vous pouvez faire avec WiseMoney",
+      "overview": {
+        "track": {
+          "title": "Suivez",
+          "accounts": "Comptes",
+          "operations": "Opérations",
+          "transfers": "Transferts"
+        },
+        "plan": {
+          "title": "Prévoyez",
+          "budgets": "Budgets",
+          "goals": "Objectifs",
+          "dueDates": "Échéances"
+        },
+        "protect": {
+          "title": "Protégez",
+          "encrypted": "Chiffré",
+          "offline": "Hors ligne",
+          "backups": "Sauvegardes"
+        }
+      },
       "openVault": "Ouvrir mon espace",
       "startOnboarding": "Voir comment ça marche",
       "openApp": "Ouvrir l'app",

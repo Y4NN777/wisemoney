@@ -115,10 +115,10 @@ try {
     const response = await page.goto(baseURL, { waitUntil: "networkidle" });
     assert.equal(response?.status(), 200, `${device.name}: home did not return 200`);
     await page.waitForFunction(() => !document.body.innerText.includes("Loading"), undefined, { timeout: 10_000 });
-    await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
+    await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     await page.evaluate(() => localStorage.setItem("wisemoney.theme.preference.v1", "dark"));
     await page.reload({ waitUntil: "networkidle" });
-    await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
+    await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     const darkLandingBackground = await page.locator(".landing-grid").evaluate((element) =>
       getComputedStyle(element).backgroundImage);
     assert.match(darkLandingBackground, /rgba\(32, 41, 67/,
@@ -134,7 +134,7 @@ try {
     await page.screenshot({ path: `${outputDir}/${device.name}-landing-dark.png`, fullPage: true });
     await page.evaluate(() => localStorage.setItem("wisemoney.theme.preference.v1", "light"));
     await page.reload({ waitUntil: "networkidle" });
-    await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
+    await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     await page.getByRole("button", { name: "Open help", exact: true }).click();
     await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
     await page.getByRole("button", { name: device.name === "mobile" ? "Ask WiseBot" : "Open WiseBot", exact: true }).click();
@@ -166,8 +166,17 @@ try {
     await page.getByRole("button", { name: "Back", exact: true }).click();
     await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
     await page.getByRole("button", { name: "Back", exact: true }).click();
-    await page.getByRole("heading", { name: /WiseMoney starts with your device/i }).waitFor();
+    await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}.png`, fullPage: true });
+    await page.getByRole("combobox", { name: "Choose language", exact: true }).click();
+    await page.getByRole("option", { name: "Français", exact: true }).click();
+    await page.getByRole("heading", { name: "Gérez votre argent. Gardez le contrôle.", exact: true }).waitFor();
+    await page.getByText("Sauvegardes", { exact: true }).waitFor();
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true,
+      `${device.name}: French landing has horizontal overflow`);
+    await page.screenshot({ path: `${outputDir}/${device.name}-landing-fr.png`, fullPage: true });
+    await page.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+    await page.getByRole("option", { name: "English", exact: true }).click();
 
     const registration = await page.evaluate(async () => {
       const ready = await navigator.serviceWorker.ready;

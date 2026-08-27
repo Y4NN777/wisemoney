@@ -16,7 +16,7 @@ import { router } from "../../router.ts";
 import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContext.ts";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
-import { ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, Eye, EyeOff, ShieldCheck, Upload, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, CalendarClock, ChevronDown, ChevronUp, Download, Eye, EyeOff, ShieldCheck, Upload, WalletCards, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -179,21 +179,33 @@ type LandingOnboardingProps = {
 function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
   const { t } = useTranslation();
   const primaryLabel = hasVault ? t("keyUnlock.landing.openVault") : t("keyUnlock.landing.start");
-  const trustItems = [
+  const overviewItems = [
+    {
+      icon: <WalletCards className="h-5 w-5" />,
+      title: t("keyUnlock.landing.overview.track.title"),
+      features: [
+        t("keyUnlock.landing.overview.track.accounts"),
+        t("keyUnlock.landing.overview.track.operations"),
+        t("keyUnlock.landing.overview.track.transfers"),
+      ],
+    },
+    {
+      icon: <CalendarClock className="h-5 w-5" />,
+      title: t("keyUnlock.landing.overview.plan.title"),
+      features: [
+        t("keyUnlock.landing.overview.plan.budgets"),
+        t("keyUnlock.landing.overview.plan.goals"),
+        t("keyUnlock.landing.overview.plan.dueDates"),
+      ],
+    },
     {
       icon: <ShieldCheck className="h-5 w-5" />,
-      title: t("keyUnlock.landing.steps.vault.title"),
-      body: t("keyUnlock.landing.steps.vault.body"),
-    },
-    {
-      icon: <WifiOff className="h-5 w-5" />,
-      title: t("keyUnlock.landing.steps.offline.title"),
-      body: t("keyUnlock.landing.steps.offline.body"),
-    },
-    {
-      icon: <Bot className="h-5 w-5" />,
-      title: t("keyUnlock.landing.steps.ai.title"),
-      body: t("keyUnlock.landing.steps.ai.body"),
+      title: t("keyUnlock.landing.overview.protect.title"),
+      features: [
+        t("keyUnlock.landing.overview.protect.encrypted"),
+        t("keyUnlock.landing.overview.protect.offline"),
+        t("keyUnlock.landing.overview.protect.backups"),
+      ],
     },
   ];
 
@@ -212,17 +224,16 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
         </header>
 
         <div className="grid flex-1 border-b border-border lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)]">
-          <div className="flex flex-col justify-center gap-7 py-10 lg:border-r lg:border-border lg:py-16 lg:pr-12">
-            <div className="space-y-5">
-              <p className="text-sm font-semibold text-ocean-primary">{t("keyUnlock.landing.kicker")}</p>
+          <div className="flex flex-col justify-center gap-8 py-10 lg:border-r lg:border-border lg:py-16 lg:pr-12">
+            <div className="space-y-6">
               <h1 className="max-w-4xl text-4xl font-bold leading-[0.98] tracking-normal text-foreground sm:text-6xl lg:text-7xl">
                 {t("keyUnlock.landing.title")}
               </h1>
-              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {t("keyUnlock.landing.body")}
               </p>
               {hasVault && (
-                <p className="max-w-2xl border-l-2 border-ocean-primary pl-4 text-sm leading-relaxed text-muted-foreground">
+                <p className="max-w-xl border-l-2 border-ocean-primary pl-4 text-sm font-medium text-foreground">
                   {t("keyUnlock.landing.existingVault")}
                 </p>
               )}
@@ -233,20 +244,26 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
             </Button>
           </div>
 
-          <aside className="flex flex-col justify-center py-8 lg:pl-10">
+          <aside aria-label={t("keyUnlock.landing.overviewAria")} className="flex flex-col justify-center py-8 lg:pl-10">
             <div className="border border-border bg-card">
-              {trustItems.map((item, index) => (
+              {overviewItems.map((item, index) => (
                 <article
                   key={item.title}
-                  className={`grid grid-cols-[3.5rem_1fr] ${index < trustItems.length - 1 ? "border-b border-border" : ""}`}
+                  className={`grid grid-cols-[3.5rem_1fr] ${index < overviewItems.length - 1 ? "border-b border-border" : ""}`}
                 >
                   <div className="flex flex-col items-center gap-3 border-r border-border p-3 text-ocean-primary">
                     <span className="text-lg font-bold tabular-nums">{String(index + 1).padStart(2, "0")}</span>
                     {item.icon}
                   </div>
                   <div className="p-4 sm:p-5">
-                    <h2 className="text-base font-semibold text-foreground">{item.title}</h2>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+                    <h2 className="text-lg font-semibold text-foreground">{item.title}</h2>
+                    <ul className="mt-3 grid grid-cols-3 divide-x divide-border border-y border-border text-center text-xs font-medium text-muted-foreground">
+                      {item.features.map((feature) => (
+                        <li key={feature} className="flex min-h-11 items-center justify-center px-2 py-2 leading-tight">
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </article>
               ))}

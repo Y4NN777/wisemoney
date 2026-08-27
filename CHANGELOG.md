@@ -42,6 +42,9 @@ from an earlier public release.
 
 ### Changed
 
+- **Clearer first visit** — the landing page now leads with a short,
+  benefit-focused promise and communicates tracking, planning, and protection
+  through a compact visual overview instead of explanatory paragraphs.
 - **Simpler information architecture** — Capture focuses on entering money,
   Planning groups forward-looking work, Settings progressively discloses
   advanced controls, and WiseBot uses a focused mobile conversation.

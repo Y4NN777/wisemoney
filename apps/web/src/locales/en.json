@@ -104,10 +104,31 @@
     },
     "landing": {
       "aria": "WiseMoney introduction",
-      "kicker": "A personal finance app that works on your device",
-      "title": "WiseMoney starts with your device, not a login wall.",
-      "body": "Build your private finance workspace first: dashboard, quick expense entry, budgets, goals, recurring payments, exports, and settings all open from one protected space.",
-      "existingVault": "A private space already exists in this browser. Open it to continue with your saved records.",
+      "kicker": "Your money, on your device",
+      "title": "Manage your money. Stay in control.",
+      "body": "Accounts, budgets, and due dates stay together on this device.",
+      "existingVault": "Your private space is ready on this device.",
+      "overviewAria": "What you can do with WiseMoney",
+      "overview": {
+        "track": {
+          "title": "Track",
+          "accounts": "Accounts",
+          "operations": "Operations",
+          "transfers": "Transfers"
+        },
+        "plan": {
+          "title": "Plan",
+          "budgets": "Budgets",
+          "goals": "Goals",
+          "dueDates": "Due dates"
+        },
+        "protect": {
+          "title": "Protect",
+          "encrypted": "Encrypted",
+          "offline": "Offline",
+          "backups": "Backups"
+        }
+      },
       "openVault": "Open my space",
       "startOnboarding": "See how it works",
       "openApp": "Open app",
