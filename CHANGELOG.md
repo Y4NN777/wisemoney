@@ -30,9 +30,11 @@ from an earlier public release.
   exports without financial amounts.
 - **Backups and financial cycles** — lossless encrypted backup and restore,
   CSV/XLSX exports, readable cycle statements, and guarded cycle closure.
-- **Financial guidance** — a bilingual offline help guide, WiseBot product help,
-  financial-literacy explanations, and a separately consented Financial
-  Assistant with managed and bring-your-own-key provider modes.
+- **Financial guidance** — a versioned bilingual task guide shared by written
+  help and WiseBot, precise follow-up context, deterministic offline answers,
+  quiet local coaching with optional silent notifications, understandable error
+  recovery, financial-literacy explanations, and a separately consented
+  Financial Assistant with managed and bring-your-own-key provider modes.
 - **Installable web application** — responsive phone and desktop layouts,
   offline navigation, install guidance, and a custom service worker preserving
   the encrypted local-first model.
@@ -86,6 +88,10 @@ from an earlier public release.
   implementation jargon. WiseBot uses the complete canonical guide, retains
   the selected topic across follow-up questions, requests exact procedural
   steps, and safely renders lists and emphasis.
+- **Local projection recovery** — a damaged or unreadable cached projection no
+  longer blocks the dashboard or Planning; WiseMoney rebuilds it from the
+  encrypted event journal and offers calm retry, reopen, local diagnostic, and
+  WiseBot explanation actions if a screen still cannot load.
 
 ### Security
 

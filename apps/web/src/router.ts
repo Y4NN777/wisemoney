@@ -11,6 +11,7 @@ import { Route as recurringRoute } from "./routes/recurring.tsx";
 import { Route as debtsRoute } from "./routes/debts.tsx";
 import { Route as plannedExpensesRoute } from "./routes/plannedExpenses.tsx";
 import { Route as operationsRoute } from "./routes/operations.tsx";
+import AppRouteError from "./errors/AppRouteError.tsx";
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -26,4 +27,4 @@ const routeTree = rootRoute.addChildren([
   operationsRoute,
 ]);
 
-export const router = createRouter({ routeTree });
+export const router = createRouter({ routeTree, defaultErrorComponent: AppRouteError });

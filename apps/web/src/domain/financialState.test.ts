@@ -991,6 +991,24 @@ describe("getSnapshot", () => {
     expect(result.accounts[0]?.name).toBe("Cash");
   });
 
+  it("replays a healthy journal when the cached projection cannot be decrypted", async () => {
+    const event = makeEvent({
+      id: "e1", timestamp: 1000, type: "account_created",
+      payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 1000, currency: "USD" } },
+    });
+    fakeEvents.seed([event]);
+    await fakeSnapshotStore.put({
+      id: "current", asOfEventId: "e1", asOfTimestamp: 1000,
+      ciphertext: new Uint8Array([1, 2, 3]), iv: new Uint8Array(12),
+    });
+    fakeOpen.mockRejectedValueOnce(new DOMException("The operation failed", "OperationError"));
+    fakeOpen.mockImplementationOnce((envelope: EncryptedEnvelope) => Promise.resolve(envelope.ciphertext.slice()));
+
+    const result = await getSnapshot(mkKey);
+
+    expect(result.accounts[0]?.name).toBe("Cash");
+  });
+
   it("invalidates a version 3 snapshot and rebuilds version 4 from the journal", async () => {
     fakeEvents.seed([makeEvent({
       id: "e1", timestamp: 1000, type: "account_created",

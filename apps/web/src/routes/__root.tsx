@@ -6,6 +6,7 @@ import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 import ReminderCenter, { type ReminderViewModel } from "../components/ReminderCenter.tsx";
 import { ReminderProvider, useReminders } from "../reminders/ReminderProvider.tsx";
+import { CoachProvider } from "../coach/CoachProvider.tsx";
 
 const navItems = [
   { to: "/", labelKey: "nav.dashboard", compactLabelKey: "nav.dashboardShort", icon: LayoutDashboard, exact: true },
@@ -20,7 +21,7 @@ export const Route = createRootRoute({
 });
 
 function RootWithReminders() {
-  return <ReminderProvider><RootLayout /></ReminderProvider>;
+  return <ReminderProvider><CoachProvider><RootLayout /></CoachProvider></ReminderProvider>;
 }
 
 function reminderUrgency(type: ReminderViewModel["type"], dueAt: number, now = Date.now()): ReminderViewModel["urgency"] {

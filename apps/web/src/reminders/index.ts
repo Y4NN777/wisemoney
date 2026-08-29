@@ -401,6 +401,7 @@ function toLocalReminder(
   now: number,
 ): LocalReminder {
   return {
+    kind: "financial",
     id: reminder.id,
     label: reminder.label.trim().slice(0, 120),
     triggerAt: reminder.triggerAt,
@@ -526,7 +527,7 @@ export function dismissReminder(
   return updateReminder(reminderId, "dismissedAt", storage, now);
 }
 
-/** Replaces the complete queue with one storage write, preserving matching inbox state. */
+/** Replaces only financial reminders, preserving the independent WiseBot coach queue. */
 export async function rebuildReminderQueue(
   snapshot: FinancialStateSnapshot,
   options: {
@@ -553,7 +554,7 @@ export async function rebuildReminderQueue(
     };
   });
   const systemQueue = options.systemQueue ?? getReminderQueueStorage();
-  await systemQueue.replaceAll(reminders.map((reminder) =>
+  await systemQueue.replaceScope("financial", reminders.map((reminder) =>
     toLocalReminder(reminder, options.locale ?? currentLocale(), now)
   ));
   persistQueue({ version: 1, rebuiltAt: now, reminders }, storage);

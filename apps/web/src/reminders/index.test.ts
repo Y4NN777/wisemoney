@@ -33,10 +33,13 @@ function systemQueue(
 ) {
   const replaceAll = replacement ?? vi.fn<(reminders: readonly LocalReminder[]) => Promise<void>>()
     .mockResolvedValue(undefined);
+  const replaceScope = vi.fn<(kind: "financial" | "coach", reminders: readonly LocalReminder[]) => Promise<void>>()
+    .mockImplementation((_kind, reminders) => replaceAll(reminders));
   return {
     storage: {
       enqueue: vi.fn(),
       replaceAll,
+      replaceScope,
       remove: vi.fn(),
       claimDue: vi.fn(),
       complete: vi.fn(),
@@ -44,6 +47,7 @@ function systemQueue(
       prune: vi.fn(),
     } as unknown as ReminderQueueStorage,
     replaceAll,
+    replaceScope,
   };
 }
 
@@ -372,8 +376,9 @@ describe("queue persistence and inbox", () => {
     });
 
     expect(reminders).toHaveLength(1);
-    expect(system.replaceAll).toHaveBeenCalledOnce();
-    expect(system.replaceAll.mock.calls[0]![0]).toMatchObject([{
+    expect(system.replaceScope).toHaveBeenCalledOnce();
+    expect(system.replaceScope.mock.calls[0]![0]).toBe("financial");
+    expect(system.replaceScope.mock.calls[0]![1]).toMatchObject([{
       id: reminders[0]!.id,
       label: "School fees",
       locale: "fr",

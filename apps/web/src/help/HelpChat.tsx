@@ -3,7 +3,8 @@ import { useEffect, useRef, useState, type ChangeEvent, type ClipboardEvent, typ
 import { useTranslation } from "react-i18next";
 import Logo from "../components/Logo.tsx";
 import { Button } from "../components/ui/button.tsx";
-import { findRelevantHelpSections, type HelpSection } from "./corpus.ts";
+import { findRelevantHelpSections, localTaskAnswer, type HelpSection } from "./corpus.ts";
+import type { SafeHelpContext } from "./context.ts";
 import {
   streamHelpMessage,
   type HelpChatHistoryMessage,
@@ -39,10 +40,16 @@ const POLL_INTERVAL_MS = 1_250;
 export default function HelpChat({
   sections,
   openRequest,
+  initialPrompt,
+  safeContext,
+  onOpenChange,
   vaultUnlocked,
 }: {
   sections: HelpSection[];
   openRequest: number;
+  initialPrompt?: string;
+  safeContext: SafeHelpContext;
+  onOpenChange?: (open: boolean) => void;
   vaultUnlocked: boolean;
 }) {
   const { t, i18n } = useTranslation();
@@ -115,6 +122,7 @@ export default function HelpChat({
 
   const closePanel = () => {
     setOpen(false);
+    onOpenChange?.(false);
   };
 
   const resetConversation = () => {
@@ -127,8 +135,13 @@ export default function HelpChat({
   };
 
   useEffect(() => {
-    if (openRequest > 0) setOpen(true);
-  }, [openRequest]);
+    if (openRequest <= 0) return;
+    setOpen(true);
+    onOpenChange?.(true);
+    if (initialPrompt != null && initialPrompt.trim().length > 0 && messages.length === 0) {
+      setInput(initialPrompt.trim());
+    }
+  }, [initialPrompt, openRequest]);
 
   useEffect(() => {
     if (previousVaultUnlockedRef.current && !vaultUnlocked) resetConversation();
@@ -144,9 +157,8 @@ export default function HelpChat({
       return;
     }
 
-    const previousSectionIds = [...messages].reverse().find((message) =>
-      message.role === "assistant" && message.sectionIds != null)?.sectionIds ?? [];
-    const selectedSections = findRelevantHelpSections(sections, question, 3, previousSectionIds);
+    const previousSectionIds = messages.flatMap((message) => message.role === "assistant" && message.sectionIds?.[0] != null ? [message.sectionIds[0]] : []).slice(-3);
+    const selectedSections = findRelevantHelpSections(sections, question, 4, previousSectionIds, safeContext.surfaceId);
     const priorHistory = messages.map(({ role, text }) => ({ role, text }));
     const image = imageDataUrl;
     const userMessage: DisplayMessage = {
@@ -165,6 +177,7 @@ export default function HelpChat({
     pendingRef.current = pending;
 
     void (async () => {
+      let assistantId: number | null = null;
       try {
         let currentTicket = await requestLocalTicket(image != null);
         pending.ticketId = currentTicket.id;
@@ -182,9 +195,10 @@ export default function HelpChat({
         setTicket(currentTicket);
         pending.controller = new AbortController();
 
-        const assistantId = ++messageIdRef.current;
+        const nextAssistantId = ++messageIdRef.current;
+        assistantId = nextAssistantId;
         setMessages((current) => [...current, {
-          id: assistantId,
+          id: nextAssistantId,
           role: "assistant",
           text: "",
           sectionIds: selectedSections.map(({ id }) => id),
@@ -196,10 +210,17 @@ export default function HelpChat({
           locale: (i18n.resolvedLanguage ?? i18n.language).startsWith("fr") ? "fr" : "en",
           history: priorHistory,
           sections: selectedSections,
+          safeContext: {
+            ...safeContext,
+            ...(selectedSections[0] == null ? {} : { taskId: selectedSections[0].id }),
+          },
           signal: pending.controller.signal,
         }, (chunk) => {
           setMessages((current) => current.map((message) =>
-            message.id === assistantId ? { ...message, text: message.text + chunk } : message));
+            message.id === nextAssistantId ? { ...message, text: message.text + chunk } : message));
+        }, (meta) => {
+          setMessages((current) => current.map((message) =>
+            message.id === nextAssistantId ? { ...message, sectionIds: meta.taskIds } : message));
         });
         setTicket(await finishLocalTicket(currentTicket.id, true));
       } catch (caught) {
@@ -207,9 +228,16 @@ export default function HelpChat({
           await finishLocalTicket(pending.ticketId, false).then(setTicket).catch(() => undefined);
         }
         if (!pending.cancelled) {
-          setError(caught instanceof LocalAdmissionError && caught.reason === "quota"
-            ? t("helpPage.chat.quotaReached")
-            : t("helpPage.chat.unavailable"));
+          const fallback = selectedSections[0];
+          if (assistantId != null && fallback != null && !(caught instanceof LocalAdmissionError && caught.reason === "quota")) {
+            setMessages((current) => current.map((message) => message.id === assistantId
+              ? { ...message, text: localTaskAnswer(fallback), sectionIds: [fallback.id] }
+              : message));
+          } else {
+            setError(caught instanceof LocalAdmissionError && caught.reason === "quota"
+              ? t("helpPage.chat.quotaReached")
+              : t("helpPage.chat.unavailable"));
+          }
         }
       } finally {
         if (pendingRef.current === pending) pendingRef.current = null;
@@ -229,12 +257,12 @@ export default function HelpChat({
   };
 
   return (
-    <div className={open ? "fixed inset-0 z-[70] sm:inset-auto sm:bottom-7 sm:right-7" : "fixed bottom-5 right-4 z-[70] sm:bottom-7 sm:right-7"}>
+    <div className={open ? "fixed inset-0 z-[70] sm:inset-auto sm:bottom-7 sm:right-7" : `fixed right-4 z-[70] sm:bottom-7 sm:right-7 ${vaultUnlocked ? "bottom-[calc(4.75rem+var(--safe-area-bottom))]" : "bottom-5"}`}>
       {open && (
         <section
           role="dialog"
           aria-label={t("helpPage.chat.title")}
-          className="flex h-[100dvh] w-screen flex-col overflow-hidden bg-white sm:mb-3 sm:h-[min(680px,calc(100dvh-7rem))] sm:w-[min(410px,calc(100vw-2rem))] sm:border sm:border-foreground/20 sm:shadow-[0_18px_48px_rgba(16,24,32,0.16)]"
+          className="flex h-[100dvh] w-screen flex-col overflow-hidden bg-background text-foreground sm:mb-3 sm:h-[min(680px,calc(100dvh-7rem))] sm:w-[min(410px,calc(100vw-2rem))] sm:border sm:border-foreground/20 sm:shadow-[0_18px_48px_rgba(16,24,32,0.16)]"
         >
           <header className="grid min-h-14 grid-cols-[3.25rem_1fr_2.75rem_2.75rem_2.75rem] border-b border-border">
             <div className="flex items-center justify-center border-r border-border bg-ocean-primary">
@@ -259,7 +287,7 @@ export default function HelpChat({
           </header>
 
           {!online && (
-            <div className="flex items-start gap-2 border-b border-border bg-neutral-100 px-3 py-2 text-xs text-muted-foreground" role="status">
+            <div className="flex items-start gap-2 border-b border-border bg-muted px-3 py-2 text-xs text-muted-foreground" role="status">
               <WifiOff className="mt-0.5 h-4 w-4 shrink-0" />
               {t("helpPage.chat.offline")}
             </div>
@@ -309,7 +337,7 @@ export default function HelpChat({
               </div>
             )}
             {!showConsent && messages.map((message) => (
-              <article key={message.id} className={message.role === "user" ? "ml-8 border border-ocean-primary bg-ocean-primary p-3 text-sm text-white" : "mr-5 border-l-2 border-ocean-primary bg-neutral-100 p-3 text-sm"}>
+              <article key={message.id} className={message.role === "user" ? "ml-8 border border-ocean-primary bg-ocean-primary p-3 text-sm text-white" : "mr-5 border-l-2 border-ocean-primary bg-muted p-3 text-sm"}>
                 {message.role === "assistant" && message.text.length > 0
                   ? <HelpMessageMarkdown text={message.text} />
                   : <p className="whitespace-pre-wrap leading-relaxed">{message.text || (submitting ? t("helpPage.chat.writing") : t("helpPage.chat.unavailable"))}</p>}
@@ -330,7 +358,7 @@ export default function HelpChat({
             ))}
 
             {!showConsent && ticket?.status === "waiting" && (
-              <div className="border border-border bg-white p-3 text-xs" role="status">
+              <div className="border border-border bg-card p-3 text-xs" role="status">
                 <div className="flex items-center gap-2 font-semibold">
                   <LoaderCircle className="h-4 w-4 animate-spin text-ocean-primary" />
                   {t("helpPage.chat.queuePosition", { position: ticket.position })}
@@ -342,11 +370,11 @@ export default function HelpChat({
             {!showConsent && submitting && ticket?.status !== "waiting" && (
               <Button type="button" variant="outline" size="sm" onClick={cancelPending}>{t("helpPage.chat.stop")}</Button>
             )}
-            {!showConsent && error != null && <p className="border-l-2 border-destructive bg-neutral-100 p-3 text-xs" role="alert">{error}</p>}
+            {!showConsent && error != null && <p className="border-l-2 border-destructive bg-muted p-3 text-xs" role="alert">{error}</p>}
             <div ref={endRef} />
           </div>
 
-          {!showConsent && <footer className="border-t border-border bg-white p-3 pb-[calc(0.75rem+var(--safe-area-bottom))] sm:pb-3">
+          {!showConsent && <footer className="border-t border-border bg-card p-3 pb-[calc(0.75rem+var(--safe-area-bottom))] sm:pb-3">
             {ticket != null && (
               <p className="mb-2 text-[11px] text-muted-foreground">
                 {t("helpPage.chat.quota", { count: ticket.remainingUnits })}
@@ -376,7 +404,7 @@ export default function HelpChat({
                 disabled={!online || submitting}
                 placeholder={t("helpPage.chat.placeholder")}
                 aria-label={t("helpPage.chat.placeholder")}
-                className="min-h-10 resize-none border border-input bg-white px-3 py-2 text-sm focus-visible:border-primary"
+                className="min-h-10 resize-none border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:border-primary"
               />
               <Button type="submit" size="icon" disabled={!online || submitting || imageBusy || input.trim().length === 0} aria-label={t("helpPage.chat.send")}>
                 <Send className="h-4 w-4" />
@@ -389,8 +417,11 @@ export default function HelpChat({
       {!open && (
         <button
           type="button"
-          onClick={() => setOpen(true)}
-          className="hidden h-14 w-14 items-center justify-center border border-ocean-primary bg-white shadow-[0_8px_24px_rgba(16,24,32,0.14)] transition-transform hover:-translate-y-0.5 sm:flex"
+          onClick={() => {
+            setOpen(true);
+            onOpenChange?.(true);
+          }}
+          className={`${window.location.pathname === "/help" ? "hidden sm:flex" : "flex"} h-12 w-12 items-center justify-center border border-ocean-primary bg-card shadow-[0_8px_24px_rgba(16,24,32,0.14)] transition-transform hover:-translate-y-0.5 sm:h-14 sm:w-14`}
           aria-label={t("helpPage.chat.open")}
           title={t("helpPage.chat.open")}
         >

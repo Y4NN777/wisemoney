@@ -1199,20 +1199,25 @@ export async function getSnapshot(
   const cached = await db.financialStateSnapshot.get("current");
 
   if (cached) {
-    const snapshotPlaintext = await open(
-      { ciphertext: cached.ciphertext, iv: cached.iv },
-      masterKey
-    );
-    let parsedSnapshot: unknown;
+    let parsedSnapshot: unknown = null;
     try {
+      const snapshotPlaintext = await open(
+        { ciphertext: cached.ciphertext, iv: cached.iv },
+        masterKey
+      );
       try {
-        parsedSnapshot = JSON.parse(new TextDecoder().decode(snapshotPlaintext)) as unknown;
-      } catch (error) {
-        if (!(error instanceof SyntaxError)) throw error;
-        parsedSnapshot = null;
+        try {
+          parsedSnapshot = JSON.parse(new TextDecoder().decode(snapshotPlaintext)) as unknown;
+        } catch (error) {
+          if (!(error instanceof SyntaxError)) throw error;
+        }
+      } finally {
+        snapshotPlaintext.fill(0);
       }
-    } finally {
-      snapshotPlaintext.fill(0);
+    } catch {
+      // The snapshot is a disposable projection. A truncated or stale encrypted
+      // cache must never prevent replaying the healthy encrypted event journal.
+      parsedSnapshot = null;
     }
 
     if (

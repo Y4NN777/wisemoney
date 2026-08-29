@@ -12,15 +12,20 @@ describe("help corpus", () => {
     for (const locale of ["en", "fr"]) {
       const sections = getHelpSections(locale);
       const covered = new Set(sections.flatMap(({ features }) => features));
-      expect(sections).toHaveLength(12);
+      expect(sections.length).toBeGreaterThanOrEqual(20);
       expect(sections.map(({ id }) => id)).toEqual(getHelpSections(locale === "en" ? "fr" : "en").map(({ id }) => id));
+      for (const section of sections) {
+        expect(section.steps.length, `${locale}/${section.id} has steps`).toBeGreaterThan(0);
+        expect(section.expectedResult.length, `${locale}/${section.id} has a result`).toBeGreaterThan(0);
+        expect(section.groupId.length).toBeGreaterThan(0);
+      }
       for (const feature of REQUIRED_HELP_FEATURES) expect(covered.has(feature), `${locale} is missing ${feature}`).toBe(true);
     }
   });
 
   it("normalizes accents and case for local search", () => {
     expect(normalizeSearchText("  DÉPENSES et Épargne  ")).toBe("depenses et epargne");
-    expect(searchHelpSections(getHelpSections("fr"), "depenses")[0]?.id).toBe("transactions");
+    expect(searchHelpSections(getHelpSections("fr"), "enregistrer dépense")[0]?.id).toBe("transactions");
     expect(searchHelpSections(getHelpSections("fr"), "réinitialiser")[0]?.id).toBe("sauvegarde");
   });
 
@@ -36,16 +41,16 @@ describe("help corpus", () => {
       const installation = getHelpSections(locale).find(({ id }) => id === "installation");
       expect(installation).toBeDefined();
       expect([installation?.title, installation?.summary, ...(installation?.steps ?? [])].join(" ")).not.toMatch(/\bPWA\b/i);
-      expect(installation?.summary).toMatch(/browser|navigateur/);
+      expect([installation?.summary, ...(installation?.steps ?? []), ...(installation?.limitations ?? [])].join(" ")).toMatch(/browser|navigateur/i);
     }
   });
 
   it("retrieves transfers from a natural question and keeps that context for a follow-up", () => {
     const sections = getHelpSections("fr");
     const first = findRelevantHelpSections(sections, "On peut faire un transfert de compte à compte et le suivre ?");
-    expect(first[0]?.id).toBe("transactions");
+    expect(first[0]?.id).toBe("virements");
 
-    const followUp = findRelevantHelpSections(sections, "Mais comment le faire exactement ?", 3, first.map(({ id }) => id));
-    expect(followUp[0]?.id).toBe("transactions");
+    const followUp = findRelevantHelpSections(sections, "Mais comment le faire exactement ?", 3, first[0] == null ? [] : [first[0].id]);
+    expect(followUp[0]?.id).toBe("virements");
   });
 });

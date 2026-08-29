@@ -121,7 +121,7 @@ try {
     await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     const darkLandingBackground = await page.locator(".landing-grid").evaluate((element) =>
       getComputedStyle(element).backgroundImage);
-    assert.match(darkLandingBackground, /rgba\(32, 41, 67/,
+    assert.match(darkLandingBackground, /rgba\(22, 48, 58/,
       `${device.name}: landing still uses the light theme glow in dark mode`);
     assert.doesNotMatch(darkLandingBackground, /rgba\(237, 241, 255/,
       `${device.name}: light landing glow leaked into dark mode`);
@@ -129,11 +129,11 @@ try {
       const style = getComputedStyle(element);
       return { background: style.backgroundColor, foreground: style.color };
     });
-    assert.deepEqual(darkPrimaryAction, { background: "rgb(0, 47, 167)", foreground: "rgb(255, 255, 255)" },
+    assert.deepEqual(darkPrimaryAction, { background: "rgb(0, 119, 182)", foreground: "rgb(255, 255, 255)" },
       `${device.name}: dark theme primary action drifted from WiseMoney blue`);
     const darkLanguageIcon = await page.getByRole("combobox", { name: "Choose language", exact: true })
       .locator("svg").first().evaluate((element) => getComputedStyle(element).color);
-    assert.equal(darkLanguageIcon, "rgb(0, 47, 167)",
+    assert.equal(darkLanguageIcon, "rgb(0, 119, 182)",
       `${device.name}: language switcher drifted from WiseMoney blue`);
     await page.screenshot({ path: `${outputDir}/${device.name}-landing-dark.png`, fullPage: true });
     await page.evaluate(() => localStorage.setItem("wisemoney.theme.preference.v1", "light"));
@@ -157,7 +157,7 @@ try {
     await page.getByText("Your question and optional image are sent to Google to generate the answer.", { exact: true }).waitFor();
     await page.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Quick search").fill("backup");
-    await page.getByText("Back up, import, export, and reset", { exact: true }).waitFor();
+    await page.getByText("Back up, export, and start a new cycle", { exact: true }).waitFor();
     await page.getByRole("button", { name: "See what’s new", exact: true }).click();
     await page.getByRole("heading", { name: "What’s new", exact: true }).waitFor();
     await page.getByText("1.0.0", { exact: true }).first().waitFor();
@@ -201,7 +201,7 @@ try {
     await page.waitForFunction(() => !document.body.innerText.includes("Loading"), undefined, { timeout: 10_000 });
     await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
     await page.getByLabel("Quick search").fill("offline");
-    await page.getByText("Offline use and troubleshooting", { exact: true }).waitFor();
+    await page.getByText("Use WiseMoney offline and recover from a problem", { exact: true }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}-offline.png`, fullPage: true });
     await page.goto(`${baseURL}/updates`, { waitUntil: "domcontentloaded" });
     await page.getByRole("heading", { name: "What’s new", exact: true }).waitFor();
@@ -388,7 +388,7 @@ try {
   await appPage.getByRole("button", { name: "Open help", exact: true }).click();
   await appPage.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
   await appPage.getByLabel("Quick search").fill("total balance");
-  await appPage.getByText("Read the dashboard", { exact: true }).waitFor();
+  await appPage.getByText("Read the dashboard and activity", { exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Back", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
   await appPage.screenshot({ path: `${outputDir}/transfer-history.png`, fullPage: true });

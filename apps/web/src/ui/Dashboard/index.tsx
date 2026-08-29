@@ -47,6 +47,8 @@ import {
   type CashFlowPoint,
   type BalancePoint,
 } from "../../analytics/dashboard.ts";
+import AppFaultPanel from "../../errors/AppFaultPanel.tsx";
+import { classifyAppError } from "../../errors/diagnostics.ts";
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -1399,10 +1401,14 @@ export default function Dashboard() {
   }
 
   if (currentQuery.error != null || transactionHistoryQuery.error != null || currentQuery.data == null) {
+    const loadError = currentQuery.error ?? transactionHistoryQuery.error;
     return (
-      <main aria-label={t("dashboard.title")} className="flex min-h-[50vh] flex-col items-center justify-center space-y-2 text-center">
-        <p className="text-destructive text-lg font-medium">{t("common.error")}</p>
-        <p className="text-muted-foreground text-sm">{t("dashboard.loadFailed")}</p>
+      <main aria-label={t("dashboard.title")} className="app-page flex min-h-[60vh] items-center justify-center">
+        <AppFaultPanel
+          faultCode={classifyAppError(loadError, "dashboard_load")}
+          surfaceId="dashboard"
+          onRetry={() => { void Promise.all([currentQuery.refetch(), transactionHistoryQuery.refetch()]); }}
+        />
       </main>
     );
   }
@@ -1434,9 +1440,12 @@ export default function Dashboard() {
 
   if (error != null || snapshot == null) {
     return (
-      <main aria-label={t("dashboard.title")} className="flex min-h-[50vh] flex-col items-center justify-center space-y-2 text-center">
-        <p className="text-destructive text-lg font-medium">{t("common.error")}</p>
-        <p className="text-muted-foreground text-sm">{t("dashboard.loadFailed")}</p>
+      <main aria-label={t("dashboard.title")} className="app-page flex min-h-[60vh] items-center justify-center">
+        <AppFaultPanel
+          faultCode={classifyAppError(error, "dashboard_load")}
+          surfaceId="dashboard"
+          onRetry={() => { void historicalQuery.refetch(); }}
+        />
       </main>
     );
   }

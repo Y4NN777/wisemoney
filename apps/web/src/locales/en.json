@@ -1340,6 +1340,38 @@
       "rebuild": "Could not refresh local reminders"
     }
   },
+  "fault": {
+    "title": "WiseMoney couldn’t open this screen",
+    "codes": {
+      "dashboard_load": "Your data is still on this device. Try loading again or reopen WiseMoney.",
+      "storage_unavailable": "This device’s storage did not respond correctly. Try again without deleting your data.",
+      "render_conflict": "The display was interrupted. Reopening WiseMoney usually restores it.",
+      "network_unavailable": "This action is waiting for a connection. The rest of your space remains available on this device.",
+      "unknown": "A temporary problem interrupted this screen. You can retry without losing your data."
+    },
+    "retry": "Try again",
+    "reopen": "Reopen WiseMoney",
+    "askWiseBot": "Understand with WiseBot",
+    "diagnostic": "Diagnostic {{id}} — tap to copy",
+    "copied": "Identifier copied"
+  },
+  "coach": {
+    "settings": {
+      "inApp": "In-app tips",
+      "inAppHelp": "WiseBot can suggest a useful next step at the right time. Only one card appears per session.",
+      "notifications": "Tip notifications",
+      "notificationsHelp": "Optional, silent, and limited to one per week. Your browser decides the exact delivery time.",
+      "pause": "Pause for 14 days",
+      "reset": "Reset seen tips",
+      "privacy": "Decisions stay on this device. Nothing is sent to an AI service until you tap “Ask WiseBot”.",
+      "permission": {
+        "default": "Permission not requested",
+        "granted": "Notifications allowed",
+        "denied": "Notifications blocked",
+        "unsupported": "Unavailable on this device"
+      }
+    }
+  },
   "settings": {
     "system": "System",
     "title": "Settings",
@@ -1364,6 +1396,10 @@
       "action": "See what’s new"
     },
     "sections": {
+      "coach": {
+        "title": "WiseBot help",
+        "description": "Quiet in-app tips and optional notifications"
+      },
       "reminders": {
         "title": "Reminders and calendar",
         "description": "Local deadlines, system notifications, and weekly review"
@@ -1462,7 +1498,7 @@
     "back": "Back",
     "eyebrow": "WiseMoney guide",
     "title": "Find your way around your money.",
-    "intro": "Twelve short paths explain every important WiseMoney feature. Search locally, read offline, or open a step when you need more detail.",
+    "intro": "Short paths explain every important WiseMoney feature. Search locally, read offline, or open a step when you need more detail.",
     "paths": "guided paths from setup to troubleshooting",
     "searchLabel": "Quick search",
     "searchPlaceholder": "Try “install”, “transfer”, or “backup”",
@@ -1524,7 +1560,7 @@
       "privateTitle": "Your accounts stay private",
       "privateBody": "The guide and WiseBot explain how to use WiseMoney without opening your accounts or reading your transactions. The Financial Assistant analyzes your information only after you explicitly agree.",
       "offlineTitle": "Help remains available without Internet",
-      "offlineBody": "Once WiseMoney has been opened on this device, all twelve guide paths remain available without a connection. WiseBot needs Internet."
+      "offlineBody": "Once WiseMoney has been opened on this device, every guide path remains available without a connection. WiseBot needs Internet."
     },
     "updates": {
       "title": "Discover what’s new",

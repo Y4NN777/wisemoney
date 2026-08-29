@@ -1,12 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { AlertCircle, ArrowRight, HandCoins, ListTodo, Repeat, Target, Wallet } from "lucide-react";
+import { ArrowRight, HandCoins, ListTodo, Repeat, Target, Wallet } from "lucide-react";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
+import AppFaultPanel from "../../errors/AppFaultPanel.tsx";
+import { classifyAppError } from "../../errors/diagnostics.ts";
 
 export default function Planning() {
   const { t } = useTranslation();
-  const { data: snapshot, isLoading, error } = useFinancialState();
+  const { data: snapshot, isLoading, error, refetch } = useFinancialState();
 
   const items = snapshot == null ? [] : [
     {
@@ -55,10 +57,7 @@ export default function Planning() {
           {Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-16 w-full" />)}
         </div>
       ) : error != null || snapshot == null ? (
-        <div role="alert" className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          {t("planning.loadFailed")}
-        </div>
+        <AppFaultPanel faultCode={classifyAppError(error)} surfaceId="planning" onRetry={() => { void refetch(); }} />
       ) : (
         <nav aria-label={t("planning.title")} className="grid gap-2 sm:grid-cols-2">
           {items.map((item) => (

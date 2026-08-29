@@ -31,7 +31,7 @@
           {
             "id": "understand",
             "title": "Comprenez avant de décider",
-            "body": "Le guide bilingue explique les fonctions et les notions financières. WiseBot répond aux questions sur WiseMoney ; l’Assistant financier reste séparé et demande votre accord avant toute analyse."
+            "body": "Le guide bilingue explique chaque parcours avec des étapes concrètes. WiseBot connaît ces mêmes parcours, conserve le sujet des questions suivantes et peut proposer rarement une aide locale ; rien n’est envoyé à un service d’IA avant votre demande explicite. L’Assistant financier reste séparé."
           },
           {
             "id": "carry",
@@ -67,7 +67,7 @@
           {
             "id": "understand",
             "title": "Understand before you decide",
-            "body": "The bilingual guide explains features and financial concepts. WiseBot answers questions about WiseMoney; the Financial Assistant remains separate and asks before analyzing your information."
+            "body": "The bilingual guide explains every journey with concrete steps. WiseBot uses those same journeys, keeps the topic across follow-up questions, and can occasionally offer local help; nothing is sent to an AI service until you explicitly ask. The Financial Assistant remains separate."
           },
           {
             "id": "carry",

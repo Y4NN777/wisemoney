@@ -50,7 +50,7 @@ function inlineMarkdown(text: string): ReactNode[] {
       return <em key={index}>{part.slice(1, -1)}</em>;
     }
     if (part.startsWith("`") && part.endsWith("`")) {
-      return <code key={index} className="border border-foreground/15 bg-white px-1 py-0.5 text-[0.9em]">{part.slice(1, -1)}</code>;
+      return <code key={index} className="border border-foreground/15 bg-card px-1 py-0.5 text-[0.9em]">{part.slice(1, -1)}</code>;
     }
     return <Fragment key={index}>{part}</Fragment>;
   });

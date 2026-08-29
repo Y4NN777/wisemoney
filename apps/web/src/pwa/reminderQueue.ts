@@ -2,19 +2,21 @@ export const REMINDER_QUEUE_UPDATED_MESSAGE = "WISEMONEY_REMINDER_QUEUE_UPDATED"
 export const REMINDER_PERIODIC_SYNC_TAG = "wisemoney-reminders";
 
 const DATABASE_NAME = "WiseMoneyReminderQueue";
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 const REMINDER_STORE = "reminders";
 const DELIVERY_STORE = "deliveries";
 const DEFAULT_CLAIM_LEASE_MS = 5 * 60 * 1000;
 const DEFAULT_PERIODIC_INTERVAL_MS = 12 * 60 * 60 * 1000;
 
 export type ReminderLocale = "en" | "fr";
+export type ReminderKind = "financial" | "coach";
 
 /**
  * Plain, non-financial notification copy. Callers deliberately cannot attach an
  * amount or vault payload: the service worker can run while the vault is locked.
  */
 export type LocalReminder = {
+  kind: ReminderKind;
   id: string;
   label: string;
   triggerAt: number;
@@ -36,6 +38,7 @@ type DeliveryReceipt = {
 export type ReminderQueueStorage = {
   enqueue: (reminder: LocalReminder) => Promise<"queued" | "duplicate">;
   replaceAll: (reminders: readonly LocalReminder[]) => Promise<void>;
+  replaceScope: (kind: ReminderKind, reminders: readonly LocalReminder[]) => Promise<void>;
   remove: (id: string) => Promise<void>;
   claimDue: (now: number, limit?: number) => Promise<LocalReminder[]>;
   complete: (id: string, deliveredAt: number) => Promise<void>;
@@ -80,6 +83,9 @@ function validateReminder(reminder: LocalReminder): LocalReminder {
   if (reminder.locale !== "en" && reminder.locale !== "fr") {
     throw new Error("reminderQueue: invalid locale");
   }
+  if (reminder.kind !== "financial" && reminder.kind !== "coach") {
+    throw new Error("reminderQueue: invalid kind");
+  }
   if (!/^\/(?!\/)/.test(reminder.href)) throw new Error("reminderQueue: href must be an app-relative path");
   return { ...reminder, id, label };
 }
@@ -96,7 +102,7 @@ export class IndexedDbReminderQueue implements ReminderQueueStorage {
     if (this.databasePromise != null) return this.databasePromise;
     this.databasePromise = new Promise((resolve, reject) => {
       const request = this.factory.open(DATABASE_NAME, DATABASE_VERSION);
-      request.onupgradeneeded = () => {
+      request.onupgradeneeded = (event) => {
         const database = request.result;
         if (!database.objectStoreNames.contains(REMINDER_STORE)) {
           const reminders = database.createObjectStore(REMINDER_STORE, { keyPath: "id" });
@@ -105,6 +111,17 @@ export class IndexedDbReminderQueue implements ReminderQueueStorage {
         if (!database.objectStoreNames.contains(DELIVERY_STORE)) {
           const deliveries = database.createObjectStore(DELIVERY_STORE, { keyPath: "id" });
           deliveries.createIndex("expiresAt", "expiresAt");
+        }
+        if (event.oldVersion < 2 && database.objectStoreNames.contains(REMINDER_STORE)) {
+          const cursorRequest = request.transaction?.objectStore(REMINDER_STORE).openCursor();
+          if (cursorRequest != null) {
+            cursorRequest.onsuccess = () => {
+              const cursor = cursorRequest.result;
+              if (cursor == null) return;
+              cursor.update({ ...(cursor.value as object), kind: "financial" });
+              cursor.continue();
+            };
+          }
         }
       };
       request.onsuccess = () => resolve(request.result);
@@ -136,7 +153,14 @@ export class IndexedDbReminderQueue implements ReminderQueueStorage {
   }
 
   async replaceAll(nextReminders: readonly LocalReminder[]): Promise<void> {
+    await this.replaceScope("financial", nextReminders);
+  }
+
+  async replaceScope(kind: ReminderKind, nextReminders: readonly LocalReminder[]): Promise<void> {
     const normalized = nextReminders.map(validateReminder);
+    if (normalized.some((reminder) => reminder.kind !== kind)) {
+      throw new Error("reminderQueue: replacement kind mismatch");
+    }
     if (new Set(normalized.map((reminder) => reminder.id)).size !== normalized.length) {
       throw new Error("reminderQueue: duplicate ids in replacement");
     }
@@ -151,7 +175,7 @@ export class IndexedDbReminderQueue implements ReminderQueueStorage {
     const now = Date.now();
     const existingClaims = new Map(existing.map((reminder) => [reminder.id, reminder.claimUntil]));
     const deliveredIds = new Set(receipts.filter((receipt) => receipt.expiresAt > now).map((receipt) => receipt.id));
-    reminders.clear();
+    for (const reminder of existing) if (reminder.kind === kind) reminders.delete(reminder.id);
     for (const receipt of receipts) if (receipt.expiresAt <= now) deliveries.delete(receipt.id);
     for (const reminder of normalized) {
       if (deliveredIds.has(reminder.id)) continue;
@@ -196,6 +220,7 @@ export class IndexedDbReminderQueue implements ReminderQueueStorage {
       if (claimed.length >= limit) break;
       reminders.put({ ...reminder, claimUntil: now + this.claimLeaseMs } satisfies StoredReminder);
       claimed.push({
+        kind: reminder.kind,
         id: reminder.id,
         label: reminder.label,
         triggerAt: reminder.triggerAt,
@@ -295,13 +320,25 @@ export async function processDueReminders(
 }
 
 export function notificationFor(reminder: LocalReminder): { title: string; options: NotificationOptions } {
+  if (reminder.kind === "coach") {
+    return {
+      title: reminder.locale === "fr" ? "Une aide WiseMoney" : "A WiseMoney tip",
+      options: {
+        body: reminder.label,
+        icon: "/icons/wisemoney-icon-192.png",
+        tag: `wisemoney-coach:${reminder.id}`,
+        silent: true,
+        data: { href: reminder.href, kind: reminder.kind },
+      },
+    };
+  }
   return {
     title: reminder.locale === "fr" ? "Rappel WiseMoney" : "WiseMoney reminder",
     options: {
       body: reminder.locale === "fr" ? `À vérifier : ${reminder.label}` : `Review: ${reminder.label}`,
       icon: "/icons/wisemoney-icon-192.png",
       tag: `wisemoney-reminder:${reminder.id}`,
-      data: { href: reminder.href },
+      data: { href: reminder.href, kind: reminder.kind },
     },
   };
 }

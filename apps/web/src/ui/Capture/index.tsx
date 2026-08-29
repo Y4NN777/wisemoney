@@ -14,6 +14,7 @@ import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { parseMajorUnits } from "../../types/money.ts";
 import { parseCaptureSearch, Route, type CaptureTab, type ManageSection } from "../../routes/capture.tsx";
 import { ManagementSections } from "./ManagementSections.tsx";
+import { recordCoachFormFault } from "../../coach/index.ts";
 
 function AccountRequired({ onManage }: { onManage: () => void }) {
   const { t } = useTranslation();
@@ -68,12 +69,12 @@ export default function Capture() {
   const handleTransferSubmit = (e: FormEvent) => {
     e.preventDefault();
     setTransferError(null);
-    if (!transferFrom) { setTransferError(t("capture.transfer.errors.selectFrom")); return; }
-    if (!transferTo && !transferExternal.trim()) { setTransferError(t("capture.transfer.errors.selectDestination")); return; }
+    if (!transferFrom) { recordCoachFormFault("capture.transfer.source", "virements"); setTransferError(t("capture.transfer.errors.selectFrom")); return; }
+    if (!transferTo && !transferExternal.trim()) { recordCoachFormFault("capture.transfer.destination", "virements"); setTransferError(t("capture.transfer.errors.selectDestination")); return; }
     const sourceAccount = accounts.find((account) => account.id === transferFrom);
     const currency = sourceAccount?.currency ?? snapshot?.baseCurrency ?? "XOF";
     const amount = parseMajorUnits(transferAmount, currency);
-    if (amount == null || amount <= 0) { setTransferError(t("capture.transfer.errors.validAmount")); return; }
+    if (amount == null || amount <= 0) { recordCoachFormFault("capture.transfer.amount", "virements"); setTransferError(t("capture.transfer.errors.validAmount")); return; }
     const money = { minorUnits: amount, currency };
     recordTransfer.mutate({
       fromAccountId: transferFrom,
@@ -92,6 +93,7 @@ export default function Capture() {
         toast.success(t("capture.transfer.recorded"));
       },
       onError: () => {
+        recordCoachFormFault("capture.transfer.save", "virements");
         const message = t("capture.transfer.errors.failed");
         setTransferError(message);
         toast.error(message);
@@ -102,12 +104,12 @@ export default function Capture() {
   const handleTransactionSubmit = (e: FormEvent) => {
     e.preventDefault();
     setTxError(null);
-    if (!categoryId) { setTxError(t("capture.transaction.errors.selectCategory")); return; }
-    if (!accountId) { setTxError(t("capture.transaction.errors.selectAccount")); return; }
+    if (!categoryId) { recordCoachFormFault("capture.transaction.category", "transactions"); setTxError(t("capture.transaction.errors.selectCategory")); return; }
+    if (!accountId) { recordCoachFormFault("capture.transaction.account", "transactions"); setTxError(t("capture.transaction.errors.selectAccount")); return; }
     const selectedAccount = accounts.find((account) => account.id === accountId);
     const currency = selectedAccount?.currency ?? snapshot?.baseCurrency ?? "XOF";
     const amount = parseMajorUnits(amountStr, currency);
-    if (amount == null || amount <= 0) { setTxError(t("capture.transaction.errors.validAmount")); return; }
+    if (amount == null || amount <= 0) { recordCoachFormFault("capture.transaction.amount", "transactions"); setTxError(t("capture.transaction.errors.validAmount")); return; }
     const money = { minorUnits: amount, currency };
     recordTx.mutate({ accountId, categoryId, amount: money, direction, ...(note ? { note } : {}) }, {
       onSuccess: () => {
@@ -117,6 +119,7 @@ export default function Capture() {
         toast.success(t(direction === "income" ? "capture.transaction.incomeRecorded" : "capture.transaction.expenseRecorded"));
       },
       onError: () => {
+        recordCoachFormFault("capture.transaction.save", "transactions");
         const message = t("capture.transaction.errors.failed");
         setTxError(message);
         toast.error(message);
@@ -127,11 +130,11 @@ export default function Capture() {
   const handleGoalContribution = (e: FormEvent) => {
     e.preventDefault();
     setGoalError(null);
-    if (!goalId) { setGoalError(t("capture.goal.errors.selectGoal")); return; }
+    if (!goalId) { recordCoachFormFault("capture.goal.selection", "objectifs"); setGoalError(t("capture.goal.errors.selectGoal")); return; }
     const selectedGoal = activeGoals.find((goal) => goal.id === goalId);
     const currency = selectedGoal?.targetAmount.currency ?? snapshot?.baseCurrency ?? "XOF";
     const amount = parseMajorUnits(goalAmountStr, currency);
-    if (amount == null || amount <= 0) { setGoalError(t("capture.goal.errors.validAmount")); return; }
+    if (amount == null || amount <= 0) { recordCoachFormFault("capture.goal.amount", "objectifs"); setGoalError(t("capture.goal.errors.validAmount")); return; }
     const money = { minorUnits: amount, currency };
     recordGoalContrib.mutate({ goalId, amount: money }, {
       onSuccess: () => {
@@ -140,6 +143,7 @@ export default function Capture() {
         toast.success(t("capture.goal.recorded"));
       },
       onError: () => {
+        recordCoachFormFault("capture.goal.save", "objectifs");
         const message = t("capture.goal.errors.failed");
         setGoalError(message);
         toast.error(message);

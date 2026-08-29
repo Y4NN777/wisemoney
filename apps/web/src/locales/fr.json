@@ -1340,6 +1340,38 @@
       "rebuild": "Impossible d’actualiser les rappels locaux"
     }
   },
+  "fault": {
+    "title": "WiseMoney n’a pas pu ouvrir cet écran",
+    "codes": {
+      "dashboard_load": "Vos données sont toujours sur cet appareil. Réessayez le chargement ou rouvrez WiseMoney.",
+      "storage_unavailable": "Le stockage de cet appareil n’a pas répondu correctement. Réessayez sans effacer vos données.",
+      "render_conflict": "L’affichage a été perturbé. Rouvrir WiseMoney suffit généralement à reprendre.",
+      "network_unavailable": "Cette action attend une connexion. Le reste de votre espace demeure disponible sur cet appareil.",
+      "unknown": "Un problème temporaire a interrompu cet écran. Vous pouvez réessayer sans perdre vos données."
+    },
+    "retry": "Réessayer",
+    "reopen": "Rouvrir WiseMoney",
+    "askWiseBot": "Comprendre avec WiseBot",
+    "diagnostic": "Diagnostic {{id}} — toucher pour copier",
+    "copied": "Identifiant copié"
+  },
+  "coach": {
+    "settings": {
+      "inApp": "Conseils dans l’application",
+      "inAppHelp": "WiseBot peut proposer une étape utile au bon moment. Une seule carte apparaît par session.",
+      "notifications": "Notifications de conseils",
+      "notificationsHelp": "Facultatives, silencieuses et limitées à une par semaine. Votre navigateur décide du moment exact.",
+      "pause": "Mettre en pause 14 jours",
+      "reset": "Réinitialiser les conseils vus",
+      "privacy": "Les décisions restent sur cet appareil. Rien n’est envoyé à un service d’IA avant votre clic sur « Demander à WiseBot ».",
+      "permission": {
+        "default": "Autorisation non demandée",
+        "granted": "Notifications autorisées",
+        "denied": "Notifications refusées",
+        "unsupported": "Non disponible sur cet appareil"
+      }
+    }
+  },
   "settings": {
     "system": "Système",
     "title": "Paramètres",
@@ -1364,6 +1396,10 @@
       "action": "Voir les nouveautés"
     },
     "sections": {
+      "coach": {
+        "title": "Aide WiseBot",
+        "description": "Conseils discrets dans l’application et notifications facultatives"
+      },
       "reminders": {
         "title": "Rappels et calendrier",
         "description": "Échéances locales, notifications système et revue hebdomadaire"
@@ -1462,7 +1498,7 @@
     "back": "Retour",
     "eyebrow": "Guide WiseMoney",
     "title": "Trouvez votre chemin dans vos finances.",
-    "intro": "Douze parcours courts expliquent chaque fonction importante de WiseMoney. Recherchez localement, lisez hors ligne ou développez une étape quand vous en avez besoin.",
+    "intro": "Des parcours courts expliquent chaque fonction importante de WiseMoney. Recherchez localement, lisez hors ligne ou développez une étape quand vous en avez besoin.",
     "paths": "parcours guidés, du démarrage au dépannage",
     "searchLabel": "Recherche rapide",
     "searchPlaceholder": "Essayez « installer », « virement » ou « sauvegarde »",
@@ -1524,7 +1560,7 @@
       "privateTitle": "Vos comptes restent privés",
       "privateBody": "Le guide et WiseBot expliquent comment utiliser WiseMoney sans ouvrir vos comptes ni lire vos transactions. L’Assistant financier n’analyse vos informations qu’après votre accord explicite.",
       "offlineTitle": "L’aide reste disponible sans Internet",
-      "offlineBody": "Une fois WiseMoney ouvert sur cet appareil, les douze parcours du guide restent disponibles sans connexion. WiseBot, lui, a besoin d’Internet."
+      "offlineBody": "Une fois WiseMoney ouvert sur cet appareil, tous les parcours du guide restent disponibles sans connexion. WiseBot, lui, a besoin d’Internet."
     },
     "updates": {
       "title": "Découvrez les nouveautés",

@@ -60,6 +60,15 @@ calls the Google Gemini API directly, keeps the credential outside the PWA
 bundle, and stores no queue, quota, question, image, or conversation. It has no
 database or Go edge dependency.
 
+Written help and WiseBot share the versioned `ProductTask` catalog in
+`src/help/corpus.ts`. The browser sends only known task identifiers and a
+strict `SafeHelpContext` (version, locale, surface, entry point, and optional
+generic fault code); the function rebuilds trusted instructions from the
+catalog and rejects unknown identifiers or extra fields. Amounts, balances,
+account names, transactions, notes, vault contents, screenshots, and stacks are
+not part of that context. Provider output is streamed as `meta`, `delta`, and
+`done` SSE events, with deterministic catalog steps as the client fallback.
+
 Create a free-tier API key in Google AI Studio and set `GEMINI_API_KEY` in the
 Vercel project's server environment. Leave billing and automatic upgrades
 disabled on the Google project. `HELP_GEMMA_MODEL` defaults to
@@ -88,10 +97,16 @@ the user not to include personal or financial information.
   separate from actual transactions and from repeating recurring items, and affect
   balances only when completion creates an expense transaction.
 - The custom `injectManifest` service worker precaches the offline shell and WASM
-  unlock asset. Its separate IndexedDB reminder queue stores only a label, dates,
-  locale, and app-relative destination—never an amount or decrypted vault payload.
+  unlock asset. Its versioned IndexedDB reminder queue isolates `financial` and
+  `coach` scopes and stores only a label, dates, locale, and app-relative
+  destination—never an amount or decrypted vault payload. Coach notifications
+  require explicit permission, are silent, expire after 48 hours, and are capped
+  locally.
   Delivery is opportunistic because browser activation and Periodic Background
   Sync availability vary by platform.
+- The local coach is deterministic and event-driven. Settings, exposure history,
+  and generic diagnostics remain on the device; no provider request starts until
+  the user explicitly opens WiseBot and sends a question.
 - ICS helpers create a manual dated or recurring reminder, or four rotating weekly
   review series. Calendar files are bilingual, include `VALARM`, and omit amounts.
 - The Financial State pillar has zero dependency on the AI pillar (NFR-MOD-01).

@@ -12,6 +12,7 @@ import { Button } from "../../components/ui/button.tsx";
 import { openUpdates } from "../../releases/navigation.ts";
 import { PRODUCT_VERSION } from "../../releases/releaseNotes.ts";
 import ThemeSettings from "../../components/ThemeSettings.tsx";
+import CoachSettingsSection from "../../components/CoachSettingsSection.tsx";
 
 function SettingsPanel({
   icon,
@@ -84,6 +85,13 @@ export default function Settings() {
       </section>
 
       <div className="grid gap-3 motion-enter">
+        <SettingsPanel
+          icon={<Bot className="h-5 w-5" />}
+          title={t("settings.sections.coach.title")}
+          description={t("settings.sections.coach.description")}
+        >
+          <CoachSettingsSection />
+        </SettingsPanel>
         <SettingsPanel
           icon={<BellRing className="h-5 w-5" />}
           title={t("settings.sections.reminders.title")}

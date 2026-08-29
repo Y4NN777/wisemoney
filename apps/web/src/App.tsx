@@ -18,6 +18,7 @@ import { notifyReminderQueueUpdated, registerReminderPeriodicSync } from "./pwa/
 import UpdatesPage from "./releases/UpdatesPage.tsx";
 import { openUpdates, UPDATES_NAVIGATION_EVENT, isUpdatesPath } from "./releases/navigation.ts";
 import { PRODUCT_VERSION } from "./releases/releaseNotes.ts";
+import { WiseBotProvider } from "./help/WiseBotProvider.tsx";
 
 const UPDATE_TOAST_ID = "wisemoney-update-ready";
 const UPDATE_INSTALLED_TOAST_ID = "wisemoney-update-installed";
@@ -156,17 +157,19 @@ export default function App() {
 
   return (
     <PwaInstallProvider>
-      <Toaster />
-      <PwaUpdateHandler vaultUnlocked={vaultUnlocked} />
-      <div hidden={publicPage != null} aria-hidden={publicPage != null}>
-        <KeyUnlock onVaultUnlockedChange={setVaultUnlocked} />
-      </div>
-      <div hidden={publicPage !== "help"} aria-hidden={publicPage !== "help"}>
-        <HelpPage visible={publicPage === "help"} vaultUnlocked={vaultUnlocked} />
-      </div>
-      <div hidden={publicPage !== "updates"} aria-hidden={publicPage !== "updates"}>
-        <UpdatesPage visible={publicPage === "updates"} />
-      </div>
+      <WiseBotProvider vaultUnlocked={vaultUnlocked}>
+        <Toaster />
+        <PwaUpdateHandler vaultUnlocked={vaultUnlocked} />
+        <div hidden={publicPage != null} aria-hidden={publicPage != null}>
+          <KeyUnlock onVaultUnlockedChange={setVaultUnlocked} />
+        </div>
+        <div hidden={publicPage !== "help"} aria-hidden={publicPage !== "help"}>
+          <HelpPage visible={publicPage === "help"} />
+        </div>
+        <div hidden={publicPage !== "updates"} aria-hidden={publicPage !== "updates"}>
+          <UpdatesPage visible={publicPage === "updates"} />
+        </div>
+      </WiseBotProvider>
     </PwaInstallProvider>
   );
 }

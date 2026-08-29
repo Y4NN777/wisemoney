@@ -1,4 +1,5 @@
 import { getTrustedHelpCorpus } from "./_helpCorpus.js";
+import { isSafeHelpContext } from "../../src/help/context.js";
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -19,6 +20,7 @@ type MessageBody = {
   locale?: unknown;
   history?: unknown;
   helpContext?: unknown;
+  safeContext?: unknown;
 };
 
 type GeminiPart = {
@@ -84,23 +86,40 @@ function safeHistory(value: unknown): Array<{ role: "user" | "model"; parts: Arr
   });
 }
 
-function selectedContext(value: unknown, locale: "en" | "fr"): string {
+function selectedContext(body: MessageBody, locale: "en" | "fr"): { text: string; taskIds: string[] } {
   const corpus = getTrustedHelpCorpus(locale);
-  const ids = !Array.isArray(value) ? [] : value.flatMap((entry) => typeof entry === "object" && entry != null &&
-    typeof (entry as { id?: unknown }).id === "string" ? [(entry as { id: string }).id] : []);
-  const preferred = ids.slice(0, 3).flatMap((id) => corpus.find((section) => section.id === id) ?? []);
-  const preferredIds = new Set(preferred.map(({ id }) => id));
-  const ordered = [...preferred, ...corpus.filter(({ id }) => !preferredIds.has(id))];
-  return ordered.map((section) => [
+  if (body.safeContext !== undefined && (!isSafeHelpContext(body.safeContext) || body.safeContext.locale !== locale)) {
+    throw new RequestError(400, "This help context is not allowed.");
+  }
+  const safe = isSafeHelpContext(body.safeContext) ? body.safeContext : null;
+  if (body.helpContext !== undefined && !Array.isArray(body.helpContext)) throw new RequestError(400, "This help context is not allowed.");
+  const ids = !Array.isArray(body.helpContext) ? [] : body.helpContext.map((entry) => {
+    if (typeof entry !== "object" || entry == null || Object.keys(entry).some((key) => key !== "id") || typeof (entry as { id?: unknown }).id !== "string") {
+      throw new RequestError(400, "This help context is not allowed.");
+    }
+    return (entry as { id: string }).id;
+  });
+  const orderedIds = [...new Set([...(safe?.taskId == null ? [] : [safe.taskId]), ...ids])].slice(0, 4);
+  if (orderedIds.some((id) => !corpus.some((section) => section.id === id))) throw new RequestError(400, "This help context is not allowed.");
+  const preferred = orderedIds.flatMap((id) => corpus.find((section) => section.id === id) ?? []);
+  const selected = preferred.length > 0 ? preferred : corpus.slice(0, 4);
+  const documentation = selected.map((section) => [
     `[${section.id}] ${section.title}`,
     section.summary,
+    ...(section.prerequisites.length === 0 ? [] : ["Prerequisites:", ...section.prerequisites.map((item) => `- ${item}`)]),
     ...section.steps.map((step, index) => `${index + 1}. ${step}`),
+    `Expected result: ${section.expectedResult}`,
+    ...section.limitations.map((limitation) => `Limitation: ${limitation}`),
   ].join("\n")).join("\n\n");
+  const manifest = locale === "fr"
+    ? "WiseMoney suit comptes, revenus, dépenses, virements, budgets, objectifs, dépenses prévues, récurrents, dettes, créances, rappels, devises et sauvegardes. WiseBot explique le produit mais n’agit pas dans le coffre et n’analyse pas les finances."
+    : "WiseMoney tracks accounts, income, expenses, transfers, budgets, goals, planned expenses, recurring items, debts, receivables, reminders, currencies, and backups. WiseBot explains the product but never acts in the vault or analyzes finances.";
+  return { text: `${manifest}\n\n${documentation}`, taskIds: selected.map(({ id }) => id) };
 }
 
 function geminiBody(body: MessageBody, question: string, image: string | null, locale: "en" | "fr") {
   const language = locale === "fr" ? "French" : "English";
-  const context = selectedContext(body.helpContext, locale);
+  const context = selectedContext(body, locale).text;
   const systemInstruction = `You are WiseBot, the WiseMoney product help assistant. Answer only questions about using WiseMoney, in ${language}.
 
 RESPONSE RULES
@@ -206,6 +225,10 @@ export function extractGeminiDeltas(buffer: string): { text: string; remainder: 
   return { text, remainder };
 }
 
+function sseEvent(event: "meta" | "delta" | "done", value: unknown): Uint8Array {
+  return new TextEncoder().encode(`event: ${event}\ndata: ${JSON.stringify(value)}\n\n`);
+}
+
 export async function sendMessage(request: Request): Promise<Response> {
   try {
     const config = getConfig();
@@ -220,27 +243,29 @@ export async function sendMessage(request: Request): Promise<Response> {
       throw new RequestError(image.length > MAX_IMAGE_DATA_URL_LENGTH ? 413 : 400, "This image could not be sent.");
     }
     const locale = body.locale === "fr" ? "fr" : "en";
+    const trustedContext = selectedContext(body, locale);
     const provider = await providerRequest(config, body, question, image, locale, request.signal);
     if (provider.body == null) throw new Error("provider-body-missing");
 
-    const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     const upstream = provider.body.getReader();
     const stream = new ReadableStream<Uint8Array>({
       async start(controller) {
         let buffer = "";
         try {
+          controller.enqueue(sseEvent("meta", { taskIds: trustedContext.taskIds }));
           while (true) {
             const result = await upstream.read();
             if (result.done) break;
             buffer += decoder.decode(result.value, { stream: true });
             const parsed = extractGeminiDeltas(buffer);
             buffer = parsed.remainder;
-            if (parsed.text.length > 0) controller.enqueue(encoder.encode(parsed.text));
+            if (parsed.text.length > 0) controller.enqueue(sseEvent("delta", { text: parsed.text }));
           }
           buffer += decoder.decode();
           const final = extractGeminiDeltas(`${buffer}\n`);
-          if (final.text.length > 0) controller.enqueue(encoder.encode(final.text));
+          if (final.text.length > 0) controller.enqueue(sseEvent("delta", { text: final.text }));
+          controller.enqueue(sseEvent("done", {}));
           controller.close();
         } catch {
           controller.error(new Error("help-stream-unavailable"));
@@ -253,7 +278,7 @@ export async function sendMessage(request: Request): Promise<Response> {
     return new Response(stream, {
       status: 200,
       headers: {
-        "content-type": "text/plain; charset=utf-8",
+        "content-type": "text/event-stream; charset=utf-8",
         "cache-control": "no-store",
         "x-content-type-options": "nosniff",
       },

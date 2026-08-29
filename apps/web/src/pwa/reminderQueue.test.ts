@@ -11,6 +11,7 @@ import {
 } from "./reminderQueue.ts";
 
 const dueReminder: LocalReminder = {
+  kind: "financial",
   id: "planned:expense-1:2026-08-15",
   label: "Révision moto",
   triggerAt: 1_755_216_000_000,
@@ -27,6 +28,7 @@ function fakeStorage(reminders: LocalReminder[]): ReminderQueueStorage & {
   return {
     enqueue: vi.fn().mockResolvedValue("queued"),
     replaceAll: vi.fn().mockResolvedValue(undefined),
+    replaceScope: vi.fn().mockResolvedValue(undefined),
     remove: vi.fn().mockResolvedValue(undefined),
     claimDue: vi.fn().mockResolvedValue(reminders),
     complete: vi.fn().mockResolvedValue(undefined),
@@ -64,6 +66,25 @@ describe("local reminder queue processing", () => {
     expect(english.title).toBe("WiseMoney reminder");
     expect(english.options.body).toBe("Review: Révision moto");
     expect(french.options).not.toHaveProperty("amount");
+  });
+
+  it("keeps WiseBot notifications generic and silent", () => {
+    const coach = notificationFor({
+      ...dueReminder,
+      kind: "coach",
+      id: "coach:weekly-dashboard",
+      label: "Un repère rapide pour mieux lire votre tableau de bord",
+      href: "/help?coachTip=tableau-de-bord#tableau-de-bord",
+    });
+
+    expect(coach).toMatchObject({
+      title: "Une aide WiseMoney",
+      options: {
+        body: "Un repère rapide pour mieux lire votre tableau de bord",
+        silent: true,
+        data: { href: "/help?coachTip=tableau-de-bord#tableau-de-bord", kind: "coach" },
+      },
+    });
   });
 
   it("does not notify duplicate or expired claims", async () => {

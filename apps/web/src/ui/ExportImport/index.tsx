@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
+import { markCoachBackupCreated } from "../../coach/CoachProvider.tsx";
 
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
@@ -20,7 +21,7 @@ function downloadBlob(blob: Blob, filename: string): void {
   a.download = filename;
   document.body.appendChild(a);
   a.click();
-  document.body.removeChild(a);
+  a.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
@@ -123,6 +124,7 @@ export default function ExportImportSection() {
     if (preparedCycle == null) return;
     if (kind === "backup") {
       downloadBlob(preparedCycle.backup, preparedCycle.backupFilename);
+      markCoachBackupCreated();
     } else {
       downloadBlob(preparedCycle.report, preparedCycle.reportFilename);
     }
@@ -180,6 +182,7 @@ export default function ExportImportSection() {
         }
       }
       downloadBlob(blob, filename);
+      markCoachBackupCreated();
       toast.success(t("exportImport.export.success"), { description: filename });
     } catch {
       const message = t("exportImport.export.errors.failed");
@@ -200,6 +203,7 @@ export default function ExportImportSection() {
     try {
       const blob = await exportJSON(masterKey, true, passphrase);
       downloadBlob(blob, `wisemoney-encrypted-${Date.now()}.wmexport`);
+      markCoachBackupCreated();
       setShowPassphraseDialog(null);
       setPassphrase("");
       toast.success(t("exportImport.export.encryptedSuccess"));
