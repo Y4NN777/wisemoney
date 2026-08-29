@@ -1,4 +1,4 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import { createRootRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, MessageSquare, PlusCircle, ClipboardList, Settings as SettingsIcon } from "lucide-react";
 import Logo from "../components/Logo.tsx";
 import HelpActions from "../components/HelpActions.tsx";
@@ -38,6 +38,7 @@ function reminderUrgency(type: ReminderViewModel["type"], dueAt: number, now = D
 function RootLayout() {
   const { t } = useTranslation();
   const navigate = Route.useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { reminders, markRead, dismiss } = useReminders();
   const reminderViews: ReminderViewModel[] = reminders.map((reminder) => ({
     id: reminder.id,
@@ -86,7 +87,7 @@ function RootLayout() {
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 pb-20 pt-4 md:px-6 md:pt-6 lg:pb-8">
-        <div className="mx-auto w-full max-w-7xl">
+        <div key={pathname} className="route-transition mx-auto w-full max-w-7xl">
           <Outlet />
         </div>
       </main>

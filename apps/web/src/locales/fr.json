@@ -367,7 +367,7 @@
       },
       "capture": {
         "title": "Enregistrer les mouvements financiers",
-        "body": "Ajoutez revenus, dépenses, virements et contributions aux objectifs. Vous pouvez le faire sans internet."
+        "body": "Ajoutez revenus, dépenses, transferts et contributions aux objectifs. Vous pouvez le faire sans internet."
       },
       "planning": {
         "title": "Planifier le mois",
@@ -659,7 +659,7 @@
     "ariaLabel": "Saisie d’une transaction",
     "prerequisite": {
       "accountTitle": "Créez d’abord un compte",
-      "accountBody": "Les transactions et virements nécessitent un compte actif afin que WiseMoney tienne les soldes à jour.",
+      "accountBody": "Les transactions et transferts nécessitent un compte actif afin que WiseMoney tienne les soldes à jour.",
       "createAccount": "Créer un compte"
     },
     "empty": {
@@ -670,7 +670,7 @@
     },
     "tabs": {
       "transaction": "Transaction",
-      "transfer": "Virement",
+      "transfer": "Transfert",
       "goal": "Objectif",
       "manage": "Gérer"
     },
@@ -698,26 +698,26 @@
       }
     },
     "transfer": {
-      "title": "Virement entre comptes",
+      "title": "Transfert entre comptes",
       "from": "Compte source",
       "fromPlaceholder": "Sélectionner le compte source",
       "to": "Compte destinataire",
-      "toOptional": "(optionnel pour un virement externe)",
+      "toOptional": "(optionnel pour un transfert externe)",
       "toPlaceholder": "Sélectionner le compte destinataire",
       "external": "Ou destination externe",
       "externalPlaceholder": "p. ex. Banque externe, PayPal, etc.",
       "amount": "Montant",
       "amountPlaceholder": "0,00",
       "note": "Note (optionnelle)",
-      "notePlaceholder": "Note de virement",
-      "submit": "Enregistrer le virement",
+      "notePlaceholder": "Note de transfert",
+      "submit": "Enregistrer le transfert",
       "submitting": "Traitement…",
-      "recorded": "Virement enregistré",
+      "recorded": "Transfert enregistré",
       "errors": {
         "validAmount": "Entrez un montant valide",
         "selectFrom": "Sélectionnez un compte source",
         "selectDestination": "Sélectionnez un compte destinataire ou saisissez une destination externe",
-        "failed": "Échec de l'enregistrement du virement"
+        "failed": "Échec de l'enregistrement du transfert"
       }
     },
     "goal": {
@@ -1501,7 +1501,7 @@
     "intro": "Des parcours courts expliquent chaque fonction importante de WiseMoney. Recherchez localement, lisez hors ligne ou développez une étape quand vous en avez besoin.",
     "paths": "parcours guidés, du démarrage au dépannage",
     "searchLabel": "Recherche rapide",
-    "searchPlaceholder": "Essayez « installer », « virement » ou « sauvegarde »",
+    "searchPlaceholder": "Essayez « installer », « transfert » ou « sauvegarde »",
     "contents": "Sur cette page",
     "results": "Résultats d’aide",
     "resultCount_one": "{{count}} parcours correspondant",

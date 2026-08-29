@@ -94,13 +94,13 @@ const fr: ProductTask[] = [
     limitations: ["La suppression d’une transaction est définitive dans le cycle courant."], features: ["transactions"],
   },
   {
-    id: "virements", groupId: "suivi", locale: "fr", title: "Transférer entre deux comptes et suivre le virement", route: "/capture?tab=transfer",
+    id: "virements", groupId: "suivi", locale: "fr", title: "Transférer entre deux comptes et suivre le transfert", route: "/capture?tab=transfer",
     summary: "Déplacez un montant entre deux comptes WiseMoney ou notez un envoi vers une destination externe.",
     prerequisites: ["Avoir un compte source actif ; deux comptes actifs de même devise pour un transfert interne."],
-    steps: ["Ouvrez Saisie puis Virement.", "Choisissez le compte source et le compte destinataire.", "Saisissez le montant, la date et la note éventuelle, puis choisissez Enregistrer le virement.", "Ouvrez Tableau de bord puis Toutes les opérations et filtrez sur Virements pour le retrouver."],
+    steps: ["Ouvrez Saisie puis Transfert.", "Choisissez le compte source et le compte destinataire.", "Saisissez le montant, la date et la note éventuelle, puis choisissez Enregistrer le transfert.", "Ouvrez Tableau de bord puis Toutes les opérations et filtrez sur Transferts pour le retrouver."],
     expectedResult: "Le compte source est débité et le compte destinataire interne est crédité.",
     aliases: ["transfert", "compte à compte", "envoyer argent", "destination externe", "suivre transfert"], surfaces: ["capture", "operations", "dashboard"],
-    limitations: ["Les comptes d’un transfert interne doivent utiliser la même devise ; un virement ne se modifie pas après enregistrement."], features: ["transfers"],
+    limitations: ["Les comptes d’un transfert interne doivent utiliser la même devise ; un transfert ne se modifie pas après enregistrement."], features: ["transfers"],
   },
   {
     id: "tableau-de-bord", groupId: "suivi", locale: "fr", title: "Lire le tableau de bord et l’activité", route: "/",
@@ -127,7 +127,7 @@ const fr: ProductTask[] = [
     steps: ["Ouvrez Planification puis Objectifs.", "Choisissez Ajouter un objectif, indiquez son nom et sa cible, puis enregistrez.", "Pour contribuer, ouvrez Saisie puis Objectif, choisissez l’objectif et saisissez le montant."],
     expectedResult: "La progression de l’objectif augmente du montant contribué.",
     aliases: ["épargne", "cagnotte", "contribution", "montant cible"], surfaces: ["planning", "goals", "capture"],
-    limitations: ["Une contribution suit la progression ; elle n’effectue pas un virement bancaire réel."], features: ["goals"],
+    limitations: ["Une contribution suit la progression ; elle n’effectue pas un transfert bancaire réel."], features: ["goals"],
   },
   {
     id: "depenses-prevues", groupId: "planification", locale: "fr", title: "Préparer puis réaliser une dépense prévue", route: "/planned-expenses",

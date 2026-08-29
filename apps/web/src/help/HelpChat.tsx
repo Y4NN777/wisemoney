@@ -65,10 +65,12 @@ export default function HelpChat({
   const [consentAccepted, setConsentAccepted] = useState(() => hasHelpProviderConsent());
   const [showConsent, setShowConsent] = useState(() => !hasHelpProviderConsent());
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const panelRef = useRef<HTMLElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
   const pendingRef = useRef<PendingRequest | null>(null);
   const messageIdRef = useRef(0);
   const previousVaultUnlockedRef = useRef(vaultUnlocked);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
@@ -124,6 +126,39 @@ export default function HelpChat({
     setOpen(false);
     onOpenChange?.(false);
   };
+
+  useEffect(() => {
+    if (!open) return;
+    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const focusPanel = window.requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLElement>("button, textarea, input, a[href]")?.focus();
+    });
+    const keepFocusInside = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closePanel();
+        return;
+      }
+      if (event.key !== "Tab" || panelRef.current == null) return;
+      const focusable = [...panelRef.current.querySelectorAll<HTMLElement>("button:not([disabled]), textarea:not([disabled]), input:not([disabled]), a[href]")];
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (first == null || last == null) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", keepFocusInside);
+    return () => {
+      window.cancelAnimationFrame(focusPanel);
+      document.removeEventListener("keydown", keepFocusInside);
+      previousFocusRef.current?.focus();
+    };
+  }, [open]);
 
   const resetConversation = () => {
     cancelPending();
@@ -259,11 +294,19 @@ export default function HelpChat({
   return (
     <div className={open ? "fixed inset-0 z-[70] sm:inset-auto sm:bottom-7 sm:right-7" : `fixed right-4 z-[70] sm:bottom-7 sm:right-7 ${vaultUnlocked ? "bottom-[calc(4.75rem+var(--safe-area-bottom))]" : "bottom-5"}`}>
       {open && (
-        <section
-          role="dialog"
-          aria-label={t("helpPage.chat.title")}
-          className="flex h-[100dvh] w-screen flex-col overflow-hidden bg-background text-foreground sm:mb-3 sm:h-[min(680px,calc(100dvh-7rem))] sm:w-[min(410px,calc(100vw-2rem))] sm:border sm:border-foreground/20 sm:shadow-[0_18px_48px_rgba(16,24,32,0.16)]"
-        >
+        <>
+          <div
+            className="wisebot-overlay fixed inset-0 cursor-default bg-background/35 backdrop-blur-[3px]"
+            onClick={closePanel}
+            aria-hidden="true"
+          />
+          <section
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("helpPage.chat.title")}
+            className="wisebot-panel relative z-10 flex h-[100dvh] w-screen flex-col overflow-hidden bg-background text-foreground sm:mb-3 sm:h-[min(680px,calc(100dvh-7rem))] sm:w-[min(410px,calc(100vw-2rem))] sm:border sm:border-foreground/20 sm:shadow-[0_18px_48px_rgba(16,24,32,0.16)]"
+          >
           <header className="grid min-h-14 grid-cols-[3.25rem_1fr_2.75rem_2.75rem_2.75rem] border-b border-border">
             <div className="flex items-center justify-center border-r border-border bg-ocean-primary">
               <button type="button" onClick={closePanel} aria-label={t("common.back")} className="flex h-full w-full items-center justify-center sm:hidden">
@@ -411,7 +454,8 @@ export default function HelpChat({
               </Button>
             </form>
           </footer>}
-        </section>
+          </section>
+        </>
       )}
 
       {!open && (

@@ -112,7 +112,7 @@ function selectedContext(body: MessageBody, locale: "en" | "fr"): { text: string
     ...section.limitations.map((limitation) => `Limitation: ${limitation}`),
   ].join("\n")).join("\n\n");
   const manifest = locale === "fr"
-    ? "WiseMoney suit comptes, revenus, dépenses, virements, budgets, objectifs, dépenses prévues, récurrents, dettes, créances, rappels, devises et sauvegardes. WiseBot explique le produit mais n’agit pas dans le coffre et n’analyse pas les finances."
+    ? "WiseMoney suit comptes, revenus, dépenses, transferts, budgets, objectifs, dépenses prévues, récurrents, dettes, créances, rappels, devises et sauvegardes. WiseBot explique le produit mais n’agit pas dans le coffre et n’analyse pas les finances."
     : "WiseMoney tracks accounts, income, expenses, transfers, budgets, goals, planned expenses, recurring items, debts, receivables, reminders, currencies, and backups. WiseBot explains the product but never acts in the vault or analyzes finances.";
   return { text: `${manifest}\n\n${documentation}`, taskIds: selected.map(({ id }) => id) };
 }

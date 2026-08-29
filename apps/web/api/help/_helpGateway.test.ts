@@ -66,7 +66,7 @@ describe("stateless Gemini help gateway", () => {
 
   it("sends only the trusted transfer procedure selected by the browser", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(
-      `data: {"candidates":[{"content":{"parts":[{"text":"Oui. Ouvrez Saisie, puis Virement."}]}}]}\n\n`,
+      `data: {"candidates":[{"content":{"parts":[{"text":"Oui. Ouvrez Saisie, puis Transfert."}]}}]}\n\n`,
       { status: 200, headers: { "content-type": "text/event-stream" } },
     ));
     vi.stubGlobal("fetch", fetchMock);
@@ -82,8 +82,8 @@ describe("stateless Gemini help gateway", () => {
       systemInstruction: { parts: Array<{ text: string }> };
     };
     const instruction = providerBody.systemInstruction.parts[0]?.text ?? "";
-    expect(instruction).toContain("[virements] Transférer entre deux comptes et suivre le virement");
-    expect(instruction).toContain("Ouvrez Saisie puis Virement");
+    expect(instruction).toContain("[virements] Transférer entre deux comptes et suivre le transfert");
+    expect(instruction).toContain("Ouvrez Saisie puis Transfert");
     expect(instruction).toContain("Toutes les opérations");
     expect(instruction).not.toContain("[demarrage]");
     expect(instruction).not.toContain("[sauvegarde]");

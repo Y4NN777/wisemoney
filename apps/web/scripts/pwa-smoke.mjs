@@ -144,6 +144,17 @@ try {
     await page.getByRole("button", { name: device.name === "mobile" ? "Ask WiseBot" : "Open WiseBot", exact: true }).click();
     const wiseBotDialog = page.getByRole("dialog", { name: "WiseBot", exact: true });
     await wiseBotDialog.waitFor();
+    const wiseBotOverlay = page.locator(".wisebot-overlay");
+    await wiseBotOverlay.waitFor();
+    const wiseBotMotion = await wiseBotDialog.evaluate((element) => ({
+      animation: getComputedStyle(element).animationName,
+      overlayBlur: getComputedStyle(document.querySelector(".wisebot-overlay")).backdropFilter,
+    }));
+    assert.equal(wiseBotMotion.animation, "wisebot-panel-in", `${device.name}: WiseBot panel has no entrance motion`);
+    assert.match(wiseBotMotion.overlayBlur, /blur\(3px\)/, `${device.name}: WiseBot overlay has no background blur`);
+    await wiseBotDialog.evaluate(async (element) => {
+      await Promise.all(element.getAnimations().map((animation) => animation.finished));
+    });
     const wiseBotBox = await wiseBotDialog.boundingBox();
     assert.ok(wiseBotBox != null, `${device.name}: WiseBot dialog has no layout box`);
     if (device.name === "mobile") {
@@ -271,6 +282,11 @@ try {
   await compactDashboardLink.waitFor();
   assert.equal((await compactDashboardLink.textContent())?.trim(), "Accueil",
     "French bottom navigation did not use the compact dashboard label");
+  await syncPage.getByRole("link", { name: "Saisie", exact: true }).click();
+  await syncPage.getByRole("tab", { name: "Transfert", exact: true }).waitFor();
+  assert.equal(await syncPage.locator(".route-transition").evaluate((element) => getComputedStyle(element).animationName), "route-transition-in",
+    "app navigation did not animate the incoming page");
+  await compactDashboardLink.click();
   await syncPage.screenshot({ path: `${outputDir}/bottom-navigation-fr.png`, fullPage: true });
   await syncPage.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
   await syncPage.getByRole("option", { name: "English", exact: true }).click();
