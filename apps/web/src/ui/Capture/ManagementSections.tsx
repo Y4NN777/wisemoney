@@ -106,19 +106,19 @@ function AccountCurrencyPicker({ value, onChange }: { value: string; onChange: (
   return (
     <div ref={rootRef} className="relative min-w-0">
       <button id="accCurrency" type="button" aria-expanded={open} aria-haspopup="listbox" onClick={() => setOpen((current) => !current)}
-        className="flex min-h-12 w-full items-center justify-between gap-3 border border-input bg-white px-3 py-2 text-left text-sm">
+        className="flex min-h-12 w-full items-center justify-between gap-3 border border-input bg-background px-3 py-2 text-left text-sm">
         <span className="min-w-0 truncate font-semibold">{selected == null ? value : `${selected.code} — ${selected.name}`}</span>
         <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
       </button>
       {open && (
-        <div className="absolute inset-x-0 top-[calc(100%+0.25rem)] z-50 border border-border bg-white shadow-lg">
+        <div className="absolute inset-x-0 top-[calc(100%+0.25rem)] z-50 border border-border bg-popover text-popover-foreground shadow-lg">
           <div className="border-b border-border p-2">
             <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("capture.manage.currencySearch", { currency: value })} autoFocus />
           </div>
           <div className="max-h-[min(18rem,42dvh)] overflow-y-auto p-1" role="listbox">
             {filtered.length === 0 ? <p className="p-3 text-sm text-muted-foreground">{t("capture.manage.noCurrency")}</p> : filtered.map((currency) => (
               <button key={currency.code} type="button" role="option" aria-selected={currency.code === value}
-                className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-[#F7F7F8]"
+                className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground"
                 onClick={() => { onChange(currency.code); setOpen(false); setQuery(""); }}>
                 <span className="min-w-0 truncate"><strong>{currency.code}</strong> — {currency.name}</span>
                 {currency.code === value && <Check className="h-4 w-4 shrink-0 text-ocean-primary" />}
@@ -219,7 +219,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
   return (
     <>
       <Card className="overflow-hidden rounded-none border-border shadow-none">
-        <CardHeader className="border-b border-border bg-white">
+        <CardHeader className="border-b border-border bg-muted">
           <CardTitle className="flex items-center justify-between text-base">
             {t(`capture.manage.${section}`)}
             <Dialog open={createOpen} onOpenChange={(open) => { setCreateOpen(open); setError(null); }}>

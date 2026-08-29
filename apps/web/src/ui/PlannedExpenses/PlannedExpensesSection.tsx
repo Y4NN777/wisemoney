@@ -353,8 +353,8 @@ export function PlannedExpensesSection({
   );
 
   return (
-    <Card className="overflow-hidden border-primary/25 bg-white shadow-none">
-      <CardHeader className="border-b border-border bg-[#F7F7F8]">
+    <Card className="overflow-hidden border-primary/25 bg-card shadow-none">
+      <CardHeader className="border-b border-border bg-muted">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-lg">{t("capture.plannedExpenses.title")}</CardTitle>
@@ -370,7 +370,7 @@ export function PlannedExpensesSection({
           const items = activeItems.filter((item) => item.priority === priority);
           return (
             <section key={priority} className="grid border-b border-border last:border-b-0 lg:grid-cols-[8rem_minmax(0,1fr)]" aria-labelledby={`planned-${priority}`}>
-              <header className="border-b border-border bg-[#F7F7F8] p-4 lg:border-b-0 lg:border-r">
+              <header className="border-b border-border bg-muted p-4 lg:border-b-0 lg:border-r">
                 <p aria-hidden="true" className="text-4xl font-semibold leading-none tabular-nums text-primary">{PRIORITY_NUMBER[priority]}</p>
                 <h3 id={`planned-${priority}`} className="mt-2 text-sm font-semibold">{t(`capture.plannedExpenses.priorityGroups.${priority}`)}</h3>
               </header>
@@ -378,7 +378,7 @@ export function PlannedExpensesSection({
                 <p className="p-5 text-sm text-muted-foreground">{t("capture.plannedExpenses.emptyPriority")}</p>
               ) : (
                 <ul className="grid gap-3 p-3 lg:block lg:divide-y lg:divide-border lg:p-0">{items.map((item) => (
-                  <li key={item.id} className="grid gap-4 border border-border bg-white p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start lg:border-0">
+                  <li key={item.id} className="grid gap-4 border border-border bg-card p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start lg:border-0">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                         <p className="font-semibold">{item.label}</p>
@@ -418,7 +418,7 @@ export function PlannedExpensesSection({
         })}
 
         <details className="border-t border-border">
-          <summary className="cursor-pointer bg-[#F7F7F8] px-4 py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset">
+          <summary className="cursor-pointer bg-muted px-4 py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset">
             {t("capture.plannedExpenses.history.title")} <span className="font-normal tabular-nums text-muted-foreground">({history.length})</span>
           </summary>
           {history.length === 0 ? <p className="p-5 text-sm text-muted-foreground">{t("capture.plannedExpenses.history.empty")}</p> : (
@@ -476,7 +476,7 @@ export function PlannedExpensesSection({
           </DialogHeader>
           {completing && <form onSubmit={submitComplete} className="space-y-4 pt-2" noValidate>
             {completeError != null && <p role="alert" className="text-sm text-destructive">{completeError}</p>}
-            <div className="grid gap-3 border-y border-border bg-[#F7F7F8] px-3 py-3 sm:grid-cols-2">
+            <div className="grid gap-3 border-y border-border bg-muted px-3 py-3 sm:grid-cols-2">
               <div><p className="text-xs text-muted-foreground">{t("capture.plannedExpenses.fields.label")}</p><p className="font-medium">{completing.label}</p></div>
               <div><p className="text-xs text-muted-foreground">{t("capture.plannedExpenses.fields.category")}</p><p className="font-medium">{categoryName(completing.categoryId)}</p></div>
             </div>
@@ -485,7 +485,7 @@ export function PlannedExpensesSection({
               <div className="grid grid-cols-[1fr_auto] gap-2"><Input id="planned-actual" inputMode="decimal" value={actualAmount} onChange={(event) => setActualAmount(event.target.value)} required /><span className="flex items-center border-l border-border pl-3 text-sm font-semibold">{completing.estimatedAmount.currency}</span></div>
             </div>
             {compatibleAccounts.length === 0 ? (
-              <div className="border border-primary/30 bg-[#F7F7F8] p-4">
+              <div className="border border-primary/30 bg-muted p-4">
                 <p className="text-sm">{t("capture.plannedExpenses.noCompatibleAccount", { currency: completing.estimatedAmount.currency })}</p>
                 <Button type="button" variant="outline" className="mt-3" onClick={() => { setCompleting(null); onOpenAccounts(); }}>{t("capture.plannedExpenses.openAccounts")}</Button>
               </div>
@@ -506,4 +506,3 @@ export function PlannedExpensesSection({
     </Card>
   );
 }
-

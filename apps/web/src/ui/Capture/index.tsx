@@ -439,7 +439,7 @@ export default function Capture() {
 
         <TabsContent value="manage">
           <div className="max-w-4xl space-y-3">
-            <div className="grid grid-cols-2 border border-border bg-[#F7F7F8]" role="tablist" aria-label={t("capture.manage.sectionsLabel")}>
+            <div className="grid grid-cols-2 border border-border bg-muted" role="tablist" aria-label={t("capture.manage.sectionsLabel")}>
               {(["accounts", "categories"] as const).map((section) => (
                 <button
                   key={section}
@@ -447,7 +447,7 @@ export default function Capture() {
                   role="tab"
                   aria-selected={manageSection === section}
                   onClick={() => selectManageSection(section)}
-                  className={`min-h-12 border-ocean-primary px-4 text-left text-sm font-semibold transition-colors first:border-r ${manageSection === section ? "bg-ocean-primary text-white" : "bg-white text-foreground hover:bg-[#F7F7F8]"}`}
+                  className={`min-h-12 border-ocean-primary px-4 text-left text-sm font-semibold transition-colors first:border-r ${manageSection === section ? "bg-ocean-primary text-white" : "bg-card text-card-foreground hover:bg-muted"}`}
                 >
                   {t(`capture.manage.${section}`)}
                 </button>

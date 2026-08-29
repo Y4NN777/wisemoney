@@ -438,6 +438,36 @@ try {
   assert.equal(await appPage.locator('meta[name="theme-color"]').getAttribute("content"), "#111318", "dark theme-color was not applied");
   assert.equal(await appPage.evaluate(() => localStorage.getItem("wisemoney.theme.preference.v1")), "dark", "dark theme choice was not persisted");
   await appPage.screenshot({ path: `${outputDir}/settings-dark.png`, fullPage: true });
+  await appPage.setViewportSize({ width: 390, height: 844 });
+  await appPage.getByRole("link", { name: "Capture", exact: true }).click();
+  await appPage.getByRole("tab", { name: "Manage", exact: true }).click();
+  const inactiveCategoriesTab = appPage.getByRole("tab", { name: "Categories", exact: true });
+  assert.notEqual(
+    await inactiveCategoriesTab.evaluate((element) => getComputedStyle(element).backgroundColor),
+    "rgb(255, 255, 255)",
+    "dark management tabs use a hard-coded white surface",
+  );
+  await inactiveCategoriesTab.click();
+  const categoriesCardHeading = appPage.getByText("Categories", { exact: true }).last();
+  assert.notEqual(
+    await categoriesCardHeading.evaluate((element) => getComputedStyle(element.parentElement).backgroundColor),
+    "rgb(255, 255, 255)",
+    "dark management card header uses a hard-coded white surface",
+  );
+  const coachTip = appPage.getByLabel("WiseBot tip", { exact: true });
+  await coachTip.waitFor({ timeout: 25_000 });
+  const coachOverlay = appPage.locator(".coach-overlay");
+  assert.match(
+    await coachOverlay.evaluate((element) => getComputedStyle(element).backdropFilter),
+    /blur\(3px\)/,
+    "coach tip overlay does not blur the page behind it",
+  );
+  await appPage.screenshot({ path: `${outputDir}/capture-management-dark.png`, fullPage: true });
+  await appPage.getByRole("button", { name: "Dismiss this tip", exact: true }).click();
+  assert.equal(await coachTip.getAttribute("data-closing"), "true", "coach tip does not enter its smooth closing state");
+  await coachTip.waitFor({ state: "detached" });
+  await appPage.setViewportSize({ width: 1280, height: 900 });
+  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();
   await appPage.getByLabel("Private passphrase", { exact: true }).waitFor();

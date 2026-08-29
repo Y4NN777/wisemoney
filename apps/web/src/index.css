@@ -337,6 +337,24 @@
     transform-origin: bottom right;
   }
 
+  .coach-overlay {
+    animation: coach-overlay-in 180ms var(--ease-standard) both;
+  }
+
+  .coach-card {
+    animation: coach-card-in 260ms var(--ease-emphasized) both;
+    transform-origin: bottom right;
+  }
+
+  .coach-overlay-closing {
+    animation: coach-overlay-out 180ms var(--ease-standard) both;
+  }
+
+  .coach-card-closing {
+    animation: coach-card-out 180ms var(--ease-standard) both;
+    pointer-events: none;
+  }
+
   .landing-grid {
     background:
       linear-gradient(to right, var(--landing-grid-line) 1px, transparent 1px),
@@ -401,6 +419,38 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes coach-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes coach-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes coach-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes coach-card-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
   }
 }
 
