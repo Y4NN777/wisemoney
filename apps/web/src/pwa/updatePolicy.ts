@@ -55,13 +55,11 @@ export function clearPwaUpdateReload(storage?: SessionStorage): void {
   }
 }
 
-export function consumePwaUpdateReload(storage?: SessionStorage): boolean {
+export function hasPwaUpdateReload(storage?: SessionStorage): boolean {
   const target = resolveSessionStorage(storage);
   if (target == null) return false;
   try {
-    const marked = target.getItem(UPDATE_RELOAD_MARKER) === "1";
-    if (marked) target.removeItem(UPDATE_RELOAD_MARKER);
-    return marked;
+    return target.getItem(UPDATE_RELOAD_MARKER) === "1";
   } catch {
     return false;
   }

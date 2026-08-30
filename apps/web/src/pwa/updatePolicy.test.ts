@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   clearPwaUpdateReload,
-  consumePwaUpdateReload,
   getPwaUpdateDisposition,
+  hasPwaUpdateReload,
   markPwaUpdateReload,
   shouldReloadAfterControllerChange,
 } from "./updatePolicy.ts";
@@ -27,7 +27,7 @@ describe("PWA update policy", () => {
     expect(getPwaUpdateDisposition(false, false)).toBe("idle");
   });
 
-  it("persists and consumes the post-reload confirmation once", () => {
+  it("keeps the post-reload confirmation until the user dismisses it", () => {
     const values = new Map<string, string>();
     const storage = {
       getItem: (key: string) => values.get(key) ?? null,
@@ -36,8 +36,10 @@ describe("PWA update policy", () => {
     };
 
     expect(markPwaUpdateReload(storage)).toBe(true);
-    expect(consumePwaUpdateReload(storage)).toBe(true);
-    expect(consumePwaUpdateReload(storage)).toBe(false);
+    expect(hasPwaUpdateReload(storage)).toBe(true);
+    expect(hasPwaUpdateReload(storage)).toBe(true);
+    clearPwaUpdateReload(storage);
+    expect(hasPwaUpdateReload(storage)).toBe(false);
   });
 
   it("keeps the update flow operational when session storage is unavailable", () => {
@@ -54,7 +56,7 @@ describe("PWA update policy", () => {
     };
 
     expect(markPwaUpdateReload(storage)).toBe(false);
-    expect(consumePwaUpdateReload(storage)).toBe(false);
+    expect(hasPwaUpdateReload(storage)).toBe(false);
     expect(() => clearPwaUpdateReload(storage)).not.toThrow();
   });
 });
