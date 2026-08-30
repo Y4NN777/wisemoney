@@ -447,7 +447,7 @@ export default function Capture() {
                   role="tab"
                   aria-selected={manageSection === section}
                   onClick={() => selectManageSection(section)}
-                  className={`min-h-12 border-ocean-primary px-4 text-left text-sm font-semibold transition-colors first:border-r ${manageSection === section ? "bg-ocean-primary text-white" : "bg-card text-card-foreground hover:bg-muted"}`}
+                  className={`min-h-12 border-primary px-4 text-left text-sm font-semibold transition-colors first:border-r ${manageSection === section ? "bg-primary text-primary-foreground" : "bg-card text-card-foreground hover:bg-muted"}`}
                 >
                   {t(`capture.manage.${section}`)}
                 </button>

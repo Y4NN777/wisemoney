@@ -125,6 +125,17 @@ export function CoachProvider({ children }: { children: ReactNode }) {
   const [milestones, setMilestones] = useState({ hasTransaction: false, hasTransfer: false });
   const [repeatedFaultCode, setRepeatedFaultCode] = useState(repeatedLocalFault);
   const [repeatedTaskId, setRepeatedTaskId] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const refreshModalState = () => {
+      setModalOpen(document.querySelector('[role="dialog"][data-state="open"]') != null);
+    };
+    const observer = new MutationObserver(refreshModalState);
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-state"] });
+    refreshModalState();
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setReady(true), Math.max(0, 20_000 - (Date.now() - sessionStartedAt.current)));
@@ -250,7 +261,7 @@ export function CoachProvider({ children }: { children: ReactNode }) {
   return (
     <CoachContext.Provider value={value}>
       {children}
-      {nudge != null && <CoachCard
+      {nudge != null && !modalOpen && <CoachCard
         nudge={nudge}
         onLater={() => recordAndClose("later")}
         onDismiss={() => recordAndClose("dismissed")}

@@ -6,7 +6,7 @@ import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
 import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Archive, AlertTriangle, Info } from "lucide-react";
@@ -112,6 +112,7 @@ export default function Budgets() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{t("budgets.create")}</DialogTitle>
+              <DialogDescription>{t("budgets.createHelp")}</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               {createError != null && (
@@ -143,6 +144,7 @@ export default function Budgets() {
                     )}
                   </SelectContent>
                 </Select>
+                <p className="text-xs leading-relaxed text-muted-foreground">{t("budgets.categoryHelp")}</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="budget-limit">{t("budgets.monthlyLimit", { currency: snapshot?.baseCurrency ?? "XOF" })}</Label>
@@ -174,6 +176,14 @@ export default function Budgets() {
         </Dialog>
       </div>
 
+      <div className="flex items-start gap-3 border-l-2 border-information bg-information-wash px-3 py-3">
+        <Info className="mt-0.5 h-4 w-4 shrink-0 text-information" />
+        <div>
+          <p className="text-sm font-semibold">{t("budgets.howItWorksTitle")}</p>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("budgets.howItWorksBody")}</p>
+        </div>
+      </div>
+
       {activeBudgets.length === 0 && archivedBudgets.length === 0 && (
         <div className="empty-state">
           <p>{t("budgets.empty")}</p>
@@ -188,9 +198,10 @@ export default function Budgets() {
             const cat = allCategories.find((c) => c.id === budget.categoryId);
             const overspent = prog != null && prog.percentage > 100;
             const nearing = prog != null && prog.percentage >= 80 && !overspent;
+            const difference = prog == null ? 0 : prog.limit.minorUnits - prog.spent.minorUnits;
 
             return (
-              <Card key={budget.id} className={`interactive-surface ${overspent ? "border-destructive bg-destructive/10" : nearing ? "border-amber bg-amber-wash" : ""}`}>
+              <Card key={budget.id} className={`interactive-surface ${overspent ? "border-negative/40 bg-negative-wash" : nearing ? "border-attention/40 bg-attention-wash" : ""}`}>
                 <CardContent className="pt-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 min-w-0">
@@ -201,7 +212,7 @@ export default function Budgets() {
                         </Badge>
                       </div>
                       {overspent && <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />}
-                      {nearing && <Info className="h-4 w-4 text-amber-500 shrink-0" />}
+                      {nearing && <Info className="h-4 w-4 text-attention shrink-0" />}
                     </div>
                     <Button
                       variant="ghost"
@@ -225,7 +236,7 @@ export default function Budgets() {
                     <>
                       <Progress
                         value={Math.min(prog.percentage, 100)}
-                        className={overspent ? "bg-red-200 [&>div]:bg-destructive" : nearing ? "bg-amber-200 [&>div]:bg-amber-500" : ""}
+                        className={overspent ? "bg-negative-wash [&>div]:bg-negative" : nearing ? "bg-attention-wash [&>div]:bg-attention" : ""}
                       />
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>
@@ -237,6 +248,9 @@ export default function Budgets() {
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {budget.periodMonth} &middot; {Math.round(prog.percentage)}% {t("budgets.used")}
+                      </p>
+                      <p className={`text-xs font-semibold ${overspent ? "text-negative" : "text-foreground"}`}>
+                        {t(overspent ? "budgets.overBy" : "budgets.remaining", { amount: formatMoney(Math.abs(difference), prog.limit.currency) })}
                       </p>
                     </>
                   )}

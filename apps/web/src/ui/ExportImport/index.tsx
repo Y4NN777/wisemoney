@@ -474,29 +474,31 @@ export default function ExportImportSection() {
           if (!open && !preparingCycle && !resettingCycle) resetCycleDialog();
         }}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl" onOpenAutoFocus={(event) => event.preventDefault()}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 pr-8">
-              <Archive className="h-5 w-5 text-ocean-primary" />
+              <Archive className="h-5 w-5 text-primary" />
               {t("exportImport.cycle.dialogTitle")}
             </DialogTitle>
-            <DialogDescription>{t("exportImport.cycle.dialogDescription")}</DialogDescription>
+            <DialogDescription>
+              {t(preparedCycle == null ? "exportImport.cycle.prepareDescription" : "exportImport.cycle.confirmDescription")}
+            </DialogDescription>
           </DialogHeader>
+
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3" aria-label={t("exportImport.cycle.progressLabel")}>
+            <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">1</span>
+              <span>{t("exportImport.cycle.prepareStage")}</span>
+            </div>
+            <span className="h-px w-8 bg-border" aria-hidden="true" />
+            <div className={`flex items-center justify-end gap-2 text-xs font-semibold ${preparedCycle == null ? "text-muted-foreground" : "text-foreground"}`}>
+              <span className={`flex h-6 w-6 items-center justify-center rounded-full ${preparedCycle == null ? "border border-border bg-muted" : "bg-primary text-primary-foreground"}`}>2</span>
+              <span>{t("exportImport.cycle.confirmStage")}</span>
+            </div>
+          </div>
 
           {preparedCycle == null ? (
             <form onSubmit={(event) => { void handlePrepareCycle(event); }} className="space-y-4">
-              <div className="grid gap-3 rounded-md border border-border bg-background p-3 sm:grid-cols-3">
-                {[
-                  ["01", t("exportImport.cycle.steps.backup")],
-                  ["02", t("exportImport.cycle.steps.report")],
-                  ["03", t("exportImport.cycle.steps.reset")],
-                ].map(([number, label]) => (
-                  <div key={number} className="flex items-start gap-2">
-                    <span className="text-xs font-semibold tabular-nums text-ocean-primary">{number}</span>
-                    <span className="text-xs leading-relaxed text-muted-foreground">{label}</span>
-                  </div>
-                ))}
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="cycle-label">{t("exportImport.cycle.label")}</Label>
                 <Input
@@ -505,40 +507,39 @@ export default function ExportImportSection() {
                   onChange={(event) => setCycleLabel(event.target.value)}
                   maxLength={80}
                   placeholder={t("exportImport.cycle.labelPlaceholder")}
-                  autoFocus
                   required
                 />
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="cycle-passphrase">{t("exportImport.cycle.passphrase")}</Label>
-                  <Input
-                    id="cycle-passphrase"
-                    type="password"
-                    value={cyclePassphrase}
-                    onChange={(event) => setCyclePassphrase(event.target.value)}
-                    minLength={8}
-                    autoComplete="new-password"
-                    required
-                  />
+              <fieldset className="space-y-3 border-t border-border pt-4">
+                <legend className="pr-3 text-sm font-semibold">{t("exportImport.cycle.protectionTitle")}</legend>
+                <p className="text-xs leading-relaxed text-muted-foreground">{t("exportImport.cycle.passphraseHelp")}</p>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="cycle-passphrase">{t("exportImport.cycle.passphrase")}</Label>
+                    <Input
+                      id="cycle-passphrase"
+                      type="password"
+                      value={cyclePassphrase}
+                      onChange={(event) => setCyclePassphrase(event.target.value)}
+                      minLength={8}
+                      autoComplete="new-password"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cycle-passphrase-confirmation">{t("exportImport.cycle.passphraseConfirmation")}</Label>
+                    <Input
+                      id="cycle-passphrase-confirmation"
+                      type="password"
+                      value={cyclePassphraseConfirmation}
+                      onChange={(event) => setCyclePassphraseConfirmation(event.target.value)}
+                      minLength={8}
+                      autoComplete="new-password"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cycle-passphrase-confirmation">{t("exportImport.cycle.passphraseConfirmation")}</Label>
-                  <Input
-                    id="cycle-passphrase-confirmation"
-                    type="password"
-                    value={cyclePassphraseConfirmation}
-                    onChange={(event) => setCyclePassphraseConfirmation(event.target.value)}
-                    minLength={8}
-                    autoComplete="new-password"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="flex items-start gap-2 rounded-md border border-amber bg-amber-wash p-3">
-                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-                <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-400">{t("exportImport.cycle.passphraseHelp")}</p>
-              </div>
+              </fieldset>
               {cycleError != null && <p role="alert" className="text-sm text-destructive">{cycleError}</p>}
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={resetCycleDialog} disabled={preparingCycle}>
@@ -552,11 +553,11 @@ export default function ExportImportSection() {
             </form>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-start gap-3 rounded-md border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950/30">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+              <div className="flex items-start gap-3 rounded-md border border-positive/30 bg-positive-wash p-3">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-positive" />
                 <div>
-                  <p className="text-sm font-semibold text-green-800 dark:text-green-300">{t("exportImport.cycle.archiveReady")}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-green-700 dark:text-green-400">{t("exportImport.cycle.archiveReadyHelp")}</p>
+                  <p className="text-sm font-semibold text-positive">{t("exportImport.cycle.archiveReady")}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("exportImport.cycle.archiveReadyHelp")}</p>
                 </div>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -569,7 +570,7 @@ export default function ExportImportSection() {
                     </div>
                   </div>
                   <Button type="button" variant="outline" size="sm" className="mt-3 w-full" onClick={() => handleCycleDownload("backup")}>
-                    {downloadedCycleFiles.backup ? <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" /> : <Download className="mr-2 h-4 w-4" />}
+                    {downloadedCycleFiles.backup ? <CheckCircle2 className="mr-2 h-4 w-4 text-positive" /> : <Download className="mr-2 h-4 w-4" />}
                     {t("exportImport.cycle.downloadBackup")}
                   </Button>
                 </div>
@@ -582,15 +583,17 @@ export default function ExportImportSection() {
                     </div>
                   </div>
                   <Button type="button" variant="outline" size="sm" className="mt-3 w-full" onClick={() => handleCycleDownload("report")}>
-                    {downloadedCycleFiles.report ? <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" /> : <Download className="mr-2 h-4 w-4" />}
+                    {downloadedCycleFiles.report ? <CheckCircle2 className="mr-2 h-4 w-4 text-positive" /> : <Download className="mr-2 h-4 w-4" />}
                     {t("exportImport.cycle.downloadReport")}
                   </Button>
                 </div>
               </div>
-              <div className="rounded-md border border-border bg-background p-3">
-                <p className="text-xs font-medium">{t("exportImport.cycle.checksum")}</p>
-                <code className="mt-1 block break-all text-[11px] leading-relaxed text-muted-foreground">{preparedCycle.backupSha256}</code>
-              </div>
+              <details className="group rounded-md border border-border bg-background">
+                <summary className="cursor-pointer px-3 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                  {t("exportImport.cycle.checksum")}
+                </summary>
+                <code className="block break-all border-t border-border px-3 py-2.5 text-[11px] leading-relaxed text-muted-foreground">{preparedCycle.backupSha256}</code>
+              </details>
 
               <div className="space-y-3 border-t border-border pt-4">
                 <div className="flex items-start gap-2">
@@ -617,9 +620,9 @@ export default function ExportImportSection() {
                     disabled={!savedFilesConfirmed}
                   />
                 </div>
-                <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-3">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-                  <p className="text-xs leading-relaxed text-destructive">{t("exportImport.cycle.resetWarning")}</p>
+                <div className="flex items-start gap-2 rounded-md border border-danger/35 bg-danger-wash p-3">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
+                  <p className="text-xs leading-relaxed text-danger">{t("exportImport.cycle.resetWarning")}</p>
                 </div>
                 {cycleError != null && <p role="alert" className="text-sm text-destructive">{cycleError}</p>}
               </div>
@@ -630,6 +633,7 @@ export default function ExportImportSection() {
                 <Button
                   type="button"
                   variant="destructive"
+                  className="bg-danger-strong text-white hover:bg-danger-strong/90"
                   onClick={() => { void handleCycleReset(); }}
                   disabled={!downloadedCycleFiles.backup || !downloadedCycleFiles.report || !savedFilesConfirmed || resetConfirmation !== "RESET" || resettingCycle}
                 >

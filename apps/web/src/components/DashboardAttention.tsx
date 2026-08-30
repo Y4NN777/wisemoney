@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, ArrowUpRight, Check, Clock3, SlidersHorizontal, X } from "lucide-react";
+import { AlertTriangle, ArrowUpRight, Check, Clock3, Info, SlidersHorizontal, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { selectDashboardAlerts, type DashboardAlert } from "../analytics/dashboard.ts";
@@ -34,6 +34,9 @@ function AlertBody({ alert, snapshot }: { alert: DashboardAlert; snapshot: Finan
   if (alert.kind === "negative_cash_flow") {
     return <>{t("dashboard.negativeCashFlowBody", { amount: formatMoney({ ...snapshot.netCashFlow, minorUnits: Math.abs(snapshot.netCashFlow.minorUnits) }) })}</>;
   }
+  if (alert.kind === "spending_from_balance") {
+    return <>{t("dashboard.spendingFromBalanceBody", { amount: formatMoney(snapshot.periodExpenses) })}</>;
+  }
   const budget = snapshot.budgets.find((item) => item.id === alert.entityId);
   return <>{t("dashboard.attention.budgetThresholdBody", { name: budget?.name ?? t("common.unknown"), percentage: alert.threshold ?? 0 })}</>;
 }
@@ -41,6 +44,7 @@ function AlertBody({ alert, snapshot }: { alert: DashboardAlert; snapshot: Finan
 function alertTitle(alert: DashboardAlert, t: ReturnType<typeof useTranslation>["t"]): string {
   if (alert.kind === "missing_fx") return t("dashboard.missingFxTitle");
   if (alert.kind === "negative_cash_flow") return t("dashboard.negativeCashFlow");
+  if (alert.kind === "spending_from_balance") return t("dashboard.spendingFromBalance");
   return alert.threshold === 100 ? t("dashboard.budgetExceeded") : t("dashboard.attention.budgetApproaching");
 }
 
@@ -60,10 +64,11 @@ function AlertRow({
   onSnooze: () => void;
 }) {
   const { t } = useTranslation();
+  const informational = alert.severity === "info";
   return (
     <article className={`grid gap-3 border-t border-border px-4 py-4 first:border-t-0 sm:grid-cols-[auto_minmax(0,1fr)_auto] ${read ? "opacity-65" : ""}`}>
-      <span className={`flex h-9 w-9 items-center justify-center border ${alert.severity === "critical" ? "border-negative/35 bg-negative-wash text-negative" : "border-attention/35 bg-attention-wash text-attention"}`}>
-        <AlertTriangle className="h-4 w-4" />
+      <span className={`flex h-9 w-9 items-center justify-center border ${alert.severity === "critical" ? "border-negative/35 bg-negative-wash text-negative" : informational ? "border-information/35 bg-information-wash text-information" : "border-attention/35 bg-attention-wash text-attention"}`}>
+        {informational ? <Info className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
       </span>
       <div className="min-w-0">
         <h3 className="text-sm font-semibold">{alertTitle(alert, t)}</h3>

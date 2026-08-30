@@ -175,6 +175,8 @@ describe("dashboard analytics", () => {
   it("creates stable period and threshold alert fingerprints", () => {
     const result = selectDashboardAlerts(snapshot({
       missingFxCurrencies: ["USD", "EUR", "USD"],
+      periodIncome: { minorUnits: 10_000, currency: "XOF" },
+      periodExpenses: { minorUnits: 11_000, currency: "XOF" },
       netCashFlow: { minorUnits: -1_000, currency: "XOF" },
       budgets: [{ id: "food", name: "Food", categoryId: "c", limit: { minorUnits: 10_000, currency: "XOF" }, periodMonth: "2026-08", isArchived: false, spent: { minorUnits: 9_000, currency: "XOF" } }],
       budgetProgress: { food: { limit: { minorUnits: 10_000, currency: "XOF" }, spent: { minorUnits: 9_000, currency: "XOF" }, percentage: 90 } },
@@ -185,6 +187,22 @@ describe("dashboard analytics", () => {
       "missing-fx:XOF:EUR,USD",
       "negative-cash-flow:2026-08",
     ]);
+  });
+
+  it("explains expenses funded from the opening balance without calling them excess spending", () => {
+    const result = selectDashboardAlerts(snapshot({
+      periodIncome: { minorUnits: 0, currency: "XOF" },
+      periodExpenses: { minorUnits: 5_000, currency: "XOF" },
+      netCashFlow: { minorUnits: -5_000, currency: "XOF" },
+    }));
+
+    expect(result).toContainEqual({
+      id: "spending-from-balance:2026-08",
+      kind: "spending_from_balance",
+      severity: "info",
+      entityId: "2026-08",
+      threshold: null,
+    });
   });
 
   it("rejects reversed date ranges instead of silently producing misleading data", () => {

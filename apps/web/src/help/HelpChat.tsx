@@ -292,11 +292,11 @@ export default function HelpChat({
   };
 
   return (
-    <div className={open ? "fixed inset-0 z-[70] sm:inset-auto sm:bottom-7 sm:right-7" : `fixed right-4 z-[70] sm:bottom-7 sm:right-7 ${vaultUnlocked ? "bottom-[calc(4.75rem+var(--safe-area-bottom))]" : "bottom-5"}`}>
+    <div className={open ? "fixed inset-0 z-[70] sm:inset-auto sm:bottom-7 sm:right-7" : `fixed right-4 z-40 sm:bottom-7 sm:right-7 ${vaultUnlocked ? "bottom-[calc(4.75rem+var(--safe-area-bottom))]" : "bottom-5"}`}>
       {open && (
         <>
           <div
-            className="wisebot-overlay fixed inset-0 cursor-default bg-background/35 backdrop-blur-[3px]"
+            className="wisebot-overlay fixed inset-0 cursor-default bg-[var(--modal-overlay)] backdrop-blur-md"
             onClick={closePanel}
             aria-hidden="true"
           />

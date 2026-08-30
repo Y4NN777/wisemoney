@@ -237,7 +237,11 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
                       <div className="space-y-2"><Label htmlFor="accType">{t("capture.manage.accountType")}</Label><Select value={accountType} onValueChange={setAccountType}><SelectTrigger id="accType"><SelectValue /></SelectTrigger><SelectContent>{ACCOUNT_TYPES.map((type) => <SelectItem key={type} value={type}>{t(`capture.manage.accountTypes.${type}`)}</SelectItem>)}</SelectContent></Select></div>
                       <div className="space-y-2"><Label htmlFor="accCurrency">{t("capture.manage.accountCurrency")}</Label><AccountCurrencyPicker value={accountCurrency} onChange={setAccountCurrency} /></div>
                     </div>
-                    <div className="space-y-2"><Label htmlFor="openingBalance">{t("capture.manage.accountBalance")}</Label><Input id="openingBalance" inputMode="decimal" value={openingBalance} onChange={(event) => setOpeningBalance(event.target.value)} placeholder="0.00" /></div>
+                    <div className="space-y-2">
+                      <Label htmlFor="openingBalance">{t("capture.manage.accountBalance")}</Label>
+                      <Input id="openingBalance" inputMode="decimal" value={openingBalance} onChange={(event) => setOpeningBalance(event.target.value)} placeholder="0.00" />
+                      <p className="text-xs leading-relaxed text-muted-foreground">{t("capture.manage.accountBalanceHelp")}</p>
+                    </div>
                   </>}
                   <Button type="submit" disabled={createCategory.isPending || createAccount.isPending} className="w-full sm:w-auto">{t(isCategories ? "capture.manage.submit" : "capture.manage.submitAccount")}</Button>
                 </form>

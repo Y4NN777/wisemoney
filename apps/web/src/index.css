@@ -52,6 +52,9 @@
   --positive-wash: #e7f4ec;
   --negative: #9a3412;
   --negative-wash: #fff0e8;
+  --danger: #8f3b35;
+  --danger-strong: #963a34;
+  --danger-wash: #f8ecea;
   --attention: #9a5b13;
   --attention-wash: #fff3d8;
   --information: #0077b6;
@@ -62,6 +65,7 @@
   --landing-grid-line: rgba(0, 119, 182, 0.08);
   --landing-glow: rgba(230, 245, 250, 0.92);
   --landing-wash: rgba(230, 245, 250, 0.68);
+  --modal-overlay: rgba(0, 48, 73, 0.34);
 
   /* ---------- Focus ring ---------- */
   --ring-offset: 2px;
@@ -177,6 +181,9 @@
   --positive-wash: #1c3026;
   --negative: #e09a7e;
   --negative-wash: #35231f;
+  --danger: #e3aaa4;
+  --danger-strong: #963a34;
+  --danger-wash: #322322;
   --attention: #d3a45f;
   --attention-wash: #332a1d;
   --information: #4db6db;
@@ -187,6 +194,7 @@
   --landing-grid-line: rgba(0, 180, 216, 0.10);
   --landing-glow: rgba(22, 48, 58, 0.78);
   --landing-wash: rgba(22, 48, 58, 0.44);
+  --modal-overlay: rgba(0, 22, 34, 0.72);
 
   /* Ink in dark mode uses white-at-opacity */
   --ink-90: rgba(255, 255, 255, 0.90);
@@ -221,6 +229,9 @@
   --color-positive-wash: var(--positive-wash);
   --color-negative: var(--negative);
   --color-negative-wash: var(--negative-wash);
+  --color-danger: var(--danger);
+  --color-danger-strong: var(--danger-strong);
+  --color-danger-wash: var(--danger-wash);
   --color-attention: var(--attention);
   --color-attention-wash: var(--attention-wash);
   --color-information: var(--information);

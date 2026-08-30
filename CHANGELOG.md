@@ -41,6 +41,10 @@ from an earlier public release.
 - **Public release notes** — a bilingual `/updates` page available before vault
   unlock, with user-facing highlights and links to the corresponding GitHub
   release.
+- **WiseBot knowledge roadmap** — a reviewed architecture proposal now defines
+  the future financial-education corpus, Burkina Faso and UEMOA context,
+  Pinecone retrieval, live web evidence, offline learning pack, and the guarded
+  path from tutoring to user-confirmed actions.
 
 ### Changed
 
@@ -56,6 +60,14 @@ from an earlier public release.
 - **Clearer financial language** — balances, received/spent values, movements,
   consent boundaries, offline behavior, and reminder reliability use direct
   French and English wording intended for non-technical users.
+- **Clearer money workflows** — account creation explains that the opening
+  balance is existing money rather than monthly income, while budgets explain
+  that expenses are counted automatically by category and month across
+  accounts, with an explicit remaining or exceeded amount.
+- **Calmer cycle closure** — the archive flow is split into preparation and
+  confirmation, keeps the keyboard closed on entry, reduces repeated guidance,
+  collapses the technical checksum, and separates reversible actions from the
+  final destructive confirmation.
 - **Production defaults** — new vaults default to XOF while forms and summaries
   respect the selected account or base currency.
 - **Public documentation** — project, security, architecture, threat-model, and
@@ -76,6 +88,12 @@ from an earlier public release.
 - **Mobile experience** — reduced-motion indicators stop correctly, WiseBot fits
   phone safe areas, forms stay constrained, and dropdowns remain stable inside
   dialogs.
+- **Modal and coach layering** — dialogs and sheets now use theme-aware, softly
+  blurred overlays; mobile actions have consistent spacing; and WiseBot coaching
+  stays behind active dialogs instead of competing with the current task.
+- **Dashboard balance interpretation** — spending recorded before any monthly
+  income is shown as use of the existing opening balance rather than an alarming
+  claim that the user has exceeded their income.
 - **Projection integrity** — event replay, period boundaries, archived entities,
   recurring anchors, transaction changes, category totals, transfers, currency
   conversion, recurring-realisation deduplication, and safe-integer arithmetic

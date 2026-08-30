@@ -42,7 +42,7 @@ export type UpcomingCommitment = {
 
 export type DashboardAlert = {
   id: string;
-  kind: "missing_fx" | "negative_cash_flow" | "budget_threshold";
+  kind: "missing_fx" | "negative_cash_flow" | "spending_from_balance" | "budget_threshold";
   severity: "info" | "attention" | "critical";
   entityId: string;
   threshold: number | null;
@@ -298,10 +298,11 @@ export function selectDashboardAlerts(snapshot: FinancialStateSnapshot): Dashboa
   }
   if (snapshot.netCashFlow.minorUnits < 0) {
     const periodKey = new Date(snapshot.periodStart).toISOString().slice(0, 7);
+    const spendingFromExistingBalance = snapshot.periodIncome.minorUnits === 0 && snapshot.periodExpenses.minorUnits > 0;
     alerts.push({
-      id: `negative-cash-flow:${periodKey}`,
-      kind: "negative_cash_flow",
-      severity: "attention",
+      id: `${spendingFromExistingBalance ? "spending-from-balance" : "negative-cash-flow"}:${periodKey}`,
+      kind: spendingFromExistingBalance ? "spending_from_balance" : "negative_cash_flow",
+      severity: spendingFromExistingBalance ? "info" : "attention",
       entityId: periodKey,
       threshold: null,
     });
