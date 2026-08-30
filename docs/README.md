@@ -62,6 +62,14 @@ The specs were produced in order; each constrains the next. Read them in sequenc
 
 ---
 
+## Future architecture
+
+| Document | What it owns | Link |
+| -------- | ------------ | ---- |
+| **WiseBot knowledge and tutoring architecture** | Deferred direction for the reviewed financial-education corpus, Pinecone retrieval, live web evidence, offline pack, tutoring policy, and the path to confirmed agent actions. | [`WISEBOT_KNOWLEDGE_ARCHITECTURE.md`](./WISEBOT_KNOWLEDGE_ARCHITECTURE.md) |
+
+---
+
 ## Decision record
 
 | Document | What it owns | Link |

@@ -54,6 +54,11 @@ WiseMoney/
 └── pnpm-workspace.yaml
 ```
 
+## Documentation
+
+- [Documentation index](./docs/README.md)
+- [WiseBot knowledge and tutoring architecture](./docs/WISEBOT_KNOWLEDGE_ARCHITECTURE.md)
+
 ## Run Locally
 
 ```bash
