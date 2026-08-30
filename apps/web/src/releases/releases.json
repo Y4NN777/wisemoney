@@ -11,7 +11,7 @@
           {
             "id": "track",
             "title": "Suivez ce qui entre et ce qui sort",
-            "body": "Regroupez vos comptes, revenus, dépenses et transferts. Le tableau de bord relie soldes, évolution, catégories et alertes contrôlables ; la vue Toutes les opérations permet de retrouver chaque mouvement."
+            "body": "Regroupez vos comptes, revenus, dépenses et mouvements entre comptes. Le tableau de bord résume le mois sans compter les mouvements internes comme des dépenses ; la vue Activité permet de rechercher et d’exporter chaque opération en CSV ou XLSX."
           },
           {
             "id": "plan",
@@ -47,7 +47,7 @@
           {
             "id": "track",
             "title": "See what comes in and goes out",
-            "body": "Bring accounts, income, expenses, and transfers together. The dashboard connects balances, trends, categories, and controllable alerts; All operations lets you trace every movement."
+            "body": "Bring accounts, income, expenses, and movements between accounts together. The dashboard summarizes the month without counting internal movements as spending; Activity lets you search and export every operation as CSV or XLSX."
           },
           {
             "id": "plan",

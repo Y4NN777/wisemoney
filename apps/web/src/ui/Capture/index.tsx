@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { useFinancialState, useRecordTransaction, useRecordGoalContribution, useRecordTransfer } from "../../hooks/useFinancialState.ts";
+import { Link } from "@tanstack/react-router";
+import { useCurrencyContext, useFinancialState, useRecordTransaction, useRecordGoalContribution, useRecordTransfer } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -8,10 +9,11 @@ import { Button } from "../../components/ui/button.tsx";
 import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
-import { Plus, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, ArrowUp, ArrowDown, ArrowRightLeft, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
-import { parseMajorUnits } from "../../types/money.ts";
+import { formatMoney, parseMajorUnits } from "../../types/money.ts";
+import { convertUsingContext } from "../../domain/currencyStore.ts";
 import { parseCaptureSearch, Route, type CaptureTab, type ManageSection } from "../../routes/capture.tsx";
 import { ManagementSections } from "./ManagementSections.tsx";
 import { recordCoachFormFault } from "../../coach/index.ts";
@@ -43,6 +45,7 @@ export default function Capture() {
   const manageSection: ManageSection = parsedSearch.section ?? "accounts";
   const navigate = Route.useNavigate();
   const { data: snapshot, isLoading } = useFinancialState();
+  const currencyContextQuery = useCurrencyContext();
   const recordTx = useRecordTransaction();
   const recordGoalContrib = useRecordGoalContribution();
   const recordTransfer = useRecordTransfer();
@@ -60,7 +63,9 @@ export default function Capture() {
 
   const [transferFrom, setTransferFrom] = useState("");
   const [transferTo, setTransferTo] = useState("");
+  const [transferDestinationType, setTransferDestinationType] = useState<"internal" | "external">("internal");
   const [transferExternal, setTransferExternal] = useState("");
+  const [transferCategoryId, setTransferCategoryId] = useState("");
   const [transferAmount, setTransferAmount] = useState("");
   const [transferNote, setTransferNote] = useState("");
   const [transferError, setTransferError] = useState<string | null>(null);
@@ -70,35 +75,57 @@ export default function Capture() {
     e.preventDefault();
     setTransferError(null);
     if (!transferFrom) { recordCoachFormFault("capture.transfer.source", "virements"); setTransferError(t("capture.transfer.errors.selectFrom")); return; }
-    if (!transferTo && !transferExternal.trim()) { recordCoachFormFault("capture.transfer.destination", "virements"); setTransferError(t("capture.transfer.errors.selectDestination")); return; }
+    if (transferDestinationType === "internal" && !transferTo) { recordCoachFormFault("capture.transfer.destination", "virements"); setTransferError(t("capture.transfer.errors.selectInternalDestination")); return; }
+    if (transferDestinationType === "external" && !transferExternal.trim()) { recordCoachFormFault("capture.transfer.destination", "virements"); setTransferError(t("capture.transfer.errors.enterExternalDestination")); return; }
+    if (transferDestinationType === "external" && !transferCategoryId) { recordCoachFormFault("capture.transfer.category", "virements"); setTransferError(t("capture.transfer.errors.selectCategory")); return; }
     const sourceAccount = accounts.find((account) => account.id === transferFrom);
     const currency = sourceAccount?.currency ?? snapshot?.baseCurrency ?? "XOF";
     const amount = parseMajorUnits(transferAmount, currency);
     if (amount == null || amount <= 0) { recordCoachFormFault("capture.transfer.amount", "virements"); setTransferError(t("capture.transfer.errors.validAmount")); return; }
     const money = { minorUnits: amount, currency };
-    recordTransfer.mutate({
-      fromAccountId: transferFrom,
-      ...(transferTo ? { toAccountId: transferTo } : {}),
-      ...(transferExternal.trim() ? { externalDestination: transferExternal.trim() } : {}),
-      amount: money,
-      ...(transferNote ? { note: transferNote } : {}),
-    }, {
+    const resetMovement = () => {
+      setTransferAmount("");
+      setTransferNote("");
+      setTransferFrom("");
+      setTransferTo("");
+      setTransferExternal("");
+      setTransferCategoryId("");
+      setTransferError(null);
+    };
+    const callbacks = {
       onSuccess: () => {
-        setTransferAmount("");
-        setTransferNote("");
-        setTransferFrom("");
-        setTransferTo("");
-        setTransferExternal("");
-        setTransferError(null);
-        toast.success(t("capture.transfer.recorded"));
+        resetMovement();
+        toast.success(t(transferDestinationType === "internal" ? "capture.transfer.internalRecorded" : "capture.transfer.externalRecorded"));
       },
       onError: () => {
         recordCoachFormFault("capture.transfer.save", "virements");
-        const message = t("capture.transfer.errors.failed");
+        const message = t(transferDestinationType === "internal" ? "capture.transfer.errors.internalFailed" : "capture.transfer.errors.externalFailed");
         setTransferError(message);
         toast.error(message);
       },
-    });
+    };
+    if (transferDestinationType === "internal") {
+      const targetAccount = accounts.find((account) => account.id === transferTo);
+      if (sourceAccount != null && targetAccount != null && sourceAccount.currency !== targetAccount.currency && transferPreview == null) {
+        setTransferError(t("capture.transfer.errors.missingRate", { from: sourceAccount.currency, to: targetAccount.currency }));
+        return;
+      }
+      recordTransfer.mutate({
+        fromAccountId: transferFrom,
+        toAccountId: transferTo,
+        amount: money,
+        ...(transferNote ? { note: transferNote } : {}),
+      }, callbacks);
+      return;
+    }
+    recordTx.mutate({
+      accountId: transferFrom,
+      categoryId: transferCategoryId,
+      amount: money,
+      direction: "expense",
+      merchant: transferExternal.trim(),
+      ...(transferNote ? { note: transferNote } : {}),
+    }, callbacks);
   };
 
   const handleTransactionSubmit = (e: FormEvent) => {
@@ -165,6 +192,21 @@ export default function Capture() {
   const activeGoals = snapshot?.goals.filter((g) => !g.isArchived) ?? [];
   const transactionCurrency = accounts.find((account) => account.id === accountId)?.currency ?? snapshot?.baseCurrency ?? "XOF";
   const transferCurrency = accounts.find((account) => account.id === transferFrom)?.currency ?? snapshot?.baseCurrency ?? "XOF";
+  const transferSourceAccount = accounts.find((account) => account.id === transferFrom);
+  const transferTargetAccount = accounts.find((account) => account.id === transferTo);
+  const transferMinorUnits = parseMajorUnits(transferAmount, transferCurrency);
+  const transferPreview = transferDestinationType === "internal" && transferSourceAccount != null && transferTargetAccount != null && transferMinorUnits != null && transferMinorUnits > 0
+    ? convertUsingContext(
+        { minorUnits: transferMinorUnits, currency: transferSourceAccount.currency },
+        transferTargetAccount.currency,
+        currencyContextQuery.data ?? { rates: new Map() },
+      )
+    : null;
+  const transferRate = transferSourceAccount != null && transferTargetAccount != null
+    ? currencyContextQuery.data?.rates.get(`${transferSourceAccount.currency}/${transferTargetAccount.currency}`)
+      ?? currencyContextQuery.data?.rates.get(`${transferTargetAccount.currency}/${transferSourceAccount.currency}`)
+      ?? null
+    : null;
   const goalCurrency = activeGoals.find((goal) => goal.id === goalId)?.targetAmount.currency ?? snapshot?.baseCurrency ?? "XOF";
   const selectTab = (nextTab: CaptureTab) => {
     void navigate({ search: nextTab === "manage" ? { tab: nextTab, section: "accounts" } : { tab: nextTab }, replace: true });
@@ -309,7 +351,11 @@ export default function Capture() {
               <form onSubmit={handleTransferSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="transfer-from">{t("capture.transfer.from")}</Label>
-                  <Select value={transferFrom} onValueChange={setTransferFrom}>
+                  <Select value={transferFrom} onValueChange={(value) => {
+                    setTransferFrom(value);
+                    if (value === transferTo) setTransferTo("");
+                    setTransferError(null);
+                  }}>
                     <SelectTrigger id="transfer-from"><SelectValue placeholder={t("capture.transfer.fromPlaceholder")} /></SelectTrigger>
                     <SelectContent>
                       {accounts.length === 0 ? (
@@ -323,33 +369,64 @@ export default function Capture() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="transfer-to">{t("capture.transfer.to")} <span className="text-xs text-muted-foreground">{t("capture.transfer.toOptional")}</span></Label>
-                  <Select value={transferTo} onValueChange={(v) => { setTransferTo(v); setTransferExternal(""); }}>
-                    <SelectTrigger id="transfer-to"><SelectValue placeholder={t("capture.transfer.toPlaceholder")} /></SelectTrigger>
-                    <SelectContent>
-                      {accounts.filter((a) => a.id !== transferFrom).length === 0 ? (
-                        <SelectEmptyState>{t("capture.empty.noOtherAccounts")}</SelectEmptyState>
-                      ) : (
-                        accounts.filter((a) => a.id !== transferFrom).map((a) => (
-                          <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
+                <div className="space-y-2" role="group" aria-label={t("capture.transfer.destinationType")}>
+                  <Label>{t("capture.transfer.destinationType")}</Label>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Button type="button" variant={transferDestinationType === "internal" ? "default" : "outline"} className="h-auto min-h-12 justify-start whitespace-normal px-3 py-2 text-left" onClick={() => {
+                      setTransferDestinationType("internal");
+                      setTransferExternal("");
+                      setTransferCategoryId("");
+                      setTransferError(null);
+                    }}>
+                      <ArrowRightLeft className="mr-2 h-4 w-4 shrink-0" />
+                      {t("capture.transfer.internalDestination")}
+                    </Button>
+                    <Button type="button" variant={transferDestinationType === "external" ? "default" : "outline"} className="h-auto min-h-12 justify-start whitespace-normal px-3 py-2 text-left" onClick={() => {
+                      setTransferDestinationType("external");
+                      setTransferTo("");
+                      setTransferError(null);
+                    }}>
+                      <ShoppingBag className="mr-2 h-4 w-4 shrink-0" />
+                      {t("capture.transfer.externalDestination")}
+                    </Button>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="transfer-external">{t("capture.transfer.external")}</Label>
-                  <Input
-                    id="transfer-external"
-                    type="text"
-                    placeholder={t("capture.transfer.externalPlaceholder")}
-                    value={transferExternal}
-                    onChange={(e) => { setTransferExternal(e.target.value); if (e.target.value) setTransferTo(""); }}
-                    disabled={transferTo !== ""}
-                  />
-                </div>
+                {transferDestinationType === "internal" ? (
+                  <div className="space-y-2">
+                    <Label htmlFor="transfer-to">{t("capture.transfer.to")}</Label>
+                    <Select value={transferTo} onValueChange={(value) => { setTransferTo(value); setTransferError(null); }}>
+                      <SelectTrigger id="transfer-to"><SelectValue placeholder={t("capture.transfer.toPlaceholder")} /></SelectTrigger>
+                      <SelectContent>
+                        {accounts.filter((account) => account.id !== transferFrom).length === 0 ? (
+                          <SelectEmptyState>{t("capture.empty.noOtherAccounts")}</SelectEmptyState>
+                        ) : (
+                          accounts.filter((account) => account.id !== transferFrom).map((account) => (
+                            <SelectItem key={account.id} value={account.id}>{account.name} · {account.currency}</SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="transfer-external">{t("capture.transfer.external")}</Label>
+                      <Input id="transfer-external" type="text" placeholder={t("capture.transfer.externalPlaceholder")} value={transferExternal} onChange={(event) => setTransferExternal(event.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="transfer-category">{t("capture.transfer.category")}</Label>
+                      <Select value={transferCategoryId} onValueChange={setTransferCategoryId}>
+                        <SelectTrigger id="transfer-category"><SelectValue placeholder={t("capture.transaction.selectCategory")} /></SelectTrigger>
+                        <SelectContent>
+                          {categories.length === 0 ? <SelectEmptyState>{t("capture.empty.categoriesManage")}</SelectEmptyState> : categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>{categoryDisplayName(category, t)}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="transfer-amount">{t("capture.transfer.amount")}</Label>
@@ -368,6 +445,23 @@ export default function Capture() {
                   </div>
                 </div>
 
+                {transferDestinationType === "internal" && transferSourceAccount != null && transferTargetAccount != null && transferSourceAccount.currency !== transferTargetAccount.currency && transferMinorUnits != null && transferMinorUnits > 0 && (
+                  transferPreview != null ? (
+                    <div className="border-l-2 border-ocean-primary bg-ocean-wash/45 px-3 py-2 text-sm">
+                      <p className="font-medium text-foreground">{t("capture.transfer.destinationReceives", { amount: formatMoney(transferPreview) })}</p>
+                      {transferRate != null && <p className="mt-1 text-xs text-muted-foreground">{t("capture.transfer.rateUsed", { base: transferRate.baseCurrency, rate: transferRate.rate, quote: transferRate.quoteCurrency })}</p>}
+                      <p className="mt-1 text-xs text-muted-foreground">{t("capture.transfer.conversionSaved")}</p>
+                    </div>
+                  ) : !currencyContextQuery.isLoading ? (
+                    <div className="border border-border bg-accent/45 p-3 text-sm">
+                      <p className="font-medium text-foreground">{t("capture.transfer.errors.missingRate", { from: transferSourceAccount.currency, to: transferTargetAccount.currency })}</p>
+                      <Button asChild type="button" variant="link" className="mt-1 h-auto p-0 text-ocean-primary">
+                        <Link to="/settings">{t("capture.transfer.addRate")}</Link>
+                      </Button>
+                    </div>
+                  ) : null
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="transfer-note">{t("capture.transfer.note")}</Label>
                   <Input
@@ -379,8 +473,10 @@ export default function Capture() {
                   />
                 </div>
 
-                <Button type="submit" disabled={recordTransfer.isPending} className="w-full sm:w-auto">
-                  {recordTransfer.isPending ? t("capture.transfer.submitting") : t("capture.transfer.submit")}
+                <Button type="submit" disabled={recordTransfer.isPending || recordTx.isPending} className="w-full sm:w-auto">
+                  {recordTransfer.isPending || recordTx.isPending
+                    ? t("capture.transfer.submitting")
+                    : t(transferDestinationType === "internal" ? "capture.transfer.submitInternal" : "capture.transfer.submitExternal")}
                 </Button>
               </form>
             </CardContent>

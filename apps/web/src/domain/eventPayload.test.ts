@@ -47,6 +47,20 @@ describe("financial event payload schemas", () => {
     })).toThrow();
   });
 
+  it("accepts an internal destination amount and rejects one on legacy external transfers", () => {
+    expect(() => validateFinancialEventPayload("transfer_created", {
+      ...validPayloads.transfer_created,
+      destinationAmount: { minorUnits: 2, currency: "EUR" },
+    })).not.toThrow();
+    expect(() => validateFinancialEventPayload("transfer_created", {
+      fromAccountId: "a",
+      toAccountId: null,
+      externalDestination: "Merchant",
+      amount: money,
+      destinationAmount: { minorUnits: 2, currency: "EUR" },
+    })).toThrow(/destination amount/);
+  });
+
   it("accepts legacy signed transaction amounts for replay normalization", () => {
     expect(() => validateFinancialEventPayload("transaction_created", {
       ...validPayloads.transaction_created,

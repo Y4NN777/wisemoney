@@ -57,7 +57,12 @@ function snapshot(overrides: Partial<FinancialStateSnapshot> = {}): FinancialSta
 }
 
 function operation(overrides: Partial<FinancialOperation> & Pick<FinancialOperation, "id" | "timestamp" | "kind">): FinancialOperation {
-  return { direction: null, amount: null, displayAmount: null, note: "", accountId: null, toAccountId: null, externalDestination: null, categoryId: null, goalId: null, recurringItemId: null, ...overrides };
+  const inferredRole = overrides.kind === "income"
+    ? "income"
+    : overrides.kind === "expense" || overrides.kind === "planned_expense" || (overrides.kind === "recurring_realisation" && overrides.direction === "expense")
+      ? "expense"
+      : overrides.kind === "recurring_realisation" && overrides.direction === "income" ? "income" : "neutral";
+  return { direction: null, amount: null, displayAmount: null, destinationAmount: null, note: "", merchant: null, accountId: null, toAccountId: null, externalDestination: null, categoryId: null, goalId: null, recurringItemId: null, cashFlowRole: inferredRole, isLegacyExternal: false, ...overrides };
 }
 
 describe("dashboard analytics", () => {
@@ -65,9 +70,9 @@ describe("dashboard analytics", () => {
     const start = new Date(2026, 7, 1).getTime();
     const end = new Date(2026, 7, 10, 23, 59, 59, 999).getTime();
     const points = selectCashFlowTimeline([
-      transaction({ id: "income", timestamp: start + 100, direction: "income", displayAmount: { minorUnits: 1_000, currency: "XOF" } }),
-      transaction({ id: "expense", timestamp: start + 200, direction: "expense", displayAmount: { minorUnits: 250, currency: "XOF" } }),
-      transaction({ id: "outside", timestamp: end + 1, direction: "income", displayAmount: { minorUnits: 9_999, currency: "XOF" } }),
+      operation({ id: "income", timestamp: start + 100, kind: "income", displayAmount: { minorUnits: 1_000, currency: "XOF" } }),
+      operation({ id: "expense", timestamp: start + 200, kind: "expense", displayAmount: { minorUnits: 250, currency: "XOF" } }),
+      operation({ id: "outside", timestamp: end + 1, kind: "income", displayAmount: { minorUnits: 9_999, currency: "XOF" } }),
     ], { start, end }, 5);
 
     expect(points.reduce((sum, point) => sum + point.income, 0)).toBe(1_000);
@@ -77,9 +82,9 @@ describe("dashboard analytics", () => {
 
   it("groups expenses by category with stable ordering and shares", () => {
     const items = selectExpensesByCategory([
-      transaction({ id: "a", timestamp: 10, direction: "expense", categoryId: "food", displayAmount: { minorUnits: 300, currency: "XOF" } }),
-      transaction({ id: "b", timestamp: 11, direction: "expense", categoryId: "rent", displayAmount: { minorUnits: 700, currency: "XOF" } }),
-      transaction({ id: "c", timestamp: 12, direction: "income", categoryId: "food", displayAmount: { minorUnits: 500, currency: "XOF" } }),
+      operation({ id: "a", timestamp: 10, kind: "expense", categoryId: "food", displayAmount: { minorUnits: 300, currency: "XOF" } }),
+      operation({ id: "b", timestamp: 11, kind: "expense", categoryId: "rent", displayAmount: { minorUnits: 700, currency: "XOF" } }),
+      operation({ id: "c", timestamp: 12, kind: "income", categoryId: "food", displayAmount: { minorUnits: 500, currency: "XOF" } }),
     ], { start: 0, end: 20 }, "XOF");
 
     expect(items.map((item) => [item.categoryId, item.amount.minorUnits, item.share])).toEqual([
@@ -93,7 +98,7 @@ describe("dashboard analytics", () => {
       operation({ id: "income", timestamp: 2, kind: "income", displayAmount: { minorUnits: 5_000, currency: "XOF" } }),
       operation({ id: "expense", timestamp: 3, kind: "expense", displayAmount: { minorUnits: 2_000, currency: "XOF" } }),
       operation({ id: "internal", timestamp: 4, kind: "transfer", toAccountId: "bank", displayAmount: { minorUnits: 50_000, currency: "XOF" } }),
-      operation({ id: "external", timestamp: 5, kind: "transfer", externalDestination: "Other", displayAmount: { minorUnits: 1_000, currency: "XOF" } }),
+      operation({ id: "external", timestamp: 5, kind: "transfer", externalDestination: "Other", displayAmount: { minorUnits: 1_000, currency: "XOF" }, cashFlowRole: "expense", isLegacyExternal: true }),
     ], { start: 1, end: 10 }, 2);
     expect(points[0]?.balance).toBe(10_000);
     expect(points.at(-1)?.balance).toBe(12_000);
@@ -135,6 +140,21 @@ describe("dashboard analytics", () => {
     ], "cash");
     expect(result.map((item) => item.id)).toEqual(["out", "in"]);
     expect(result.every((item) => item.displayAmount === item.amount)).toBe(true);
+  });
+
+  it("uses the destination currency for an incoming cross-currency account movement", () => {
+    const [incoming] = selectAccountOperations([
+      operation({
+        id: "fx",
+        timestamp: 1,
+        kind: "transfer",
+        accountId: "cash",
+        toAccountId: "usd",
+        amount: { minorUnits: 10_000, currency: "XOF" },
+        destinationAmount: { minorUnits: 1_650, currency: "USD" },
+      }),
+    ], "usd");
+    expect(incoming?.displayAmount).toEqual({ minorUnits: 1_650, currency: "USD" });
   });
 
   it("does not invent account shares when account currencies are incompatible", () => {

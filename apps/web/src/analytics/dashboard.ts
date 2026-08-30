@@ -1,5 +1,6 @@
 import type { FinancialStateSnapshot, MoneyDTO, TransactionDisplay } from "../domain/financialState.ts";
 import type { FinancialOperation } from "../domain/financialOperations.ts";
+import { operationAmountForAccount, operationEffect } from "./operations.ts";
 
 export type DateRange = {
   start: number;
@@ -24,6 +25,8 @@ export type CategoryExpense = {
   amount: MoneyDTO;
   share: number;
 };
+
+export const UNCATEGORIZED_CATEGORY_ID = "__uncategorized__";
 
 export type AccountDistribution = {
   accountId: string;
@@ -95,7 +98,7 @@ export function selectAccountOperations(
   if (accountId == null) return [...operations];
   return operations
     .filter((operation) => operation.accountId === accountId || operation.toAccountId === accountId)
-    .map((operation) => ({ ...operation, displayAmount: operation.amount }));
+    .map((operation) => ({ ...operation, displayAmount: operationAmountForAccount(operation, accountId) }));
 }
 
 /**
@@ -103,9 +106,10 @@ export function selectAccountOperations(
  * they are not TransactionDisplay records and therefore never become income or expense.
  */
 export function selectCashFlowTimeline(
-  transactions: readonly TransactionDisplay[],
+  operations: readonly FinancialOperation[],
   range: DateRange,
   preferredBucketCount = 8,
+  accountId: string | null = null,
 ): CashFlowPoint[] {
   const validRange = boundedRange(range);
   const bucketCount = Math.max(1, Math.min(31, Math.trunc(preferredBucketCount)));
@@ -123,18 +127,21 @@ export function selectCashFlowTimeline(
     };
   });
 
-  for (const transaction of transactions) {
-    if (transaction.timestamp < validRange.start || transaction.timestamp > validRange.end) continue;
-    const amount = transaction.displayAmount?.minorUnits;
+  for (const operation of operations) {
+    if (operation.timestamp < validRange.start || operation.timestamp > validRange.end) continue;
+    const operationAmount = operationAmountForAccount(operation, accountId);
+    const amount = operationAmount?.minorUnits;
     if (amount == null || !Number.isSafeInteger(amount)) continue;
-    const index = Math.min(points.length - 1, Math.floor((transaction.timestamp - validRange.start) / bucketMs));
+    const effect = operationEffect(operation, accountId);
+    if (effect === "neutral") continue;
+    const index = Math.min(points.length - 1, Math.floor((operation.timestamp - validRange.start) / bucketMs));
     const point = points[index];
     if (point == null) continue;
     const value = Math.abs(amount);
-    if (transaction.direction === "income") {
+    if (effect === "incoming") {
       point.income += value;
       point.net += value;
-    } else {
+    } else if (effect === "outgoing") {
       point.expenses += value;
       point.net -= value;
     }
@@ -144,19 +151,11 @@ export function selectCashFlowTimeline(
 }
 
 function cashEffect(operation: FinancialOperation, currency: string, accountId?: string): number {
-  const amount = accountId == null ? operation.displayAmount : operation.amount;
+  const contextAccountId = accountId ?? null;
+  const amount = operationAmountForAccount(operation, contextAccountId);
   if (amount?.currency !== currency) return 0;
-  if (operation.kind === "income") return amount.minorUnits;
-  if (operation.kind === "expense" || operation.kind === "planned_expense") return -amount.minorUnits;
-  if (operation.kind === "recurring_realisation") {
-    return operation.direction === "income" ? amount.minorUnits : operation.direction === "expense" ? -amount.minorUnits : 0;
-  }
-  if (operation.kind === "transfer") {
-    if (accountId == null) return operation.toAccountId == null ? -amount.minorUnits : 0;
-    if (operation.accountId === accountId) return -amount.minorUnits;
-    if (operation.toAccountId === accountId) return amount.minorUnits;
-  }
-  return 0;
+  const effect = operationEffect(operation, contextAccountId);
+  return effect === "incoming" ? amount.minorUnits : effect === "outgoing" ? -amount.minorUnits : 0;
 }
 
 /** Reconstructs the balance path backwards from the authoritative closing balance. */
@@ -195,16 +194,19 @@ export function selectBalanceTimeline(
 }
 
 export function selectExpensesByCategory(
-  transactions: readonly TransactionDisplay[],
+  operations: readonly FinancialOperation[],
   range: DateRange,
   displayCurrency: string,
 ): CategoryExpense[] {
   const totals = new Map<string, number>();
-  for (const transaction of selectPeriodTransactions(transactions, range)) {
-    if (transaction.direction !== "expense") continue;
-    const amount = transaction.displayAmount;
+  const validRange = boundedRange(range);
+  for (const operation of operations) {
+    if (operation.timestamp < validRange.start || operation.timestamp > validRange.end) continue;
+    if (operationEffect(operation, null) !== "outgoing") continue;
+    const amount = operation.displayAmount;
     if (amount == null || amount.currency !== displayCurrency) continue;
-    totals.set(transaction.categoryId, (totals.get(transaction.categoryId) ?? 0) + Math.abs(amount.minorUnits));
+    const categoryId = operation.categoryId ?? UNCATEGORIZED_CATEGORY_ID;
+    totals.set(categoryId, (totals.get(categoryId) ?? 0) + Math.abs(amount.minorUnits));
   }
   const total = [...totals.values()].reduce((sum, value) => sum + value, 0);
   return [...totals]

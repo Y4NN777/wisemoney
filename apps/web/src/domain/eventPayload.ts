@@ -122,14 +122,16 @@ export function validateFinancialEventPayload(type: FinancialEventType, payload:
       if (payload.amount !== undefined) money(payload.amount, "amount");
       timestamp(payload.date, "date"); return;
     case "transfer_created": {
-      shape(payload, ["fromAccountId", "toAccountId", "externalDestination", "amount"], ["note"]);
+      shape(payload, ["fromAccountId", "toAccountId", "externalDestination", "amount"], ["note", "destinationAmount"]);
       text(payload.fromAccountId, "fromAccountId"); nullableText(payload.toAccountId, "toAccountId");
       nullableText(payload.externalDestination, "externalDestination");
       if ("note" in payload) nullableText(payload.note, "note");
       money(payload.amount, "amount");
+      if (payload.destinationAmount !== undefined) money(payload.destinationAmount, "destinationAmount");
       const hasAccount = typeof payload.toAccountId === "string" && payload.toAccountId !== "";
       const hasExternal = typeof payload.externalDestination === "string" && payload.externalDestination.trim() !== "";
       if (hasAccount === hasExternal || payload.toAccountId === payload.fromAccountId) throw new Error("transfer destination is invalid");
+      if (hasExternal && payload.destinationAmount !== undefined) throw new Error("external transfer cannot have a destination amount");
       return;
     }
     case "debt_credit_created":

@@ -104,6 +104,7 @@ type TransferState = {
   toAccountId: string | null;
   externalDestination: string | null;
   amount: MoneyDTO;
+  destinationAmount?: MoneyDTO | null;
   note: string;
 };
 
@@ -549,9 +550,13 @@ function applyPayload(
         toAccountId: string | null;
         externalDestination: string | null;
         amount: { minorUnits: number; currency: string };
+        destinationAmount?: { minorUnits: number; currency: string };
         note?: string | null;
       };
       const amount = positiveMoney({ minorUnits: p.amount.minorUnits, currency: p.amount.currency });
+      const destinationAmount = p.destinationAmount == null
+        ? null
+        : positiveMoney({ minorUnits: p.destinationAmount.minorUnits, currency: p.destinationAmount.currency });
       const from = required(acc.accounts.get(p.fromAccountId), "account", p.fromAccountId);
       if (!from.isActive) throw new Error(`event ${eventId}: account ${p.fromAccountId} is archived`);
       if (from.currency !== amount.currency) throw new Error(`event ${eventId}: transfer currency mismatch`);
@@ -559,8 +564,18 @@ function applyPayload(
       if (p.toAccountId != null) {
         const to = required(acc.accounts.get(p.toAccountId), "account", p.toAccountId);
         if (!to.isActive) throw new Error(`event ${eventId}: account ${p.toAccountId} is archived`);
-        if (to.currency !== amount.currency) throw new Error(`event ${eventId}: transfer currency mismatch`);
-        to.balance = addMoney(to.balance, amount);
+        const creditedAmount = destinationAmount ?? amount;
+        if (to.currency !== creditedAmount.currency) throw new Error(`event ${eventId}: transfer currency mismatch`);
+        if (to.currency !== amount.currency && destinationAmount == null) {
+          throw new Error(`event ${eventId}: transfer destination amount is required`);
+        }
+        if (to.currency === amount.currency && destinationAmount != null &&
+          (destinationAmount.currency !== amount.currency || destinationAmount.minorUnits !== amount.minorUnits)) {
+          throw new Error(`event ${eventId}: same-currency transfer amounts must match`);
+        }
+        to.balance = addMoney(to.balance, creditedAmount);
+      } else if (destinationAmount != null) {
+        throw new Error(`event ${eventId}: external transfer cannot have a destination amount`);
       }
       acc.transfers.push({
         id: eventId,
@@ -569,6 +584,7 @@ function applyPayload(
         toAccountId: p.toAccountId,
         externalDestination: p.externalDestination,
         amount,
+        ...(destinationAmount == null ? {} : { destinationAmount }),
         note: p.note ?? "",
       });
       break;

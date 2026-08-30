@@ -31,7 +31,23 @@ describe("projectFinancialOperations", () => {
     const [operation] = projectFinancialOperations([
       event({ id: "transfer", timestamp: 10, type: "transfer_created", payload: { fromAccountId: "cash", toAccountId: "bank", externalDestination: null, amount: { minorUnits: 1_000, currency: "XOF" }, note: "Move" } }),
     ]);
-    expect(operation).toMatchObject({ kind: "transfer", direction: null, accountId: "cash", toAccountId: "bank" });
+    expect(operation).toMatchObject({ kind: "transfer", direction: null, accountId: "cash", toAccountId: "bank", cashFlowRole: "neutral", isLegacyExternal: false });
+  });
+
+  it("preserves cross-currency destination amounts and classifies legacy external transfers", () => {
+    const operations = projectFinancialOperations([
+      event({ id: "fx", timestamp: 10, type: "transfer_created", payload: { fromAccountId: "cash", toAccountId: "usd", externalDestination: null, amount: { minorUnits: 10_000, currency: "XOF" }, destinationAmount: { minorUnits: 1_650, currency: "USD" } } }),
+      event({ id: "legacy", timestamp: 11, type: "transfer_created", payload: { fromAccountId: "cash", toAccountId: null, externalDestination: "Awa", amount: { minorUnits: 2_000, currency: "XOF" } } }),
+    ]);
+    expect(operations.find((item) => item.id === "fx")?.destinationAmount).toEqual({ minorUnits: 1_650, currency: "USD" });
+    expect(operations.find((item) => item.id === "legacy")).toMatchObject({ cashFlowRole: "expense", isLegacyExternal: true, externalDestination: "Awa" });
+  });
+
+  it("projects merchant names for search and activity labels", () => {
+    const [operation] = projectFinancialOperations([
+      event({ id: "expense", timestamp: 10, type: "transaction_created", payload: { accountId: "cash", categoryId: "food", amount: { minorUnits: 500, currency: "XOF" }, direction: "expense", merchant: "Marché" } }),
+    ]);
+    expect(operation).toMatchObject({ merchant: "Marché", cashFlowRole: "expense" });
   });
 
   it("includes goal contributions and recurring realisations without treating them as cash flow", () => {

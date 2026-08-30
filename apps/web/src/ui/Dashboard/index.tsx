@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { useDeleteTransaction, useFinancialOperations, useFinancialState, useHasTransactions, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
+import { useDeleteTransaction, useFinancialOperations, useFinancialState, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Progress } from "../../components/ui/progress.tsx";
@@ -17,6 +17,7 @@ import {
   PlusCircle, CalendarDays,
 } from "lucide-react";
 import type { FinancialStateSnapshot, TransactionDisplay } from "../../domain/financialState.ts";
+import type { FinancialOperation } from "../../domain/financialOperations.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 import { requestInsight } from "../../pillars/intelligence/index.ts";
@@ -44,9 +45,11 @@ import {
   selectExpensesByCategory,
   selectPeriodTransactions,
   selectUpcomingCommitments,
+  UNCATEGORIZED_CATEGORY_ID,
   type CashFlowPoint,
   type BalancePoint,
 } from "../../analytics/dashboard.ts";
+import { summarizeMonthlyActivity } from "../../analytics/operations.ts";
 import AppFaultPanel from "../../errors/AppFaultPanel.tsx";
 import { classifyAppError } from "../../errors/diagnostics.ts";
 
@@ -684,11 +687,13 @@ function FinancialOverview({
   isCurrentPeriod,
   comparison,
   accountName,
+  activityContext,
 }: {
   snapshot: FinancialStateSnapshot;
   isCurrentPeriod: boolean;
   comparison: PeriodComparisonSummary | null;
   accountName: string | null;
+  activityContext: { start: number; end: number; accountId: string | null };
 }) {
   const { t } = useTranslation();
   const currency = snapshot.totalBalance.currency;
@@ -785,6 +790,16 @@ function FinancialOverview({
               difference: formatSignedMoney(net, currency),
             })}
           </p>
+          <Button asChild variant="outline" size="sm" className="w-full justify-between sm:w-auto">
+            <Link to="/operations" search={{
+              start: activityContext.start,
+              end: activityContext.end,
+              accountId: activityContext.accountId ?? undefined,
+            }}>
+              {t("dashboard.viewMonthlyActivity")}
+              <ArrowRightLeft className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
         </CardContent>
       </Card>
     </section>
@@ -814,13 +829,15 @@ function DashboardQuickActions() {
 function DashboardContent({
   snapshot,
   canMutate,
-  periodComparison,
   selectedAccountId,
+  operations,
+  operationsLoading,
 }: {
   snapshot: FinancialStateSnapshot;
   canMutate: boolean;
-  periodComparison: PeriodComparisonSummary | null;
   selectedAccountId: string;
+  operations: readonly FinancialOperation[];
+  operationsLoading: boolean;
 }) {
   const { t } = useTranslation();
   const masterKey = useMasterKey();
@@ -834,25 +851,16 @@ function DashboardContent({
   const deleteTransaction = useDeleteTransaction();
 
   const periodStart = snapshot.periodStart;
-  const periodEnd = snapshot.periodEnd;
+  const periodEnd = Math.min(snapshot.periodEnd, snapshot.asOfTimestamp);
   const { data: allTransactions, isLoading: periodTransactionsLoading } = useTransactionsInRange(0, snapshot.asOfTimestamp);
-  const { data: allOperations, isLoading: periodOperationsLoading } = useFinancialOperations();
-  const periodTransactions = useMemo(
-    () => selectPeriodTransactions(allTransactions ?? [], { start: periodStart, end: periodEnd }),
-    [allTransactions, periodEnd, periodStart],
-  );
   const periodOperations = useMemo(
-    () => (allOperations ?? []).filter((operation) => operation.timestamp >= periodStart && operation.timestamp <= periodEnd),
-    [allOperations, periodEnd, periodStart],
+    () => operations.filter((operation) => operation.timestamp >= periodStart && operation.timestamp <= periodEnd),
+    [operations, periodEnd, periodStart],
   );
   const selectedAccount = selectedAccountId === "all"
     ? null
     : snapshot.accounts.find((account) => account.id === selectedAccountId && account.isActive) ?? null;
   const accountId = selectedAccount?.id ?? null;
-  const scopedPeriodTransactions = useMemo(
-    () => selectAccountTransactions(periodTransactions, accountId),
-    [accountId, periodTransactions],
-  );
   const scopedPeriodOperations = useMemo(
     () => selectAccountOperations(periodOperations, accountId),
     [accountId, periodOperations],
@@ -902,39 +910,52 @@ function DashboardContent({
   const activeGoals = snapshot.goals.filter((g) => !g.isArchived);
   const accountDistribution = useMemo(() => selectAccountDistribution(snapshot), [snapshot]);
   const upcomingCommitments = useMemo(() => selectUpcomingCommitments(snapshot), [snapshot]);
+  const activityCurrency = selectedAccount?.currency ?? snapshot.baseCurrency;
+  const activitySummary = useMemo(() => summarizeMonthlyActivity({
+    operations,
+    start: periodStart,
+    end: periodEnd,
+    accountId,
+    displayCurrency: activityCurrency,
+  }), [accountId, activityCurrency, operations, periodEnd, periodStart]);
+  const previousPeriod = computePrevPeriod(new Date(periodStart).getFullYear(), new Date(periodStart).getMonth() + 1);
+  const previousStart = new Date(previousPeriod.year, previousPeriod.month - 1, 1).getTime();
+  const previousEnd = new Date(previousPeriod.year, previousPeriod.month, 0, 23, 59, 59, 999).getTime();
+  const previousActivitySummary = useMemo(() => summarizeMonthlyActivity({
+    operations,
+    start: previousStart,
+    end: previousEnd,
+    accountId,
+    displayCurrency: activityCurrency,
+  }), [accountId, activityCurrency, operations, previousEnd, previousStart]);
+  const periodComparison = useMemo<PeriodComparisonSummary>(() => ({
+    incomeChange: comparePeriodAmounts(activitySummary.received.minorUnits, previousActivitySummary.received.minorUnits),
+    expenseChange: comparePeriodAmounts(activitySummary.spent.minorUnits, previousActivitySummary.spent.minorUnits),
+  }), [activitySummary.received.minorUnits, activitySummary.spent.minorUnits, previousActivitySummary.received.minorUnits, previousActivitySummary.spent.minorUnits]);
   const overviewSnapshot = useMemo((): FinancialStateSnapshot => {
-    if (selectedAccount == null) return snapshot;
-    const income = scopedPeriodTransactions.reduce(
-      (sum, transaction) => sum + (transaction.direction === "income" ? Math.abs(transaction.amount.minorUnits) : 0),
-      0,
-    );
-    const expenses = scopedPeriodTransactions.reduce(
-      (sum, transaction) => sum + (transaction.direction === "expense" ? Math.abs(transaction.amount.minorUnits) : 0),
-      0,
-    );
     return {
       ...snapshot,
-      baseCurrency: selectedAccount.currency,
-      accounts: [selectedAccount],
-      totalBalance: selectedAccount.balance,
-      periodIncome: { minorUnits: income, currency: selectedAccount.currency },
-      periodExpenses: { minorUnits: expenses, currency: selectedAccount.currency },
-      netCashFlow: { minorUnits: income - expenses, currency: selectedAccount.currency },
+      baseCurrency: activityCurrency,
+      accounts: selectedAccount == null ? snapshot.accounts : [selectedAccount],
+      totalBalance: selectedAccount?.balance ?? snapshot.totalBalance,
+      periodIncome: activitySummary.received,
+      periodExpenses: activitySummary.spent,
+      netCashFlow: activitySummary.difference,
     };
-  }, [scopedPeriodTransactions, selectedAccount, snapshot]);
+  }, [activityCurrency, activitySummary.difference, activitySummary.received, activitySummary.spent, selectedAccount, snapshot]);
 
   const categorySpending = useMemo(() => {
-    const items = selectExpensesByCategory(scopedPeriodTransactions, { start: periodStart, end: periodEnd }, overviewSnapshot.baseCurrency)
+    const items = selectExpensesByCategory(scopedPeriodOperations, { start: periodStart, end: periodEnd }, overviewSnapshot.baseCurrency)
       .map((item) => {
         const category = categories.find((candidate) => candidate.id === item.categoryId);
-        return { ...item, name: category == null ? t("common.unknown") : categoryDisplayName(category, t) };
+        return { ...item, name: item.categoryId === UNCATEGORIZED_CATEGORY_ID ? t("operations.uncategorized") : category == null ? t("common.unknown") : categoryDisplayName(category, t) };
       });
     return { items, total: items.reduce((sum, item) => sum + item.amount.minorUnits, 0), currency: overviewSnapshot.baseCurrency };
-  }, [categories, overviewSnapshot.baseCurrency, periodEnd, periodStart, scopedPeriodTransactions, t]);
+  }, [categories, overviewSnapshot.baseCurrency, periodEnd, periodStart, scopedPeriodOperations, t]);
 
   const cashFlowSeries = useMemo(
-    () => selectCashFlowTimeline(scopedPeriodTransactions, { start: periodStart, end: periodEnd }, 8),
-    [scopedPeriodTransactions, periodStart, periodEnd],
+    () => selectCashFlowTimeline(scopedPeriodOperations, { start: periodStart, end: periodEnd }, 8, accountId),
+    [accountId, scopedPeriodOperations, periodStart, periodEnd],
   );
   const balanceSeries = useMemo(
     () => selectBalanceTimeline(overviewSnapshot.totalBalance, scopedPeriodOperations, { start: periodStart, end: periodEnd }, 10, accountId ?? undefined),
@@ -1005,6 +1026,7 @@ function DashboardContent({
         isCurrentPeriod={canMutate}
         comparison={selectedAccount == null ? periodComparison : null}
         accountName={selectedAccount?.name ?? null}
+        activityContext={{ start: periodStart, end: periodEnd, accountId }}
       />
 
       {canMutate && <DashboardQuickActions />}
@@ -1018,7 +1040,7 @@ function DashboardContent({
             <Button asChild variant="ghost" size="sm"><Link to="/operations" search={accountId == null ? {} : { accountId }}>{t("dashboard.viewAll")}</Link></Button>
           </CardHeader>
           <CardContent>
-            {periodOperationsLoading ? <Skeleton className="h-52 w-full" /> : <BalanceTrendChart points={balanceSeries} currency={currency} periodStart={periodStart} accountId={accountId} />}
+            {operationsLoading ? <Skeleton className="h-52 w-full" /> : <BalanceTrendChart points={balanceSeries} currency={currency} periodStart={periodStart} accountId={accountId} />}
           </CardContent>
         </Card>
         <Card className="interactive-surface metric-surface">
@@ -1027,7 +1049,7 @@ function DashboardContent({
             <TrendingUp className="h-4 w-4 text-ocean-primary" />
           </CardHeader>
           <CardContent>
-            {periodTransactionsLoading ? (
+            {operationsLoading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
               <CashFlowTrendChart points={cashFlowSeries} currency={currency} accountId={accountId} />
@@ -1349,21 +1371,10 @@ export default function Dashboard() {
   const isCurrent = selectedYear === now.getFullYear() && selectedMonth === now.getMonth() + 1;
 
   const currentQuery = useFinancialState();
-  const transactionHistoryQuery = useHasTransactions();
-  const prevPeriod = computePrevPeriod(selectedYear, selectedMonth);
+  const operationsQuery = useFinancialOperations();
   const historicalQuery = useHistoricalState(selectedYear, selectedMonth);
-  const prevQuery = useHistoricalState(prevPeriod.year, prevPeriod.month);
 
   const { data: snapshot, isLoading, error } = isCurrent ? currentQuery : historicalQuery;
-  const { data: prevSnapshot } = prevQuery;
-
-  const periodComparison = useMemo(() => {
-    if (snapshot == null || prevSnapshot == null) return null;
-    return {
-      incomeChange: comparePeriodAmounts(snapshot.periodIncome.minorUnits, prevSnapshot.periodIncome.minorUnits),
-      expenseChange: comparePeriodAmounts(snapshot.periodExpenses.minorUnits, prevSnapshot.periodExpenses.minorUnits),
-    };
-  }, [snapshot, prevSnapshot]);
 
   const goPrev = () => {
     if (selectedMonth === 1) {
@@ -1388,7 +1399,7 @@ export default function Dashboard() {
     setSelectedMonth(now.getMonth() + 1);
   };
 
-  if (currentQuery.isLoading || transactionHistoryQuery.isLoading) {
+  if (currentQuery.isLoading || operationsQuery.isLoading) {
     return (
       <main aria-label={t("dashboard.title")} className="app-page">
         <Skeleton className="h-8 w-48" />
@@ -1400,21 +1411,21 @@ export default function Dashboard() {
     );
   }
 
-  if (currentQuery.error != null || transactionHistoryQuery.error != null || currentQuery.data == null) {
-    const loadError = currentQuery.error ?? transactionHistoryQuery.error;
+  if (currentQuery.error != null || operationsQuery.error != null || currentQuery.data == null) {
+    const loadError = currentQuery.error ?? operationsQuery.error;
     return (
       <main aria-label={t("dashboard.title")} className="app-page flex min-h-[60vh] items-center justify-center">
         <AppFaultPanel
           faultCode={classifyAppError(loadError, "dashboard_load")}
           surfaceId="dashboard"
-          onRetry={() => { void Promise.all([currentQuery.refetch(), transactionHistoryQuery.refetch()]); }}
+          onRetry={() => { void Promise.all([currentQuery.refetch(), operationsQuery.refetch()]); }}
         />
       </main>
     );
   }
 
   const activeAccountCount = currentQuery.data.accounts.filter((account) => account.isActive).length;
-  const dashboardMode = getDashboardMode(activeAccountCount, transactionHistoryQuery.data === true);
+  const dashboardMode = getDashboardMode(activeAccountCount, (operationsQuery.data?.length ?? 0) > 0);
   if (dashboardMode === "setup") return <DashboardSetup />;
   if (dashboardMode === "first-transaction") {
     return <FirstTransactionDashboard snapshot={currentQuery.data} accountCount={activeAccountCount} />;
@@ -1468,7 +1479,13 @@ export default function Dashboard() {
         onAccountChange={setSelectedAccountId}
       />
 
-      <DashboardContent snapshot={snapshot} canMutate={isCurrent} periodComparison={periodComparison} selectedAccountId={effectiveSelectedAccountId} />
+      <DashboardContent
+        snapshot={snapshot}
+        canMutate={isCurrent}
+        selectedAccountId={effectiveSelectedAccountId}
+        operations={operationsQuery.data ?? []}
+        operationsLoading={operationsQuery.isLoading}
+      />
     </main>
   );
 }

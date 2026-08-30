@@ -11,7 +11,7 @@ describe("getDashboardMode", () => {
     expect(getDashboardMode(1, false)).toBe("first-transaction");
   });
 
-  it("keeps onboarding complete after any surviving transaction", () => {
+  it("keeps onboarding complete after any surviving financial operation, including a transfer", () => {
     expect(getDashboardMode(1, true)).toBe("active");
   });
 });

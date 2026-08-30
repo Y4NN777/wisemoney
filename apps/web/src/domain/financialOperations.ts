@@ -14,6 +14,8 @@ export type FinancialOperationKind =
   | "goal_contribution"
   | "recurring_realisation";
 
+export type CashFlowRole = "income" | "expense" | "neutral";
+
 export type FinancialOperation = {
   id: string;
   timestamp: number;
@@ -21,13 +23,17 @@ export type FinancialOperation = {
   direction: "income" | "expense" | null;
   amount: MoneyDTO | null;
   displayAmount: MoneyDTO | null;
+  destinationAmount: MoneyDTO | null;
   note: string;
+  merchant: string | null;
   accountId: string | null;
   toAccountId: string | null;
   externalDestination: string | null;
   categoryId: string | null;
   goalId: string | null;
   recurringItemId: string | null;
+  cashFlowRole: CashFlowRole;
+  isLegacyExternal: boolean;
 };
 
 export type DecodedFinancialEvent = {
@@ -88,13 +94,17 @@ export function projectFinancialOperations(events: readonly DecodedFinancialEven
           direction,
           amount,
           displayAmount: null,
+          destinationAmount: null,
           note: text(payload.note),
+          merchant: nullableString(payload.merchant),
           accountId: nullableString(payload.accountId),
           toAccountId: null,
           externalDestination: null,
           categoryId: nullableString(payload.categoryId),
           goalId: null,
           recurringItemId: null,
+          cashFlowRole: direction,
+          isLegacyExternal: false,
           tags,
         });
         break;
@@ -107,6 +117,9 @@ export function projectFinancialOperations(events: readonly DecodedFinancialEven
       case "transfer_created": {
         const amount = money(payload.amount);
         if (amount == null) break;
+        const toAccountId = nullableString(payload.toAccountId);
+        const externalDestination = nullableString(payload.externalDestination);
+        const isLegacyExternal = toAccountId == null && externalDestination != null;
         other.set(event.id, {
           id: event.id,
           timestamp: event.timestamp,
@@ -114,13 +127,17 @@ export function projectFinancialOperations(events: readonly DecodedFinancialEven
           direction: null,
           amount,
           displayAmount: null,
+          destinationAmount: money(payload.destinationAmount),
           note: text(payload.note),
+          merchant: null,
           accountId: nullableString(payload.fromAccountId),
-          toAccountId: nullableString(payload.toAccountId),
-          externalDestination: nullableString(payload.externalDestination),
+          toAccountId,
+          externalDestination,
           categoryId: null,
           goalId: null,
           recurringItemId: null,
+          cashFlowRole: isLegacyExternal ? "expense" : "neutral",
+          isLegacyExternal,
         });
         break;
       }
@@ -134,13 +151,17 @@ export function projectFinancialOperations(events: readonly DecodedFinancialEven
           direction: null,
           amount,
           displayAmount: null,
+          destinationAmount: null,
           note: "",
+          merchant: null,
           accountId: null,
           toAccountId: null,
           externalDestination: null,
           categoryId: null,
           goalId: nullableString(payload.goalId),
           recurringItemId: null,
+          cashFlowRole: "neutral",
+          isLegacyExternal: false,
         });
         break;
       }
@@ -165,13 +186,17 @@ export function projectFinancialOperations(events: readonly DecodedFinancialEven
           direction: definition?.direction ?? null,
           amount: money(payload.amount) ?? definition?.amount ?? null,
           displayAmount: null,
+          destinationAmount: null,
           note: definition?.label ?? "",
+          merchant: null,
           accountId: null,
           toAccountId: null,
           externalDestination: null,
           categoryId: definition?.categoryId ?? null,
           goalId: null,
           recurringItemId: itemId,
+          cashFlowRole: definition?.direction ?? "neutral",
+          isLegacyExternal: false,
         });
         recurringRealisationIds.add(event.id);
         break;

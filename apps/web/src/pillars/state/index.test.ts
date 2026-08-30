@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { fakeAppendEvent, fakeAppendEvents, fakeGetSnapshot, fakeReadTransactions, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable } = vi.hoisted(() => {
+const { fakeAppendEvent, fakeAppendEvents, fakeGetSnapshot, fakeReadTransactions, fakeLoadCurrencyContext, fakeConvertUsingContext, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable } = vi.hoisted(() => {
   const fakeAppendEvent = vi.fn<(args: { type: string; payload: Record<string, unknown>; masterKey: unknown }) => Promise<void>>();
   const fakeAppendEvents = vi.fn<(args: Array<{ type: string; payload: Record<string, unknown>; masterKey: unknown }>) => Promise<void>>();
   const fakeGetSnapshot = vi.fn<() => Promise<Record<string, unknown>>>();
   const fakeReadTransactions = vi.fn<() => Promise<Array<Record<string, unknown>>>>();
+  const fakeLoadCurrencyContext = vi.fn();
+  const fakeConvertUsingContext = vi.fn();
   class FakeTable<T extends { id: string }> {
     private store = new Map<string, T>();
     get(id: string): Promise<T | undefined> { return Promise.resolve(this.store.get(id)); }
@@ -15,7 +17,7 @@ const { fakeAppendEvent, fakeAppendEvents, fakeGetSnapshot, fakeReadTransactions
   const fakeCategoriesTable = new FakeTable();
   const fakeGoalsTable = new FakeTable();
   const fakeRecurringItemsTable = new FakeTable();
-  return { fakeAppendEvent, fakeAppendEvents, fakeGetSnapshot, fakeReadTransactions, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable };
+  return { fakeAppendEvent, fakeAppendEvents, fakeGetSnapshot, fakeReadTransactions, fakeLoadCurrencyContext, fakeConvertUsingContext, fakeAccountsTable, fakeCategoriesTable, fakeGoalsTable, fakeRecurringItemsTable };
 });
 
 vi.mock("@/domain/eventStore.ts", () => ({
@@ -35,6 +37,11 @@ vi.mock("@/db/schema.ts", () => ({
 vi.mock("@/domain/financialState.ts", () => ({
   getSnapshot: fakeGetSnapshot,
   readTransactionsInRange: fakeReadTransactions,
+}));
+
+vi.mock("@/domain/currencyStore.ts", () => ({
+  loadCurrencyContext: fakeLoadCurrencyContext,
+  convertUsingContext: fakeConvertUsingContext,
 }));
 
 import {
@@ -66,6 +73,7 @@ function snapshot(overrides: Record<string, unknown> = {}): Record<string, unkno
   const goals = (overrides.goals as Array<Record<string, unknown>> | undefined) ?? [];
   return {
     asOfEventId: "snapshot-event",
+    baseCurrency: "XOF",
     categories: [],
     budgets: [],
     recurringItems: [],
@@ -95,6 +103,9 @@ beforeEach(() => {
   fakeGetSnapshot.mockResolvedValue(snapshot());
   fakeReadTransactions.mockReset();
   fakeReadTransactions.mockResolvedValue([]);
+  fakeLoadCurrencyContext.mockReset();
+  fakeLoadCurrencyContext.mockResolvedValue({ baseCurrency: "XOF", rates: new Map() });
+  fakeConvertUsingContext.mockReset();
   fakeAccountsTable.clear();
   fakeCategoriesTable.clear();
   fakeGoalsTable.clear();
@@ -576,7 +587,7 @@ describe("recordTransfer", () => {
     });
   });
 
-  it("rejects self-transfers and cross-currency transfers", async () => {
+  it("rejects self-transfers", async () => {
     fakeGetSnapshot.mockResolvedValue(snapshot({
       accounts: [
         { id: "cash", currency: "XOF", isActive: true },
@@ -590,12 +601,50 @@ describe("recordTransfer", () => {
       amount: { minorUnits: 10_000, currency: "XOF" },
       masterKey: mkKey,
     })).rejects.toThrow(ValidationError);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
+  });
+
+  it("persists the converted destination amount for a cross-currency transfer", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [
+        { id: "cash", currency: "XOF", isActive: true, balance: { minorUnits: 100_000, currency: "XOF" } },
+        { id: "usd", currency: "USD", isActive: true, balance: { minorUnits: 500, currency: "USD" } },
+      ],
+    }));
+    fakeConvertUsingContext.mockReturnValue({ minorUnits: 1_650, currency: "USD" });
+
+    await recordTransfer({
+      fromAccountId: "cash",
+      toAccountId: "usd",
+      amount: { minorUnits: 10_000, currency: "XOF" },
+      masterKey: mkKey,
+    });
+
+    expect(fakeLoadCurrencyContext).toHaveBeenCalledWith(mkKey, "XOF");
+    expect(fakeAppendEvent.mock.calls[0]![0].payload).toMatchObject({
+      fromAccountId: "cash",
+      toAccountId: "usd",
+      externalDestination: null,
+      amount: { minorUnits: 10_000, currency: "XOF" },
+      destinationAmount: { minorUnits: 1_650, currency: "USD" },
+    });
+  });
+
+  it("does not append a cross-currency transfer when no rate is available", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [
+        { id: "cash", currency: "XOF", isActive: true },
+        { id: "usd", currency: "USD", isActive: true },
+      ],
+    }));
+    fakeConvertUsingContext.mockReturnValue(null);
+
     await expect(recordTransfer({
       fromAccountId: "cash",
       toAccountId: "usd",
       amount: { minorUnits: 10_000, currency: "XOF" },
       masterKey: mkKey,
-    })).rejects.toThrow(ValidationError);
+    })).rejects.toThrow(/exchange rate/i);
     expect(fakeAppendEvent).not.toHaveBeenCalled();
   });
 });

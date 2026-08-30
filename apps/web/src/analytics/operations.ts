@@ -1,4 +1,5 @@
 import type { FinancialOperation, FinancialOperationKind } from "../domain/financialOperations.ts";
+import type { MoneyDTO } from "../domain/financialState.ts";
 
 export type OperationFilters = {
   query: string;
@@ -27,12 +28,15 @@ export function filterFinancialOperations(
   const query = searchable(filters.query);
   return operations.filter((operation) => {
     if (operation.timestamp < filters.start || operation.timestamp > filters.end) return false;
-    if (filters.kind !== "all" && operation.kind !== filters.kind) return false;
+    if (filters.kind === "expense" && operation.kind !== "expense" && !operation.isLegacyExternal) return false;
+    if (filters.kind === "transfer" && (operation.kind !== "transfer" || operation.isLegacyExternal)) return false;
+    if (filters.kind !== "all" && filters.kind !== "expense" && filters.kind !== "transfer" && operation.kind !== filters.kind) return false;
     if (filters.accountId !== "all" && operation.accountId !== filters.accountId && operation.toAccountId !== filters.accountId) return false;
     if (filters.categoryId !== "all" && operation.categoryId !== filters.categoryId) return false;
     if (query === "") return true;
     const haystack = searchable([
       operation.note,
+      operation.merchant ?? "",
       operation.externalDestination ?? "",
       operation.accountId == null ? "" : index.accounts[operation.accountId] ?? "",
       operation.toAccountId == null ? "" : index.accounts[operation.toAccountId] ?? "",
@@ -43,17 +47,104 @@ export function filterFinancialOperations(
   });
 }
 
-export function operationCashTotals(operations: readonly FinancialOperation[], currency: string): { income: number; expenses: number; net: number } {
-  let income = 0;
-  let expenses = 0;
-  for (const operation of operations) {
-    if (operation.displayAmount?.currency !== currency) continue;
-    if (operation.kind === "income") income += operation.displayAmount.minorUnits;
-    if (operation.kind === "expense" || operation.kind === "planned_expense") expenses += operation.displayAmount.minorUnits;
-    if (operation.kind === "recurring_realisation" && operation.direction === "income") income += operation.displayAmount.minorUnits;
-    if (operation.kind === "recurring_realisation" && operation.direction === "expense") expenses += operation.displayAmount.minorUnits;
+export type MonthlyActivitySummary = {
+  received: MoneyDTO;
+  spent: MoneyDTO;
+  difference: MoneyDTO;
+  uncategorizedSpent: MoneyDTO;
+  missingCurrencies: string[];
+  isPartial: boolean;
+};
+
+export type MonthlyActivityInput = {
+  operations: readonly FinancialOperation[];
+  start: number;
+  end: number;
+  accountId: string | null;
+  displayCurrency: string;
+};
+
+function safeAdd(left: number, right: number): number {
+  const result = left + right;
+  if (!Number.isSafeInteger(result)) throw new RangeError("activity total exceeds the safe integer range");
+  return result;
+}
+
+export function operationEffect(
+  operation: FinancialOperation,
+  accountId: string | null,
+): "incoming" | "outgoing" | "neutral" {
+  if (operation.kind === "transfer" && !operation.isLegacyExternal) {
+    if (accountId == null) return "neutral";
+    if (operation.accountId === accountId) return "outgoing";
+    if (operation.toAccountId === accountId) return "incoming";
+    return "neutral";
   }
-  return { income, expenses, net: income - expenses };
+  if (operation.cashFlowRole === "income") return "incoming";
+  if (operation.cashFlowRole === "expense") return "outgoing";
+  return "neutral";
+}
+
+export function operationAmountForAccount(
+  operation: FinancialOperation,
+  accountId: string | null,
+): MoneyDTO | null {
+  if (accountId == null) return operation.displayAmount;
+  if (operation.kind === "transfer" && operation.toAccountId === accountId) {
+    return operation.destinationAmount ?? operation.amount;
+  }
+  return operation.amount;
+}
+
+export function summarizeMonthlyActivity(input: MonthlyActivityInput): MonthlyActivitySummary {
+  if (!Number.isSafeInteger(input.start) || !Number.isSafeInteger(input.end) || input.start < 0 || input.end < input.start) {
+    throw new RangeError("activity date range is invalid");
+  }
+  let received = 0;
+  let spent = 0;
+  let uncategorizedSpent = 0;
+  const missingCurrencies = new Set<string>();
+
+  for (const operation of input.operations) {
+    if (operation.timestamp < input.start || operation.timestamp > input.end) continue;
+    if (input.accountId != null && operation.accountId !== input.accountId && operation.toAccountId !== input.accountId) continue;
+    const effect = operationEffect(operation, input.accountId);
+    if (effect === "neutral") continue;
+    const amount = operationAmountForAccount(operation, input.accountId);
+    if (amount == null || amount.currency !== input.displayCurrency) {
+      const source = input.accountId != null && operation.toAccountId === input.accountId
+        ? operation.destinationAmount ?? operation.amount
+        : operation.amount;
+      if (source != null) missingCurrencies.add(source.currency);
+      continue;
+    }
+    const value = Math.abs(amount.minorUnits);
+    if (effect === "incoming") received = safeAdd(received, value);
+    if (effect === "outgoing") {
+      spent = safeAdd(spent, value);
+      if (operation.categoryId == null) uncategorizedSpent = safeAdd(uncategorizedSpent, value);
+    }
+  }
+
+  return {
+    received: { minorUnits: received, currency: input.displayCurrency },
+    spent: { minorUnits: spent, currency: input.displayCurrency },
+    difference: { minorUnits: safeAdd(received, -spent), currency: input.displayCurrency },
+    uncategorizedSpent: { minorUnits: uncategorizedSpent, currency: input.displayCurrency },
+    missingCurrencies: [...missingCurrencies].sort(),
+    isPartial: missingCurrencies.size > 0,
+  };
+}
+
+export function operationCashTotals(operations: readonly FinancialOperation[], currency: string): { income: number; expenses: number; net: number } {
+  const summary = summarizeMonthlyActivity({
+    operations,
+    start: 0,
+    end: Number.MAX_SAFE_INTEGER,
+    accountId: null,
+    displayCurrency: currency,
+  });
+  return { income: summary.received.minorUnits, expenses: summary.spent.minorUnits, net: summary.difference.minorUnits };
 }
 
 export function groupOperationsByLocalDay(operations: readonly FinancialOperation[]): Array<{ day: string; operations: FinancialOperation[] }> {

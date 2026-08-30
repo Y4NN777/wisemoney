@@ -22,7 +22,7 @@ from an earlier public release.
 - **Dashboard and financial history** — current and per-account balances,
   monthly activity, period comparisons, balance and cash-flow trends, category
   breakdowns, controllable alerts, adaptive first-use guidance, and a unified,
-  searchable view of all financial operations.
+  searchable monthly activity view with CSV and XLSX exports.
 - **Planning tools** — budgets, savings goals, recurring items, one-off planned
   expenses, and debt/receivable tracking with optional due dates.
 - **Local reminders and calendars** — weekly reviews, due-date and budget
@@ -64,6 +64,15 @@ from an earlier public release.
   balance is existing money rather than monthly income, while budgets explain
   that expenses are counted automatically by category and month across
   accounts, with an explicit remaining or exceeded amount.
+- **Unambiguous money movement** — moving money to another WiseMoney account is
+  an internal transfer and remains neutral in combined activity; sending money
+  to a person or business is recorded as a categorized expense. Internal
+  transfers between currencies reuse the locally managed exchange rate and
+  preserve both source and destination amounts.
+- **Smoother monthly story** — the dashboard keeps its existing hierarchy but
+  now links directly to a focused monthly Activity page. Received, spent, and
+  difference values share one calculation across the dashboard, account views,
+  daily subtotals, search, and exports.
 - **Calmer cycle closure** — the archive flow is split into preparation and
   confirmation, keeps the keyboard closed on entry, reduces repeated guidance,
   collapses the technical checksum, and separates reversible actions from the

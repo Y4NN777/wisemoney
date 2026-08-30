@@ -1,6 +1,6 @@
 export type DashboardMode = "setup" | "first-transaction" | "active";
 
-export function getDashboardMode(activeAccountCount: number, hasTransactions: boolean): DashboardMode {
+export function getDashboardMode(activeAccountCount: number, hasOperations: boolean): DashboardMode {
   if (activeAccountCount === 0) return "setup";
-  return hasTransactions ? "active" : "first-transaction";
+  return hasOperations ? "active" : "first-transaction";
 }

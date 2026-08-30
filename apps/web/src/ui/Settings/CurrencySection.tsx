@@ -402,6 +402,8 @@ export default function CurrencySection() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["financialState"] }),
       queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      queryClient.invalidateQueries({ queryKey: ["financialOperations"] }),
+      queryClient.invalidateQueries({ queryKey: ["currencyContext"] }),
     ]);
   };
 

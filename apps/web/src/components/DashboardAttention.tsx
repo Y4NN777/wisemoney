@@ -102,6 +102,8 @@ export default function DashboardAttention({ snapshot }: { snapshot: FinancialSt
   const alerts = useMemo(() => selectDashboardAlerts(snapshot), [snapshot]);
   const states = useMemo(() => loadDashboardAlertStates(), [revision]);
   const visible = useMemo(() => selectVisibleDashboardAlerts(alerts, states), [alerts, states]);
+  const informational = visible.filter((alert) => alert.severity === "info");
+  const actionable = visible.filter((alert) => alert.severity !== "info");
 
   if (visible.length === 0) return null;
 
@@ -136,28 +138,35 @@ export default function DashboardAttention({ snapshot }: { snapshot: FinancialSt
   );
 
   return (
-    <Card className="overflow-hidden border-attention/30">
+    <div className="space-y-3">
+      {informational.map((alert) => (
+        <div key={alert.id} className="overflow-hidden border border-ocean-primary/20 bg-ocean-wash/30">
+          {renderAlert(alert)}
+        </div>
+      ))}
+      {actionable.length > 0 && <Card className="overflow-hidden border-attention/30">
       <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-border pb-3">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-attention" />
           <CardTitle className="text-base">{t("dashboard.attention.title")}</CardTitle>
         </div>
-        {visible.length > 3 && (
+        {actionable.length > 3 && (
           <Sheet>
             <SheetTrigger asChild>
-              <Button type="button" variant="ghost" size="sm">{t("dashboard.attention.viewAll", { count: visible.length })}</Button>
+              <Button type="button" variant="ghost" size="sm">{t("dashboard.attention.viewAll", { count: actionable.length })}</Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-full max-w-md p-0 sm:max-w-md">
               <SheetHeader className="border-b border-border px-5 py-5 pr-12">
                 <SheetTitle>{t("dashboard.attention.allTitle")}</SheetTitle>
                 <SheetDescription>{t("dashboard.attention.description")}</SheetDescription>
               </SheetHeader>
-              <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto">{visible.map(renderAlert)}</div>
+              <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto">{actionable.map(renderAlert)}</div>
             </SheetContent>
           </Sheet>
         )}
       </CardHeader>
-      <CardContent className="p-0">{visible.slice(0, 3).map(renderAlert)}</CardContent>
-    </Card>
+      <CardContent className="p-0">{actionable.slice(0, 3).map(renderAlert)}</CardContent>
+    </Card>}
+    </div>
   );
 }

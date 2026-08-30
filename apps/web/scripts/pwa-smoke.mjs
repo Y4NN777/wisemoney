@@ -370,11 +370,12 @@ try {
   await appPage.getByRole("tab", { name: "Transfer", exact: true }).click();
   await appPage.getByLabel("From Account", { exact: true }).click();
   await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
+  await appPage.getByRole("button", { name: "To one of my accounts", exact: true }).click();
   await appPage.getByLabel(/To Account/).click();
-  await appPage.getByRole("option", { name: "Smoke Savings", exact: true }).click();
+  await appPage.getByRole("option", { name: /Smoke Savings/ }).click();
   await appPage.locator("#transfer-amount").fill("10000");
   await appPage.locator("#transfer-note").fill("Smoke transfer motive");
-  await appPage.getByRole("button", { name: "Record Transfer", exact: true }).click();
+  await appPage.getByRole("button", { name: "Move between my accounts", exact: true }).click();
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
   await appPage.getByText(/Smoke transfer motive/).waitFor();
@@ -387,8 +388,22 @@ try {
   await appPage.getByText("Balance evolution", { exact: true }).first().waitFor();
   await appPage.getByText("Money in and money out", { exact: true }).first().waitFor();
   await appPage.getByText("Spending mix", { exact: true }).first().waitFor();
-  await appPage.locator('a[href^="/operations"]').first().click();
-  await appPage.getByRole("heading", { name: "All operations", exact: true }).waitFor();
+  await appPage.getByRole("link", { name: "View this month’s activity", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Activity", exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "CSV", exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "XLSX", exact: true }).waitFor();
+  const [activityCsvDownload] = await Promise.all([
+    appPage.waitForEvent("download"),
+    appPage.getByRole("button", { name: "CSV", exact: true }).click(),
+  ]);
+  assert.match(activityCsvDownload.suggestedFilename(), /^wisemoney-activity-\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\.csv$/);
+  assert.ok(await activityCsvDownload.path(), "activity CSV download has no local path");
+  const [activityXlsxDownload] = await Promise.all([
+    appPage.waitForEvent("download"),
+    appPage.getByRole("button", { name: "XLSX", exact: true }).click(),
+  ]);
+  assert.match(activityXlsxDownload.suggestedFilename(), /^wisemoney-activity-\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\.xlsx$/);
+  assert.ok(await activityXlsxDownload.path(), "activity XLSX download has no local path");
   await appPage.getByPlaceholder("Label, account, or category", { exact: true }).fill("Smoke retained transaction");
   await appPage.getByText("Smoke retained transaction", { exact: true }).waitFor();
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();

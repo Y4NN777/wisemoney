@@ -4,6 +4,7 @@ import Dexie, { type ObservabilitySet } from "dexie";
 import { useMasterKey } from "../lib/masterKeyContext.ts";
 import { getSnapshot, replayUpTo, readTransactionsInRange } from "../domain/financialState.ts";
 import { readFinancialOperationsInRange } from "../domain/financialOperations.ts";
+import { loadCurrencyContext } from "../domain/currencyStore.ts";
 import type { TransactionDisplay } from "../domain/financialState.ts";
 import {
   recordTransaction, updateTransaction, deleteTransaction, createAccount, updateAccount,
@@ -28,6 +29,7 @@ import type { MasterKey } from "../crypto/envelope.ts";
 const SNAPSHOT_KEY = ["financialState"] as const;
 const TRANSACTIONS_KEY = ["transactions"] as const;
 const OPERATIONS_KEY = ["financialOperations"] as const;
+const CURRENCY_CONTEXT_KEY = ["currencyContext"] as const;
 const masterKeyScopes = new WeakMap<MasterKey, string>();
 
 function masterKeyScope(masterKey: MasterKey): string {
@@ -43,6 +45,7 @@ async function invalidateFinancialData(queryClient: ReturnType<typeof useQueryCl
     queryClient.invalidateQueries({ queryKey: SNAPSHOT_KEY }),
     queryClient.invalidateQueries({ queryKey: TRANSACTIONS_KEY }),
     queryClient.invalidateQueries({ queryKey: OPERATIONS_KEY }),
+    queryClient.invalidateQueries({ queryKey: CURRENCY_CONTEXT_KEY }),
   ]);
 }
 
@@ -73,6 +76,16 @@ export function useFinancialState() {
   return useQuery<FinancialStateSnapshot>({
     queryKey: [...SNAPSHOT_KEY, scope],
     queryFn: () => getSnapshot(masterKey),
+    staleTime: 30_000,
+  });
+}
+
+export function useCurrencyContext() {
+  const masterKey = useMasterKey();
+  const scope = masterKeyScope(masterKey);
+  return useQuery({
+    queryKey: [...CURRENCY_CONTEXT_KEY, scope],
+    queryFn: () => loadCurrencyContext(masterKey, "XOF"),
     staleTime: 30_000,
   });
 }

@@ -2,6 +2,7 @@ import type { MasterKey } from "@/crypto/envelope.ts";
 import { appendEvent, appendEvents } from "@/domain/eventStore.ts";
 import type { MoneyDTO, PlannedExpensePriority } from "@/domain/financialState.ts";
 import { getSnapshot, readTransactionsInRange } from "@/domain/financialState.ts";
+import { convertUsingContext, loadCurrencyContext } from "@/domain/currencyStore.ts";
 
 import type { DebtCreditKind, DebtCreditStatus } from "@/domain/financialState.ts";
 
@@ -1128,8 +1129,7 @@ export async function realiseRecurringOccurrence(
 
 export type RecordTransferParams = {
   fromAccountId: string;
-  toAccountId?: string;
-  externalDestination?: string;
+  toAccountId: string;
   amount: MoneyDTO;
   note?: string;
   masterKey: MasterKey;
@@ -1145,20 +1145,12 @@ export async function recordTransfer(
   if (!fromAccount) {
     errors.push({ field: "fromAccountId", message: "Source account not found (INV-EVT-03)" });
   }
-  if (params.toAccountId != null) {
-    const toAccount = snapshot.accounts.find((a) => a.id === params.toAccountId && a.isActive);
-    if (!toAccount) {
-      errors.push({ field: "toAccountId", message: "Destination account not found (INV-EVT-03)" });
-    }
-    if (params.toAccountId === params.fromAccountId) {
-      errors.push({ field: "toAccountId", message: "Source and destination must differ" });
-    }
-    if (fromAccount != null && toAccount != null && fromAccount.currency !== toAccount.currency) {
-      errors.push({ field: "toAccountId", message: "Destination account currency must match source account currency" });
-    }
+  const toAccount = snapshot.accounts.find((a) => a.id === params.toAccountId && a.isActive);
+  if (!toAccount) {
+    errors.push({ field: "toAccountId", message: "Destination account not found (INV-EVT-03)" });
   }
-  if (params.toAccountId == null && (params.externalDestination == null || params.externalDestination.trim().length === 0)) {
-    errors.push({ field: "externalDestination", message: "External destination is required when no internal account selected" });
+  if (params.toAccountId === params.fromAccountId) {
+    errors.push({ field: "toAccountId", message: "Source and destination must differ" });
   }
   validateMoney("amount", params.amount, errors, { positive: true });
   if (fromAccount != null && params.amount.currency !== fromAccount.currency) {
@@ -1166,12 +1158,22 @@ export async function recordTransfer(
   }
   if (fromAccount != null && Number.isSafeInteger(params.amount.minorUnits)) {
     validateSafeResult("amount", fromAccount.balance.minorUnits - params.amount.minorUnits, errors);
-    if (params.toAccountId != null) {
-      const toAccount = snapshot.accounts.find((account) => account.id === params.toAccountId && account.isActive);
-      if (toAccount != null) {
-        validateSafeResult("amount", toAccount.balance.minorUnits + params.amount.minorUnits, errors);
-      }
+  }
+  if (errors.length > 0) {
+    throw new ValidationError(errors);
+  }
+
+  let destinationAmount: MoneyDTO | null = null;
+  if (fromAccount != null && toAccount != null && fromAccount.currency !== toAccount.currency) {
+    const currencyContext = await loadCurrencyContext(params.masterKey, snapshot.baseCurrency);
+    destinationAmount = convertUsingContext(params.amount, toAccount.currency, currencyContext);
+    if (destinationAmount == null) {
+      throw new ValidationError([{ field: "exchangeRate", message: `Missing exchange rate from ${fromAccount.currency} to ${toAccount.currency}` }]);
     }
+  }
+  if (toAccount != null) {
+    const creditedAmount = destinationAmount ?? params.amount;
+    validateSafeResult("destinationAmount", toAccount.balance.minorUnits + creditedAmount.minorUnits, errors);
   }
   if (errors.length > 0) {
     throw new ValidationError(errors);
@@ -1187,9 +1189,10 @@ export async function recordTransfer(
     entityId: params.fromAccountId,
     payload: {
       fromAccountId: params.fromAccountId,
-      toAccountId: params.toAccountId ?? null,
-      externalDestination: params.externalDestination ?? null,
+      toAccountId: params.toAccountId,
+      externalDestination: null,
       amount: params.amount,
+      ...(destinationAmount == null ? {} : { destinationAmount }),
       note: params.note ?? null,
     },
     masterKey: params.masterKey,

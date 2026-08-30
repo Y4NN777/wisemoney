@@ -83,8 +83,8 @@ describe("stateless Gemini help gateway", () => {
     };
     const instruction = providerBody.systemInstruction.parts[0]?.text ?? "";
     expect(instruction).toContain("[virements] Transférer entre deux comptes et suivre le transfert");
-    expect(instruction).toContain("Ouvrez Saisie puis Transfert");
-    expect(instruction).toContain("Toutes les opérations");
+    expect(instruction).toContain("Ouvrez Saisie puis Envoyer ou déplacer de l’argent");
+    expect(instruction).toContain("ouvrez Activité");
     expect(instruction).not.toContain("[demarrage]");
     expect(instruction).not.toContain("[sauvegarde]");
   });

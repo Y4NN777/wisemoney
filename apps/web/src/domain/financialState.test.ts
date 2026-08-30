@@ -497,6 +497,34 @@ describe("replayFromInception", () => {
     ])).toThrow(/transfer currency mismatch/);
   });
 
+  it("replays a cross-currency transfer using its immutable destination amount", async () => {
+    const snapshot = await replayFromInception([
+      makeEvent({
+        id: "account-xof", timestamp: 1000, type: "account_created",
+        payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 100_000, currency: "XOF" } },
+      }),
+      makeEvent({
+        id: "account-usd", timestamp: 1100, type: "account_created",
+        payload: { name: "Savings", type: "savings", initialBalance: { minorUnits: 500, currency: "USD" } },
+      }),
+      makeEvent({
+        id: "transfer-fx", timestamp: 2000, type: "transfer_created",
+        payload: {
+          fromAccountId: "account-xof",
+          toAccountId: "account-usd",
+          externalDestination: null,
+          amount: { minorUnits: 10_000, currency: "XOF" },
+          destinationAmount: { minorUnits: 1_650, currency: "USD" },
+          note: "Travel savings",
+        },
+      }),
+    ], mkKey, 3000);
+
+    expect(snapshot.accounts.find((account) => account.id === "account-xof")?.balance).toEqual({ minorUnits: 90_000, currency: "XOF" });
+    expect(snapshot.accounts.find((account) => account.id === "account-usd")?.balance).toEqual({ minorUnits: 2_150, currency: "USD" });
+    expect(snapshot.transfers[0]?.destinationAmount).toEqual({ minorUnits: 1_650, currency: "USD" });
+  });
+
   it("rejects imported goal contributions in another currency or after archival", () => {
     const goal = {
       id: "goal-a", timestamp: 1000, type: "goal_created" as const,
