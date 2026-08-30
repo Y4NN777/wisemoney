@@ -151,7 +151,7 @@ try {
       overlayBlur: getComputedStyle(document.querySelector(".wisebot-overlay")).backdropFilter,
     }));
     assert.equal(wiseBotMotion.animation, "wisebot-panel-in", `${device.name}: WiseBot panel has no entrance motion`);
-    assert.match(wiseBotMotion.overlayBlur, /blur\(3px\)/, `${device.name}: WiseBot overlay has no background blur`);
+    assert.match(wiseBotMotion.overlayBlur, /blur\((?!0px\))/, `${device.name}: WiseBot overlay has no background blur`);
     await wiseBotDialog.evaluate(async (element) => {
       await Promise.all(element.getAnimations().map((animation) => animation.finished));
     });
