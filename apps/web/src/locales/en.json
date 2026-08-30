@@ -2,9 +2,9 @@
   "app": {
     "name": "WiseMoney",
     "loading": "Loading…",
-    "updateAvailable": "An improvement is ready",
+    "updateAvailable": "Update available",
     "updateDescription": "Installing it restarts WiseMoney and safely locks your space. Your data stays on this device.",
-    "updateNow": "Install",
+    "updateNow": "Update",
     "updateLater": "Later",
     "updateInstalling": "Installing the improvement…",
     "updateInstallingDescription": "Keep WiseMoney open for a few seconds. It will restart automatically.",

@@ -58,6 +58,32 @@ function PwaUpdateNotice({
           ? t("app.updateInstalledDescription")
           : t("app.updateFailedDescription");
 
+  if (stage === "available") {
+    return (
+      <aside
+        role="status"
+        aria-live="polite"
+        className="motion-enter fixed inset-x-3 top-[calc(var(--safe-area-top)+0.75rem)] z-[90] mx-auto max-w-md rounded-lg border border-ocean-primary/30 bg-ocean-wash/95 text-ocean-dark shadow-[0_12px_32px_rgba(0,48,73,0.16)] backdrop-blur-xl"
+      >
+        <div className="flex min-h-14 items-center gap-2 p-2.5 sm:gap-3 sm:p-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-primary text-white">
+            <Download className="h-4 w-4" />
+          </span>
+          <p className="min-w-0 flex-1 text-sm font-semibold leading-snug">{title}</p>
+          <Button type="button" size="sm" className="shrink-0" onClick={onInstall}>{t("app.updateNow")}</Button>
+          <button
+            type="button"
+            className="interactive-surface flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ocean-dark"
+            onClick={onDismiss}
+            aria-label={t("app.updateDismiss")}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside
       role={stage === "failed" ? "alert" : "status"}
@@ -65,7 +91,7 @@ function PwaUpdateNotice({
       className="motion-enter fixed inset-x-3 top-[calc(var(--safe-area-top)+0.75rem)] z-[90] mx-auto max-w-xl overflow-hidden rounded-lg border border-ocean-primary/40 bg-card/95 text-card-foreground shadow-[0_18px_48px_rgba(16,24,32,0.22)] backdrop-blur-xl"
     >
       <div className="h-1 bg-ocean-wash" aria-hidden="true">
-        <div className={`h-full bg-ocean-primary transition-[width] duration-500 ${stage === "available" ? "w-1/4" : installing ? "w-2/3" : "w-full"}`} />
+        <div className={`h-full bg-ocean-primary transition-[width] duration-500 ${installing ? "w-2/3" : "w-full"}`} />
       </div>
       <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_auto] gap-3 p-3 sm:p-4">
         <span className="flex h-10 w-10 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
@@ -76,10 +102,9 @@ function PwaUpdateNotice({
           <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{description}</p>
           {!installing && (
             <div className="mt-3 flex flex-wrap gap-2">
-              {stage === "available" && <Button type="button" size="sm" onClick={onInstall}>{t("app.updateNow")}</Button>}
               {stage === "failed" && <Button type="button" size="sm" onClick={onInstall}>{t("app.updateRetry")}</Button>}
               {stage === "installed" && <Button type="button" size="sm" variant="outline" onClick={onViewUpdates}>{t("app.viewUpdates")}</Button>}
-              {(stage === "available" || stage === "failed") && <Button type="button" size="sm" variant="ghost" onClick={onLater}>{t("app.updateLater")}</Button>}
+              {stage === "failed" && <Button type="button" size="sm" variant="ghost" onClick={onLater}>{t("app.updateLater")}</Button>}
             </div>
           )}
         </div>

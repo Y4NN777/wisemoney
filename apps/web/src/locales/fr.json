@@ -2,9 +2,9 @@
   "app": {
     "name": "WiseMoney",
     "loading": "Chargement…",
-    "updateAvailable": "Une amélioration est prête",
+    "updateAvailable": "Mise à jour disponible",
     "updateDescription": "Son installation redémarre WiseMoney et verrouille votre espace en toute sécurité. Vos données restent sur cet appareil.",
-    "updateNow": "Installer",
+    "updateNow": "Mettre à jour",
     "updateLater": "Plus tard",
     "updateInstalling": "Installation de l’amélioration…",
     "updateInstallingDescription": "Gardez WiseMoney ouvert quelques secondes. L’application redémarrera automatiquement.",
