@@ -86,7 +86,7 @@
       "usePassphrase": "Utiliser ma phrase privée",
       "webauthnAuthenticating": "Ouverture…",
       "webauthnErrors": {
-        "notConfigured": "Le déverrouillage de l'appareil n'est pas configuré",
+        "notConfigured": "Le déverrouillage de l’appareil n’est pas activé sur cet appareil",
         "failed": "Échec du déverrouillage de l'appareil"
       }
     },
@@ -144,8 +144,7 @@
           "body": "Vos données financières sont protégées sur cet appareil par une phrase privée que vous seul connaissez."
         },
         "offline": {
-          "title": "Utiliser l'app hors ligne",
-          "body": "Saisissez des transactions, gérez les comptes et consultez les budgets sans attendre un serveur."
+          "title": "Utiliser l'app hors ligne"
         },
         "ai": {
           "title": "Utiliser l'assistant quand vous êtes prêt",
@@ -258,8 +257,7 @@
           "answer": "Non. L'assistant est optionnel. S'il n'est pas configuré, WiseMoney masque ou désactive les actions intelligentes au lieu de vous forcer à les utiliser."
         },
         "sync": {
-          "question": "Et la sauvegarde en ligne ?",
-          "answer": "WiseMoney fonctionne localement dès maintenant. La sauvegarde et la synchronisation en ligne peuvent être ajoutées quand le service en ligne est connecté."
+          "question": "Et la sauvegarde en ligne ?"
         }
       }
     },
@@ -366,8 +364,7 @@
         "answer": "Non. L'assistant est optionnel. S'il n'est pas configuré, WiseMoney garde les outils normaux de gestion financière disponibles."
       },
       "sync": {
-        "question": "Puis-je sauvegarder ou synchroniser en ligne ?",
-        "answer": "La sauvegarde en ligne est optionnelle et dépend du service en ligne connecté. En attendant, WiseMoney fonctionne sur cet appareil."
+        "question": "Puis-je sauvegarder ou synchroniser en ligne ?"
       }
     }
   },
@@ -482,7 +479,6 @@
     "accountCount_one": "{{count}} compte",
     "accountCount_other": "{{count}} comptes",
     "spendingBreakdown": "Détail des dépenses",
-    "aiUnavailable": "Ajoutez une clé personnelle de fournisseur IA dans les paramètres avant de demander une analyse.",
     "analyzing": "Analyse…",
     "analyzePeriod": "Analyser cette période",
     "insightLoadFailed": "Impossible de charger l’analyse pour le moment.",
@@ -753,7 +749,6 @@
       "sectionsLabel": "Organisation de la saisie",
       "summary": "Résumé de la gestion",
       "accounts": "Comptes",
-      "managedBalance": "Solde géré",
       "customCategories": "Catégories personnalisées",
       "categories": "Catégories",
       "new": "Nouveau",
@@ -923,8 +918,7 @@
     "setupRequiredByo": "Ajoutez une clé personnelle de fournisseur dans les paramètres pour utiliser l’assistant.",
     "setupRequiredEdge": "Ajoutez une clé personnelle de fournisseur ou connectez votre compte en ligne pour utiliser l’assistant.",
     "smartFeaturesPreparing": "Cette fonctionnalité intelligente est en préparation. Vos données et toutes les fonctions normales de WiseMoney restent disponibles.",
-    "emptyPaused": "Les fonctions d'IA sont en pause tant que vous n'avez pas configuré une clé de fournisseur ou connecté la passerelle gérée.",
-    "aiNoticeTitle": "L'IA est facultative et non configurée",
+    "aiNoticeTitle": "L’assistant est facultatif",
     "aiNoticeAction": "Configurer les clés IA",
     "tabs": {
       "insights": "Analyses",
@@ -934,7 +928,7 @@
       "insight": {
         "name": "Analyse des dépenses",
         "purpose": "Analyser vos habitudes de dépenses et identifier des tendances",
-        "provider": "Votre routage de fournisseurs configuré",
+        "provider": "Le fournisseur que vous avez choisi",
         "description": "Détecte les anomalies, tendances et changements notables dans vos finances",
         "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -942,7 +936,7 @@
       "recommendation": {
         "name": "Recommandation",
         "purpose": "Suggérer des actions concrètes pour améliorer votre situation financière",
-        "provider": "Votre routage de fournisseurs configuré",
+        "provider": "Le fournisseur que vous avez choisi",
         "description": "Génère des ajustements budgétaires, des suggestions d'épargne et des compromis de dépenses",
         "redactedData": "Totaux de période, progression des budgets et objectifs — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -950,7 +944,7 @@
       "prediction": {
         "name": "Prévision",
         "purpose": "Projeter le solde de fin de mois et les dates d'épuisement des budgets",
-        "provider": "Votre routage de fournisseurs configuré",
+        "provider": "Le fournisseur que vous avez choisi",
         "description": "Prévoit votre trajectoire financière basée sur les données actuelles et les éléments récurrents",
         "redactedData": "Revenus/dépenses de période, récurrents projetés, limites budgétaires — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -958,7 +952,7 @@
       "patternDetection": {
         "name": "Détection de schémas",
         "purpose": "Détecter les habitudes de dépenses récurrentes et les dépendances entre catégories",
-        "provider": "Votre routage de fournisseurs configuré",
+        "provider": "Le fournisseur que vous avez choisi",
         "description": "Identifie les schémas comportementaux comme les restaurants fréquents, l'inflation d'abonnements ou la concentration par catégorie",
         "redactedData": "Agrégats par catégorie, état des budgets, comparaisons de période — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -966,7 +960,7 @@
       "literacy": {
         "name": "Chat pédagogique",
         "purpose": "Expliquer les concepts de finances personnelles en langage simple",
-        "provider": "Votre routage de fournisseurs configuré",
+        "provider": "Le fournisseur que vous avez choisi",
         "description": "Répond à vos questions sur la budgétisation, l'épargne, les flux de trésorerie, etc. — en lien avec vos données",
         "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
@@ -986,7 +980,6 @@
     "chat": {
       "title": "Chat d'éducation financière",
       "description": "Posez des questions sur les finances personnelles",
-      "paused": "Le chat est en pause jusqu’à ce que vous configuriez une clé fournisseur ou connectiez le service géré.",
       "emptyTitle": "Posez une question pour commencer à apprendre",
       "emptyExample": "p. ex. \"Qu'est-ce que la règle 50/30/20 ?\"",
       "placeholder": "Posez une question…",
@@ -1386,7 +1379,7 @@
       "foregroundSound": "Son lorsque WiseMoney est ouvert",
       "soundHelp": "Un son discret peut être joué dans l’application. Lorsque WiseMoney est fermé, le son dépend des réglages du téléphone et du navigateur.",
       "exportCalendar": "Ajouter la revue au calendrier",
-      "bestEffort": "Sans serveur, les notifications système peuvent arriver en retard lorsque WiseMoney est fermé. Le centre de rappels se met à jour à chaque ouverture ; ajouter l’échéance au calendrier reste le moyen le plus fiable.",
+      "bestEffort": "Lorsque WiseMoney est fermé, les notifications système peuvent arriver en retard. Le centre de rappels se met à jour à chaque ouverture ; ajouter l’échéance au calendrier reste le moyen le plus fiable.",
       "permission": {
         "default": "Autorisation non demandée",
         "granted": "Notifications système autorisées",
@@ -1565,7 +1558,7 @@
       "defaultChangedBody": "Votre devise par défaut a été mise à jour.",
       "rateAdded": "Taux ajouté : {{pair}} = {{rate}}",
       "rateRemoved": "Taux supprimé",
-      "securityNote": "Les taux de change sont chiffrés sur cet appareil et ne sont jamais envoyés au serveur. Les conversions utilisent l’arrondi au pair avec le taux décimal exact.",
+      "securityNote": "Les taux de change sont chiffrés et restent sur cet appareil. Les conversions utilisent l’arrondi au pair avec le taux décimal exact.",
       "save": "Enregistrer",
       "saving": "Enregistrement…",
       "errors": {
@@ -1693,9 +1686,7 @@
     "optional": "optionnelle",
     "noCategories": "Aucune catégorie. Créez-en une dans Gérer."
   },
-  "errors": {
-    "httpsRequired": "HTTPS est requis en production pour la sécurité. Définissez VITE_EDGE_BASE_URL avec une URL https://."
-  },
+  "errors": {},
   "captureSheet": {
     "cashName": "Espèces",
     "date": "Date",

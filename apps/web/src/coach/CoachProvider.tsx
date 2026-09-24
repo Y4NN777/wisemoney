@@ -176,7 +176,9 @@ export function CoachProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!ready || snapshot == null || nudge != null) return;
+    // A tip is never chosen while a dialog or sheet is open: deciding then would record it as
+    // shown and pop it the instant the form closes. The effect re-runs when the dialog closes.
+    if (!ready || snapshot == null || nudge != null || modalOpen) return;
     const now = Date.now();
     const planningUsed = snapshot.budgets.length + snapshot.goals.length + snapshot.plannedExpenses.length +
       snapshot.recurringItems.length + snapshot.debtCredits.length > 0;
@@ -205,7 +207,7 @@ export function CoachProvider({ children }: { children: ReactNode }) {
     setSessionNudgeShown(true);
     setNudge(decision.nudge);
     if (decision.nudge.kind === "recovery") setRepeatedTaskId(null);
-  }, [history, i18n.language, i18n.resolvedLanguage, milestones, nudge, pathname, ready, reminders.settings.enabled, repeatedFaultCode, repeatedTaskId, sessionNudgeShown, settings, snapshot, wiseBot.isOpen]);
+  }, [history, i18n.language, i18n.resolvedLanguage, milestones, modalOpen, nudge, pathname, ready, reminders.settings.enabled, repeatedFaultCode, repeatedTaskId, sessionNudgeShown, settings, snapshot, wiseBot.isOpen]);
 
   useEffect(() => {
     if (nudge == null || !canScheduleCoachNotification(settings, history) || notificationPermission !== "granted") return;

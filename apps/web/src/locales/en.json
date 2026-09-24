@@ -86,7 +86,7 @@
       "usePassphrase": "Use my private passphrase",
       "webauthnAuthenticating": "Opening…",
       "webauthnErrors": {
-        "notConfigured": "Device unlock is not configured",
+        "notConfigured": "Device unlock is not set up on this device",
         "failed": "Device unlock failed"
       }
     },
@@ -144,8 +144,7 @@
           "body": "Your financial records are protected on this device with a passphrase only you know."
         },
         "offline": {
-          "title": "Use the app offline",
-          "body": "Capture transactions, manage accounts, and review budgets without waiting for a server."
+          "title": "Use the app offline"
         },
         "ai": {
           "title": "Use the assistant when ready",
@@ -258,8 +257,7 @@
           "answer": "No. The assistant is optional. If it is not set up, WiseMoney will hide or disable smart actions instead of asking you to use them."
         },
         "sync": {
-          "question": "What about online backup and sync?",
-          "answer": "WiseMoney works locally now. Online backup and sync can be added when the online service is connected."
+          "question": "What about online backup and sync?"
         }
       }
     },
@@ -366,8 +364,7 @@
         "answer": "No. The assistant is optional. If it is not set up, WiseMoney keeps the normal finance tools available."
       },
       "sync": {
-        "question": "Can I back up or sync online?",
-        "answer": "Online backup is optional and depends on the online service being connected. Until then, WiseMoney works on this device."
+        "question": "Can I back up or sync online?"
       }
     }
   },
@@ -482,7 +479,6 @@
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "spendingBreakdown": "Spending breakdown",
-    "aiUnavailable": "Add a personal AI provider key in Settings before requesting an AI insight.",
     "analyzing": "Analyzing…",
     "analyzePeriod": "Analyze this period",
     "insightLoadFailed": "Could not load insight right now.",
@@ -753,7 +749,6 @@
       "sectionsLabel": "Capture organization",
       "summary": "Management summary",
       "accounts": "Accounts",
-      "managedBalance": "Managed balance",
       "customCategories": "Custom categories",
       "categories": "Categories",
       "new": "New",
@@ -923,8 +918,7 @@
     "setupRequiredByo": "Add a personal provider key in Settings to use the assistant.",
     "setupRequiredEdge": "Add a personal provider key or connect your online account to use the assistant.",
     "smartFeaturesPreparing": "This smart feature is being prepared. Your records and all standard WiseMoney features remain available.",
-    "emptyPaused": "AI features are paused until you configure a provider key or connect the managed service.",
-    "aiNoticeTitle": "AI is optional and not configured",
+    "aiNoticeTitle": "The assistant is optional",
     "aiNoticeAction": "Configure AI keys",
     "tabs": {
       "insights": "Insights",
@@ -934,7 +928,7 @@
       "insight": {
         "name": "Spending Insight",
         "purpose": "Analyse your spending patterns and surface observations",
-        "provider": "Your configured provider routing",
+        "provider": "The provider you chose",
         "description": "Finds anomalies, trends, and notable changes in your finances",
         "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -942,7 +936,7 @@
       "recommendation": {
         "name": "Recommendation",
         "purpose": "Suggest concrete actions to improve your financial situation",
-        "provider": "Your configured provider routing",
+        "provider": "The provider you chose",
         "description": "Generates budget adjustments, savings suggestions, and spending trade-offs",
         "redactedData": "Period totals, budget progress, goal progress — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -950,7 +944,7 @@
       "prediction": {
         "name": "Prediction",
         "purpose": "Project end-of-month balance and budget exhaustion dates",
-        "provider": "Your configured provider routing",
+        "provider": "The provider you chose",
         "description": "Forecasts your financial trajectory based on current data and recurring items",
         "redactedData": "Period income/expenses, projected recurring items, budget limits — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -958,7 +952,7 @@
       "patternDetection": {
         "name": "Pattern Detection",
         "purpose": "Detect recurring spending habits and category dependencies",
-        "provider": "Your configured provider routing",
+        "provider": "The provider you chose",
         "description": "Identifies behavioural patterns like frequent dining, subscription creep, or category concentration",
         "redactedData": "Category-level aggregates, budget status, period comparisons — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -966,7 +960,7 @@
       "literacy": {
         "name": "Learning Chat",
         "purpose": "Explain personal finance concepts in plain language",
-        "provider": "Your configured provider routing",
+        "provider": "The provider you chose",
         "description": "Answers questions about budgeting, saving, cash flow, and more — tied to your data",
         "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
@@ -986,7 +980,6 @@
     "chat": {
       "title": "Financial Literacy Chat",
       "description": "Ask anything about personal finance",
-      "paused": "Chat is paused until you configure a provider key or connect the managed service.",
       "emptyTitle": "Ask a question to start learning",
       "emptyExample": "e.g. \"What is the 50/30/20 rule?\"",
       "placeholder": "Ask a question…",
@@ -1386,7 +1379,7 @@
       "foregroundSound": "Sound while WiseMoney is open",
       "soundHelp": "A quiet sound can play inside the app. When WiseMoney is closed, sound depends on your phone and browser settings.",
       "exportCalendar": "Add review to calendar",
-      "bestEffort": "Without a server, system notifications may arrive late while WiseMoney is closed. The reminder center refreshes whenever the app opens; adding the due date to your calendar remains the most reliable option.",
+      "bestEffort": "While WiseMoney is closed, system notifications may arrive late. The reminder center refreshes whenever the app opens; adding the due date to your calendar remains the most reliable option.",
       "permission": {
         "default": "Permission not requested",
         "granted": "System notifications allowed",
@@ -1565,7 +1558,7 @@
       "defaultChangedBody": "Your default currency has been updated.",
       "rateAdded": "Rate added: {{pair}} = {{rate}}",
       "rateRemoved": "Rate removed",
-      "securityNote": "Exchange rates are encrypted on this device and never sent to the server. Conversions use half-even rounding with the exact decimal rate.",
+      "securityNote": "Exchange rates are encrypted and stay on this device. Conversions use half-even rounding with the exact decimal rate.",
       "save": "Save",
       "saving": "Saving…",
       "errors": {
@@ -1693,9 +1686,7 @@
     "optional": "optional",
     "noCategories": "No categories yet. Create one in Manage."
   },
-  "errors": {
-    "httpsRequired": "HTTPS is required in production for security. Set VITE_EDGE_BASE_URL to an https:// URL."
-  },
+  "errors": {},
   "captureSheet": {
     "cashName": "Cash",
     "date": "Date",

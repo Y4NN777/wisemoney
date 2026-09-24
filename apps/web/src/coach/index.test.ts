@@ -21,6 +21,7 @@ describe("WiseBot coach decisions", () => {
     const history = resetCoachHistory(NOW - DAY);
     expect(decideCoachNudge(context({ sessionStartedAt: NOW - 19_999 }), DEFAULT_COACH_SETTINGS, history, NOW)).toMatchObject({ reason: "too-early" });
     expect(decideCoachNudge(context({ interactionBusy: true }), DEFAULT_COACH_SETTINGS, history, NOW)).toMatchObject({ reason: "busy" });
+    expect(decideCoachNudge(context({ wiseBotOpen: true }), DEFAULT_COACH_SETTINGS, history, NOW)).toMatchObject({ reason: "busy" });
   });
 
   it("prioritises recovery, then first account and first transaction", () => {

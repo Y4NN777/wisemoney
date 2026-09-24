@@ -304,6 +304,7 @@ export default function HelpChat({
             ref={panelRef}
             role="dialog"
             aria-modal="true"
+            data-state="open"
             aria-label={t("helpPage.chat.title")}
             className="wisebot-panel relative z-10 flex h-[100dvh] w-screen flex-col overflow-hidden bg-background text-foreground sm:mb-3 sm:h-[min(680px,calc(100dvh-7rem))] sm:w-[min(410px,calc(100vw-2rem))] sm:border sm:border-foreground/20 sm:shadow-[0_18px_48px_rgba(16,24,32,0.16)]"
           >

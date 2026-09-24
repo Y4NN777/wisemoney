@@ -36,14 +36,25 @@ describe("localization resources", () => {
     expect(en.dashboard.greeting.messages).toHaveLength(GREETING_MESSAGE_COUNT);
   });
 
-  it("keeps implementation jargon out of user-facing offline guidance", () => {
-    for (const resource of [en, fr]) {
-      const guidance = [
-        resource.helpPage.footer.privateBody,
-        resource.helpPage.footer.offlineBody,
-        resource.reminders.settings.bestEffort,
-      ].join(" ");
-      expect(guidance).not.toMatch(/\bPWA\b/i);
+  it("keeps deployment and infrastructure vocabulary out of every user-facing string", () => {
+    // ux-simplification decision 6: the product never talks about servers, deployments or its own plumbing.
+    const forbidden = [
+      /\bPWA\b/i, /\bservers?\b/i, /\bserveurs?\b/i, /d[ée]ploi/i, /deploy/i, /VITE_/, /\bbackend\b/i, /\bproxy\b/i,
+      /online service/i, /service en ligne/i, /\bedge\b/i, /managed service/i, /service g[ée]r[ée]/i, /passerelle/i,
+      /\bnot configured\b/i, /non configur/i,
+    ];
+    const offenders: string[] = [];
+    for (const [name, resource] of [["en", en], ["fr", fr]] as const) {
+      const walk = (value: unknown, path: string) => {
+        if (typeof value === "string") {
+          const hit = forbidden.find((pattern) => pattern.test(value));
+          if (hit != null) offenders.push(`${name}:${path} (${hit.source})`);
+        } else if (value != null && typeof value === "object") {
+          for (const [key, child] of Object.entries(value)) walk(child, path === "" ? key : `${path}.${key}`);
+        }
+      };
+      walk(resource, "");
     }
+    expect(offenders).toEqual([]);
   });
 });
