@@ -62,7 +62,7 @@ export default function ReminderSettingsSection({
 
   return (
     <div className="space-y-5">
-      <section className="grid gap-4 border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+      <section className="grid gap-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
         <div>
           <SettingToggle
             checked={settings.enabled}
@@ -77,7 +77,7 @@ export default function ReminderSettingsSection({
         </span>
       </section>
 
-      <section className="grid gap-3 border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+      <section className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
         <div>
           <SettingToggle
             checked={settings.foregroundSound}
@@ -89,7 +89,7 @@ export default function ReminderSettingsSection({
         <Volume2 className="h-5 w-5 text-ocean-primary" />
       </section>
 
-      <section aria-label={t("reminders.settings.typesTitle")} className="divide-y divide-border border border-border bg-card">
+      <section aria-label={t("reminders.settings.typesTitle")} className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
         {(Object.keys(settings.types) as ReminderType[]).map((type) => (
           <div key={type} className="grid gap-3 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(9rem,14rem)] sm:items-center">
             <div>
@@ -118,7 +118,7 @@ export default function ReminderSettingsSection({
         ))}
       </section>
 
-      <section className="grid gap-4 border border-border bg-card p-4 sm:grid-cols-2">
+      <section className="grid gap-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="reminder-weekday">{t("reminders.settings.weekday")}</Label>
           <Select

@@ -17,7 +17,7 @@ export default function Logo({ variant = "full", className }: LogoProps) {
       className={className}
       aria-label="WiseMoney icon"
     >
-      <rect x="2" y="2" width="96" height="96" rx="16" fill="#0077b6" />
+      <circle cx="50" cy="50" r="48" fill="#0077b6" />
       <path
         d="M22 70 C22 70 28 30 38 30 C44 30 46 50 50 55 C54 50 56 30 62 30 C72 30 78 70 78 70"
         stroke="white"
@@ -50,7 +50,7 @@ export default function Logo({ variant = "full", className }: LogoProps) {
           <stop offset="100%" stopColor="#00b4d8" />
         </linearGradient>
       </defs>
-      <rect x="2" y="2" width="96" height="96" rx="16" fill={`url(#${gradientId})`} />
+      <circle cx="50" cy="50" r="48" fill={`url(#${gradientId})`} />
       <path
         d="M22 70 C22 70 28 30 38 30 C44 30 46 50 50 55 C54 50 56 30 62 30 C72 30 78 70 78 70"
         stroke="white"

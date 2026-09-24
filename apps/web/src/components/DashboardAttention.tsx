@@ -143,7 +143,7 @@ export default function DashboardAttention({ snapshot, limit = null }: { snapsho
   return (
     <div className="space-y-3">
       {informational.map((alert) => (
-        <div key={alert.id} className="overflow-hidden border border-ocean-primary/20 bg-ocean-wash/30">
+        <div key={alert.id} className="overflow-hidden rounded-lg border border-ocean-primary/20 bg-ocean-wash/30">
           {renderAlert(alert)}
         </div>
       ))}

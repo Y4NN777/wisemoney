@@ -131,7 +131,7 @@ export function BalanceTrendChart({ points, currency, periodStart, accountId }: 
   }));
   return (
     <div className="space-y-3">
-      <div className="h-52 overflow-hidden border border-border bg-card">
+      <div className="h-52 overflow-hidden rounded-lg border border-border bg-card">
         <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t("dashboard.balanceTrend")} className="h-full w-full">
           <line x1={paddingX} x2={width - paddingX} y1={height - paddingY} y2={height - paddingY} stroke="var(--border)" />
           <polyline points={coordinates.map((point) => `${point.x},${point.y}`).join(" ")} fill="none" stroke="var(--ocean-primary)" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter" />

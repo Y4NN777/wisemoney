@@ -82,7 +82,7 @@ function CoachCard({ nudge, onLater, onDismiss, onHelp, onBot }: {
       <aside
         aria-label={locale === "fr" ? "Conseil WiseBot" : "WiseBot tip"}
         data-closing={closing ? "true" : undefined}
-        className={`coach-card fixed inset-x-3 bottom-[calc(4.75rem+var(--safe-area-bottom))] z-[80] border border-ocean-primary bg-card shadow-[0_16px_44px_rgba(16,24,32,0.22)] sm:left-auto sm:right-5 sm:w-[min(390px,calc(100vw-2rem))] lg:bottom-5 ${closing ? "coach-card-closing" : ""}`}
+        className={`coach-card fixed inset-x-3 bottom-[calc(4.75rem+var(--safe-area-bottom))] z-[80] overflow-hidden rounded-2xl border border-ocean-primary bg-card shadow-[0_16px_44px_rgba(16,24,32,0.22)] sm:left-auto sm:right-5 sm:w-[min(390px,calc(100vw-2rem))] lg:bottom-5 ${closing ? "coach-card-closing" : ""}`}
       >
         <div className="grid grid-cols-[3.25rem_1fr_2.75rem] border-b border-border">
           <span className="flex items-center justify-center border-r border-border bg-ocean-primary text-white"><Bot className="h-5 w-5" /></span>

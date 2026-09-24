@@ -52,7 +52,7 @@ export function FinancialOverview({
     : periodMonth;
 
   return (
-    <section aria-label={t("dashboard.balanceSummary")} className="situation-line grid gap-px overflow-hidden border border-border bg-border lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
+    <section aria-label={t("dashboard.balanceSummary")} className="situation-line grid gap-px overflow-hidden rounded-lg border border-border bg-border lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
           <div>

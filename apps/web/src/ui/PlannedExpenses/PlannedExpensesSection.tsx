@@ -378,7 +378,7 @@ export function PlannedExpensesSection({
                 <p className="p-5 text-sm text-muted-foreground">{t("capture.plannedExpenses.emptyPriority")}</p>
               ) : (
                 <ul className="grid gap-3 p-3 lg:block lg:divide-y lg:divide-border lg:p-0">{items.map((item) => (
-                  <li key={item.id} className="grid gap-4 border border-border bg-card p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start lg:border-0">
+                  <li key={item.id} className="grid gap-4 rounded-lg border border-border bg-card p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start lg:border-0">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                         <p className="font-semibold">{item.label}</p>
@@ -485,7 +485,7 @@ export function PlannedExpensesSection({
               <div className="grid grid-cols-[1fr_auto] gap-2"><Input id="planned-actual" inputMode="decimal" value={actualAmount} onChange={(event) => setActualAmount(event.target.value)} required /><span className="flex items-center border-l border-border pl-3 text-sm font-semibold">{completing.estimatedAmount.currency}</span></div>
             </div>
             {compatibleAccounts.length === 0 ? (
-              <div className="border border-primary/30 bg-muted p-4">
+              <div className="rounded-lg border border-primary/30 bg-muted p-4">
                 <p className="text-sm">{t("capture.plannedExpenses.noCompatibleAccount", { currency: completing.estimatedAmount.currency })}</p>
                 <Button type="button" variant="outline" className="mt-3" onClick={() => { setCompleting(null); onOpenAccounts(); }}>{t("capture.plannedExpenses.openAccounts")}</Button>
               </div>

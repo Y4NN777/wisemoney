@@ -306,7 +306,7 @@ export default function HelpChat({
             aria-modal="true"
             data-state="open"
             aria-label={t("helpPage.chat.title")}
-            className="wisebot-panel relative z-10 flex h-[100dvh] w-screen flex-col overflow-hidden bg-background text-foreground sm:mb-3 sm:h-[min(680px,calc(100dvh-7rem))] sm:w-[min(410px,calc(100vw-2rem))] sm:border sm:border-foreground/20 sm:shadow-[0_18px_48px_rgba(16,24,32,0.16)]"
+            className="wisebot-panel relative z-10 flex h-[100dvh] w-screen flex-col overflow-hidden bg-background text-foreground sm:mb-3 sm:h-[min(680px,calc(100dvh-7rem))] sm:w-[min(410px,calc(100vw-2rem))] sm:rounded-2xl sm:border sm:border-foreground/20 sm:shadow-[0_18px_48px_rgba(16,24,32,0.16)]"
           >
           <header className="grid min-h-14 grid-cols-[3.25rem_1fr_2.75rem_2.75rem_2.75rem] border-b border-border">
             <div className="flex items-center justify-center border-r border-border bg-ocean-primary">
@@ -339,7 +339,7 @@ export default function HelpChat({
 
           <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3" aria-live="polite">
             {showConsent && (
-              <section className="border border-ocean-primary bg-ocean-wash p-3 text-left" aria-label={t("helpPage.chat.consent.title")}>
+              <section className="rounded-lg border border-ocean-primary bg-ocean-wash p-3 text-left" aria-label={t("helpPage.chat.consent.title")}>
                 <div className="flex items-start gap-2">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-ocean-primary" />
                   <div>
@@ -402,7 +402,7 @@ export default function HelpChat({
             ))}
 
             {!showConsent && ticket?.status === "waiting" && (
-              <div className="border border-border bg-card p-3 text-xs" role="status">
+              <div className="rounded-lg border border-border bg-card p-3 text-xs" role="status">
                 <div className="flex items-center gap-2 font-semibold">
                   <LoaderCircle className="h-4 w-4 animate-spin text-ocean-primary" />
                   {t("helpPage.chat.queuePosition", { position: ticket.position })}
@@ -426,8 +426,8 @@ export default function HelpChat({
               </p>
             )}
             {imageDataUrl != null && (
-              <div className="mb-2 flex items-center gap-2 border border-border p-2">
-                <img src={imageDataUrl} alt={t("helpPage.chat.imagePreview")} className="h-12 w-12 object-cover" />
+              <div className="mb-2 flex items-center gap-2 rounded-md border border-border p-2">
+                <img src={imageDataUrl} alt={t("helpPage.chat.imagePreview")} className="h-12 w-12 rounded-md object-cover" />
                 <span className="min-w-0 flex-1 text-xs text-muted-foreground">{t("helpPage.chat.imageCost")}</span>
                 <Button type="button" size="icon" variant="ghost" className="h-8 w-8" onClick={() => setImageDataUrl(null)} aria-label={t("helpPage.chat.removeImage")}>
                   <Trash2 className="h-4 w-4" />
@@ -448,7 +448,7 @@ export default function HelpChat({
                 disabled={!online || submitting}
                 placeholder={t("helpPage.chat.placeholder")}
                 aria-label={t("helpPage.chat.placeholder")}
-                className="min-h-10 resize-none border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:border-primary"
+                className="min-h-10 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:border-primary"
               />
               <Button type="submit" size="icon" disabled={!online || submitting || imageBusy || input.trim().length === 0} aria-label={t("helpPage.chat.send")}>
                 <Send className="h-4 w-4" />
@@ -466,7 +466,7 @@ export default function HelpChat({
             setOpen(true);
             onOpenChange?.(true);
           }}
-          className={`${window.location.pathname === "/help" ? "hidden sm:flex" : "flex"} h-12 w-12 items-center justify-center border border-ocean-primary bg-card shadow-[0_8px_24px_rgba(16,24,32,0.14)] transition-transform hover:-translate-y-0.5 sm:h-14 sm:w-14`}
+          className={`${window.location.pathname === "/help" ? "hidden sm:flex" : "flex"} h-12 w-12 items-center justify-center rounded-full border border-ocean-primary bg-card shadow-[0_8px_24px_rgba(16,24,32,0.14)] transition-transform hover:-translate-y-0.5 sm:h-14 sm:w-14`}
           aria-label={t("helpPage.chat.open")}
           title={t("helpPage.chat.open")}
         >

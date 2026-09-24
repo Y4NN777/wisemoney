@@ -21,12 +21,12 @@ export default function HelpActions({ compact = false }: HelpActionsProps) {
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-2">
       <Button
         type="button"
         variant="outline"
         size={compact ? "icon" : "sm"}
-        className={compact ? "h-9 w-9" : "gap-2"}
+        className={compact ? "h-9 w-9" : "h-9 gap-2 px-3"}
         onClick={() => openHelp()}
         aria-label={t("helpPage.open")}
       >
@@ -36,7 +36,7 @@ export default function HelpActions({ compact = false }: HelpActionsProps) {
       {!install.installed && (
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="icon"
           className="h-9 w-9 text-ocean-primary"
           onClick={handleInstall}

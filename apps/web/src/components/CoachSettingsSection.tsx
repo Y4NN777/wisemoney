@@ -18,14 +18,14 @@ export default function CoachSettingsSection() {
   const coach = useCoach();
   return (
     <div className="space-y-4">
-      <section className="grid gap-4 border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+      <section className="grid gap-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
         <div>
           <SettingToggle checked={coach.settings.inAppEnabled} label={t("coach.settings.inApp")} onChange={coach.updateInApp} />
           <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">{t("coach.settings.inAppHelp")}</p>
         </div>
         <Bot className="h-5 w-5 text-ocean-primary" />
       </section>
-      <section className="grid gap-4 border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+      <section className="grid gap-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
         <div>
           <SettingToggle checked={coach.settings.notificationsEnabled} label={t("coach.settings.notifications")} onChange={(enabled) => { void coach.updateNotifications(enabled); }} />
           <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">{t("coach.settings.notificationsHelp")}</p>

@@ -188,7 +188,7 @@ export default function Operations() {
         </div>
       </header>
 
-      <section aria-label={t("operations.summary")} className="grid divide-y divide-border border border-border bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+      <section aria-label={t("operations.summary")} className="grid divide-y divide-border overflow-hidden rounded-lg border border-border bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {([
           { key: "received", amount: totals.received, tone: totals.received.minorUnits > 0 ? "text-positive" : "text-foreground" },
           { key: "spent", amount: totals.spent, tone: totals.spent.minorUnits > 0 ? "text-negative" : "text-foreground" },

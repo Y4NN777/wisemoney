@@ -24,7 +24,7 @@ function AccountsCategoriesSection() {
   const [section, setSection] = useState<ManageSection>("accounts");
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 border border-border bg-muted" role="tablist" aria-label={t("capture.manage.sectionsLabel")}>
+      <div className="grid grid-cols-2 overflow-hidden rounded-lg border border-border bg-muted" role="tablist" aria-label={t("capture.manage.sectionsLabel")}>
         {(["accounts", "categories"] as const).map((candidate) => (
           <button
             key={candidate}

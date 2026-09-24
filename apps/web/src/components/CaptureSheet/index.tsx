@@ -573,7 +573,7 @@ function TransferForm({ onDone }: { onDone: () => void }) {
             <p className="mt-1 text-xs text-muted-foreground">{t("capture.transfer.conversionSaved")}</p>
           </div>
         ) : !currencyContextQuery.isLoading ? (
-          <div className="border border-border bg-accent/45 p-3 text-sm">
+          <div className="rounded-lg border border-border bg-accent/45 p-3 text-sm">
             <p className="font-medium text-foreground">{t("capture.transfer.errors.missingRate", { from: sourceAccount?.currency, to: targetAccount?.currency })}</p>
             <Button asChild type="button" variant="link" className="mt-1 h-auto p-0 text-ocean-primary">
               <Link to="/settings">{t("capture.transfer.addRate")}</Link>

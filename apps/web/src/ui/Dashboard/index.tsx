@@ -68,7 +68,7 @@ function DashboardQuickActions() {
   const openCapture = useOpenCaptureSheet();
   const quickActionClass = "h-auto min-w-0 justify-start whitespace-normal bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4";
   return (
-    <nav aria-label={t("dashboard.quickActions")} className="grid grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-4">
+    <nav aria-label={t("dashboard.quickActions")} className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-4">
       <Button type="button" variant="ghost" className={quickActionClass} onClick={() => openCapture("transaction", "expense")}>
         <ArrowUp className="mr-2 h-4 w-4 text-negative" />{t("dashboard.addExpense")}
       </Button>
@@ -427,7 +427,7 @@ function DashboardContent({
                       {account.share == null ? (
                         <p className="text-[11px] text-muted-foreground">{t("dashboard.accountShareUnavailable")}</p>
                       ) : (
-                        <div className="h-1.5 overflow-hidden bg-muted"><div className="h-full bg-ocean-primary" style={{ width: `${Math.min(100, account.share)}%` }} /></div>
+                        <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-ocean-primary" style={{ width: `${Math.min(100, account.share)}%` }} /></div>
                       )}
                     </div>
                   ))}

@@ -106,12 +106,12 @@ function AccountCurrencyPicker({ value, onChange }: { value: string; onChange: (
   return (
     <div ref={rootRef} className="relative min-w-0">
       <button id="accCurrency" type="button" aria-expanded={open} aria-haspopup="listbox" onClick={() => setOpen((current) => !current)}
-        className="flex min-h-12 w-full items-center justify-between gap-3 border border-input bg-background px-3 py-2 text-left text-sm">
+        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-input bg-background px-3 py-2 text-left text-sm">
         <span className="min-w-0 truncate font-semibold">{selected == null ? value : `${selected.code} — ${selected.name}`}</span>
         <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
       </button>
       {open && (
-        <div className="absolute inset-x-0 top-[calc(100%+0.25rem)] z-50 border border-border bg-popover text-popover-foreground shadow-lg">
+        <div className="absolute inset-x-0 top-[calc(100%+0.25rem)] z-50 rounded-md border border-border bg-popover text-popover-foreground shadow-lg">
           <div className="border-b border-border p-2">
             <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("capture.manage.currencySearch", { currency: value })} autoFocus />
           </div>

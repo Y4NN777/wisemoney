@@ -78,12 +78,12 @@ export default function HelpPage() {
                 <span className="text-7xl font-bold tabular-nums sm:text-8xl">{sections.length}</span>
                 <span className="max-w-32 text-sm leading-tight">{t("helpPage.paths")}</span>
               </div>
-              <div className="help-orbit relative overflow-hidden bg-muted p-5 sm:p-7" aria-hidden="true">
+              <div className="help-orbit relative overflow-hidden rounded-2xl bg-muted p-5 sm:p-7" aria-hidden="true">
                 <div className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0077b6]" />
                 <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0077b6] bg-card" />
                 <div className="absolute left-[calc(50%-0.5rem)] top-[calc(50%-0.5rem)] h-4 w-4 bg-[#0077b6]" />
                 <div className="absolute left-[18%] top-[22%] h-3 w-3 bg-[#0077b6]" />
-                <div className="absolute bottom-[20%] right-[16%] h-3 w-3 border border-[#0077b6] bg-card" />
+                <div className="absolute bottom-[20%] right-[16%] h-3 w-3 rounded-full border border-[#0077b6] bg-card" />
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function HelpPage() {
                 placeholder={t("helpPage.searchPlaceholder")}
                 className="h-12 border-foreground/20 bg-background pl-10 pr-14 text-base shadow-none hover:border-[#0077b6]/50 focus-visible:border-[#0077b6] focus-visible:ring-[#0077b6]"
               />
-              <kbd className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 border border-foreground/20 bg-muted px-2 py-1 text-[11px] text-muted-foreground sm:block">⌘ K</kbd>
+              <kbd className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 rounded-md border border-foreground/20 bg-muted px-2 py-1 text-[11px] text-muted-foreground sm:block">⌘ K</kbd>
             </div>
           </div>
         </section>
@@ -168,7 +168,7 @@ export default function HelpPage() {
                             <span className="block text-xl font-bold leading-tight sm:text-3xl">{section.title}</span>
                             <span className="mt-2 block max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">{section.summary}</span>
                           </span>
-                          <span className="flex h-8 w-8 items-center justify-center border border-foreground/20 text-xl leading-none text-[#0077b6] group-open:bg-[#0077b6] group-open:text-white">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-md border border-foreground/20 text-xl leading-none text-[#0077b6] group-open:bg-[#0077b6] group-open:text-white">
                             <span className="group-open:hidden">+</span><span className="hidden group-open:inline">−</span>
                           </span>
                         </summary>

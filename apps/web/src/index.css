@@ -363,6 +363,19 @@
     pointer-events: none;
   }
 
+  /* Landing product glimpse: rests slightly turned, follows the mouse on hover-capable devices. */
+  .landing-glimpse {
+    transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, -2deg));
+    transition: transform 180ms var(--ease-standard);
+    will-change: transform;
+  }
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    .landing-glimpse {
+      transform: none;
+      transition: none;
+    }
+  }
+
   /* Landing backdrop: two soft ocean glows, no grid (ux-simplification Phase 5). */
   .landing-grid {
     background:

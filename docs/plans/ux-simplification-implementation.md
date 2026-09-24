@@ -33,7 +33,8 @@ Status: PROPOSED · 2026-09-19 · Design: `docs/designs/ux-simplification.md`
 - [x] Infrastructure vocabulary removed from EN/FR strings (eight unreferenced keys deleted, live ones rewritten); `i18n.test.ts` now sweeps every leaf string of both locales against a forbidden list. Coach tips are not decided while a dialog or sheet is open (`CoachProvider` gates on `modalOpen`; WiseBot panel carries `data-state`).
 - [x] `rem.md` / `coverage/` removed in Phase 0. NFR-MOD-02 and NFR-MOD-01 enforced with the core `no-restricted-imports` rule scoped by directory in `eslint.config.js` (no `eslint-plugin-import` dependency — substitution noted in commit `72f6cde`); `ui/Assistant` now imports through `pillars/intelligence`.
 
-## Phase 5 — Landing pass — PROPOSED 2026-09-24
-- [ ] Design proposal from screenshots first (Y4NN: "more better and premium"); then implement. Keep `Start` / `Open my space` names (smokes), no new dependencies, PWA precache size checked.
+## Phase 5 — Landing pass — DONE 2026-09-24
+- [x] Direction "product glimpse" chosen by Y4NN from three options: hero (kicker, headline, promise, Start) + a decorative Home-card preview with masked amounts, one assurance line, soft ocean glows instead of the blueprint grid; dead slide CSS and unused landing keys removed (`5a7ec1e`).
+- [x] Polish on request: circular logo (component, public SVGs, PNG icons re-rendered from the SVG — maskable keeps a full-bleed blue square behind the circle), header controls on one 36 px height with one outline style, hero card tilts toward the mouse (CSS variables set from pointer events; disabled for touch and reduced motion), and a sweep that rounded 32 bordered surfaces that had no radius (Settings sections, help, chat panel, capture sheet notes, quick actions, activity summary, coach card, WiseBot launcher).
 
 Deferred: KeyUnlock split (after Phase 2 settles), `pillars/state` split (on demand), locale namespace split, all edge-deployment items.

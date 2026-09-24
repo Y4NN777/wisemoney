@@ -67,7 +67,7 @@ export default function UpdatesPage() {
             <aside className="grid min-h-72 grid-rows-[1fr_auto] bg-[#0077b6] text-white">
               <div className="flex items-start justify-between gap-4 p-5 sm:p-8">
                 <span className="text-sm font-bold">{t("updatesPage.current")}</span>
-                <span className="border border-white/40 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]">
+                <span className="rounded-full border border-white/40 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]">
                   {t("updatesPage.official")}
                 </span>
               </div>

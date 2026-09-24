@@ -7,7 +7,7 @@
     </linearGradient>
   </defs>
   <!-- Rounded badge — 16px radius, matches Aïobi DS shape language -->
-  <rect x="2" y="2" width="96" height="96" rx="16" fill="url(#ocean-icon)"/>
+  <circle cx="50" cy="50" r="48" fill="url(#ocean-icon)"/>
   <!-- Stylized "W" wave mark — thick rounded strokes -->
   <path d="M22 70 
            C22 70 28 30 38 30 

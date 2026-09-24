@@ -199,9 +199,9 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
   return (
     <main aria-label={t("keyUnlock.landing.aria")} className="landing-grid min-h-dvh bg-background text-foreground">
       <section className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between py-3">
+        <header className="flex items-center justify-between gap-3 py-3">
           <Logo className="h-8 w-auto" />
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <HelpActions />
             <LanguageSwitcher compact />
             <Button type="button" onClick={onStart} className="hidden h-9 px-4 sm:inline-flex">
@@ -251,13 +251,32 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
  * A static preview of the Home summary card. Amounts are masked on purpose: the page shows
  * the shape of the product, never invented figures. Decorative, so hidden from assistive tech.
  */
+const GLIMPSE_MAX_TILT_DEG = 7;
+
 function LandingGlimpse() {
   const { t } = useTranslation();
+  const cardRef = useRef<HTMLDivElement | null>(null);
   const masked = "\u2022\u2022\u2022\u2022\u2022\u2022";
+  // The tilt follows the pointer through two CSS custom properties; the transform, its
+  // transition and the reduced-motion / touch opt-outs live in index.css (.landing-glimpse).
+  // Setting the variables from JS is the only way to feed pointer coordinates to that rule.
+  const tilt = (event: React.PointerEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (card == null || event.pointerType !== "mouse") return;
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    card.style.setProperty("--tilt-x", `${(-y * GLIMPSE_MAX_TILT_DEG).toFixed(2)}deg`);
+    card.style.setProperty("--tilt-y", `${(x * GLIMPSE_MAX_TILT_DEG).toFixed(2)}deg`);
+  };
+  const rest = () => {
+    cardRef.current?.style.removeProperty("--tilt-x");
+    cardRef.current?.style.removeProperty("--tilt-y");
+  };
   return (
-    <div aria-hidden="true" className="relative mx-auto w-full max-w-sm lg:max-w-md">
+    <div aria-hidden="true" className="relative mx-auto w-full max-w-sm lg:max-w-md" onPointerMove={tilt} onPointerLeave={rest}>
       <div className="absolute -inset-6 rounded-[2rem] bg-ocean-wash/70 blur-2xl" />
-      <div className="relative rounded-2xl border border-border bg-card p-5 shadow-[0_24px_60px_rgba(16,24,32,0.14)] sm:p-6 lg:-rotate-2">
+      <div ref={cardRef} className="landing-glimpse relative rounded-2xl border border-border bg-card p-5 shadow-[0_24px_60px_rgba(16,24,32,0.14)] sm:p-6">
         <p className="text-xs font-medium text-ocean-primary">{t("dashboard.availableToday")}</p>
         <p className="mt-2 text-3xl font-semibold tracking-[0.22em] text-foreground/55">{masked}</p>
         <p className="mt-1 text-xs text-muted-foreground">{t("keyUnlock.landing.glimpse.caption")}</p>
@@ -342,7 +361,7 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
     <main aria-label={t("keyUnlock.restore.aria")} className="flex min-h-dvh flex-col bg-background p-4">
       <AuthTopBar onBack={onBack} />
       <section className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center py-6">
-        <div className="grid gap-0 border border-border bg-card/95 shadow-sm lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="grid gap-0 overflow-hidden rounded-lg border border-border bg-card/95 shadow-sm lg:grid-cols-[0.92fr_1.08fr]">
           <aside className="border-b border-border bg-ocean-primary p-5 text-white lg:border-b-0 lg:border-r">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80">{t("keyUnlock.restore.kicker")}</p>
             <h1 className="mt-3 text-4xl font-bold leading-none sm:text-5xl">{t("keyUnlock.restore.title")}</h1>
