@@ -64,7 +64,7 @@ export function FinancialOverview({
           <Wallet className="h-5 w-5 shrink-0 text-ocean-primary" />
         </CardHeader>
         <CardContent>
-          <p className="break-words text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl">
+          <p className="break-words text-xl font-semibold tracking-tight tabular-nums sm:text-2xl">
             {formatMoney(snapshot.totalBalance.minorUnits, currency)}
           </p>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">

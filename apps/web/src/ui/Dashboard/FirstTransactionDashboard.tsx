@@ -64,7 +64,7 @@ export function SummaryCard({
         {icon}
       </CardHeader>
       <CardContent>
-        <p className={`text-2xl font-semibold tabular-nums ${valueClass ?? ""}`}>{value}</p>
+        <p className={`text-xl font-semibold tabular-nums ${valueClass ?? ""}`}>{value}</p>
         {footer != null && <p className="text-xs text-muted-foreground mt-1">{footer}</p>}
       </CardContent>
     </Card>

@@ -83,7 +83,7 @@ export function DashboardPeriodHeader({
   return (
     <header className="flex flex-col gap-4 py-1 sm:flex-row sm:items-end sm:justify-between sm:py-2">
       <div className="min-w-0">
-        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+        <h1 className="text-base font-semibold tracking-tight sm:text-xl">
           {t(`dashboard.greeting.${greetingTime}`)}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">

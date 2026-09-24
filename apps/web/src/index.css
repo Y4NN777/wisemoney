@@ -309,7 +309,7 @@
   }
 
   .page-title {
-    @apply text-xl font-semibold tracking-normal sm:text-2xl;
+    @apply text-lg font-semibold tracking-normal sm:text-xl;
   }
 
   .panel-grid {
