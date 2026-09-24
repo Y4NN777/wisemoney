@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./apps/web/public/logo.svg" alt="WiseMoney" width="260" />
+  <img src="./docs/assets/wisemoney-logo.svg" alt="WiseMoney" width="260" />
 </p>
 
 <p align="center">
