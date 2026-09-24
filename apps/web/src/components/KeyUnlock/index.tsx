@@ -202,9 +202,9 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
         <header className="flex items-center justify-between gap-3 py-3">
           <Logo className="h-8 w-auto" />
           <div className="flex shrink-0 items-center gap-2">
-            <HelpActions />
+            <HelpActions compact />
             <LanguageSwitcher compact />
-            <Button type="button" onClick={onStart} className="hidden h-9 px-4 sm:inline-flex">
+            <Button type="button" onClick={onStart} className="ml-2 hidden h-9 px-4 sm:inline-flex">
               {hasVault ? t("keyUnlock.landing.openApp") : t("keyUnlock.landing.start")}
             </Button>
           </div>

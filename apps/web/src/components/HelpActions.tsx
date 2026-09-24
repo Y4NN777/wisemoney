@@ -26,7 +26,7 @@ export default function HelpActions({ compact = false }: HelpActionsProps) {
         type="button"
         variant="outline"
         size={compact ? "icon" : "sm"}
-        className={compact ? "h-9 w-9" : "h-9 gap-2 px-3"}
+        className={compact ? "h-9 w-9 rounded-full" : "h-9 gap-2 px-3"}
         onClick={() => openHelp()}
         aria-label={t("helpPage.open")}
       >
@@ -38,7 +38,7 @@ export default function HelpActions({ compact = false }: HelpActionsProps) {
           type="button"
           variant="outline"
           size="icon"
-          className="h-9 w-9 text-ocean-primary"
+          className={compact ? "h-9 w-9 rounded-full text-ocean-primary" : "h-9 w-9 text-ocean-primary"}
           onClick={handleInstall}
           aria-label={install.canPrompt ? t("helpPage.install.prompt") : t("helpPage.install.instructions")}
           title={install.canPrompt ? t("helpPage.install.prompt") : t("helpPage.install.instructions")}
