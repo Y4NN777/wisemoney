@@ -11,7 +11,9 @@ export type IntelligenceFeatureId =
   | "prediction"
   | "pattern_detection";
 
-export type { AIResult } from "@/ai/orchestration.ts";
+export type { AIResult, ProviderUnavailableSignal } from "@/ai/orchestration.ts";
+/** Prompt cap surfaced for the assistant input; the orchestration client enforces it. */
+export { MAX_AI_PROMPT_LENGTH } from "@/ai/orchestration.ts";
 
 /**
  * Request an AI-driven insight for the current financial state.

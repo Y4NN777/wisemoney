@@ -21,7 +21,7 @@ import {
   Send, Shield, X, Settings2, Key,
 } from "lucide-react";
 import type { AIResult, IntelligenceFeatureId } from "../../pillars/intelligence/index.ts";
-import { MAX_AI_PROMPT_LENGTH, type ProviderUnavailableSignal } from "../../ai/orchestration.ts";
+import { MAX_AI_PROMPT_LENGTH, type ProviderUnavailableSignal } from "../../pillars/intelligence/index.ts";
 import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 import { useTranslation } from "react-i18next";
 

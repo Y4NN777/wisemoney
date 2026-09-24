@@ -22,9 +22,6 @@ export default [
     rules: {
       ...tsPlugin.configs["recommended"].rules,
       ...tsPlugin.configs["recommended-requiring-type-checking"].rules,
-      // NFR-MOD-02: UI surfaces must never import provider SDKs. Enforce this by
-      // blocking direct provider SDK imports from ui/ — TODO: add import/no-restricted-paths
-      // rule once eslint-plugin-import is added (sprint T-S0-04 or later).
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/no-unsafe-assignment": "error",
@@ -33,6 +30,31 @@ export default [
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_",
         caughtErrorsIgnorePattern: "^_",
+      }],
+    },
+  },
+  // NFR-MOD-02 (docs/SRS.md): UI surfaces talk to AI through the pillar modules, never through
+  // the orchestration client or a provider SDK. Enforced with the core rule so no dependency is
+  // needed; the layering it encodes is ARCHITECTURE.md §12 rule 2.
+  {
+    files: ["src/ui/**/*.{ts,tsx}", "src/components/**/*.{ts,tsx}", "src/routes/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": ["error", {
+        patterns: [
+          { group: ["**/ai/*", "@/ai/*"], message: "NFR-MOD-02: import AI through pillars/intelligence or pillars/literacy, not the orchestration client." },
+          { group: ["openai", "@google/genai", "@google/generative-ai", "@anthropic-ai/*"], message: "NFR-MOD-02: provider SDKs never enter the UI." },
+        ],
+      }],
+    },
+  },
+  // NFR-MOD-01: Financial State stays independent of the AI pillars (ARCHITECTURE.md §12 rule 1).
+  {
+    files: ["src/pillars/state/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": ["error", {
+        patterns: [
+          { group: ["**/pillars/intelligence/*", "@/pillars/intelligence/*", "**/pillars/literacy/*", "@/pillars/literacy/*", "**/ai/*", "@/ai/*"], message: "NFR-MOD-01: the state pillar must not depend on intelligence, literacy or the AI client." },
+        ],
       }],
     },
   },
