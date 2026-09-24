@@ -395,7 +395,7 @@ try {
   await appPage.getByRole("dialog").getByRole("tab", { name: "Transfer", exact: true }).click();
   await appPage.getByRole("dialog").getByLabel("From Account", { exact: true }).click();
   await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
-  await appPage.getByRole("dialog").getByRole("button", { name: "To one of my accounts", exact: true }).click();
+  await appPage.getByRole("dialog").getByRole("button", { name: "One of my accounts", exact: true }).click();
   await appPage.getByRole("dialog").getByLabel(/To Account/).click();
   await appPage.getByRole("option", { name: /Smoke Savings/ }).click();
   await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("10000");

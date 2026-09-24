@@ -102,8 +102,9 @@ export default function CaptureSheet() {
           className="inset-x-0 bottom-0 top-auto max-h-[92dvh] w-full translate-x-0 translate-y-0 rounded-t-2xl rounded-b-none border-b-0 p-4 pt-2 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:bottom-auto sm:left-[50%] sm:top-[50%] sm:w-[calc(100%-2rem)] sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:rounded-b-none sm:border-b sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-95"
           aria-describedby={undefined}
         >
-          <DialogHeader className="sr-only">
-            <DialogTitle>{t("capture.heading")}</DialogTitle>
+          {/* Visible title row: the close button lives here, clear of the tab list. */}
+          <DialogHeader className="flex flex-row items-center pr-10 pb-2 pt-1">
+            <DialogTitle className="text-sm font-semibold">{t("capture.heading")}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-3 gap-1 rounded-md border border-border bg-muted p-1" role="tablist" aria-label={t("capture.ariaLabel")}>
             {CAPTURE_MODES.map((candidate) => (
