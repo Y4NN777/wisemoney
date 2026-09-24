@@ -446,6 +446,52 @@ export async function setupMasterKey(
 }
 
 // ---------------------------------------------------------------------------
+// Device unlock after setup (Settings > Security)
+// ---------------------------------------------------------------------------
+
+/** True when the browser exposes WebAuthn at all; PRF support is only known at registration. */
+export function isWebAuthnAvailable(): boolean {
+  return typeof PublicKeyCredential !== "undefined" && typeof navigator !== "undefined" && navigator.credentials != null;
+}
+
+export async function hasWebAuthnUnlock(): Promise<boolean> {
+  const meta = await db.keyMeta.get("primary");
+  return meta?.webAuthnHandle != null;
+}
+
+/**
+ * Add WebAuthn daily unlock to an existing vault.
+ *
+ * The session master key is a non-extractable CryptoKey (INV-KEY-03), so the raw
+ * Argon2id bytes needed by wrapMasterKeyWithWebAuthn can only come from a fresh
+ * derivation: the caller collects the passphrase again. keyMeta is written only
+ * after the wrap succeeds, so a failed registration leaves passphrase unlock intact.
+ */
+export async function enableWebAuthnUnlock(passphrase: string): Promise<void> {
+  if (!(await verifyPassphrase(passphrase))) {
+    throw new Error("enableWebAuthnUnlock: incorrect passphrase");
+  }
+  const meta = await db.keyMeta.get("primary");
+  if (meta == null) throw new Error("enableWebAuthnUnlock: keyMeta not initialised");
+
+  const credentialId = await createWebAuthnCredential();
+  const { rawBytes } = await deriveMasterKeyWithRaw(passphrase, meta.argon2idParams, meta.argon2idSalt);
+  try {
+    const wrapped = await wrapMasterKeyWithWebAuthn(rawBytes, credentialId);
+    await db.keyMeta.put({ ...meta, ...wrapped });
+  } finally {
+    rawBytes.fill(0);
+  }
+}
+
+/** Remove WebAuthn daily unlock; the passphrase path is untouched. */
+export async function disableWebAuthnUnlock(): Promise<void> {
+  const meta = await db.keyMeta.get("primary");
+  if (meta == null) return;
+  await db.keyMeta.put({ ...meta, webAuthnHandle: null, wrappedKey: null, wrappedIv: null });
+}
+
+// ---------------------------------------------------------------------------
 // wrapMasterKeyWithWebAuthn / unwrapMasterKeyWithWebAuthn
 // ---------------------------------------------------------------------------
 

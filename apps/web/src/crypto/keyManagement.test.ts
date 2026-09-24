@@ -78,6 +78,9 @@ import {
   DEFAULT_ARGON2ID_PARAMS,
   wrapMasterKeyWithWebAuthn,
   unwrapMasterKeyWithWebAuthn,
+  enableWebAuthnUnlock,
+  disableWebAuthnUnlock,
+  hasWebAuthnUnlock,
 } from "./keyManagement.ts";
 
 // ---------------------------------------------------------------------------
@@ -376,6 +379,62 @@ describe("DEFAULT_ARGON2ID_PARAMS round-trip (slow)", () => {
 // ---------------------------------------------------------------------------
 // WebAuthn PRF — Node failure behavior; browser round trip is in the smoke script
 // ---------------------------------------------------------------------------
+
+describe("enableWebAuthnUnlock / disableWebAuthnUnlock", () => {
+  const passphrase = "device-unlock-passphrase";
+
+  it("rejects an incorrect passphrase without touching keyMeta", async () => {
+    await setupMasterKey(passphrase, TEST_PARAMS);
+    const before = await fakeKeyMeta.get("primary");
+
+    await expect(enableWebAuthnUnlock("wrong")).rejects.toThrow(/incorrect passphrase/);
+    expect(await fakeKeyMeta.get("primary")).toEqual(before);
+    expect(await hasWebAuthnUnlock()).toBe(false);
+  });
+
+  it("leaves passphrase-only unlock intact when the authenticator wrap fails", async () => {
+    await setupMasterKey(passphrase, TEST_PARAMS);
+    class FakePublicKeyCredential {
+      rawId = new Uint8Array([9, 9, 9]).buffer;
+      getClientExtensionResults() { return { prf: { enabled: true } }; }
+    }
+    vi.stubGlobal("PublicKeyCredential", FakePublicKeyCredential);
+    vi.stubGlobal("navigator", {
+      credentials: { create: vi.fn().mockResolvedValue(new FakePublicKeyCredential()) },
+    });
+    try {
+      // Registration succeeds but the PRF assertion is unavailable in Node, so the wrap throws.
+      await expect(enableWebAuthnUnlock(passphrase)).rejects.toThrow();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+    const meta = await fakeKeyMeta.get("primary");
+    expect(meta?.webAuthnHandle).toBeNull();
+    expect(meta?.wrappedKey).toBeNull();
+    expect(await verifyPassphrase(passphrase)).toBe(true);
+  });
+
+  it("disableWebAuthnUnlock clears the wrapped key and keeps the passphrase path", async () => {
+    await setupMasterKey(passphrase, TEST_PARAMS);
+    const meta = (await fakeKeyMeta.get("primary"))!;
+    await fakeKeyMeta.put({
+      ...meta,
+      webAuthnHandle: new Uint8Array([1]),
+      wrappedKey: new Uint8Array([2]),
+      wrappedIv: new Uint8Array([3]),
+    });
+    expect(await hasWebAuthnUnlock()).toBe(true);
+
+    await disableWebAuthnUnlock();
+
+    const after = await fakeKeyMeta.get("primary");
+    expect(after?.webAuthnHandle).toBeNull();
+    expect(after?.wrappedKey).toBeNull();
+    expect(after?.wrappedIv).toBeNull();
+    expect(await hasWebAuthnUnlock()).toBe(false);
+    expect(await verifyPassphrase(passphrase)).toBe(true);
+  });
+});
 
 describe("wrapMasterKeyWithWebAuthn / unwrapMasterKeyWithWebAuthn", () => {
   it("wrapMasterKeyWithWebAuthn throws clearly in a non-browser environment", async () => {

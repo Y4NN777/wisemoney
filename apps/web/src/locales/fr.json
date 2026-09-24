@@ -99,8 +99,6 @@
       "confirmPassphrase": "Confirmer la phrase privée",
       "submitting": "Configuration…",
       "createVault": "Créer l'espace privé",
-      "deviceUnlock": "Activer le déverrouillage de l’appareil",
-      "deviceUnlockDescription": "Utilisez un visage, une empreinte, un code PIN ou une clé de sécurité compatible pour les prochaines ouvertures. La phrase privée reste la clé de récupération.",
       "deviceUnlockUnavailable": "Le déverrouillage de l’appareil n’est pas disponible avec ce navigateur ou cet authentificateur. L’espace a été créé avec la phrase privée uniquement.",
       "errors": {
         "failed": "Échec de la configuration"
@@ -265,30 +263,6 @@
         }
       }
     },
-    "onboarding": {
-      "aria": "Accueil WiseMoney",
-      "kicker": "Aperçu de configuration",
-      "title": "Ce qui se passe avant l'ouverture de votre espace privé",
-      "stepLabel": "Étape {{number}}",
-      "steps": {
-        "vault": {
-          "title": "Créer votre espace privé",
-          "body": "WiseMoney protège vos données financières sur cet appareil avec une phrase privée que vous contrôlez."
-        },
-        "offline": {
-          "title": "L'utiliser hors ligne",
-          "body": "L'app, le tableau de bord, la saisie rapide, les comptes, les budgets et les paramètres restent disponibles quand le réseau ne l'est pas."
-        },
-        "services": {
-          "title": "Ajouter les extras plus tard",
-          "body": "L'assistant et la sauvegarde en ligne sont optionnels. WiseMoney désactive clairement ces actions tant que vous ne choisissez pas de les configurer."
-        },
-        "install": {
-          "title": "Installer l'application",
-          "body": "Après la configuration, ajoutez WiseMoney depuis le menu du navigateur pour une expérience plein écran depuis l'écran d'accueil."
-        }
-      }
-    },
     "install": {
       "title": "Installer WiseMoney sur cet appareil",
       "body": "Installez l'application avant d'en avoir besoin hors ligne. Votre espace privé et les écrans principaux restent disponibles depuis l'écran d'accueil.",
@@ -298,18 +272,6 @@
       "manualTitle": "Si aucun bouton d'installation n'apparaît :",
       "android": "Chrome Android : ouvrez le menu du navigateur et choisissez Installer l'application.",
       "ios": "Safari iPhone : utilisez Partager, puis Ajouter à l'écran d'accueil."
-    },
-    "cloud": {
-      "title": "Sauvegarde en ligne (optionnelle)",
-      "linked": "Compte en ligne connecté",
-      "notConnected": "La sauvegarde en ligne n'est pas connectée",
-      "localOnly": "Vous pouvez utiliser WiseMoney localement et hors ligne maintenant. La sauvegarde en ligne sera disponible après le déploiement et la configuration du service en ligne.",
-      "connecting": "Connexion…",
-      "createAccount": "Créer un compte en ligne",
-      "errors": {
-        "required": "L'e-mail et le mot de passe sont requis",
-        "failed": "Échec de l'inscription"
-      }
     }
   },
   "nav": {
@@ -631,7 +593,13 @@
       "Octobre",
       "Novembre",
       "Décembre"
-    ]
+    ],
+    "deviceUnlockOffer": {
+      "title": "Déverrouillez plus vite la prochaine fois",
+      "body": "Utilisez le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. Activez-le dans les réglages.",
+      "action": "Ouvrir les réglages",
+      "dismiss": "Pas maintenant"
+    }
   },
   "operations": {
     "title": "Activité",
@@ -1528,13 +1496,26 @@
       "offline": "Hors ligne",
       "localOnly": "Local uniquement",
       "onlineReady": "Sauvegarde en ligne prête",
-      "localOnlyMessage": "La sauvegarde en ligne n'est pas connectée dans ce déploiement. Votre espace, vos comptes, vos budgets et vos transactions restent sur cet appareil.",
+      "localOnlyMessage": "Votre espace, vos comptes, vos budgets et vos transactions restent sur cet appareil.",
       "language": "Langue",
       "session": "Session",
       "lock": "Verrouiller l’espace privé",
       "signOut": "Déconnexion de toutes les sessions",
       "signOutFailed": "Impossible de se déconnecter",
-      "unknown": "Inconnu"
+      "unknown": "Inconnu",
+      "deviceUnlock": {
+        "title": "Déverrouillage de l’appareil",
+        "description": "Ouvrez votre espace avec le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. La phrase privée reste la clé de récupération.",
+        "enabled": "Le déverrouillage de l’appareil est activé sur cet appareil. La phrase privée reste la clé de récupération.",
+        "enable": "Activer le déverrouillage de l’appareil",
+        "disable": "Désactiver le déverrouillage de l’appareil",
+        "passphrase": "Phrase privée",
+        "confirm": "Activer",
+        "enabling": "Enregistrement…",
+        "enabledToast": "Déverrouillage de l’appareil activé",
+        "disabledToast": "Déverrouillage de l’appareil désactivé",
+        "updateFailed": "Impossible de modifier le déverrouillage de l’appareil"
+      }
     },
     "currency": {
       "title": "Paramètres de devise",

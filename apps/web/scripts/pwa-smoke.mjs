@@ -234,10 +234,6 @@ try {
   });
   await appPage.goto(baseURL, { waitUntil: "networkidle" });
   await appPage.getByRole("button", { name: "Start", exact: true }).last().click();
-  for (let step = 0; step < 3; step++) {
-    await appPage.getByRole("button", { name: "Next", exact: true }).click();
-  }
-  await appPage.getByRole("button", { name: "Create private space", exact: true }).click();
   const passphrase = "WiseMoney-Smoke-Test-Only-2026";
   await appPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await appPage.getByLabel("Confirm private passphrase").fill(passphrase);

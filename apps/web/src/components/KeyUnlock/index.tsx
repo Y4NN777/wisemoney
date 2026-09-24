@@ -1,21 +1,20 @@
 import { useState, useEffect, useRef, type FormEvent, type ReactNode } from "react";
 import {
   deriveMasterKey,
-  createWebAuthnCredential,
   setupMasterKey,
   verifyPassphrase,
   unwrapMasterKeyWithWebAuthn,
 } from "../../crypto/keyManagement.ts";
 import type { MasterKey } from "../../crypto/envelope.ts";
 import { db } from "../../db/schema.ts";
-import { lockSession, register, restoreSession } from "../../auth/session.ts";
+import { lockSession, restoreSession } from "../../auth/session.ts";
 import { importJSON } from "../../exportImport/index.ts";
 import { useQueryClient } from "@tanstack/react-query";
 import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContext.ts";
 import { clearCachedMasterKey, getCachedMasterKey, setCachedMasterKey } from "../../lib/vaultUnlocked.ts";
+import { recordPassphraseUnlock } from "../../lib/deviceUnlockOffer.ts";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
-import { isEdgeConfigured } from "../../lib/capabilities.ts";
-import { ArrowLeft, ArrowRight, Bot, CalendarClock, ChevronDown, ChevronUp, Download, Eye, EyeOff, LockOpen, ShieldCheck, Upload, WalletCards, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarClock, LockOpen, ShieldCheck, Upload, WalletCards } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -30,7 +29,6 @@ type Flow =
   | "loading"
   | "landing"
   | "restore"
-  | "onboarding"
   | "setup"
   | "unlock-passphrase"
   | "unlock-webauthn"
@@ -79,6 +77,13 @@ export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlock
     setMasterKey(null);
     setError(null);
     setFlow(vaultUnlockFlow);
+    // Device unlock can be enabled or disabled from Settings while the vault is
+    // open, so the unlock method is re-read from keyMeta rather than remembered.
+    void db.keyMeta.get("primary").then((meta) => {
+      const nextFlow = meta?.webAuthnHandle != null ? "unlock-webauthn" : "unlock-passphrase";
+      setVaultUnlockFlow(nextFlow);
+      setFlow((current) => (current === "app" ? current : nextFlow));
+    }).catch(() => undefined);
   };
 
   useEffect(() => {
@@ -124,7 +129,7 @@ export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlock
   } else if (flow === "landing") {
     content = (
       <LandingOnboarding
-        onStart={() => setFlow(vaultUnlockFlow === "setup" ? "onboarding" : vaultUnlockFlow)}
+        onStart={() => setFlow(vaultUnlockFlow)}
         hasVault={vaultUnlockFlow !== "setup"}
       />
     );
@@ -138,8 +143,6 @@ export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlock
         setError={setError}
       />
     );
-  } else if (flow === "onboarding") {
-    content = <OnboardingFlow onBack={() => setFlow("landing")} onComplete={() => setFlow("setup")} />;
   } else if (flow === "setup") {
     content = (
       <LocalSetup
@@ -297,7 +300,6 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
   const [confirmPassphrase, setConfirmPassphrase] = useState("");
   const [exportPassphrase, setExportPassphrase] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [enableDeviceUnlock, setEnableDeviceUnlock] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
@@ -322,7 +324,7 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
     void (async () => {
       try {
         const previousKeyMeta = await db.keyMeta.get("primary");
-        const mk = await setupWithOptionalDeviceUnlock(passphrase, enableDeviceUnlock, t);
+        const mk = await setupMasterKey(passphrase);
         try {
           await importJSON(file, mk, exportPassphrase.trim().length > 0 ? exportPassphrase.trim() : undefined);
         } catch (importError) {
@@ -416,7 +418,6 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
                   />
                   <p className="text-xs text-muted-foreground">{t("keyUnlock.restore.exportPassphraseHelp")}</p>
                 </div>
-                <DeviceUnlockOption checked={enableDeviceUnlock} onCheckedChange={setEnableDeviceUnlock} />
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Button type="submit" disabled={submitting} className="justify-between">
                     {submitting ? t("keyUnlock.restore.restoring") : t("keyUnlock.restore.restore")}
@@ -428,113 +429,6 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
                   </Button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
-
-function OnboardingFlow({ onBack, onComplete }: { onBack: () => void; onComplete: () => void }) {
-  const { t } = useTranslation();
-  const [stepIndex, setStepIndex] = useState(0);
-  const steps = [
-    {
-      title: t("keyUnlock.onboarding.steps.vault.title"),
-      body: t("keyUnlock.onboarding.steps.vault.body"),
-      icon: <ShieldCheck className="h-6 w-6" />,
-    },
-    {
-      title: t("keyUnlock.onboarding.steps.offline.title"),
-      body: t("keyUnlock.onboarding.steps.offline.body"),
-      icon: <WifiOff className="h-6 w-6" />,
-    },
-    {
-      title: t("keyUnlock.onboarding.steps.services.title"),
-      body: t("keyUnlock.onboarding.steps.services.body"),
-      icon: <Bot className="h-6 w-6" />,
-    },
-    {
-      title: t("keyUnlock.onboarding.steps.install.title"),
-      body: t("keyUnlock.onboarding.steps.install.body"),
-      icon: <Download className="h-6 w-6" />,
-    },
-  ];
-  const currentStep = steps[stepIndex]!;
-  const isLastStep = stepIndex === steps.length - 1;
-
-  const handleBack = () => {
-    if (stepIndex === 0) {
-      onBack();
-      return;
-    }
-    setStepIndex((index) => index - 1);
-  };
-
-  const handleNext = () => {
-    if (isLastStep) {
-      onComplete();
-      return;
-    }
-    setStepIndex((index) => index + 1);
-  };
-
-  return (
-    <main aria-label={t("keyUnlock.onboarding.aria")} className="landing-grid flex min-h-dvh flex-col bg-background p-4 text-foreground">
-      <AuthTopBar onBack={onBack} />
-      <section className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center py-6">
-        <div className="border border-border bg-card/95 shadow-sm">
-          <div className="grid lg:grid-cols-[0.82fr_1.18fr]">
-            <aside className="border-b border-border bg-ocean-primary p-5 text-white lg:border-b-0 lg:border-r">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80">{t("keyUnlock.onboarding.kicker")}</p>
-              <h1 className="mt-3 text-4xl font-bold leading-none sm:text-5xl">{t("keyUnlock.onboarding.title")}</h1>
-              <div className="mt-8 grid grid-cols-4 gap-2 lg:grid-cols-1">
-                {steps.map((step, index) => (
-                  <button
-                    key={step.title}
-                    type="button"
-                    onClick={() => setStepIndex(index)}
-                    className={`rounded-md border p-3 text-left transition-colors ${
-                      index === stepIndex
-                        ? "border-white bg-white text-ocean-primary"
-                        : "border-white/25 bg-white/10 text-white hover:bg-white/20"
-                    }`}
-                    aria-current={index === stepIndex ? "step" : undefined}
-                  >
-                    <span className="block text-xs font-bold tabular-nums">0{index + 1}</span>
-                    <span className="mt-2 hidden text-sm font-semibold lg:block">{step.title}</span>
-                  </button>
-                ))}
-              </div>
-            </aside>
-            <div className="flex min-h-[28rem] flex-col justify-between p-5 sm:p-8">
-              <article className="landing-step">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-md border border-border bg-ocean-wash text-ocean-primary">
-                  {currentStep.icon}
-                </div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-ocean-primary">{t("keyUnlock.onboarding.stepLabel", { number: `0${stepIndex + 1}` })}</p>
-                <h2 className="mt-3 max-w-2xl text-3xl font-bold leading-tight text-foreground sm:text-5xl">{currentStep.title}</h2>
-                <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">{currentStep.body}</p>
-              </article>
-              <div className="mt-10 grid gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-center">
-                <Button type="button" variant="outline" onClick={handleBack} className="justify-between gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  {t("common.back")}
-                </Button>
-                <div className="flex justify-center gap-2">
-                  {steps.map((step, index) => (
-                    <span
-                      key={step.title}
-                      className={`h-2 rounded-full transition-all ${index === stepIndex ? "w-8 bg-ocean-primary" : "w-2 bg-border"}`}
-                    />
-                  ))}
-                </div>
-                <Button type="button" onClick={handleNext} className="justify-between gap-2">
-                  {isLastStep ? t("keyUnlock.setup.createVault") : t("common.next")}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
             </div>
           </div>
         </div>
@@ -621,7 +515,6 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
   const [passphrase, setPassphrase] = useState("");
   const [confirmPassphrase, setConfirmPassphrase] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [enableDeviceUnlock, setEnableDeviceUnlock] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -637,7 +530,7 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
     setSubmitting(true);
     void (async () => {
       try {
-        const mk = await setupWithOptionalDeviceUnlock(passphrase, enableDeviceUnlock, t);
+        const mk = await setupMasterKey(passphrase);
         await onReady(mk);
       } catch {
         setError(t("keyUnlock.setup.errors.failed"));
@@ -690,12 +583,10 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
             <p className="text-xs text-muted-foreground">
               {t("keyUnlock.login.passphraseDescription")}
             </p>
-            <DeviceUnlockOption checked={enableDeviceUnlock} onCheckedChange={setEnableDeviceUnlock} />
             <Button type="submit" disabled={submitting || passphrase.length === 0} className="w-full">
               {submitting ? t("keyUnlock.setup.submitting") : t("keyUnlock.setup.createVault")}
             </Button>
           </form>
-          <CloudEdgeAuth />
         </CardContent>
       </Card>
       </div>
@@ -703,179 +594,6 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
   );
 }
 
-type Translate = (key: string) => string;
-
-async function setupWithOptionalDeviceUnlock(
-  passphrase: string,
-  enabled: boolean,
-  t: Translate,
-): Promise<MasterKey> {
-  if (!enabled) return setupMasterKey(passphrase);
-
-  let credentialId: Uint8Array;
-  try {
-    credentialId = await createWebAuthnCredential();
-  } catch {
-    toast.warning(t("keyUnlock.setup.deviceUnlockUnavailable"));
-    return setupMasterKey(passphrase);
-  }
-
-  try {
-    return await setupMasterKey(passphrase, undefined, credentialId);
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("WebAuthn wrap failed")) {
-      toast.warning(t("keyUnlock.setup.deviceUnlockUnavailable"));
-      return setupMasterKey(passphrase);
-    }
-    throw error;
-  }
-}
-
-function DeviceUnlockOption({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (checked: boolean) => void }) {
-  const { t } = useTranslation();
-  return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-md border border-border bg-accent/35 p-3">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(event) => onCheckedChange(event.target.checked)}
-        className="mt-0.5 h-4 w-4 accent-primary"
-      />
-      <span>
-        <span className="block text-sm font-medium">{t("keyUnlock.setup.deviceUnlock")}</span>
-        <span className="mt-1 block text-xs text-muted-foreground">{t("keyUnlock.setup.deviceUnlockDescription")}</span>
-      </span>
-    </label>
-  );
-}
-
-function CloudEdgeAuth() {
-  const { t } = useTranslation();
-  const edgeConfigured = isEdgeConfigured();
-  const [expanded, setExpanded] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordsVisible, setPasswordsVisible] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
-
-  if (done) {
-    return (
-      <p className="mt-4 text-center text-xs text-green-600 dark:text-green-400">
-        {t("keyUnlock.cloud.linked")}
-      </p>
-    );
-  }
-
-  if (!edgeConfigured) {
-    return (
-      <div className="mt-6 rounded-lg border border-border bg-accent/45 p-3">
-        <p className="text-sm font-medium">{t("keyUnlock.cloud.notConnected")}</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {t("keyUnlock.cloud.localOnly")}
-        </p>
-      </div>
-    );
-  }
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    if (email.length === 0 || password.length === 0) {
-      setError(t("keyUnlock.cloud.errors.required"));
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError(t("keyUnlock.login.errors.passwordsMismatch"));
-      return;
-    }
-    setSubmitting(true);
-    void (async () => {
-      try {
-        await register(email, password);
-        setDone(true);
-      } catch {
-        setError(t("keyUnlock.cloud.errors.failed"));
-      } finally {
-        setSubmitting(false);
-      }
-    })();
-  };
-
-  return (
-    <div className="mt-6 rounded-lg border border-border bg-accent/45 p-2">
-      <Button
-        type="button"
-        variant="ghost"
-        className="flex w-full items-center justify-between text-sm text-muted-foreground"
-        onClick={() => setExpanded(!expanded)}
-      >
-        <span>{t("keyUnlock.cloud.title")}</span>
-        {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-      </Button>
-      {expanded && (
-        <form onSubmit={handleSubmit} className="mt-3 space-y-4 px-1 pb-1">
-          {error != null && (
-            <p role="alert" className="text-destructive text-sm">{error}</p>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="edge-email">{t("keyUnlock.login.email")}</Label>
-            <Input
-              id="edge-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="edge-password">{t("keyUnlock.login.password")}</Label>
-            <div className="relative">
-              <Input
-                id="edge-password"
-                type={passwordsVisible ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-                className="pr-9"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
-                onClick={() => setPasswordsVisible(!passwordsVisible)}
-                aria-label={passwordsVisible ? t("byoKey.hideKey") : t("byoKey.showKey")}
-                tabIndex={-1}
-              >
-                {passwordsVisible ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="edge-confirm-password">{t("keyUnlock.login.confirmPassword")}</Label>
-            <Input
-              id="edge-confirm-password"
-              type={passwordsVisible ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="new-password"
-            />
-          </div>
-          <Button type="submit" disabled={submitting} className="w-full" variant="secondary">
-            {submitting ? t("keyUnlock.cloud.connecting") : t("keyUnlock.cloud.createAccount")}
-          </Button>
-        </form>
-      )}
-    </div>
-  );
-}
 
 type PassphraseUnlockProps = {
   onBack: () => void;
@@ -912,6 +630,7 @@ function PassphraseUnlock({ onBack, onUnlock, error, setError }: PassphraseUnloc
           meta.argon2idParams,
           meta.argon2idSalt,
         );
+        recordPassphraseUnlock();
         await onUnlock(masterKey);
       } catch {
         setError(t("keyUnlock.unlock.errors.unlockFailed"));

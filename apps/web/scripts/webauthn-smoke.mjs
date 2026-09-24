@@ -40,16 +40,19 @@ try {
   });
   await page.reload({ waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Start", exact: true }).last().click();
-  for (let step = 0; step < 3; step++) {
-    await page.getByRole("button", { name: "Next", exact: true }).click();
-  }
-  await page.getByRole("button", { name: "Create private space", exact: true }).click();
   const passphrase = "WiseMoney-WebAuthn-Smoke-2026";
   await page.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await page.getByLabel("Confirm private passphrase", { exact: true }).fill(passphrase);
-  await page.getByRole("checkbox", { name: /Enable device unlock/ }).check();
   await page.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
   await page.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 90_000 });
+
+  // Device unlock is enabled after setup, from Settings > Security, by confirming the passphrase once.
+  await page.getByRole("link", { name: "Settings", exact: true }).click();
+  await page.getByText("Security and session", { exact: true }).click();
+  await page.getByRole("button", { name: "Turn on device unlock", exact: true }).click();
+  await page.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
+  await page.getByRole("button", { name: "Turn on", exact: true }).click();
+  await page.getByRole("button", { name: "Turn off device unlock", exact: true }).waitFor({ timeout: 30_000 });
 
   const keyMeta = await page.evaluate(async () => await new Promise((resolve, reject) => {
     const request = indexedDB.open("WiseMoney");
@@ -76,7 +79,8 @@ try {
     `WebAuthn metadata was not stored. Virtual credentials: ${virtualCredentials.credentials.length}. Body:\n${setupBody}`,
   );
 
-  await page.reload({ waitUntil: "networkidle" });
+  // Start from the root: the vault was enabled from /settings, and a plain reload would reopen there.
+  await page.goto(baseURL, { waitUntil: "networkidle" });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Open my space", exact: true }).click();
   await page.getByRole("heading", { name: "Open WiseMoney", exact: true }).waitFor();

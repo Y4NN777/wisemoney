@@ -99,8 +99,6 @@
       "confirmPassphrase": "Confirm private passphrase",
       "submitting": "Setting up…",
       "createVault": "Create private space",
-      "deviceUnlock": "Enable device unlock",
-      "deviceUnlockDescription": "Use a compatible face, fingerprint, PIN, or security key for future unlocks. Your passphrase remains the recovery key.",
       "deviceUnlockUnavailable": "Device unlock is unavailable on this browser or authenticator. The space was created with passphrase unlock only.",
       "errors": {
         "failed": "Setup failed"
@@ -265,30 +263,6 @@
         }
       }
     },
-    "onboarding": {
-      "aria": "WiseMoney onboarding",
-      "kicker": "Setup preview",
-      "title": "What happens before your private space opens",
-      "stepLabel": "Step {{number}}",
-      "steps": {
-        "vault": {
-          "title": "Create your private space",
-          "body": "WiseMoney protects your financial records on this device with a private passphrase you control."
-        },
-        "offline": {
-          "title": "Use it offline",
-          "body": "The app, dashboard, quick entry, accounts, budgets, and settings stay available when the network is unavailable."
-        },
-        "services": {
-          "title": "Add extras later",
-          "body": "The assistant and online backup are optional. WiseMoney clearly disables those actions until you choose to set them up."
-        },
-        "install": {
-          "title": "Install the app",
-          "body": "After setup, add WiseMoney from the browser menu for a full-screen home-screen experience."
-        }
-      }
-    },
     "install": {
       "title": "Install WiseMoney on this device",
       "body": "Install the app before you need it offline. Your private space and main screens stay available from the home screen.",
@@ -298,18 +272,6 @@
       "manualTitle": "If no install button appears:",
       "android": "Android Chrome: open the browser menu and choose Install app.",
       "ios": "iPhone Safari: use Share, then Add to Home Screen."
-    },
-    "cloud": {
-      "title": "Online backup (optional)",
-      "linked": "Online account connected",
-      "notConnected": "Online backup is not connected",
-      "localOnly": "You can use WiseMoney locally and offline now. Online backup will become available after the online service is deployed and configured.",
-      "connecting": "Connecting…",
-      "createAccount": "Create online account",
-      "errors": {
-        "required": "Email and password are required",
-        "failed": "Registration failed"
-      }
     }
   },
   "nav": {
@@ -631,7 +593,13 @@
       "October",
       "November",
       "December"
-    ]
+    ],
+    "deviceUnlockOffer": {
+      "title": "Unlock faster next time",
+      "body": "Use this device’s screen lock instead of typing your passphrase. Turn it on in Settings.",
+      "action": "Open Settings",
+      "dismiss": "Not now"
+    }
   },
   "operations": {
     "title": "Activity",
@@ -1528,13 +1496,26 @@
       "offline": "Offline",
       "localOnly": "Local only",
       "onlineReady": "Online backup ready",
-      "localOnlyMessage": "Online backup is not connected in this deployment. Your space, accounts, budgets, and transactions stay on this device.",
+      "localOnlyMessage": "Your space, accounts, budgets, and transactions stay on this device.",
       "language": "Language",
       "session": "Session",
       "lock": "Lock private space",
       "signOut": "Sign out of all sessions",
       "signOutFailed": "Could not sign out",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "deviceUnlock": {
+        "title": "Device unlock",
+        "description": "Open your space with this device’s screen lock instead of typing your passphrase. The passphrase stays the recovery key.",
+        "enabled": "Device unlock is on for this device. The passphrase stays the recovery key.",
+        "enable": "Turn on device unlock",
+        "disable": "Turn off device unlock",
+        "passphrase": "Private passphrase",
+        "confirm": "Turn on",
+        "enabling": "Registering…",
+        "enabledToast": "Device unlock is on",
+        "disabledToast": "Device unlock is off",
+        "updateFailed": "Could not update device unlock"
+      }
     },
     "currency": {
       "title": "Currency settings",

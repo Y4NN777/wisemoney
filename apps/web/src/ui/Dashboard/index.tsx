@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
 import { useOpenCaptureSheet } from "../../components/CaptureSheet/index.tsx";
+import DeviceUnlockOffer from "../../components/DeviceUnlockOffer/index.tsx";
 import { comparePeriodAmounts, type PeriodAmountComparison } from "./periodComparison.ts";
 import {
   GREETING_MESSAGE_COUNT,
@@ -511,6 +512,7 @@ function FirstTransactionDashboard({ snapshot, accountCount }: { snapshot: Finan
       <div className="page-head">
         <h1 className="page-title">{t("dashboard.title")}</h1>
       </div>
+      <DeviceUnlockOffer />
       <section aria-label={t("dashboard.balanceSummary")} className="grid max-w-3xl gap-3 sm:grid-cols-2">
         <SummaryCard
           title={t("dashboard.totalBalance")}
@@ -1436,6 +1438,7 @@ export default function Dashboard() {
 
   return (
     <main aria-label={t("dashboard.title")} className="app-page">
+      <DeviceUnlockOffer />
       <DashboardPeriodHeader
         selectedYear={selectedYear}
         selectedMonth={selectedMonth}

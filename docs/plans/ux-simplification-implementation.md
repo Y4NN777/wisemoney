@@ -15,11 +15,11 @@ Status: PROPOSED · 2026-09-19 · Design: `docs/designs/ux-simplification.md`
 - [x] Transfer/Goal → sheet tabs; Manage → Settings "Accounts & categories"; `/capture` redirects Home and opens the sheet; old 4-tab page deleted.
 - Verify: 454 tests, typecheck, lint green; PWA + WebAuthn smokes rewritten for the sheet and passing (2026-09-24). Smoke note: the management tabs now share the Settings page with the theme toggle, so dark-mode colour assertions wait for the element's transitions to finish.
 
-## Phase 2 — One-step onboarding
-- [ ] Delete setup-preview slides; Start → passphrase form.
-- [ ] Device-unlock checkbox removed from setup → Settings + post-second-unlock offer.
-- [ ] Remove "Online backup is not connected" from user screens.
-- Verify: Start → app ≤ 4 interactions; `pnpm test:webauthn` passes (setup now reached from Settings).
+## Phase 2 — One-step onboarding — DONE 2026-09-24
+- [x] Setup-preview slides deleted (`OnboardingFlow`, `keyUnlock.onboarding.*`); Start → passphrase form.
+- [x] Device unlock leaves setup and restore → Settings › Security row (`DevicesSection`) backed by `enableWebAuthnUnlock` / `disableWebAuthnUnlock` in `crypto/keyManagement.ts`; enabling re-derives from the passphrase because the session key is non-extractable (INV-KEY-03). Home offers it from the second passphrase unlock (`lib/deviceUnlockOffer.ts`, `components/DeviceUnlockOffer`), dismissable. Locking re-reads keyMeta so the new method applies at the next unlock.
+- [x] "Online backup is not connected" removed from setup (`CloudEdgeAuth` + `keyUnlock.cloud.*` deleted) and from Settings › Security. Remaining infra vocabulary in help FAQ strings is Phase 4.
+- Verify: Start → app in 4 interactions (Start, passphrase, confirm, Create); 463 tests; both smokes pass with device unlock enabled from Settings (2026-09-24).
 
 ## Phase 3 — Home + 3-tab IA
 - [ ] Tab bar: Home · Activity · Plan + capture FAB.
