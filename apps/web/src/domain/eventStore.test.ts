@@ -43,8 +43,21 @@ const { fakeFinancialEvents, fakeSeal, fakeSnapshotClear, fakeFxClear, fakeFxBul
         last: () => Promise.resolve(items[items.length - 1]),
       };
     }
-    where(_field: string): { above: (v: number) => { toArray: () => Promise<T[]> }; equals: (v: number) => { toArray: () => Promise<T[]> } } {
+    whereCalls = 0;
+    where(_field: string): {
+      above: (v: number) => { toArray: () => Promise<T[]> };
+      aboveOrEqual: (v: number) => { keys: () => Promise<number[]> };
+      equals: (v: number) => { toArray: () => Promise<T[]> };
+    } {
+      this.whereCalls += 1;
       return {
+        aboveOrEqual: (v: number) => ({
+          keys: () => Promise.resolve(
+            [...this.store.values()]
+              .map((r) => (r as unknown as FinancialEventRecord).timestamp)
+              .filter((timestamp) => timestamp >= v),
+          ),
+        }),
         above: (v: number) => ({
           toArray: () => Promise.resolve(
             [...this.store.values()].filter(
@@ -63,6 +76,7 @@ const { fakeFinancialEvents, fakeSeal, fakeSnapshotClear, fakeFxClear, fakeFxBul
     }
     clear(): void {
       this.store.clear();
+      this.whereCalls = 0;
     }
     peek(id: string): T | undefined {
       return this.store.get(id);
@@ -220,6 +234,16 @@ describe("appendEvent", () => {
     expect(fakeFinancialEvents.peek("stale-write")).toBeUndefined();
   });
 
+  it("shifts past an occupied timestamp with a single index read", async () => {
+    await appendEvent({ id: "first", timestamp: 1000, type: "account_created", entityId: "a", payload: accountPayload, masterKey: mkKey });
+    fakeFinancialEvents.whereCalls = 0;
+
+    await appendEvent({ id: "second", timestamp: 1000, type: "account_created", entityId: "b", payload: accountPayload, masterKey: mkKey });
+
+    expect(fakeFinancialEvents.peek("second")?.timestamp).toBe(1001);
+    expect(fakeFinancialEvents.whereCalls).toBe(1);
+  });
+
   it("accepts a write validated against the current snapshot", async () => {
     await appendEvent({
       id: "current", timestamp: 1000, type: "account_created", entityId: "a",
@@ -255,6 +279,23 @@ describe("appendEvents", () => {
     expect(fakeFinancialEvents.peek("z-first")?.timestamp).toBe(1000);
     expect(fakeFinancialEvents.peek("a-second")?.timestamp).toBe(1001);
     expect((await readAllEvents()).map((event) => event.id)).toEqual(["z-first", "a-second"]);
+  });
+
+  it("resolves collisions against the journal and within the batch from one index read", async () => {
+    await appendEvent({ id: "stored", timestamp: 1001, type: "account_created", entityId: "s", payload: accountPayload, masterKey: mkKey });
+    fakeFinancialEvents.whereCalls = 0;
+
+    await appendEvents([
+      { id: "one", timestamp: 1000, type: "account_created", entityId: "a", payload: accountPayload, masterKey: mkKey },
+      { id: "two", timestamp: 1000, type: "account_created", entityId: "b", payload: accountPayload, masterKey: mkKey },
+      { id: "three", timestamp: 1000, type: "account_created", entityId: "c", payload: accountPayload, masterKey: mkKey },
+    ]);
+
+    expect(fakeFinancialEvents.peek("one")?.timestamp).toBe(1000);
+    expect(fakeFinancialEvents.peek("two")?.timestamp).toBe(1002);
+    expect(fakeFinancialEvents.peek("three")?.timestamp).toBe(1003);
+    expect((await readAllEvents()).map((event) => event.id)).toEqual(["one", "stored", "two", "three"]);
+    expect(fakeFinancialEvents.whereCalls).toBe(1);
   });
 
   it("does not write a partial batch when an id already exists", async () => {

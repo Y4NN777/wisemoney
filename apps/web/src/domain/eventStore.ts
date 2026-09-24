@@ -84,6 +84,26 @@ async function assertExpectedLastEvent(expectedLastEventId?: string): Promise<vo
   }
 }
 
+/**
+ * Shift each record forward until its timestamp is unique in the journal and within the batch.
+ * One keys-only index read replaces a per-candidate `where("timestamp").equals()` query, which
+ * made a restore or import cost one round-trip per event (N+1). Reading every occupied
+ * timestamp from the earliest candidate onward is exact: a collision can only push a record
+ * forward, so no timestamp below `minTimestamp` can ever be assigned.
+ */
+async function resolveFreeTimestamps<T extends { timestamp: number }>(records: readonly T[]): Promise<T[]> {
+  const minTimestamp = Math.min(...records.map((record) => record.timestamp));
+  const occupied = new Set<number>(
+    (await db.financialEvents.where("timestamp").aboveOrEqual(minTimestamp).keys()) as number[],
+  );
+  return records.map((record) => {
+    let timestamp = record.timestamp;
+    while (occupied.has(timestamp)) timestamp++;
+    occupied.add(timestamp);
+    return { ...record, timestamp };
+  });
+}
+
 export async function appendEvent(params: AppendEventParams): Promise<void> {
   validateFinancialEventPayload(params.type, params.payload);
   const plaintext = new TextEncoder().encode(JSON.stringify(params.payload));
@@ -98,18 +118,15 @@ export async function appendEvent(params: AppendEventParams): Promise<void> {
   try {
     await db.transaction("rw", db.financialEvents, async () => {
       await assertExpectedLastEvent(params.expectedLastEventId);
-      let timestamp = params.timestamp;
-      while ((await db.financialEvents.where("timestamp").equals(timestamp).toArray()).length > 0) {
-        timestamp++;
-      }
-      await db.financialEvents.add({
+      const [record] = await resolveFreeTimestamps([{
         id: params.id,
-        timestamp,
+        timestamp: params.timestamp,
         type: params.type,
         entityId: params.entityId,
         ciphertext,
         iv,
-      });
+      }]);
+      await db.financialEvents.add(record!);
     });
   } catch (err: unknown) {
     if (err instanceof AppendEventError) throw err;
@@ -160,20 +177,7 @@ export async function appendEvents(params: readonly AppendEventParams[]): Promis
         throw new AppendEventError("STALE_SNAPSHOT", params[0]!.id, "Events do not share the same validated snapshot");
       }
       await assertExpectedLastEvent(expectedIds.values().next().value ?? undefined);
-      const usedTimestamps = new Set<number>();
-      const records = [];
-      for (const record of sealed) {
-        let timestamp = record.timestamp;
-        while (
-          usedTimestamps.has(timestamp) ||
-          (await db.financialEvents.where("timestamp").equals(timestamp).toArray()).length > 0
-        ) {
-          timestamp++;
-        }
-        usedTimestamps.add(timestamp);
-        records.push({ ...record, timestamp });
-      }
-      await db.financialEvents.bulkAdd(records);
+      await db.financialEvents.bulkAdd(await resolveFreeTimestamps(sealed));
     });
   } catch (err: unknown) {
     if (err instanceof AppendEventError) throw err;
