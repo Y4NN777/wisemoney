@@ -72,7 +72,7 @@ export default function UpdatesPage() {
                 </span>
               </div>
               <div className="border-t border-white/25 p-5 sm:p-8">
-                <p className="text-[clamp(4rem,10vw,8rem)] font-bold leading-none tracking-[-0.065em] tabular-nums">
+                <p className="text-[clamp(2.5rem,6vw,4rem)] font-bold leading-none tracking-tight tabular-nums">
                   {CURRENT_RELEASE.version}
                 </p>
                 <p className="mt-4 text-sm text-white/75">

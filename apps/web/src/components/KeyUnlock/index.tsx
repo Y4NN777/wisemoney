@@ -364,7 +364,7 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
         <div className="grid gap-0 overflow-hidden rounded-lg border border-border bg-card/95 shadow-sm lg:grid-cols-[0.92fr_1.08fr]">
           <aside className="border-b border-border bg-ocean-primary p-5 text-white lg:border-b-0 lg:border-r">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80">{t("keyUnlock.restore.kicker")}</p>
-            <h1 className="mt-3 text-4xl font-bold leading-none sm:text-5xl">{t("keyUnlock.restore.title")}</h1>
+            <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">{t("keyUnlock.restore.title")}</h1>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-white/80">{t("keyUnlock.restore.body")}</p>
             <div className="mt-8 grid gap-3">
               {[

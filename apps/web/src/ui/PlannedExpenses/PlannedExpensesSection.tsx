@@ -371,7 +371,7 @@ export function PlannedExpensesSection({
           return (
             <section key={priority} className="grid border-b border-border last:border-b-0 lg:grid-cols-[8rem_minmax(0,1fr)]" aria-labelledby={`planned-${priority}`}>
               <header className="border-b border-border bg-muted p-4 lg:border-b-0 lg:border-r">
-                <p aria-hidden="true" className="text-4xl font-semibold leading-none tabular-nums text-primary">{PRIORITY_NUMBER[priority]}</p>
+                <p aria-hidden="true" className="text-3xl font-semibold leading-none tabular-nums text-primary">{PRIORITY_NUMBER[priority]}</p>
                 <h3 id={`planned-${priority}`} className="mt-2 text-sm font-semibold">{t(`capture.plannedExpenses.priorityGroups.${priority}`)}</h3>
               </header>
               {items.length === 0 ? (
