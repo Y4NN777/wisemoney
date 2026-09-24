@@ -280,12 +280,12 @@
     "dashboard": "Tableau de bord",
     "dashboardShort": "Accueil",
     "capture": "Saisie",
-    "assistant": "Assistant",
-    "planning": "Planification",
     "settings": "Paramètres",
     "budgets": "Budgets",
     "goals": "Objectifs",
-    "recurring": "Récurrents"
+    "recurring": "Récurrents",
+    "activity": "Activité",
+    "plan": "Plan"
   },
   "helpCenter": {
     "open": "Ouvrir le centre d'aide",
@@ -1477,7 +1477,8 @@
       },
       "ai": {
         "title": "Services d’assistant optionnels",
-        "description": "Connectez un fournisseur d’IA uniquement si vous voulez les fonctions intelligentes"
+        "description": "Connectez un fournisseur d’IA uniquement si vous voulez les fonctions intelligentes",
+        "openAssistant": "Ouvrir l’assistant"
       },
       "security": {
         "title": "Sécurité et session",
@@ -1683,5 +1684,10 @@
     "transferNeedsAccounts": "Ajoutez un second compte pour effectuer un virement entre vos comptes.",
     "goalsEmpty": "Créez d’abord un objectif dans Planification, puis consignez vos contributions ici.",
     "openPlanning": "Ouvrir Planification"
+  },
+  "assistantCard": {
+    "title": "Assistant",
+    "body": "Posez vos questions sur votre mois, obtenez des éclairages et apprenez en avançant.",
+    "action": "Ouvrir l’assistant"
   }
 }

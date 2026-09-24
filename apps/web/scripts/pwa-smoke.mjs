@@ -287,6 +287,9 @@ try {
   await compactDashboardLink.waitFor();
   assert.equal((await compactDashboardLink.textContent())?.trim(), "Accueil",
     "French bottom navigation did not use the compact dashboard label");
+  const bottomNav = syncPage.getByRole("navigation", { name: "Navigation principale", exact: true });
+  assert.equal(await bottomNav.getByRole("link").count(), 3, "bottom navigation should hold exactly three destinations");
+  assert.equal(await bottomNav.getByRole("button").count(), 1, "bottom navigation should hold exactly one capture button");
   await syncPage.getByRole("button", { name: "Saisie", exact: true }).click();
   await syncPage.getByRole("dialog").getByRole("tab", { name: "Transfert", exact: true }).waitFor();
   await syncPage.keyboard.press("Escape");
@@ -298,11 +301,11 @@ try {
   await syncPage.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
   await syncPage.getByRole("option", { name: "English", exact: true }).click();
   await syncPage.setViewportSize({ width: 1280, height: 900 });
-  await syncPage.getByRole("link", { name: "Planning", exact: true }).click();
+  await syncPage.getByRole("link", { name: "Plan", exact: true }).click();
   await syncPage.getByRole("link", { name: /^Debts & Receivables/ }).click();
   await syncPage.getByRole("heading", { name: "Debts & Receivables", exact: true }).waitFor();
 
-  await appPage.getByRole("link", { name: "Planning", exact: true }).click();
+  await appPage.getByRole("link", { name: "Plan", exact: true }).click();
   await appPage.getByRole("link", { name: /^Debts & Receivables/ }).click();
   await appPage.getByRole("heading", { name: "Debts & Receivables", exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Add", exact: true }).click();
@@ -329,10 +332,10 @@ try {
   }
   await appPage.getByRole("tab", { name: "Categories", exact: true }).click();
   await appPage.getByPlaceholder("Search categories", { exact: true }).waitFor();
-  await appPage.getByRole("link", { name: "Planning", exact: true }).click();
+  await appPage.getByRole("link", { name: "Plan", exact: true }).click();
   await appPage.getByRole("link", { name: /^Planned expenses/ }).click();
   await appPage.getByRole("heading", { name: "Planned expenses", exact: true }).waitFor();
-  await appPage.getByRole("link", { name: "Planning", exact: true }).click();
+  await appPage.getByRole("link", { name: "Plan", exact: true }).click();
   await appPage.getByRole("link", { name: /Recurring/ }).click();
   await appPage.getByRole("heading", { name: "Recurring", exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Add Recurring", exact: true }).click();

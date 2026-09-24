@@ -4,6 +4,7 @@ import DevicesSection from "./DevicesSection.tsx";
 import CurrencySection from "./CurrencySection.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
+import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck, Sparkles, SunMoon, WalletCards } from "lucide-react";
 import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
@@ -160,6 +161,12 @@ export default function Settings() {
           title={t("settings.sections.ai.title")}
           description={t("settings.sections.ai.description")}
         >
+          <Button asChild variant="outline" size="sm" className="mb-4 w-full gap-2 sm:w-auto">
+            <Link to="/assistant">
+              <Bot className="h-4 w-4" />
+              {t("settings.sections.ai.openAssistant")}
+            </Link>
+          </Button>
           <BYOKeySettings />
         </SettingsPanel>
         <SettingsPanel

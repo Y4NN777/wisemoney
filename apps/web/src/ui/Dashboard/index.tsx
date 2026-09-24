@@ -29,6 +29,7 @@ import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
 import { useOpenCaptureSheet } from "../../components/CaptureSheet/index.tsx";
 import DeviceUnlockOffer from "../../components/DeviceUnlockOffer/index.tsx";
+import AssistantCard from "../../components/AssistantCard/index.tsx";
 import { comparePeriodAmounts, type PeriodAmountComparison } from "./periodComparison.ts";
 import {
   GREETING_MESSAGE_COUNT,
@@ -1458,6 +1459,7 @@ export default function Dashboard() {
         operations={operationsQuery.data ?? []}
         operationsLoading={operationsQuery.isLoading}
       />
+      <AssistantCard />
     </main>
   );
 }

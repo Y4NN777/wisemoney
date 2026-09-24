@@ -280,12 +280,12 @@
     "dashboard": "Dashboard",
     "dashboardShort": "Home",
     "capture": "Capture",
-    "assistant": "Assistant",
-    "planning": "Planning",
     "settings": "Settings",
     "budgets": "Budgets",
     "goals": "Goals",
-    "recurring": "Recurring"
+    "recurring": "Recurring",
+    "activity": "Activity",
+    "plan": "Plan"
   },
   "helpCenter": {
     "open": "Open help center",
@@ -1477,7 +1477,8 @@
       },
       "ai": {
         "title": "Optional assistant services",
-        "description": "Connect an AI provider only if you want smart features"
+        "description": "Connect an AI provider only if you want smart features",
+        "openAssistant": "Open assistant"
       },
       "security": {
         "title": "Security and session",
@@ -1683,5 +1684,10 @@
     "transferNeedsAccounts": "Add a second account to transfer between your accounts.",
     "goalsEmpty": "Create a goal in Planning first, then record contributions here.",
     "openPlanning": "Open Planning"
+  },
+  "assistantCard": {
+    "title": "Assistant",
+    "body": "Ask about your month, get insights, and learn as you go.",
+    "action": "Open assistant"
   }
 }

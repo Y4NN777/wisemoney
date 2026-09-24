@@ -1,11 +1,12 @@
 import { createRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Route as rootRoute } from "./__root.tsx";
-import { LayoutDashboard, MessageSquare, PlusCircle, ClipboardList, Settings as SettingsIcon } from "lucide-react";
+import { LayoutDashboard, ListOrdered, PlusCircle, ClipboardList, Settings as SettingsIcon } from "lucide-react";
 import KeyUnlock from "../components/KeyUnlock/index.tsx";
 import CaptureSheet, { useOpenCaptureSheet } from "../components/CaptureSheet/index.tsx";
 import Logo from "../components/Logo.tsx";
 import HelpActions from "../components/HelpActions.tsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
+import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import ReminderCenter, { type ReminderViewModel } from "../components/ReminderCenter.tsx";
 import { ReminderProvider, useReminders } from "../reminders/ReminderProvider.tsx";
@@ -48,22 +49,21 @@ function reminderUrgency(type: ReminderViewModel["type"], dueAt: number, now = D
   return "upcoming";
 }
 
-function CaptureNavItem({ compact = false, labelKey }: { compact?: boolean; labelKey: string }) {
+/** The capture control: a raised centre button in the bottom bar, a plain button on desktop. */
+function CaptureNavItem({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation();
   const openCapture = useOpenCaptureSheet();
   return (
     <button
       type="button"
-      aria-label={t(labelKey)}
+      aria-label={t("nav.capture")}
       onClick={() => openCapture("transaction")}
       className={compact
-        ? "flex h-full min-w-16 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-muted-foreground transition-[background-color,color,transform] duration-200 active:scale-95"
-        : "interactive-surface flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground"}
+        ? "flex h-14 w-14 -translate-y-4 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-200 active:scale-95"
+        : "interactive-surface flex h-9 items-center gap-2 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"}
     >
-      <PlusCircle className={compact ? "h-5 w-5" : "h-4 w-4"} />
-      <span className={compact ? "text-[11px] leading-tight font-medium" : ""}>
-        {t(compact ? "nav.capture" : labelKey)}
-      </span>
+      <PlusCircle className={compact ? "h-7 w-7" : "h-4 w-4"} />
+      <span className={compact ? "sr-only" : ""}>{t("nav.capture")}</span>
     </button>
   );
 }
@@ -99,26 +99,32 @@ function RootLayout() {
           </Link>
           <nav aria-label={t("nav.mainAria")} className="hidden items-center gap-1 lg:flex">
             {navItems.map((item) => (
-              item.to === "/capture" ? (
-                <CaptureNavItem key={item.to} labelKey={item.labelKey} />
-              ) : (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  activeOptions={{ exact: item.exact }}
-                  className="interactive-surface flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground"
-                  activeProps={{ className: "bg-ocean-wash text-ocean-dark shadow-sm" }}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {t(item.labelKey)}
-                </Link>
-              )
+              <Link
+                key={item.to}
+                to={item.to}
+                activeOptions={{ exact: item.exact }}
+                className="interactive-surface flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground"
+                activeProps={{ className: "bg-ocean-wash text-ocean-dark shadow-sm" }}
+              >
+                <item.icon className="h-4 w-4" />
+                {t(item.labelKey)}
+              </Link>
             ))}
+            <CaptureNavItem />
           </nav>
           <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-1 sm:gap-2">
             <ReminderCenter reminders={reminderViews} onMarkRead={markRead} onDismiss={dismiss} onOpenReminder={openReminder} />
             <HelpActions compact />
             <LanguageSwitcher compact />
+            <Link
+              to="/settings"
+              aria-label={t("nav.settings")}
+              title={t("nav.settings")}
+              className="interactive-surface flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground"
+              activeProps={{ className: "bg-ocean-wash text-ocean-dark" }}
+            >
+              <SettingsIcon className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </header>
@@ -136,12 +142,10 @@ function RootLayout() {
         style={{ paddingBottom: "var(--safe-area-bottom)" }}
       >
         <div className="mx-auto flex h-16 max-w-lg items-center justify-around">
-          {navItems.map((item) => (
-            item.to === "/capture" ? (
-              <CaptureNavItem key={item.to} compact labelKey={item.labelKey} />
-            ) : (
+          {navItems.map((item, index) => (
+            <Fragment key={item.to}>
+              {index === CAPTURE_SLOT_INDEX && <CaptureNavItem compact />}
               <Link
-                key={item.to}
                 to={item.to}
                 aria-label={t(item.labelKey)}
                 activeOptions={{ exact: item.exact }}
@@ -153,7 +157,7 @@ function RootLayout() {
                   {t(item.compactLabelKey)}
                 </span>
               </Link>
-            )
+            </Fragment>
           ))}
         </div>
       </nav>
@@ -161,10 +165,11 @@ function RootLayout() {
   );
 }
 
+// Three destinations (ux-simplification decision 1); capture is a button, not a route,
+// rendered in the bottom bar before the item at CAPTURE_SLOT_INDEX. Settings lives in the header.
 const navItems = [
   { to: "/", labelKey: "nav.dashboard", compactLabelKey: "nav.dashboardShort", icon: LayoutDashboard, exact: true },
-  { to: "/capture", labelKey: "nav.capture", compactLabelKey: "nav.capture", icon: PlusCircle, exact: false },
-  { to: "/assistant", labelKey: "nav.assistant", compactLabelKey: "nav.assistant", icon: MessageSquare, exact: false },
-  { to: "/planning", labelKey: "nav.planning", compactLabelKey: "nav.planning", icon: ClipboardList, exact: false },
-  { to: "/settings", labelKey: "nav.settings", compactLabelKey: "nav.settings", icon: SettingsIcon, exact: false },
+  { to: "/operations", labelKey: "nav.activity", compactLabelKey: "nav.activity", icon: ListOrdered, exact: false },
+  { to: "/planning", labelKey: "nav.plan", compactLabelKey: "nav.plan", icon: ClipboardList, exact: false },
 ] as const;
+const CAPTURE_SLOT_INDEX = 2;
