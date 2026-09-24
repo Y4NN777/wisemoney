@@ -448,7 +448,7 @@ export default function HelpChat({
                 disabled={!online || submitting}
                 placeholder={t("helpPage.chat.placeholder")}
                 aria-label={t("helpPage.chat.placeholder")}
-                className="min-h-10 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:border-primary"
+                className="min-h-10 resize-none rounded-md border border-input bg-background px-3 py-2 text-base text-foreground focus-visible:border-primary sm:text-sm"
               />
               <Button type="submit" size="icon" disabled={!online || submitting || imageBusy || input.trim().length === 0} aria-label={t("helpPage.chat.send")}>
                 <Send className="h-4 w-4" />

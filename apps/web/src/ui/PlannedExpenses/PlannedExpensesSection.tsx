@@ -158,7 +158,7 @@ function ExpenseFields({
       <div className="space-y-2 sm:col-span-2">
         <Label htmlFor="planned-note">{t("capture.plannedExpenses.fields.note")}</Label>
         <textarea id="planned-note" value={draft.note} onChange={(event) => onChange({ note: event.target.value })}
-          className="min-h-24 w-full rounded-md border border-input bg-card px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-ring" />
+          className="min-h-24 w-full rounded-md border border-input bg-card px-3 py-2 text-base outline-none focus:border-primary focus:ring-1 focus:ring-ring sm:text-sm" />
       </div>
     </div>
   );

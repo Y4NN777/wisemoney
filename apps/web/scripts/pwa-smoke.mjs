@@ -88,6 +88,8 @@ try {
   for (const device of [
     { name: "desktop", viewport: { width: 1440, height: 1000 } },
     { name: "mobile", viewport: { width: 390, height: 844 }, isMobile: true },
+    // iPhone 12 mini: the narrowest current iPhone (Y4NN's device, 2026-09-24).
+    { name: "mini", viewport: { width: 375, height: 812 }, isMobile: true },
   ]) {
     const context = await browser.newContext({
       viewport: device.viewport,

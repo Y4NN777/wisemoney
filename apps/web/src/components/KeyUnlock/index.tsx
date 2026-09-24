@@ -197,7 +197,7 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
   ];
 
   return (
-    <main aria-label={t("keyUnlock.landing.aria")} className="landing-grid min-h-dvh bg-background text-foreground">
+    <main aria-label={t("keyUnlock.landing.aria")} className="landing-grid min-h-dvh overflow-x-clip bg-background text-foreground">
       <section className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-6 lg:px-8">
         <header className="flex items-center justify-between gap-3 py-3">
           <Logo className="h-8 w-auto" />
