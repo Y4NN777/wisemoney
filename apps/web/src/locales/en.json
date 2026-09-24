@@ -110,50 +110,18 @@
       "title": "Manage your money. Stay in control.",
       "body": "Accounts, budgets, and due dates stay together on this device.",
       "existingVault": "Your private space is ready on this device.",
-      "overviewAria": "What you can do with WiseMoney",
-      "overview": {
-        "track": {
-          "title": "Track",
-          "accounts": "Accounts",
-          "operations": "Operations",
-          "transfers": "Transfers"
-        },
-        "plan": {
-          "title": "Plan",
-          "budgets": "Budgets",
-          "goals": "Goals",
-          "dueDates": "Due dates"
-        },
-        "protect": {
-          "title": "Protect",
-          "encrypted": "Encrypted",
-          "offline": "Offline",
-          "backups": "Backups"
-        }
-      },
       "openVault": "Open my space",
-      "startOnboarding": "See how it works",
       "openApp": "Open app",
       "start": "Start",
-      "viewSteps": "View setup guide",
-      "afterSetup": "After setup",
-      "workspaceTitle": "Your WiseMoney workspace",
-      "steps": {
-        "vault": {
-          "title": "Create a private space",
-          "body": "Your financial records are protected on this device with a passphrase only you know."
-        },
-        "offline": {
-          "title": "Use the app offline"
-        },
-        "ai": {
-          "title": "Use the assistant when ready",
-          "body": "The assistant stays optional. WiseMoney will tell you what is needed before any smart feature is used."
-        },
-        "install": {
-          "title": "Install the app",
-          "body": "After setup, add WiseMoney to your home screen from your browser menu for a full-screen app experience."
-        }
+      "assurancesAria": "What WiseMoney promises",
+      "assurances": {
+        "encrypted": "Encrypted on this device",
+        "offline": "Works offline",
+        "yours": "Your passphrase, your data"
+      },
+      "glimpse": {
+        "caption": "Your numbers appear here, and stay on this device.",
+        "footer": "Protected by your passphrase"
       }
     },
     "restore": {

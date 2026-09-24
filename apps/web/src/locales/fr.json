@@ -110,50 +110,18 @@
       "title": "Gérez votre argent. Gardez le contrôle.",
       "body": "Comptes, budgets et échéances restent réunis sur cet appareil.",
       "existingVault": "Votre espace privé est prêt sur cet appareil.",
-      "overviewAria": "Ce que vous pouvez faire avec WiseMoney",
-      "overview": {
-        "track": {
-          "title": "Suivez",
-          "accounts": "Comptes",
-          "operations": "Opérations",
-          "transfers": "Transferts"
-        },
-        "plan": {
-          "title": "Prévoyez",
-          "budgets": "Budgets",
-          "goals": "Objectifs",
-          "dueDates": "Échéances"
-        },
-        "protect": {
-          "title": "Protégez",
-          "encrypted": "Chiffré",
-          "offline": "Hors ligne",
-          "backups": "Sauvegardes"
-        }
-      },
       "openVault": "Ouvrir mon espace",
-      "startOnboarding": "Voir comment ça marche",
       "openApp": "Ouvrir l'app",
       "start": "Commencer",
-      "viewSteps": "Voir le guide",
-      "afterSetup": "Après configuration",
-      "workspaceTitle": "Votre espace WiseMoney",
-      "steps": {
-        "vault": {
-          "title": "Créer un espace privé",
-          "body": "Vos données financières sont protégées sur cet appareil par une phrase privée que vous seul connaissez."
-        },
-        "offline": {
-          "title": "Utiliser l'app hors ligne"
-        },
-        "ai": {
-          "title": "Utiliser l'assistant quand vous êtes prêt",
-          "body": "L'assistant reste optionnel. WiseMoney vous indique ce qui est nécessaire avant toute fonction intelligente."
-        },
-        "install": {
-          "title": "Installer l'application",
-          "body": "Après la configuration, ajoutez WiseMoney à votre écran d'accueil depuis le menu du navigateur pour une expérience plein écran."
-        }
+      "assurancesAria": "Ce que WiseMoney promet",
+      "assurances": {
+        "encrypted": "Chiffré sur cet appareil",
+        "offline": "Fonctionne hors ligne",
+        "yours": "Votre phrase, vos données"
+      },
+      "glimpse": {
+        "caption": "Vos chiffres apparaissent ici, et restent sur cet appareil.",
+        "footer": "Protégé par votre phrase privée"
       }
     },
     "restore": {

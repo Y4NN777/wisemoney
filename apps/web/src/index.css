@@ -62,7 +62,6 @@
   --border: rgba(16, 24, 32, 0.12);
   --input: rgba(16, 24, 32, 0.16);
   --ring: var(--ocean-primary);
-  --landing-grid-line: rgba(0, 119, 182, 0.08);
   --landing-glow: rgba(230, 245, 250, 0.92);
   --landing-wash: rgba(230, 245, 250, 0.68);
   --modal-overlay: rgba(0, 48, 73, 0.34);
@@ -188,7 +187,6 @@
   --border: #333842;
   --input: #404650;
   --ring: var(--ocean-light);
-  --landing-grid-line: rgba(0, 180, 216, 0.10);
   --landing-glow: rgba(22, 48, 58, 0.78);
   --landing-wash: rgba(22, 48, 58, 0.44);
   --modal-overlay: rgba(0, 22, 34, 0.72);
@@ -365,31 +363,14 @@
     pointer-events: none;
   }
 
+  /* Landing backdrop: two soft ocean glows, no grid (ux-simplification Phase 5). */
   .landing-grid {
     background:
-      linear-gradient(to right, var(--landing-grid-line) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--landing-grid-line) 1px, transparent 1px),
-      radial-gradient(circle at 18% 18%, var(--landing-glow), transparent 30rem),
-      linear-gradient(180deg, var(--landing-wash), transparent 34rem),
+      radial-gradient(circle at 12% 8%, var(--landing-glow), transparent 32rem),
+      radial-gradient(circle at 88% 72%, var(--landing-wash), transparent 30rem),
       var(--background);
-    background-size: 32px 32px, 32px 32px, auto, auto, auto;
   }
 
-  .landing-step {
-    animation: landing-step-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  }
-
-  .landing-step:nth-child(2) {
-    animation-delay: 80ms;
-  }
-
-  .landing-step:nth-child(3) {
-    animation-delay: 160ms;
-  }
-
-  .landing-step:nth-child(4) {
-    animation-delay: 240ms;
-  }
 }
 
 @keyframes wisemoney-enter {
@@ -461,17 +442,6 @@
   to {
     opacity: 0;
     transform: translateY(8px) scale(0.99);
-  }
-}
-
-@keyframes landing-step-in {
-  from {
-    opacity: 0;
-    transform: translateX(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
 

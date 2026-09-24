@@ -14,7 +14,7 @@ import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContex
 import { clearCachedMasterKey, getCachedMasterKey, setCachedMasterKey } from "../../lib/vaultUnlocked.ts";
 import { recordPassphraseUnlock } from "../../lib/deviceUnlockOffer.ts";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
-import { ArrowLeft, ArrowRight, CalendarClock, LockOpen, ShieldCheck, Upload, WalletCards } from "lucide-react";
+import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, ShieldCheck, Upload, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -190,40 +190,16 @@ type LandingOnboardingProps = {
 function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
   const { t } = useTranslation();
   const primaryLabel = hasVault ? t("keyUnlock.landing.openVault") : t("keyUnlock.landing.start");
-  const overviewItems = [
-    {
-      icon: <WalletCards className="h-5 w-5" />,
-      title: t("keyUnlock.landing.overview.track.title"),
-      features: [
-        t("keyUnlock.landing.overview.track.accounts"),
-        t("keyUnlock.landing.overview.track.operations"),
-        t("keyUnlock.landing.overview.track.transfers"),
-      ],
-    },
-    {
-      icon: <CalendarClock className="h-5 w-5" />,
-      title: t("keyUnlock.landing.overview.plan.title"),
-      features: [
-        t("keyUnlock.landing.overview.plan.budgets"),
-        t("keyUnlock.landing.overview.plan.goals"),
-        t("keyUnlock.landing.overview.plan.dueDates"),
-      ],
-    },
-    {
-      icon: <ShieldCheck className="h-5 w-5" />,
-      title: t("keyUnlock.landing.overview.protect.title"),
-      features: [
-        t("keyUnlock.landing.overview.protect.encrypted"),
-        t("keyUnlock.landing.overview.protect.offline"),
-        t("keyUnlock.landing.overview.protect.backups"),
-      ],
-    },
+  const assurances = [
+    { icon: <ShieldCheck className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.encrypted") },
+    { icon: <WifiOff className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.offline") },
+    { icon: <KeyRound className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.yours") },
   ];
 
   return (
     <main aria-label={t("keyUnlock.landing.aria")} className="landing-grid min-h-dvh bg-background text-foreground">
-      <section className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between border-b border-border py-3">
+      <section className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-6 lg:px-8">
+        <header className="flex items-center justify-between py-3">
           <Logo className="h-8 w-auto" />
           <div className="flex items-center gap-2">
             <HelpActions />
@@ -234,55 +210,73 @@ function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
           </div>
         </header>
 
-        <div className="grid flex-1 border-b border-border lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)]">
-          <div className="flex flex-col justify-center gap-8 py-10 lg:border-r lg:border-border lg:py-16 lg:pr-12">
-            <div className="space-y-6">
-              <h1 className="max-w-4xl text-4xl font-bold leading-[0.98] tracking-normal text-foreground sm:text-6xl lg:text-7xl">
+        <div className="grid flex-1 items-center gap-12 py-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:gap-16 lg:py-16">
+          <div className="flex flex-col gap-8">
+            <div className="space-y-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ocean-primary">{t("keyUnlock.landing.kicker")}</p>
+              <h1 className="max-w-3xl text-4xl font-bold leading-[1.02] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
                 {t("keyUnlock.landing.title")}
               </h1>
-              <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {t("keyUnlock.landing.body")}
               </p>
               {hasVault && (
-                <p className="max-w-xl border-l-2 border-ocean-primary pl-4 text-sm font-medium text-foreground">
+                <p className="max-w-lg border-l-2 border-ocean-primary pl-4 text-sm font-medium text-foreground">
                   {t("keyUnlock.landing.existingVault")}
                 </p>
               )}
             </div>
-            <Button type="button" onClick={onStart} className="h-12 w-full justify-between px-4 sm:max-w-xs">
+            <Button type="button" onClick={onStart} className="h-12 w-full justify-between px-5 text-base sm:max-w-xs">
               {primaryLabel}
               <ArrowRight className="h-4 w-4" />
             </Button>
+            <ul aria-label={t("keyUnlock.landing.assurancesAria")} className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+              {assurances.map((item) => (
+                <li key={item.label} className="flex items-center gap-2">
+                  <span className="text-ocean-primary">{item.icon}</span>
+                  {item.label}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <aside aria-label={t("keyUnlock.landing.overviewAria")} className="flex flex-col justify-center py-8 lg:pl-10">
-            <div className="border border-border bg-card">
-              {overviewItems.map((item, index) => (
-                <article
-                  key={item.title}
-                  className={`grid grid-cols-[3.5rem_1fr] ${index < overviewItems.length - 1 ? "border-b border-border" : ""}`}
-                >
-                  <div className="flex flex-col items-center gap-3 border-r border-border p-3 text-ocean-primary">
-                    <span className="text-lg font-bold tabular-nums">{String(index + 1).padStart(2, "0")}</span>
-                    {item.icon}
-                  </div>
-                  <div className="p-4 sm:p-5">
-                    <h2 className="text-lg font-semibold text-foreground">{item.title}</h2>
-                    <ul className="mt-3 grid grid-cols-3 divide-x divide-border border-y border-border text-center text-xs font-medium text-muted-foreground">
-                      {item.features.map((feature) => (
-                        <li key={feature} className="flex min-h-11 items-center justify-center px-2 py-2 leading-tight">
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </aside>
+          <LandingGlimpse />
         </div>
       </section>
     </main>
+  );
+}
+
+/**
+ * A static preview of the Home summary card. Amounts are masked on purpose: the page shows
+ * the shape of the product, never invented figures. Decorative, so hidden from assistive tech.
+ */
+function LandingGlimpse() {
+  const { t } = useTranslation();
+  const masked = "\u2022\u2022\u2022\u2022\u2022\u2022";
+  return (
+    <div aria-hidden="true" className="relative mx-auto w-full max-w-sm lg:max-w-md">
+      <div className="absolute -inset-6 rounded-[2rem] bg-ocean-wash/70 blur-2xl" />
+      <div className="relative rounded-2xl border border-border bg-card p-5 shadow-[0_24px_60px_rgba(16,24,32,0.14)] sm:p-6 lg:-rotate-2">
+        <p className="text-xs font-medium text-ocean-primary">{t("dashboard.availableToday")}</p>
+        <p className="mt-2 text-3xl font-semibold tracking-[0.22em] text-foreground/55">{masked}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{t("keyUnlock.landing.glimpse.caption")}</p>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <div className="rounded-lg border border-border bg-background p-3">
+            <p className="text-[11px] text-muted-foreground">{t("dashboard.moneyReceived")}</p>
+            <p className="mt-1 text-base font-semibold tracking-[0.2em] text-positive/70">{masked}</p>
+          </div>
+          <div className="rounded-lg border border-border bg-background p-3">
+            <p className="text-[11px] text-muted-foreground">{t("dashboard.moneySpent")}</p>
+            <p className="mt-1 text-base font-semibold tracking-[0.2em] text-negative/70">{masked}</p>
+          </div>
+        </div>
+        <div className="mt-4 flex items-center justify-between rounded-lg bg-ocean-wash/60 px-3 py-2 text-xs font-medium text-ocean-dark">
+          <span>{t("keyUnlock.landing.glimpse.footer")}</span>
+          <LockKeyhole className="h-4 w-4" />
+        </div>
+      </div>
+    </div>
   );
 }
 

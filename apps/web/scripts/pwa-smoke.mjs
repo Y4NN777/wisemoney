@@ -186,7 +186,7 @@ try {
     await page.getByRole("combobox", { name: "Choose language", exact: true }).click();
     await page.getByRole("option", { name: "Français", exact: true }).click();
     await page.getByRole("heading", { name: "Gérez votre argent. Gardez le contrôle.", exact: true }).waitFor();
-    await page.getByText("Sauvegardes", { exact: true }).waitFor();
+    await page.getByText("Chiffré sur cet appareil", { exact: true }).waitFor();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true,
       `${device.name}: French landing has horizontal overflow`);
     await page.screenshot({ path: `${outputDir}/${device.name}-landing-fr.png`, fullPage: true });
