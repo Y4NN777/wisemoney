@@ -21,16 +21,19 @@ Status: PROPOSED · 2026-09-19 · Design: `docs/designs/ux-simplification.md`
 - [x] "Online backup is not connected" removed from setup (`CloudEdgeAuth` + `keyUnlock.cloud.*` deleted) and from Settings › Security. Remaining infra vocabulary in help FAQ strings is Phase 4.
 - Verify: Start → app in 4 interactions (Start, passphrase, confirm, Create); 463 tests; both smokes pass with device unlock enabled from Settings (2026-09-24).
 
-## Phase 3 — Home + 3-tab IA
-- [ ] Tab bar: Home · Activity · Plan + capture FAB.
-- [ ] Home first viewport per design; charts below fold; split `Dashboard/index.tsx` into `HomeSummary` / `RecentMovements` / `AttentionCardHost` / `HomeCharts` while rebuilding.
-- [ ] Plan page: 5 sections on one scrolling page; update `openReminder` deep-link targets.
-- [ ] Assistant de-tabbed (`/assistant` kept, linked from Settings + Home card when configured).
-- [ ] Unify box rounding: delete the duplicate radius block in `index.css` (~L125 vs ~L258), one scale for cards/controls/focus.
-- Verify: everything ≤ 2 taps; reminder links land correctly; EN/FR parity test green.
+## Phase 3 — Home + 3-tab IA — DONE 2026-09-24
+- [x] Tab bar: Home · Activity · Plan + centre capture button (`routes/_vault.tsx`); Settings is a header icon; Assistant reached from Settings and a Home card that appears once a provider is usable (`components/AssistantCard`).
+- [x] Home first viewport from `selectHomeLayout()` (`ui/Dashboard/homeSelectors.ts`): summary, quick actions, one attention card (`DashboardAttention` `limit`), five recent movements from the operations projection (`RecentMovements`), assistant entry; charts, planning cards, filtered list and AI insight under `HomeFold` (mounted only when open). `Dashboard/index.tsx` split into co-located modules first, verbatim, in its own commit.
+- [x] Plan page: five collapsible sections from `selectPlanSections()` on one scroll; empty sections are one quiet row; the five sub-routes stay, so `openReminder` targets did not need to change.
+- [x] Box rounding: one literal scale in the `@theme` block (sm 6 · md 8 · lg 12 · xl 16 · 2xl 20), `:root` duplicate removed, `rounded-none` overrides dropped.
+- Verify: 478 tests; both smokes green at each of the five commits (`d29c3cd`, `e02e1bd`, `3b73f6e`, `c6ff6d8`, `2b6be6e`).
+- Follow-up (not done here): day/week/month presets on Activity, then remove `TransactionActivity` from the Home fold. "Activité September" — month name not localised in the French activity title (pre-existing).
 
-## Phase 4 — Language + residue
-- [ ] Replace infra vocabulary in user strings (EN/FR); WiseBot tips never auto-open over forms.
-- [ ] Delete `rem.md`, stale `coverage/`; add `import/no-restricted-paths` (NFR-MOD-02).
+## Phase 4 — Language + residue — DONE 2026-09-24
+- [x] Infrastructure vocabulary removed from EN/FR strings (eight unreferenced keys deleted, live ones rewritten); `i18n.test.ts` now sweeps every leaf string of both locales against a forbidden list. Coach tips are not decided while a dialog or sheet is open (`CoachProvider` gates on `modalOpen`; WiseBot panel carries `data-state`).
+- [x] `rem.md` / `coverage/` removed in Phase 0. NFR-MOD-02 and NFR-MOD-01 enforced with the core `no-restricted-imports` rule scoped by directory in `eslint.config.js` (no `eslint-plugin-import` dependency — substitution noted in commit `72f6cde`); `ui/Assistant` now imports through `pillars/intelligence`.
+
+## Phase 5 — Landing pass — PROPOSED 2026-09-24
+- [ ] Design proposal from screenshots first (Y4NN: "more better and premium"); then implement. Keep `Start` / `Open my space` names (smokes), no new dependencies, PWA precache size checked.
 
 Deferred: KeyUnlock split (after Phase 2 settles), `pillars/state` split (on demand), locale namespace split, all edge-deployment items.

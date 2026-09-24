@@ -45,12 +45,19 @@
 
 ### Current Implementation Snapshot
 
-- **Web app:** React 18 + TypeScript PWA with TanStack Router routes for dashboard,
-  capture, assistant, budgets, goals, recurring, planning, and settings. Local
+- **Web app:** React 18 + TypeScript PWA. Three-tab IA (Home · Activity · Plan) with a
+  centre capture button that opens an amount-first sheet; Settings in the header;
+  Assistant reached from Settings and a Home card once a provider is usable. Routes:
+  `/`, `/operations`, `/planning` (+ `/budgets`, `/goals`, `/planned-expenses`,
+  `/recurring`, `/debts`), `/assistant`, `/settings`, `/help`, `/updates`, all app
+  routes under the pathless `_vault` layout. Home shows one viewport (summary, one
+  attention card, five recent movements) with the rest under a fold. Local
   financial-state flows are event-sourced and covered by domain/pillar tests.
 - **Client data/security:** Dexie-backed local persistence, AES-GCM envelope
-  helpers, passphrase/WebAuthn key-management foundation, sealed refresh-token
-  session store, BYO-key settings, import/export, and consent/redaction modules.
+  helpers, passphrase key management with device unlock (WebAuthn PRF) enabled
+  after setup from Settings › Security, sealed refresh-token session store, BYO-key
+  settings, import/export, and consent/redaction modules. One-step onboarding
+  (landing → passphrase → app).
 - **AI orchestration:** Managed path attaches Bearer auth, `X-Egress-Level`,
   `X-Feature`, and full-consent assertions when available; assertion failures
   downgrade to redacted payloads. BYO direct-provider path remains a future slice.
@@ -76,6 +83,10 @@
 - Edge auth completion and consent gate on `/v1/ai/proxy`.
 - Managed AI orchestration path with redacted downgrade safety.
 - Changelog and documentation freshness pass for stale S0/workflow language.
+- UX simplification Phases 0–4 (2026-09-24, local commits on `main`): navigation
+  unification, instant capture sheet, one-step onboarding, three-tab IA, Home first
+  viewport, Plan sections, radius scale, vocabulary sweep, import-boundary lint
+  (`docs/plans/ux-simplification-implementation.md`).
 
 ### Tracked Follow-Ups
 
@@ -90,6 +101,8 @@
   double-issuance race.
 - Add Postgres-backed integration tests for edge handlers.
 - Implement BYO direct-provider orchestration.
+- Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
+- Activity page date presets (day/week/month), then drop `TransactionActivity` from Home.
 
 ### Blockers
 
