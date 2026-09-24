@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { Fragment, useState, useMemo, useEffect, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { useDeleteTransaction, useFinancialOperations, useFinancialState, useHasAnyMoneyMovement, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
@@ -29,7 +29,6 @@ import { useOpenCaptureSheet } from "../../components/CaptureSheet/index.tsx";
 import DeviceUnlockOffer from "../../components/DeviceUnlockOffer/index.tsx";
 import AssistantCard from "../../components/AssistantCard/index.tsx";
 import { comparePeriodAmounts } from "./periodComparison.ts";
-import DashboardAttention from "../../components/DashboardAttention.tsx";
 import {
   selectAccountDistribution,
   selectAccountOperations,
@@ -45,7 +44,10 @@ import { summarizeMonthlyActivity } from "../../analytics/operations.ts";
 import AppFaultPanel from "../../errors/AppFaultPanel.tsx";
 import { classifyAppError } from "../../errors/diagnostics.ts";
 import { formatMoney, formatDate, formatFilterDate, formatFilterRange, computePrevPeriod } from "./format.ts";
-import { type TransactionFilter, getTransactionFilterBounds } from "./homeSelectors.ts";
+import { type TransactionFilter, type HomeSectionId, getTransactionFilterBounds, indexTransactionsById, selectHomeLayout, selectRecentMovements, RECENT_MOVEMENT_LIMIT } from "./homeSelectors.ts";
+import RecentMovements from "./RecentMovements.tsx";
+import HomeFold from "./HomeFold.tsx";
+import AttentionCardHost from "./AttentionCardHost.tsx";
 import { SpendingBar, CashFlowTrendChart, BalanceTrendChart } from "./HomeCharts.tsx";
 import { HealthRail } from "./HomePlanningCards.tsx";
 import { InsightCard } from "./AiInsightCard.tsx";
@@ -218,6 +220,11 @@ function DashboardContent({
     () => selectBalanceTimeline(overviewSnapshot.totalBalance, scopedPeriodOperations, { start: periodStart, end: periodEnd }, 10, accountId ?? undefined),
     [accountId, overviewSnapshot.totalBalance, periodEnd, periodStart, scopedPeriodOperations],
   );
+  const recentMovements = useMemo(
+    () => selectRecentMovements(operations, { accountId, end: periodEnd, limit: RECENT_MOVEMENT_LIMIT }),
+    [accountId, operations, periodEnd],
+  );
+  const transactionsById = useMemo(() => indexTransactionsById(allTransactions ?? []), [allTransactions]);
 
   // load AI insight
   const handleAiInsight = async () => {
@@ -276,225 +283,27 @@ function DashboardContent({
     }
   };
 
-  return (
-    <div className="space-y-4">
-      <FinancialOverview
-        snapshot={overviewSnapshot}
-        isCurrentPeriod={canMutate}
-        comparison={selectedAccount == null ? periodComparison : null}
-        accountName={selectedAccount?.name ?? null}
-        activityContext={{ start: periodStart, end: periodEnd, accountId }}
-      />
-
-      {canMutate && <DashboardQuickActions />}
-
-      <DashboardAttention snapshot={snapshot} />
-
-      <section aria-label={t("dashboard.analyticsOverview")} className="grid gap-3 xl:grid-cols-2">
-        <Card className="interactive-surface metric-surface xl:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">{t("dashboard.balanceTrend")}</CardTitle>
-            <Button asChild variant="ghost" size="sm"><Link to="/operations" search={accountId == null ? {} : { accountId }}>{t("dashboard.viewAll")}</Link></Button>
-          </CardHeader>
-          <CardContent>
-            {operationsLoading ? <Skeleton className="h-52 w-full" /> : <BalanceTrendChart points={balanceSeries} currency={currency} periodStart={periodStart} accountId={accountId} />}
-          </CardContent>
-        </Card>
-        <Card className="interactive-surface metric-surface">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">{t("dashboard.cashFlowTrend")}</CardTitle>
-            <TrendingUp className="h-4 w-4 text-ocean-primary" />
-          </CardHeader>
-          <CardContent>
-            {operationsLoading ? (
-              <Skeleton className="h-48 w-full" />
-            ) : (
-              <CashFlowTrendChart points={cashFlowSeries} currency={currency} accountId={accountId} />
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="interactive-surface">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">{t("dashboard.spendingMix")}</CardTitle>
-            <BarChart3 className="h-4 w-4 text-ocean-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {categorySpending.items.length > 0 ? (
-                categorySpending.items.slice(0, 6).map((category) => (
-                  <SpendingBar
-                    key={category.categoryId}
-                    label={category.name}
-                    amount={category.amount.minorUnits}
-                    total={categorySpending.total}
-                    currency={category.amount.currency}
-                    categoryId={category.categoryId}
-                    accountId={accountId}
-                    start={periodStart}
-                    end={periodEnd}
-                  />
-                ))
-              ) : (
-                <p className="py-8 text-center text-sm text-muted-foreground">{t("dashboard.categoryNone")}</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      <HealthRail
-        activeBudgets={activeBudgets}
-        activeGoals={activeGoals}
+  const layout = selectHomeLayout({ canMutate });
+  const sections: Record<HomeSectionId, ReactNode> = {
+    summary: (
+          <FinancialOverview
+            snapshot={overviewSnapshot}
+            isCurrentPeriod={canMutate}
+            comparison={selectedAccount == null ? periodComparison : null}
+            accountName={selectedAccount?.name ?? null}
+            activityContext={{ start: periodStart, end: periodEnd, accountId }}
+          />
+    ),
+    quickActions: canMutate ? <DashboardQuickActions /> : null,
+    attention: <AttentionCardHost snapshot={snapshot} />,
+    recentMovements: (
+      <RecentMovements
         snapshot={snapshot}
-      />
-
-      {/* ── Two-column layout on desktop ── */}
-      <section className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
-        {upcomingCommitments.length > 0 && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-base">{t("dashboard.upcoming")}</CardTitle>
-              <Repeat className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {upcomingCommitments.slice(0, 5).map((item) => (
-                  <li key={item.id} className="border-b border-border py-2 last:border-b-0">
-                    <Link
-                      to={item.kind === "planned_expense" ? "/planned-expenses" : item.kind === "recurring_expense" ? "/recurring" : "/debts"}
-                      className="interactive-surface flex items-center justify-between gap-3"
-                    >
-                      <span className="min-w-0">
-                        <span className="block truncate text-sm font-medium">{item.label}</span>
-                        <span className="mt-0.5 block text-xs text-muted-foreground">
-                          {t(`dashboard.commitmentKinds.${item.kind}`)}
-                          {item.dueAt == null
-                            ? ""
-                            : ` · ${item.dueAt < asOfDayStart ? t("dashboard.overdueDate", { date: formatDate(item.dueAt) }) : formatDate(item.dueAt)}`}
-                        </span>
-                      </span>
-                      <span className="shrink-0 text-sm font-semibold tabular-nums">{formatMoney(item.amount.minorUnits, item.amount.currency)}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        )}
-
-        {selectedAccount == null && accountDistribution.length > 1 && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-base">{t("dashboard.accountDistribution")}</CardTitle>
-              <Wallet className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {accountDistribution.slice(0, 6).map((account) => (
-                <div key={account.accountId} className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="truncate font-medium">{account.name}</span>
-                    <span className="shrink-0 tabular-nums text-muted-foreground">{formatMoney(account.amount.minorUnits, account.amount.currency)}</span>
-                  </div>
-                  {account.share == null ? (
-                    <p className="text-[11px] text-muted-foreground">{t("dashboard.accountShareUnavailable")}</p>
-                  ) : (
-                    <div className="h-1.5 overflow-hidden bg-muted"><div className="h-full bg-ocean-primary" style={{ width: `${Math.min(100, account.share)}%` }} /></div>
-                  )}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Budgets */}
-        {activeBudgets.length > 0 && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-base">{t("budgets.title")}</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {activeBudgets.map((budget) => {
-                const prog = snapshot.budgetProgress[budget.id];
-                if (prog == null) return null;
-                const cat = snapshot.categories.find((c) => c.id === budget.categoryId);
-                const overspent = prog.percentage > 100;
-                const limitReached = prog.percentage === 100;
-                const nearingLimit = prog.percentage >= 70 && !limitReached && !overspent;
-                const budgetStatus = overspent
-                  ? t("dashboard.budgetStates.exceeded")
-                  : limitReached
-                    ? t("dashboard.budgetStates.reached")
-                    : nearingLimit
-                      ? t("dashboard.budgetStates.watch")
-                      : t("dashboard.budgetStates.within");
-                return (
-                  <div key={budget.id} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-1 min-w-0">
-                        <span className="truncate">{budget.name}</span>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal shrink-0">
-                          {cat?.name ?? t("common.unknown")}
-                        </Badge>
-                        {(nearingLimit || limitReached) && <Info className="h-3 w-3 text-attention shrink-0" />}
-                        {overspent && <AlertTriangle className="h-3 w-3 text-negative shrink-0" />}
-                      </span>
-                      <span className={overspent ? "text-negative font-medium" : nearingLimit ? "text-attention font-medium" : "text-muted-foreground"}>
-                        {formatMoney(prog.spent.minorUnits, prog.spent.currency)} / {formatMoney(prog.limit.minorUnits, prog.limit.currency)}
-                      </span>
-                    </div>
-                    <Progress
-                      value={Math.min(prog.percentage, 100)}
-                      className={overspent ? "bg-negative-wash [&>div]:bg-negative" : nearingLimit || limitReached ? "bg-attention-wash [&>div]:bg-attention" : ""}
-                    />
-                    <p className={`text-xs ${overspent ? "text-negative" : nearingLimit || limitReached ? "text-attention" : "text-muted-foreground"}`}>
-                      {budgetStatus}{nearingLimit ? ` · ${t("dashboard.remaining", { percentage: Math.round(100 - prog.percentage) })}` : ""}
-                    </p>
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-        )}
-      </section>
-
-      {/* ── Goals (full width) ── */}
-      {activeGoals.length > 0 && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">{t("goals.title")}</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {activeGoals.map((goal) => {
-              const prog = snapshot.goalProgress[goal.id];
-              if (prog == null) return null;
-              return (
-                <div key={goal.id} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>{goal.name}</span>
-                    <span className="text-muted-foreground">
-                      {formatMoney(prog.accumulated.minorUnits, prog.accumulated.currency)} / {formatMoney(prog.target.minorUnits, prog.target.currency)}
-                    </span>
-                  </div>
-                  <Progress value={Math.min(prog.percentage, 100)} />
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-      )}
-
-      <TransactionActivity
-        snapshot={snapshot}
+        movements={recentMovements}
+        transactionsById={transactionsById}
         canMutate={canMutate}
-        filter={transactionFilter}
-        onFilterChange={setTransactionFilter}
-        filterContext={transactionFilterContext}
-        transactions={listTransactions}
-        loading={listTransactionsLoading}
-        transfers={filteredTransfers}
+        loading={operationsLoading || listTransactionsLoading}
+        activityContext={{ start: periodStart, end: periodEnd, ...(accountId == null ? {} : { accountId }) }}
         onEdit={(transaction) => setTransactionEdit({
           transaction,
           categoryId: transaction.categoryId,
@@ -504,31 +313,264 @@ function DashboardContent({
         })}
         onDelete={setTransactionToDelete}
       />
-
-      {(aiInsight != null || aiCapability?.available === true) && (
-        <section aria-label={t("dashboard.aiInsight")} className="max-w-xl">
-          {aiInsight != null ? (
-            <InsightCard insight={aiInsight} />
-          ) : (
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-2 pb-2">
-                <Lightbulb className="h-4 w-4 text-muted-foreground" />
-                <CardTitle className="text-sm font-medium">{t("dashboard.aiInsight")}</CardTitle>
+    ),
+    assistant: <AssistantCard />,
+    charts: (
+          <section aria-label={t("dashboard.analyticsOverview")} className="grid gap-3 xl:grid-cols-2">
+            <Card className="interactive-surface metric-surface xl:col-span-2">
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <CardTitle className="text-base">{t("dashboard.balanceTrend")}</CardTitle>
+                <Button asChild variant="ghost" size="sm"><Link to="/operations" search={accountId == null ? {} : { accountId }}>{t("dashboard.viewAll")}</Link></Button>
               </CardHeader>
               <CardContent>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => { void handleAiInsight(); }}
-                  disabled={aiLoading}
-                >
-                  {aiLoading ? t("dashboard.analyzing") : t("dashboard.analyzePeriod")}
-                </Button>
+                {operationsLoading ? <Skeleton className="h-52 w-full" /> : <BalanceTrendChart points={balanceSeries} currency={currency} periodStart={periodStart} accountId={accountId} />}
+              </CardContent>
+            </Card>
+            <Card className="interactive-surface metric-surface">
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <CardTitle className="text-base">{t("dashboard.cashFlowTrend")}</CardTitle>
+                <TrendingUp className="h-4 w-4 text-ocean-primary" />
+              </CardHeader>
+              <CardContent>
+                {operationsLoading ? (
+                  <Skeleton className="h-48 w-full" />
+                ) : (
+                  <CashFlowTrendChart points={cashFlowSeries} currency={currency} accountId={accountId} />
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="interactive-surface">
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <CardTitle className="text-base">{t("dashboard.spendingMix")}</CardTitle>
+                <BarChart3 className="h-4 w-4 text-ocean-primary" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {categorySpending.items.length > 0 ? (
+                    categorySpending.items.slice(0, 6).map((category) => (
+                      <SpendingBar
+                        key={category.categoryId}
+                        label={category.name}
+                        amount={category.amount.minorUnits}
+                        total={categorySpending.total}
+                        currency={category.amount.currency}
+                        categoryId={category.categoryId}
+                        accountId={accountId}
+                        start={periodStart}
+                        end={periodEnd}
+                      />
+                    ))
+                  ) : (
+                    <p className="py-8 text-center text-sm text-muted-foreground">{t("dashboard.categoryNone")}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+    ),
+    planningCards: (
+      <>
+          <HealthRail
+            activeBudgets={activeBudgets}
+            activeGoals={activeGoals}
+            snapshot={snapshot}
+          />
+
+          {/* ── Two-column layout on desktop ── */}
+          <section className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+            {upcomingCommitments.length > 0 && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-3">
+                  <CardTitle className="text-base">{t("dashboard.upcoming")}</CardTitle>
+                  <Repeat className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {upcomingCommitments.slice(0, 5).map((item) => (
+                      <li key={item.id} className="border-b border-border py-2 last:border-b-0">
+                        <Link
+                          to={item.kind === "planned_expense" ? "/planned-expenses" : item.kind === "recurring_expense" ? "/recurring" : "/debts"}
+                          className="interactive-surface flex items-center justify-between gap-3"
+                        >
+                          <span className="min-w-0">
+                            <span className="block truncate text-sm font-medium">{item.label}</span>
+                            <span className="mt-0.5 block text-xs text-muted-foreground">
+                              {t(`dashboard.commitmentKinds.${item.kind}`)}
+                              {item.dueAt == null
+                                ? ""
+                                : ` · ${item.dueAt < asOfDayStart ? t("dashboard.overdueDate", { date: formatDate(item.dueAt) }) : formatDate(item.dueAt)}`}
+                            </span>
+                          </span>
+                          <span className="shrink-0 text-sm font-semibold tabular-nums">{formatMoney(item.amount.minorUnits, item.amount.currency)}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {selectedAccount == null && accountDistribution.length > 1 && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-3">
+                  <CardTitle className="text-base">{t("dashboard.accountDistribution")}</CardTitle>
+                  <Wallet className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {accountDistribution.slice(0, 6).map((account) => (
+                    <div key={account.accountId} className="space-y-1.5">
+                      <div className="flex items-center justify-between gap-3 text-sm">
+                        <span className="truncate font-medium">{account.name}</span>
+                        <span className="shrink-0 tabular-nums text-muted-foreground">{formatMoney(account.amount.minorUnits, account.amount.currency)}</span>
+                      </div>
+                      {account.share == null ? (
+                        <p className="text-[11px] text-muted-foreground">{t("dashboard.accountShareUnavailable")}</p>
+                      ) : (
+                        <div className="h-1.5 overflow-hidden bg-muted"><div className="h-full bg-ocean-primary" style={{ width: `${Math.min(100, account.share)}%` }} /></div>
+                      )}
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Budgets */}
+            {activeBudgets.length > 0 && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-3">
+                  <CardTitle className="text-base">{t("budgets.title")}</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {activeBudgets.map((budget) => {
+                    const prog = snapshot.budgetProgress[budget.id];
+                    if (prog == null) return null;
+                    const cat = snapshot.categories.find((c) => c.id === budget.categoryId);
+                    const overspent = prog.percentage > 100;
+                    const limitReached = prog.percentage === 100;
+                    const nearingLimit = prog.percentage >= 70 && !limitReached && !overspent;
+                    const budgetStatus = overspent
+                      ? t("dashboard.budgetStates.exceeded")
+                      : limitReached
+                        ? t("dashboard.budgetStates.reached")
+                        : nearingLimit
+                          ? t("dashboard.budgetStates.watch")
+                          : t("dashboard.budgetStates.within");
+                    return (
+                      <div key={budget.id} className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="flex items-center gap-1 min-w-0">
+                            <span className="truncate">{budget.name}</span>
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal shrink-0">
+                              {cat?.name ?? t("common.unknown")}
+                            </Badge>
+                            {(nearingLimit || limitReached) && <Info className="h-3 w-3 text-attention shrink-0" />}
+                            {overspent && <AlertTriangle className="h-3 w-3 text-negative shrink-0" />}
+                          </span>
+                          <span className={overspent ? "text-negative font-medium" : nearingLimit ? "text-attention font-medium" : "text-muted-foreground"}>
+                            {formatMoney(prog.spent.minorUnits, prog.spent.currency)} / {formatMoney(prog.limit.minorUnits, prog.limit.currency)}
+                          </span>
+                        </div>
+                        <Progress
+                          value={Math.min(prog.percentage, 100)}
+                          className={overspent ? "bg-negative-wash [&>div]:bg-negative" : nearingLimit || limitReached ? "bg-attention-wash [&>div]:bg-attention" : ""}
+                        />
+                        <p className={`text-xs ${overspent ? "text-negative" : nearingLimit || limitReached ? "text-attention" : "text-muted-foreground"}`}>
+                          {budgetStatus}{nearingLimit ? ` · ${t("dashboard.remaining", { percentage: Math.round(100 - prog.percentage) })}` : ""}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            )}
+          </section>
+
+          {/* ── Goals (full width) ── */}
+          {activeGoals.length > 0 && (
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <CardTitle className="text-base">{t("goals.title")}</CardTitle>
+                <Target className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {activeGoals.map((goal) => {
+                  const prog = snapshot.goalProgress[goal.id];
+                  if (prog == null) return null;
+                  return (
+                    <div key={goal.id} className="space-y-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>{goal.name}</span>
+                        <span className="text-muted-foreground">
+                          {formatMoney(prog.accumulated.minorUnits, prog.accumulated.currency)} / {formatMoney(prog.target.minorUnits, prog.target.currency)}
+                        </span>
+                      </div>
+                      <Progress value={Math.min(prog.percentage, 100)} />
+                    </div>
+                  );
+                })}
               </CardContent>
             </Card>
           )}
-        </section>
-      )}
+      </>
+    ),
+    activity: (
+          <TransactionActivity
+            snapshot={snapshot}
+            canMutate={canMutate}
+            filter={transactionFilter}
+            onFilterChange={setTransactionFilter}
+            filterContext={transactionFilterContext}
+            transactions={listTransactions}
+            loading={listTransactionsLoading}
+            transfers={filteredTransfers}
+            onEdit={(transaction) => setTransactionEdit({
+              transaction,
+              categoryId: transaction.categoryId,
+              direction: transaction.direction,
+              amount: amountInput(transaction),
+              note: transaction.note,
+            })}
+            onDelete={setTransactionToDelete}
+          />
+    ),
+    aiInsight: (
+      <>
+          {(aiInsight != null || aiCapability?.available === true) && (
+            <section aria-label={t("dashboard.aiInsight")} className="max-w-xl">
+              {aiInsight != null ? (
+                <InsightCard insight={aiInsight} />
+              ) : (
+                <Card>
+                  <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                    <Lightbulb className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-sm font-medium">{t("dashboard.aiInsight")}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => { void handleAiInsight(); }}
+                      disabled={aiLoading}
+                    >
+                      {aiLoading ? t("dashboard.analyzing") : t("dashboard.analyzePeriod")}
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </section>
+          )}
+      </>
+    ),
+  };
+
+  return (
+    <div className="space-y-4">
+      {layout.aboveFold.map((id) => <Fragment key={id}>{sections[id]}</Fragment>)}
+      <HomeFold>
+        {layout.belowFold.map((id) => <Fragment key={id}>{sections[id]}</Fragment>)}
+      </HomeFold>
 
       <Dialog open={transactionEdit != null} onOpenChange={(open) => { if (!open) setTransactionEdit(null); }}>
         <DialogContent>
@@ -720,7 +762,6 @@ export default function Dashboard() {
         operations={operationsQuery.data ?? []}
         operationsLoading={operationsQuery.isLoading}
       />
-      <AssistantCard />
     </main>
   );
 }

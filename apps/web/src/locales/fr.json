@@ -599,6 +599,12 @@
       "body": "Utilisez le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. Activez-le dans les réglages.",
       "action": "Ouvrir les réglages",
       "dismiss": "Pas maintenant"
+    },
+    "recentMovements": "Mouvements récents",
+    "fold": {
+      "more": "Plus sur ce mois",
+      "less": "Moins",
+      "aria": "Plus sur ce mois"
     }
   },
   "operations": {

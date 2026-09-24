@@ -104,3 +104,19 @@ export function selectVisibleDashboardAlerts(
     return state?.dismissedAt == null && (state?.snoozedUntil == null || state.snoozedUntil <= now);
   });
 }
+
+/**
+ * Splits visible alerts into the rows a surface will show. Actionable alerts (attention,
+ * critical — already ordered by severity upstream) take the slots first; informational
+ * strips only fill what is left, so a capped Home shows the alert that matters most.
+ */
+export function selectHomeAlerts(
+  visible: readonly DashboardAlert[],
+  limit: number | null,
+): { actionable: DashboardAlert[]; informational: DashboardAlert[] } {
+  const actionable = visible.filter((alert) => alert.severity !== "info");
+  const informational = visible.filter((alert) => alert.severity === "info");
+  if (limit == null) return { actionable, informational };
+  const shownActionable = actionable.slice(0, limit);
+  return { actionable: shownActionable, informational: informational.slice(0, Math.max(0, limit - shownActionable.length)) };
+}

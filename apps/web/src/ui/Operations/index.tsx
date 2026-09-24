@@ -47,7 +47,7 @@ function operationTone(operation: FinancialOperation, accountId: string | null):
   return "border-border bg-accent text-ocean-dark";
 }
 
-function operationTitle(operation: FinancialOperation, snapshot: NonNullable<ReturnType<typeof useFinancialState>["data"]>, t: ReturnType<typeof useTranslation>["t"]): string {
+export function operationTitle(operation: FinancialOperation, snapshot: NonNullable<ReturnType<typeof useFinancialState>["data"]>, t: ReturnType<typeof useTranslation>["t"]): string {
   if (operation.kind === "transfer") {
     if (operation.isLegacyExternal) return operation.externalDestination ?? t("operations.uncategorized");
     const from = snapshot.accounts.find((account) => account.id === operation.accountId)?.name ?? t("dashboard.unknownAccount");

@@ -11,6 +11,7 @@ import {
   loadDashboardAlertStates,
   markDashboardAlertRead,
   restoreDashboardAlert,
+  selectHomeAlerts,
   selectVisibleDashboardAlerts,
   snoozeDashboardAlert,
 } from "../attention/store.ts";
@@ -96,14 +97,16 @@ function AlertRow({
   );
 }
 
-export default function DashboardAttention({ snapshot }: { snapshot: FinancialStateSnapshot }) {
+/** `limit` caps the rows shown inline (Home passes 1); the full list stays reachable from the card. */
+export default function DashboardAttention({ snapshot, limit = null }: { snapshot: FinancialStateSnapshot; limit?: number | null }) {
   const { t } = useTranslation();
   const [revision, setRevision] = useState(0);
   const alerts = useMemo(() => selectDashboardAlerts(snapshot), [snapshot]);
   const states = useMemo(() => loadDashboardAlertStates(), [revision]);
   const visible = useMemo(() => selectVisibleDashboardAlerts(alerts, states), [alerts, states]);
-  const informational = visible.filter((alert) => alert.severity === "info");
-  const actionable = visible.filter((alert) => alert.severity !== "info");
+  const allActionable = visible.filter((alert) => alert.severity !== "info");
+  const { actionable, informational } = selectHomeAlerts(visible, limit);
+  const inlineLimit = limit ?? 3;
 
   if (visible.length === 0) return null;
 
@@ -150,22 +153,22 @@ export default function DashboardAttention({ snapshot }: { snapshot: FinancialSt
           <SlidersHorizontal className="h-4 w-4 text-attention" />
           <CardTitle className="text-base">{t("dashboard.attention.title")}</CardTitle>
         </div>
-        {actionable.length > 3 && (
+        {allActionable.length > inlineLimit && (
           <Sheet>
             <SheetTrigger asChild>
-              <Button type="button" variant="ghost" size="sm">{t("dashboard.attention.viewAll", { count: actionable.length })}</Button>
+              <Button type="button" variant="ghost" size="sm">{t("dashboard.attention.viewAll", { count: allActionable.length })}</Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-full max-w-md p-0 sm:max-w-md">
               <SheetHeader className="border-b border-border px-5 py-5 pr-12">
                 <SheetTitle>{t("dashboard.attention.allTitle")}</SheetTitle>
                 <SheetDescription>{t("dashboard.attention.description")}</SheetDescription>
               </SheetHeader>
-              <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto">{actionable.map(renderAlert)}</div>
+              <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto">{allActionable.map(renderAlert)}</div>
             </SheetContent>
           </Sheet>
         )}
       </CardHeader>
-      <CardContent className="p-0">{actionable.slice(0, 3).map(renderAlert)}</CardContent>
+      <CardContent className="p-0">{actionable.slice(0, inlineLimit).map(renderAlert)}</CardContent>
     </Card>}
     </div>
   );

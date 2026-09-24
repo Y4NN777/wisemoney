@@ -359,6 +359,18 @@ try {
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText(/Smoke transaction/).waitFor();
+  // The coach shows its single per-session tip about 20 s in, over the bottom of Home where the
+  // recent movements now sit; verify it here (blur, smooth close) before touching the rows.
+  const coachTip = appPage.getByLabel("WiseBot tip", { exact: true });
+  await coachTip.waitFor({ timeout: 25_000 });
+  assert.match(
+    await appPage.locator(".coach-overlay").evaluate((element) => getComputedStyle(element).backdropFilter),
+    /blur\(3px\)/,
+    "coach tip overlay does not blur the page behind it",
+  );
+  await appPage.getByRole("button", { name: "Dismiss this tip", exact: true }).click();
+  assert.equal(await coachTip.getAttribute("data-closing"), "true", "coach tip does not enter its smooth closing state");
+  await coachTip.waitFor({ state: "detached" });
   await appPage.getByRole("listitem").filter({ hasText: "Smoke transaction" }).getByRole("button", { name: /Edit transaction from/ }).click();
   await appPage.getByLabel("Amount (XOF)", { exact: true }).fill("1500");
   await appPage.getByLabel("Note", { exact: true }).last().fill("Smoke transaction updated");
@@ -397,6 +409,7 @@ try {
   await financialOverview.getByText("Money received", { exact: true }).waitFor();
   await financialOverview.getByText("Money spent", { exact: true }).waitFor();
   await financialOverview.getByText("Difference", { exact: true }).waitFor();
+  await appPage.getByText("More about this month", { exact: true }).click();
   await appPage.getByText("Balance evolution", { exact: true }).first().waitFor();
   await appPage.getByText("Money in and money out", { exact: true }).first().waitFor();
   await appPage.getByText("Spending mix", { exact: true }).first().waitFor();
@@ -424,6 +437,7 @@ try {
   await appPage.getByText("Balance for this account. Commitments that are not assigned to an account remain in the global view.", { exact: true }).waitFor();
   await appPage.getByRole("combobox", { name: "Account shown", exact: true }).click();
   await appPage.getByRole("option", { name: "All accounts", exact: true }).click();
+  await appPage.getByText("More about this month", { exact: true }).click();
   await appPage.getByRole("tab", { name: "All", exact: true }).click();
   await appPage.getByText(/^Through /).waitFor();
   await appPage.getByRole("tab", { name: "Month", exact: true }).click();
@@ -485,18 +499,7 @@ try {
     "rgb(255, 255, 255)",
     "dark management card header uses a hard-coded white surface",
   );
-  const coachTip = appPage.getByLabel("WiseBot tip", { exact: true });
-  await coachTip.waitFor({ timeout: 25_000 });
-  const coachOverlay = appPage.locator(".coach-overlay");
-  assert.match(
-    await coachOverlay.evaluate((element) => getComputedStyle(element).backdropFilter),
-    /blur\(3px\)/,
-    "coach tip overlay does not blur the page behind it",
-  );
   await appPage.screenshot({ path: `${outputDir}/capture-management-dark.png`, fullPage: true });
-  await appPage.getByRole("button", { name: "Dismiss this tip", exact: true }).click();
-  assert.equal(await coachTip.getAttribute("data-closing"), "true", "coach tip does not enter its smooth closing state");
-  await coachTip.waitFor({ state: "detached" });
   await appPage.setViewportSize({ width: 1280, height: 900 });
   await appPage.getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();

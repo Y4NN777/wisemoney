@@ -5,6 +5,7 @@ import {
   loadDashboardAlertStates,
   markDashboardAlertRead,
   restoreDashboardAlert,
+  selectHomeAlerts,
   selectVisibleDashboardAlerts,
   snoozeDashboardAlert,
 } from "./store.ts";
@@ -57,5 +58,24 @@ describe("dashboard attention state", () => {
     const store = storage();
     store.setItem("wisemoney.dashboard.attention.v1", "not-json");
     expect(loadDashboardAlertStates(store)).toEqual({});
+  });
+});
+
+describe("selectHomeAlerts", () => {
+  const info: DashboardAlert = { id: "info", kind: "spending_from_balance", severity: "info", entityId: "x", threshold: null };
+  const attention: DashboardAlert = { id: "attention", kind: "budget_threshold", severity: "attention", entityId: "b", threshold: 90 };
+  const critical: DashboardAlert = { id: "critical", kind: "negative_cash_flow", severity: "critical", entityId: "m", threshold: null };
+
+  it("keeps everything when no limit is set", () => {
+    expect(selectHomeAlerts([info, critical, attention], null)).toEqual({ actionable: [critical, attention], informational: [info] });
+  });
+
+  it("gives the single Home slot to the actionable alert over an informational one", () => {
+    expect(selectHomeAlerts([info, critical, attention], 1)).toEqual({ actionable: [critical], informational: [] });
+  });
+
+  it("lets an informational strip through only when actionable alerts leave room", () => {
+    expect(selectHomeAlerts([info], 1)).toEqual({ actionable: [], informational: [info] });
+    expect(selectHomeAlerts([info, attention], 2)).toEqual({ actionable: [attention], informational: [info] });
   });
 });

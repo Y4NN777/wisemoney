@@ -599,6 +599,12 @@
       "body": "Use this device’s screen lock instead of typing your passphrase. Turn it on in Settings.",
       "action": "Open Settings",
       "dismiss": "Not now"
+    },
+    "recentMovements": "Recent movements",
+    "fold": {
+      "more": "More about this month",
+      "less": "Less",
+      "aria": "More about this month"
     }
   },
   "operations": {
