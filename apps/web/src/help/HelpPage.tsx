@@ -97,7 +97,7 @@ export default function HelpPage() {
             <Button
               type="button"
               variant="secondary"
-              className="mt-4 min-h-12 w-full justify-between rounded-none border border-white bg-card text-ocean-primary"
+              className="mt-4 min-h-12 w-full justify-between border border-white bg-card text-ocean-primary"
               onClick={() => openWiseBot({ entryPoint: "manual", surfaceId: "help" })}
             >
               {t("helpPage.chat.askWiseBot")}
@@ -227,7 +227,7 @@ export default function HelpPage() {
               <h2 className="text-lg font-bold">{t("helpPage.updates.title")}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{t("helpPage.updates.description")}</p>
             </div>
-            <Button type="button" variant="outline" className="min-h-11 rounded-none" onClick={() => openUpdates()}>
+            <Button type="button" variant="outline" className="min-h-11" onClick={() => openUpdates()}>
               <Sparkles className="h-4 w-4" /> {t("helpPage.updates.action")}
             </Button>
           </div>

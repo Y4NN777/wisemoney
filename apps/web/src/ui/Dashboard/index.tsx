@@ -681,7 +681,7 @@ function FinancialOverview({
 
   return (
     <section aria-label={t("dashboard.balanceSummary")} className="situation-line grid gap-px overflow-hidden border border-border bg-border lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
-      <Card className="rounded-none border-0">
+      <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
           <div>
             <p className="text-xs font-medium text-ocean-primary">{accountName ?? t("dashboard.allActiveAccounts")}</p>
@@ -712,7 +712,7 @@ function FinancialOverview({
         </CardContent>
       </Card>
 
-      <Card className="rounded-none border-0">
+      <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">
             {t("dashboard.periodActivity", { month: contextualMonth })}
@@ -778,7 +778,7 @@ function FinancialOverview({
 function DashboardQuickActions() {
   const { t } = useTranslation();
   const openCapture = useOpenCaptureSheet();
-  const quickActionClass = "h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4";
+  const quickActionClass = "h-auto min-w-0 justify-start whitespace-normal bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4";
   return (
     <nav aria-label={t("dashboard.quickActions")} className="grid grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-4">
       <Button type="button" variant="ghost" className={quickActionClass} onClick={() => openCapture("transaction", "expense")}>

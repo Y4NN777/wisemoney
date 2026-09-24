@@ -218,7 +218,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
 
   return (
     <>
-      <Card className="overflow-hidden rounded-none border-border shadow-none">
+      <Card className="overflow-hidden border-border shadow-none">
         <CardHeader className="border-b border-border bg-muted">
           <CardTitle className="flex items-center justify-between text-base">
             {t(`capture.manage.${section}`)}

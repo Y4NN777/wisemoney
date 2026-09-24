@@ -144,7 +144,7 @@ export default function UpdatesPage() {
             <p className="text-xl font-bold">{t("updatesPage.needHelp")}</p>
             <p className="mt-1 text-sm text-white/70">{t("updatesPage.needHelpDescription")}</p>
           </div>
-          <Button type="button" variant="secondary" className="min-h-11 rounded-none border border-primary-foreground bg-primary-foreground text-ocean-primary" onClick={() => openHelp()}>
+          <Button type="button" variant="secondary" className="min-h-11 border border-primary-foreground bg-primary-foreground text-ocean-primary" onClick={() => openHelp()}>
             <BookOpen className="h-4 w-4" /> {t("updatesPage.openHelp")}
           </Button>
         </div>
