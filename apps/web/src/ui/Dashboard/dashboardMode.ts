@@ -1,6 +1,10 @@
-export type DashboardMode = "setup" | "first-transaction" | "active";
+export type DashboardMode = "first-transaction" | "active";
 
-export function getDashboardMode(activeAccountCount: number, hasOperations: boolean): DashboardMode {
-  if (activeAccountCount === 0) return "setup";
+/**
+ * The vault opens ready to capture: the first movement silently creates the
+ * default account, so the old "setup" mode (account required before capture)
+ * collapsed into "first-transaction" (docs/plans/ux-simplification-implementation.md).
+ */
+export function getDashboardMode(hasOperations: boolean): DashboardMode {
   return hasOperations ? "active" : "first-transaction";
 }

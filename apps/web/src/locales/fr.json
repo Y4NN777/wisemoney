@@ -411,7 +411,7 @@
   },
   "dashboard": {
     "accountCount": "{{count}} comptes",
-    "loadFailed": "Impossible de charger le tableau de bord. Réessayez.",
+    "loadFailed": "Échec du chargement des données financières",
     "title": "Tableau de bord",
     "setup": {
       "title": "Commencez par un compte",
@@ -553,7 +553,6 @@
     "welcome": "Bienvenue dans WiseMoney",
     "total": "Total",
     "net": "Différence",
-    "loadFailed": "Échec du chargement des données financières",
     "previousMonth": "Mois précédent",
     "nextMonth": "Mois suivant",
     "monthNavigation": "Navigation par mois",
@@ -619,7 +618,20 @@
       "updateFailed": "Impossible de modifier la transaction.",
       "deleteFailed": "Impossible de supprimer la transaction."
     },
-    "months": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+    "months": [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ]
   },
   "operations": {
     "title": "Activité",
@@ -810,7 +822,10 @@
       "accountCurrency": "Devise du compte",
       "currencySearch": "Rechercher une devise ({{currency}})",
       "noCurrency": "Aucune devise correspondante.",
-      "regions": { "africa": "Afrique", "global": "Monde" },
+      "regions": {
+        "africa": "Afrique",
+        "global": "Monde"
+      },
       "accountTypes": {
         "checking": "Compte courant",
         "savings": "Épargne",
@@ -859,36 +874,71 @@
       "confirmCancel": "Annuler la dépense prévue « {{label}} » ? Aucune transaction ne sera créée.",
       "noCompatibleAccount": "Aucun compte actif n’utilise {{currency}}. Le paiement ne peut pas encore être confirmé.",
       "openAccounts": "Ouvrir la gestion des comptes",
-      "priorities": { "low": "Faible", "medium": "Moyenne", "high": "Haute" },
-      "priorityGroups": { "high": "Priorité haute", "medium": "Priorité moyenne", "low": "Priorité faible" },
-      "statuses": { "pending": "En attente", "completed": "Réalisée", "cancelled": "Annulée" },
+      "priorities": {
+        "low": "Faible",
+        "medium": "Moyenne",
+        "high": "Haute"
+      },
+      "priorityGroups": {
+        "high": "Priorité haute",
+        "medium": "Priorité moyenne",
+        "low": "Priorité faible"
+      },
+      "statuses": {
+        "pending": "En attente",
+        "completed": "Réalisée",
+        "cancelled": "Annulée"
+      },
       "fields": {
-        "label": "Libellé", "estimatedAmount": "Montant estimé", "actualAmount": "Montant réel",
-        "currency": "Devise", "category": "Catégorie", "selectCategory": "Sélectionner une catégorie",
-        "priority": "Priorité", "dueDate": "Échéance (facultative)", "note": "Note (facultative)",
-        "account": "Compte", "selectAccount": "Sélectionner un compte", "occurredAt": "Date effective"
+        "label": "Libellé",
+        "estimatedAmount": "Montant estimé",
+        "actualAmount": "Montant réel",
+        "currency": "Devise",
+        "category": "Catégorie",
+        "selectCategory": "Sélectionner une catégorie",
+        "priority": "Priorité",
+        "dueDate": "Échéance (facultative)",
+        "note": "Note (facultative)",
+        "account": "Compte",
+        "selectAccount": "Sélectionner un compte",
+        "occurredAt": "Date effective"
       },
       "actions": {
-        "edit": "Modifier", "complete": "Marquer comme faite", "cancel": "Annuler",
-        "create": "Ajouter la dépense prévue", "save": "Enregistrer les modifications", "saving": "Enregistrement…",
-        "completing": "Création de la transaction…", "confirmComplete": "Confirmer le paiement"
+        "edit": "Modifier",
+        "complete": "Marquer comme faite",
+        "cancel": "Annuler",
+        "create": "Ajouter la dépense prévue",
+        "save": "Enregistrer les modifications",
+        "saving": "Enregistrement…",
+        "completing": "Création de la transaction…",
+        "confirmComplete": "Confirmer le paiement"
       },
       "success": {
-        "created": "Dépense prévue ajoutée", "updated": "Dépense prévue modifiée",
-        "priorityUpdated": "Priorité modifiée", "cancelled": "Dépense prévue annulée",
+        "created": "Dépense prévue ajoutée",
+        "updated": "Dépense prévue modifiée",
+        "priorityUpdated": "Priorité modifiée",
+        "cancelled": "Dépense prévue annulée",
         "completed": "Transaction créée et dépense prévue réalisée"
       },
       "errors": {
-        "labelRequired": "Saisissez un libellé.", "positiveAmount": "Saisissez un montant supérieur à zéro.",
-        "categoryRequired": "Sélectionnez une catégorie active.", "accountRequired": "Sélectionnez un compte actif compatible.",
-        "invalidDate": "Saisissez une date valide.", "createFailed": "Impossible d’ajouter la dépense prévue.",
-        "updateFailed": "Impossible de modifier la dépense prévue.", "cancelFailed": "Impossible d’annuler la dépense prévue.",
+        "labelRequired": "Saisissez un libellé.",
+        "positiveAmount": "Saisissez un montant supérieur à zéro.",
+        "categoryRequired": "Sélectionnez une catégorie active.",
+        "accountRequired": "Sélectionnez un compte actif compatible.",
+        "invalidDate": "Saisissez une date valide.",
+        "createFailed": "Impossible d’ajouter la dépense prévue.",
+        "updateFailed": "Impossible de modifier la dépense prévue.",
+        "cancelFailed": "Impossible d’annuler la dépense prévue.",
         "completeFailed": "Le paiement n’a pas été enregistré. Aucune transaction n’a été créée."
       },
       "history": {
-        "title": "Historique", "empty": "Aucune dépense prévue réalisée ou annulée.",
-        "estimated": "Estimé", "actual": "Réel", "account": "Compte utilisé",
-        "completedAt": "Réalisée le", "cancelledAt": "Annulée le"
+        "title": "Historique",
+        "empty": "Aucune dépense prévue réalisée ou annulée.",
+        "estimated": "Estimé",
+        "actual": "Réel",
+        "account": "Compte utilisé",
+        "completedAt": "Réalisée le",
+        "cancelledAt": "Annulée le"
       }
     }
   },
@@ -1364,8 +1414,13 @@
         "receivable_due": "Rappelle les créances non soldées à relancer."
       },
       "weekdays": {
-        "0": "Dimanche", "1": "Lundi", "2": "Mardi", "3": "Mercredi",
-        "4": "Jeudi", "5": "Vendredi", "6": "Samedi"
+        "0": "Dimanche",
+        "1": "Lundi",
+        "2": "Mardi",
+        "3": "Mercredi",
+        "4": "Jeudi",
+        "5": "Vendredi",
+        "6": "Samedi"
       }
     },
     "test": {
@@ -1459,6 +1514,10 @@
       "security": {
         "title": "Sécurité et session",
         "description": "Verrouiller cet espace ou gérer une session en ligne"
+      },
+      "organization": {
+        "title": "Comptes et catégories",
+        "description": "Créez ou renommez des comptes et des catégories selon votre réalité."
       }
     },
     "devices": {
@@ -1634,5 +1693,14 @@
   },
   "errors": {
     "httpsRequired": "HTTPS est requis en production pour la sécurité. Définissez VITE_EDGE_BASE_URL avec une URL https://."
+  },
+  "captureSheet": {
+    "cashName": "Espèces",
+    "date": "Date",
+    "undo": "Annuler",
+    "add": "Ajouter",
+    "transferNeedsAccounts": "Ajoutez un second compte pour effectuer un virement entre vos comptes.",
+    "goalsEmpty": "Créez d’abord un objectif dans Planification, puis consignez vos contributions ici.",
+    "openPlanning": "Ouvrir Planification"
   }
 }

@@ -243,11 +243,20 @@ try {
   await appPage.getByLabel("Confirm private passphrase").fill(passphrase);
   await appPage.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
   try {
-    await appPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
+    await appPage.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 90_000 });
   } catch (error) {
     await appPage.screenshot({ path: `${outputDir}/setup-failure.png`, fullPage: true });
     throw new Error(`Vault setup did not reach Dashboard. Body:\n${await appPage.locator("body").innerText()}`, { cause: error });
   }
+  // First movement with zero accounts: the capture sheet silently creates the default account.
+  await appPage.getByRole("button", { name: "Capture", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("700");
+  await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
+  await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
+  await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
+  await appPage.getByRole("dialog").waitFor({ state: "detached" });
+  await appPage.getByText(/Combined balance of 1 active account/).waitFor({ timeout: 90_000 });
+
   const syncPage = await appContext.newPage();
   syncPage.on("pageerror", (error) => appErrors.push(`sync pageerror: ${error.message}`));
   syncPage.on("console", (message) => {
@@ -274,7 +283,7 @@ try {
   await syncPage.getByLabel("Private passphrase", { exact: true }).waitFor();
   await syncPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await syncPage.getByRole("button", { name: "Open", exact: true }).click();
-  await syncPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
+  await syncPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor({ timeout: 90_000 });
   await syncPage.setViewportSize({ width: 390, height: 844 });
   await syncPage.getByRole("combobox", { name: "Choose language", exact: true }).click();
   await syncPage.getByRole("option", { name: "Français", exact: true }).click();
@@ -282,11 +291,13 @@ try {
   await compactDashboardLink.waitFor();
   assert.equal((await compactDashboardLink.textContent())?.trim(), "Accueil",
     "French bottom navigation did not use the compact dashboard label");
-  await syncPage.getByRole("link", { name: "Saisie", exact: true }).click();
-  await syncPage.getByRole("tab", { name: "Transfert", exact: true }).waitFor();
+  await syncPage.getByRole("button", { name: "Saisie", exact: true }).click();
+  await syncPage.getByRole("dialog").getByRole("tab", { name: "Transfert", exact: true }).waitFor();
+  await syncPage.keyboard.press("Escape");
+  await syncPage.getByRole("dialog").waitFor({ state: "detached" });
+  await compactDashboardLink.click();
   assert.equal(await syncPage.locator(".route-transition").evaluate((element) => getComputedStyle(element).animationName), "route-transition-in",
     "app navigation did not animate the incoming page");
-  await compactDashboardLink.click();
   await syncPage.screenshot({ path: `${outputDir}/bottom-navigation-fr.png`, fullPage: true });
   await syncPage.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
   await syncPage.getByRole("option", { name: "English", exact: true }).click();
@@ -311,8 +322,8 @@ try {
   await appPage.locator("main").getByText("Partially paid", { exact: true }).first().waitFor();
   await appPage.screenshot({ path: `${outputDir}/debts.png`, fullPage: true });
 
-  await appPage.getByRole("link", { name: "Capture", exact: true }).click();
-  await appPage.getByRole("tab", { name: "Manage", exact: true }).click();
+  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByText("Accounts & categories", { exact: true }).click();
   for (const [name, balance] of [["Smoke Cash", "50000"], ["Smoke Savings", "0"]]) {
     await appPage.getByRole("button", { name: "New", exact: true }).last().click();
     await appPage.getByLabel("Account name", { exact: true }).fill(name);
@@ -338,44 +349,46 @@ try {
   await appPage.getByRole("button", { name: "Archive Smoke subscription", exact: true }).click();
   await appPage.locator("main").getByText("Smoke subscription", { exact: true }).waitFor({ state: "detached" });
 
-  await appPage.getByRole("link", { name: "Capture", exact: true }).click();
-  await appPage.getByRole("tab", { name: "Transaction", exact: true }).click();
-  await appPage.getByLabel("Account", { exact: true }).click();
+  await appPage.getByRole("button", { name: "Capture", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Account", { exact: true }).click();
   await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
-  await appPage.getByLabel("Category", { exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
   await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
-  await appPage.getByLabel("Amount", { exact: true }).fill("1000");
-  await appPage.getByLabel("Note (optional)", { exact: true }).fill("Smoke transaction");
-  await appPage.getByRole("button", { name: "Record Transaction", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("1000");
+  await appPage.getByRole("dialog").getByLabel("Note (optional)", { exact: true }).fill("Smoke transaction");
+  await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
+  await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText(/Smoke transaction/).waitFor();
-  await appPage.getByRole("button", { name: /Edit transaction from/ }).click();
+  await appPage.getByRole("listitem").filter({ hasText: "Smoke transaction" }).getByRole("button", { name: /Edit transaction from/ }).click();
   await appPage.getByLabel("Amount (XOF)", { exact: true }).fill("1500");
   await appPage.getByLabel("Note", { exact: true }).last().fill("Smoke transaction updated");
   await appPage.getByRole("button", { name: "Save", exact: true }).click();
   await appPage.getByText(/Smoke transaction updated/).waitFor();
-  await appPage.getByRole("button", { name: /Delete transaction from/ }).click();
+  await appPage.getByRole("listitem").filter({ hasText: "Smoke transaction updated" }).getByRole("button", { name: /Delete transaction from/ }).click();
   await appPage.getByRole("button", { name: "Delete", exact: true }).click();
   await appPage.getByText(/Smoke transaction updated/).waitFor({ state: "detached" });
 
-  await appPage.getByRole("link", { name: "Capture", exact: true }).click();
-  await appPage.getByRole("tab", { name: "Transaction", exact: true }).click();
-  await appPage.getByLabel("Account", { exact: true }).click();
+  await appPage.getByRole("button", { name: "Capture", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Account", { exact: true }).click();
   await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
-  await appPage.getByLabel("Category", { exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
   await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
-  await appPage.getByLabel("Amount", { exact: true }).fill("500");
-  await appPage.getByLabel("Note (optional)", { exact: true }).fill("Smoke retained transaction");
-  await appPage.getByRole("button", { name: "Record Transaction", exact: true }).click();
-  await appPage.getByRole("tab", { name: "Transfer", exact: true }).click();
-  await appPage.getByLabel("From Account", { exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("500");
+  await appPage.getByRole("dialog").getByLabel("Note (optional)", { exact: true }).fill("Smoke retained transaction");
+  await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
+  await appPage.getByRole("dialog").waitFor({ state: "detached" });
+  await appPage.getByRole("button", { name: "Capture", exact: true }).click();
+  await appPage.getByRole("dialog").getByRole("tab", { name: "Transfer", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("From Account", { exact: true }).click();
   await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
-  await appPage.getByRole("button", { name: "To one of my accounts", exact: true }).click();
-  await appPage.getByLabel(/To Account/).click();
+  await appPage.getByRole("dialog").getByRole("button", { name: "To one of my accounts", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel(/To Account/).click();
   await appPage.getByRole("option", { name: /Smoke Savings/ }).click();
-  await appPage.locator("#transfer-amount").fill("10000");
-  await appPage.locator("#transfer-note").fill("Smoke transfer motive");
-  await appPage.getByRole("button", { name: "Move between my accounts", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("10000");
+  await appPage.getByRole("dialog").getByLabel("Note (optional)", { exact: true }).fill("Smoke transfer motive");
+  await appPage.getByRole("dialog").getByRole("button", { name: "Move between my accounts", exact: true }).click();
+  await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
   await appPage.getByText(/Smoke transfer motive/).waitFor();
@@ -454,9 +467,12 @@ try {
   assert.equal(await appPage.evaluate(() => localStorage.getItem("wisemoney.theme.preference.v1")), "dark", "dark theme choice was not persisted");
   await appPage.screenshot({ path: `${outputDir}/settings-dark.png`, fullPage: true });
   await appPage.setViewportSize({ width: 390, height: 844 });
-  await appPage.getByRole("link", { name: "Capture", exact: true }).click();
-  await appPage.getByRole("tab", { name: "Manage", exact: true }).click();
+  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByText("Accounts & categories", { exact: true }).click();
   const inactiveCategoriesTab = appPage.getByRole("tab", { name: "Categories", exact: true });
+  // The tabs now live on the Settings page itself, so the theme switch's colour transition is still
+  // running when they are queried; wait for it to finish instead of sampling mid-animation.
+  await inactiveCategoriesTab.evaluate((element) => Promise.all(element.getAnimations().map((animation) => animation.finished)));
   assert.notEqual(
     await inactiveCategoriesTab.evaluate((element) => getComputedStyle(element).backgroundColor),
     "rgb(255, 255, 255)",
@@ -464,6 +480,7 @@ try {
   );
   await inactiveCategoriesTab.click();
   const categoriesCardHeading = appPage.getByText("Categories", { exact: true }).last();
+  await categoriesCardHeading.evaluate((element) => Promise.all(element.parentElement.getAnimations().map((animation) => animation.finished)));
   assert.notEqual(
     await categoriesCardHeading.evaluate((element) => getComputedStyle(element.parentElement).backgroundColor),
     "rgb(255, 255, 255)",
@@ -549,7 +566,7 @@ try {
   await appPage.getByText("Cycle actions", { exact: true }).locator("..").getByText("0", { exact: true }).waitFor();
   await appPage.screenshot({ path: `${outputDir}/cycle-archive-history.png`, fullPage: true });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
-  await appPage.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
+  await appPage.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 90_000 });
 
   assert.deepEqual(appErrors, [], `app runtime errors:\n${appErrors.join("\n")}`);
   await appContext.close();

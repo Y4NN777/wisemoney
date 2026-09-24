@@ -2,6 +2,7 @@ import { createRoute, Link, Outlet, useRouterState } from "@tanstack/react-route
 import { Route as rootRoute } from "./__root.tsx";
 import { LayoutDashboard, MessageSquare, PlusCircle, ClipboardList, Settings as SettingsIcon } from "lucide-react";
 import KeyUnlock from "../components/KeyUnlock/index.tsx";
+import CaptureSheet, { useOpenCaptureSheet } from "../components/CaptureSheet/index.tsx";
 import Logo from "../components/Logo.tsx";
 import HelpActions from "../components/HelpActions.tsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
@@ -29,6 +30,7 @@ function VaultRoot() {
       <ReminderProvider>
         <CoachProvider>
           <RootLayout />
+          <CaptureSheet />
         </CoachProvider>
       </ReminderProvider>
     </KeyUnlock>
@@ -44,6 +46,26 @@ function reminderUrgency(type: ReminderViewModel["type"], dueAt: number, now = D
   if (due.getTime() < today.getTime()) return "overdue";
   if (due.getTime() === today.getTime()) return "today";
   return "upcoming";
+}
+
+function CaptureNavItem({ compact = false, labelKey }: { compact?: boolean; labelKey: string }) {
+  const { t } = useTranslation();
+  const openCapture = useOpenCaptureSheet();
+  return (
+    <button
+      type="button"
+      aria-label={t(labelKey)}
+      onClick={() => openCapture("transaction")}
+      className={compact
+        ? "flex h-full min-w-16 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-muted-foreground transition-[background-color,color,transform] duration-200 active:scale-95"
+        : "interactive-surface flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground"}
+    >
+      <PlusCircle className={compact ? "h-5 w-5" : "h-4 w-4"} />
+      <span className={compact ? "text-[11px] leading-tight font-medium" : ""}>
+        {t(compact ? "nav.capture" : labelKey)}
+      </span>
+    </button>
+  );
 }
 
 function RootLayout() {
@@ -77,6 +99,9 @@ function RootLayout() {
           </Link>
           <nav aria-label={t("nav.mainAria")} className="hidden items-center gap-1 lg:flex">
             {navItems.map((item) => (
+              item.to === "/capture" ? (
+                <CaptureNavItem key={item.to} labelKey={item.labelKey} />
+              ) : (
                 <Link
                   key={item.to}
                   to={item.to}
@@ -87,6 +112,7 @@ function RootLayout() {
                   <item.icon className="h-4 w-4" />
                   {t(item.labelKey)}
                 </Link>
+              )
             ))}
           </nav>
           <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-1 sm:gap-2">
@@ -111,6 +137,9 @@ function RootLayout() {
       >
         <div className="mx-auto flex h-16 max-w-lg items-center justify-around">
           {navItems.map((item) => (
+            item.to === "/capture" ? (
+              <CaptureNavItem key={item.to} compact labelKey={item.labelKey} />
+            ) : (
               <Link
                 key={item.to}
                 to={item.to}
@@ -124,6 +153,7 @@ function RootLayout() {
                   {t(item.compactLabelKey)}
                 </span>
               </Link>
+            )
           ))}
         </div>
       </nav>

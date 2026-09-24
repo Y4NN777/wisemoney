@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { useDeleteTransaction, useFinancialOperations, useFinancialState, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
+import { useDeleteTransaction, useFinancialOperations, useFinancialState, useHasAnyMoneyMovement, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Progress } from "../../components/ui/progress.tsx";
@@ -27,6 +27,7 @@ import { currencyFractionDigits, formatMoney as formatMoneyValue, parseMajorUnit
 import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
+import { useOpenCaptureSheet } from "../../components/CaptureSheet/index.tsx";
 import { comparePeriodAmounts, type PeriodAmountComparison } from "./periodComparison.ts";
 import {
   GREETING_MESSAGE_COUNT,
@@ -386,6 +387,7 @@ function TransactionActivity({
   onDelete: (transaction: TransactionDisplay) => void;
 }) {
   const { t } = useTranslation();
+  const openCapture = useOpenCaptureSheet();
   return (
     <Card>
       <CardHeader className="flex flex-col items-start justify-between gap-2 pb-3 sm:flex-row sm:items-center">
@@ -395,11 +397,9 @@ function TransactionActivity({
             <Link to="/operations">{t("dashboard.viewAll")}</Link>
           </Button>
         {canMutate && (
-          <Button asChild variant="outline" size="sm" className="min-w-0 whitespace-normal">
-            <Link to="/capture" search={{ tab: "transaction" }}>
-              <PlusCircle className="mr-1 h-4 w-4" />
-              {t("dashboard.addTransaction")}
-            </Link>
+          <Button type="button" variant="outline" size="sm" className="min-w-0 whitespace-normal" onClick={() => openCapture("transaction")}>
+            <PlusCircle className="mr-1 h-4 w-4" />
+            {t("dashboard.addTransaction")}
           </Button>
         )}
         </div>
@@ -503,40 +503,9 @@ function TransactionActivity({
   );
 }
 
-function DashboardSetup() {
-  const { t } = useTranslation();
-  return (
-    <main aria-label={t("dashboard.title")} className="app-page">
-      <div className="page-head">
-        <h1 className="page-title">{t("dashboard.title")}</h1>
-      </div>
-      <Card className="max-w-3xl border-ocean-primary/25">
-        <CardContent className="p-5 sm:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ocean-primary">01</p>
-          <h2 className="mt-3 text-xl font-semibold tracking-tight">{t("dashboard.setup.title")}</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{t("dashboard.setup.body")}</p>
-          <Button asChild className="mt-5 w-full sm:w-auto">
-            <Link to="/capture" search={{ tab: "manage", section: "accounts" }}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              {t("dashboard.setup.action")}
-            </Link>
-          </Button>
-          <ol className="mt-7 grid gap-3 border-t border-border pt-5 sm:grid-cols-3">
-            {["account", "transaction", "review"].map((step, index) => (
-              <li key={step} className="flex gap-3">
-                <span className="text-sm font-semibold tabular-nums text-ocean-primary">{String(index + 1).padStart(2, "0")}</span>
-                <span className="text-sm text-muted-foreground">{t(`dashboard.setup.steps.${step}`)}</span>
-              </li>
-            ))}
-          </ol>
-        </CardContent>
-      </Card>
-    </main>
-  );
-}
-
 function FirstTransactionDashboard({ snapshot, accountCount }: { snapshot: FinancialStateSnapshot; accountCount: number }) {
   const { t } = useTranslation();
+  const openCapture = useOpenCaptureSheet();
   return (
     <main aria-label={t("dashboard.title")} className="app-page">
       <div className="page-head">
@@ -552,14 +521,12 @@ function FirstTransactionDashboard({ snapshot, accountCount }: { snapshot: Finan
         <Card className="border-ocean-primary/25">
           <CardContent className="flex h-full flex-col items-start justify-between gap-4 p-5">
             <div>
-              <CardTitle className="text-base">{t("dashboard.firstTransaction.title")}</CardTitle>
+              <h2 className="text-base font-semibold leading-none tracking-normal">{t("dashboard.firstTransaction.title")}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{t("dashboard.firstTransaction.body")}</p>
             </div>
-            <Button asChild className="w-full sm:w-auto">
-              <Link to="/capture" search={{ tab: "transaction" }}>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                {t("dashboard.firstTransaction.action")}
-              </Link>
+            <Button type="button" onClick={() => openCapture("transaction")} className="w-full sm:w-auto">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              {t("dashboard.firstTransaction.action")}
             </Button>
           </CardContent>
         </Card>
@@ -808,18 +775,20 @@ function FinancialOverview({
 
 function DashboardQuickActions() {
   const { t } = useTranslation();
+  const openCapture = useOpenCaptureSheet();
+  const quickActionClass = "h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4";
   return (
     <nav aria-label={t("dashboard.quickActions")} className="grid grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-4">
-      <Button asChild variant="ghost" className="h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4">
-        <Link to="/capture" search={{ tab: "transaction", direction: "expense" }}><ArrowUp className="mr-2 h-4 w-4 text-negative" />{t("dashboard.addExpense")}</Link>
+      <Button type="button" variant="ghost" className={quickActionClass} onClick={() => openCapture("transaction", "expense")}>
+        <ArrowUp className="mr-2 h-4 w-4 text-negative" />{t("dashboard.addExpense")}
       </Button>
-      <Button asChild variant="ghost" className="h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4">
-        <Link to="/capture" search={{ tab: "transaction", direction: "income" }}><ArrowDown className="mr-2 h-4 w-4 text-positive" />{t("dashboard.addIncome")}</Link>
+      <Button type="button" variant="ghost" className={quickActionClass} onClick={() => openCapture("transaction", "income")}>
+        <ArrowDown className="mr-2 h-4 w-4 text-positive" />{t("dashboard.addIncome")}
       </Button>
-      <Button asChild variant="ghost" className="h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4">
-        <Link to="/capture" search={{ tab: "transfer" }}><ArrowRightLeft className="mr-2 h-4 w-4 text-ocean-primary" />{t("dashboard.makeTransfer")}</Link>
+      <Button type="button" variant="ghost" className={quickActionClass} onClick={() => openCapture("transfer")}>
+        <ArrowRightLeft className="mr-2 h-4 w-4 text-ocean-primary" />{t("dashboard.makeTransfer")}
       </Button>
-      <Button asChild variant="ghost" className="h-auto min-w-0 justify-start whitespace-normal rounded-none bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4">
+      <Button asChild variant="ghost" className={quickActionClass}>
         <Link to="/planned-expenses"><CalendarDays className="mr-2 h-4 w-4 text-ocean-primary" />{t("dashboard.planExpense")}</Link>
       </Button>
     </nav>
@@ -1371,7 +1340,8 @@ export default function Dashboard() {
   const isCurrent = selectedYear === now.getFullYear() && selectedMonth === now.getMonth() + 1;
 
   const currentQuery = useFinancialState();
-  const operationsQuery = useFinancialOperations();
+  const hasMovementQuery = useHasAnyMoneyMovement();
+  const operationsQuery = useFinancialOperations({ enabled: hasMovementQuery.data === true });
   const historicalQuery = useHistoricalState(selectedYear, selectedMonth);
 
   const { data: snapshot, isLoading, error } = isCurrent ? currentQuery : historicalQuery;
@@ -1399,7 +1369,7 @@ export default function Dashboard() {
     setSelectedMonth(now.getMonth() + 1);
   };
 
-  if (currentQuery.isLoading || operationsQuery.isLoading) {
+  if (currentQuery.isLoading || hasMovementQuery.isLoading || operationsQuery.isLoading) {
     return (
       <main aria-label={t("dashboard.title")} className="app-page">
         <Skeleton className="h-8 w-48" />
@@ -1425,8 +1395,7 @@ export default function Dashboard() {
   }
 
   const activeAccountCount = currentQuery.data.accounts.filter((account) => account.isActive).length;
-  const dashboardMode = getDashboardMode(activeAccountCount, (operationsQuery.data?.length ?? 0) > 0);
-  if (dashboardMode === "setup") return <DashboardSetup />;
+  const dashboardMode = getDashboardMode(hasMovementQuery.data === true);
   if (dashboardMode === "first-transaction") {
     return <FirstTransactionDashboard snapshot={currentQuery.data} accountCount={activeAccountCount} />;
   }

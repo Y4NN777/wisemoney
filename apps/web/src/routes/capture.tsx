@@ -1,5 +1,5 @@
-import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
-import { Route as rootRoute } from "./__root.tsx";
+import { createRoute, redirect } from "@tanstack/react-router";
+import { Route as vaultLayoutRoute } from "./_vault.tsx";
 
 export const captureTabs = ["transaction", "transfer", "goal", "manage"] as const;
 export type CaptureTab = typeof captureTabs[number];
@@ -26,9 +26,24 @@ export function parseCaptureSearch(search: Record<string, unknown>): { tab?: Cap
   return { tab: search.tab };
 }
 
+/**
+ * Legacy deep links: capture moved into the overlay sheet over the current
+ * screen, and account/category management moved to Settings. The route exists
+ * only to redirect old URLs.
+ */
 export const Route = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => vaultLayoutRoute,
   path: "/capture",
   validateSearch: parseCaptureSearch,
-  component: lazyRouteComponent(() => import("../ui/Capture/index.tsx")),
+  beforeLoad: ({ search }) => {
+    const parsed = parseCaptureSearch(search);
+    if (parsed.tab === "manage") {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack redirect contract
+      throw redirect({ to: "/settings", replace: true });
+    }
+    const sheetSearch: Record<string, unknown> = { capture: parsed.tab ?? "transaction" };
+    if (parsed.direction != null) sheetSearch.direction = parsed.direction;
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack redirect contract
+    throw redirect({ to: "/", search: sheetSearch, replace: true });
+  },
 });

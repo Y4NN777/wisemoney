@@ -4,8 +4,8 @@ import DevicesSection from "./DevicesSection.tsx";
 import CurrencySection from "./CurrencySection.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
-import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck, Sparkles, SunMoon } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck, Sparkles, SunMoon, WalletCards } from "lucide-react";
 import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
 import { Button } from "../../components/ui/button.tsx";
@@ -13,6 +13,34 @@ import { openUpdates } from "../../releases/navigation.ts";
 import { PRODUCT_VERSION } from "../../releases/releaseNotes.ts";
 import ThemeSettings from "../../components/ThemeSettings.tsx";
 import CoachSettingsSection from "../../components/CoachSettingsSection.tsx";
+import { useFinancialState } from "../../hooks/useFinancialState.ts";
+import { ManagementSections } from "../Capture/ManagementSections.tsx";
+import type { ManageSection } from "../../routes/capture.tsx";
+
+function AccountsCategoriesSection() {
+  const { t } = useTranslation();
+  const { data: snapshot } = useFinancialState();
+  const [section, setSection] = useState<ManageSection>("accounts");
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 border border-border bg-muted" role="tablist" aria-label={t("capture.manage.sectionsLabel")}>
+        {(["accounts", "categories"] as const).map((candidate) => (
+          <button
+            key={candidate}
+            type="button"
+            role="tab"
+            aria-selected={section === candidate}
+            onClick={() => setSection(candidate)}
+            className={`min-h-12 border-primary px-4 text-left text-sm font-semibold transition-colors first:border-r ${section === candidate ? "bg-primary text-primary-foreground" : "bg-card text-card-foreground hover:bg-muted"}`}
+          >
+            {t(`capture.manage.${candidate}`)}
+          </button>
+        ))}
+      </div>
+      {snapshot != null && <ManagementSections snapshot={snapshot} section={section} />}
+    </div>
+  );
+}
 
 function SettingsPanel({
   icon,
@@ -85,6 +113,13 @@ export default function Settings() {
       </section>
 
       <div className="grid gap-3 motion-enter">
+        <SettingsPanel
+          icon={<WalletCards className="h-5 w-5" />}
+          title={t("settings.sections.organization.title")}
+          description={t("settings.sections.organization.description")}
+        >
+          <AccountsCategoriesSection />
+        </SettingsPanel>
         <SettingsPanel
           icon={<Bot className="h-5 w-5" />}
           title={t("settings.sections.coach.title")}

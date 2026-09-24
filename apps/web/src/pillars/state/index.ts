@@ -1,5 +1,6 @@
 import type { MasterKey } from "@/crypto/envelope.ts";
 import { appendEvent, appendEvents } from "@/domain/eventStore.ts";
+import { DEFAULT_INCOME_CATEGORY_NAMES } from "@/domain/categoryHints.ts";
 import type { MoneyDTO, PlannedExpensePriority } from "@/domain/financialState.ts";
 import { getSnapshot, readTransactionsInRange } from "@/domain/financialState.ts";
 import { convertUsingContext, loadCurrencyContext } from "@/domain/currencyStore.ts";
@@ -223,6 +224,8 @@ export type RecordTransactionParams = {
   note?: string;
   tags?: string[];
   merchant?: string;
+  /** When the money movement actually happened; defaults to now. Must not be in the future. */
+  occurredAt?: number;
   masterKey: MasterKey;
 };
 
@@ -246,6 +249,9 @@ export async function recordTransaction(
   }
   if (params.direction !== "income" && params.direction !== "expense") {
     errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });
+  }
+  if (params.occurredAt != null && (!Number.isSafeInteger(params.occurredAt) || params.occurredAt > nowMs())) {
+    errors.push({ field: "occurredAt", message: "Must be a timestamp not in the future" });
   }
   if (account != null && Number.isSafeInteger(params.amount.minorUnits)) {
     validateSafeResult(
@@ -274,6 +280,7 @@ export async function recordTransaction(
       note: params.note ?? null,
       tags: params.tags ?? [],
       merchant: params.merchant ?? null,
+      ...(params.occurredAt != null ? { occurredAt: params.occurredAt } : {}),
     },
     masterKey: params.masterKey,
     expectedLastEventId: snapshot.asOfEventId,
@@ -1534,13 +1541,7 @@ const DEFAULT_EXPENSE_CATEGORIES = [
   "Travel",
 ];
 
-const DEFAULT_INCOME_CATEGORIES = [
-  "Salary",
-  "Freelance",
-  "Investments",
-  "Refunds",
-  "Other Income",
-];
+const DEFAULT_INCOME_CATEGORIES = DEFAULT_INCOME_CATEGORY_NAMES;
 
 const DEFAULT_CATEGORIES = [
   ...DEFAULT_INCOME_CATEGORIES.map((name) => ({ name, parentId: undefined })),

@@ -26,7 +26,7 @@ export default function PlannedExpenses() {
       ) : (
         <PlannedExpensesSection
           snapshot={snapshot}
-          onOpenAccounts={() => void navigate({ to: "/capture", search: { tab: "manage", section: "accounts" } })}
+          onOpenAccounts={() => void navigate({ to: "/settings" })}
         />
       )}
     </main>

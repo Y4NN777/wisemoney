@@ -411,7 +411,7 @@
   },
   "dashboard": {
     "accountCount": "{{count}} accounts",
-    "loadFailed": "The dashboard could not be loaded. Try again.",
+    "loadFailed": "Failed to load financial data",
     "title": "Dashboard",
     "setup": {
       "title": "Start with one account",
@@ -553,7 +553,6 @@
     "welcome": "Welcome to WiseMoney",
     "total": "Total",
     "net": "Difference",
-    "loadFailed": "Failed to load financial data",
     "previousMonth": "Previous month",
     "nextMonth": "Next month",
     "monthNavigation": "Month navigation",
@@ -619,7 +618,20 @@
       "updateFailed": "Could not update transaction.",
       "deleteFailed": "Could not delete transaction."
     },
-    "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ]
   },
   "operations": {
     "title": "Activity",
@@ -810,7 +822,10 @@
       "accountCurrency": "Account currency",
       "currencySearch": "Search currency ({{currency}})",
       "noCurrency": "No matching currency.",
-      "regions": { "africa": "Africa", "global": "Global" },
+      "regions": {
+        "africa": "Africa",
+        "global": "Global"
+      },
       "accountTypes": {
         "checking": "Checking",
         "savings": "Savings",
@@ -859,36 +874,71 @@
       "confirmCancel": "Cancel the planned expense “{{label}}”? No transaction will be created.",
       "noCompatibleAccount": "No active account uses {{currency}}. Payment cannot be confirmed yet.",
       "openAccounts": "Open account management",
-      "priorities": { "low": "Low", "medium": "Medium", "high": "High" },
-      "priorityGroups": { "high": "High priority", "medium": "Medium priority", "low": "Low priority" },
-      "statuses": { "pending": "Pending", "completed": "Completed", "cancelled": "Cancelled" },
+      "priorities": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "priorityGroups": {
+        "high": "High priority",
+        "medium": "Medium priority",
+        "low": "Low priority"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
       "fields": {
-        "label": "Label", "estimatedAmount": "Estimated amount", "actualAmount": "Actual amount",
-        "currency": "Currency", "category": "Category", "selectCategory": "Select a category",
-        "priority": "Priority", "dueDate": "Due date (optional)", "note": "Note (optional)",
-        "account": "Account", "selectAccount": "Select an account", "occurredAt": "Effective date"
+        "label": "Label",
+        "estimatedAmount": "Estimated amount",
+        "actualAmount": "Actual amount",
+        "currency": "Currency",
+        "category": "Category",
+        "selectCategory": "Select a category",
+        "priority": "Priority",
+        "dueDate": "Due date (optional)",
+        "note": "Note (optional)",
+        "account": "Account",
+        "selectAccount": "Select an account",
+        "occurredAt": "Effective date"
       },
       "actions": {
-        "edit": "Edit", "complete": "Mark as completed", "cancel": "Cancel",
-        "create": "Add planned expense", "save": "Save changes", "saving": "Saving…",
-        "completing": "Creating transaction…", "confirmComplete": "Confirm payment"
+        "edit": "Edit",
+        "complete": "Mark as completed",
+        "cancel": "Cancel",
+        "create": "Add planned expense",
+        "save": "Save changes",
+        "saving": "Saving…",
+        "completing": "Creating transaction…",
+        "confirmComplete": "Confirm payment"
       },
       "success": {
-        "created": "Planned expense added", "updated": "Planned expense updated",
-        "priorityUpdated": "Priority updated", "cancelled": "Planned expense cancelled",
+        "created": "Planned expense added",
+        "updated": "Planned expense updated",
+        "priorityUpdated": "Priority updated",
+        "cancelled": "Planned expense cancelled",
         "completed": "Transaction created and planned expense completed"
       },
       "errors": {
-        "labelRequired": "Enter a label.", "positiveAmount": "Enter an amount greater than zero.",
-        "categoryRequired": "Select an active category.", "accountRequired": "Select a compatible active account.",
-        "invalidDate": "Enter a valid date.", "createFailed": "Could not add the planned expense.",
-        "updateFailed": "Could not update the planned expense.", "cancelFailed": "Could not cancel the planned expense.",
+        "labelRequired": "Enter a label.",
+        "positiveAmount": "Enter an amount greater than zero.",
+        "categoryRequired": "Select an active category.",
+        "accountRequired": "Select a compatible active account.",
+        "invalidDate": "Enter a valid date.",
+        "createFailed": "Could not add the planned expense.",
+        "updateFailed": "Could not update the planned expense.",
+        "cancelFailed": "Could not cancel the planned expense.",
         "completeFailed": "Payment was not recorded. No transaction was created."
       },
       "history": {
-        "title": "History", "empty": "No completed or cancelled planned expenses.",
-        "estimated": "Estimated", "actual": "Actual", "account": "Account used",
-        "completedAt": "Completed on", "cancelledAt": "Cancelled on"
+        "title": "History",
+        "empty": "No completed or cancelled planned expenses.",
+        "estimated": "Estimated",
+        "actual": "Actual",
+        "account": "Account used",
+        "completedAt": "Completed on",
+        "cancelledAt": "Cancelled on"
       }
     }
   },
@@ -1364,8 +1414,13 @@
         "receivable_due": "Reminds you to follow up unsettled receivables."
       },
       "weekdays": {
-        "0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday",
-        "4": "Thursday", "5": "Friday", "6": "Saturday"
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday"
       }
     },
     "test": {
@@ -1459,6 +1514,10 @@
       "security": {
         "title": "Security and session",
         "description": "Lock this space or manage an online session"
+      },
+      "organization": {
+        "title": "Accounts & categories",
+        "description": "Create or rename accounts and categories that fit your reality."
       }
     },
     "devices": {
@@ -1634,5 +1693,14 @@
   },
   "errors": {
     "httpsRequired": "HTTPS is required in production for security. Set VITE_EDGE_BASE_URL to an https:// URL."
+  },
+  "captureSheet": {
+    "cashName": "Cash",
+    "date": "Date",
+    "undo": "Undo",
+    "add": "Add",
+    "transferNeedsAccounts": "Add a second account to transfer between your accounts.",
+    "goalsEmpty": "Create a goal in Planning first, then record contributions here.",
+    "openPlanning": "Open Planning"
   }
 }

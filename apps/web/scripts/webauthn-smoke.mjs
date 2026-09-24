@@ -49,7 +49,7 @@ try {
   await page.getByLabel("Confirm private passphrase", { exact: true }).fill(passphrase);
   await page.getByRole("checkbox", { name: /Enable device unlock/ }).check();
   await page.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
-  await page.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 90_000 });
+  await page.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 90_000 });
 
   const keyMeta = await page.evaluate(async () => await new Promise((resolve, reject) => {
     const request = indexedDB.open("WiseMoney");
@@ -98,7 +98,7 @@ try {
   await page.getByRole("button", { name: "Back to overview", exact: true }).click();
   await page.getByRole("button", { name: "Open my space", exact: true }).click();
   await page.getByRole("button", { name: "Open", exact: true }).click();
-  await page.getByRole("heading", { name: "Start with one account", exact: true }).waitFor({ timeout: 30_000 });
+  await page.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 30_000 });
 
   await cdp.send("WebAuthn.removeVirtualAuthenticator", { authenticatorId });
   await context.close();
