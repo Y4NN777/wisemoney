@@ -5,6 +5,7 @@ import {
   loadCurrencyContext,
   saveFxRate,
   setStoredBaseCurrency,
+  DEFAULT_BASE_CURRENCY,
 } from "../../domain/currencyStore.ts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Button } from "../../components/ui/button.tsx";
@@ -357,7 +358,7 @@ export default function CurrencySection() {
   const [newBase, setNewBase] = useState("EUR");
   const [newQuote, setNewQuote] = useState("USD");
   const [newRate, setNewRate] = useState("");
-  const [defaultCurrency, setDefaultCurrency] = useState("XOF");
+  const [defaultCurrency, setDefaultCurrency] = useState(DEFAULT_BASE_CURRENCY);
   const [saving, setSaving] = useState(false);
 
   const refreshRates = async () => {

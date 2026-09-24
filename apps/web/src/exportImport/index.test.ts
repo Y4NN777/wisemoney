@@ -38,6 +38,7 @@ vi.mock("@/domain/eventStore.ts", () => ({
 }));
 vi.mock("@/domain/currencyStore.ts", () => ({
   loadCurrencyContext: mockLoadCurrencyContext,
+  DEFAULT_BASE_CURRENCY: "XOF",
 }));
 vi.mock("@/domain/eventPayload.ts", () => ({ validateFinancialEventPayload: mockValidatePayload }));
 

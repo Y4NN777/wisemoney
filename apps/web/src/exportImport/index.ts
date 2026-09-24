@@ -27,7 +27,7 @@ import { deriveMasterKey } from "@/crypto/keyManagement.ts";
 import { isFinancialEventType, replaceAllEvents } from "@/domain/eventStore.ts";
 import type { FinancialEventPayload, FinancialEventType } from "@/domain/eventStore.ts";
 import { persistSnapshot, replayFromInception, validateDecryptedEventSequence } from "@/domain/financialState.ts";
-import { loadCurrencyContext } from "@/domain/currencyStore.ts";
+import { loadCurrencyContext, DEFAULT_BASE_CURRENCY } from "@/domain/currencyStore.ts";
 import { validateFinancialEventPayload } from "@/domain/eventPayload.ts";
 import { convertMoney } from "@/types/money.ts";
 
@@ -137,7 +137,7 @@ export async function exportJSON(
   exportPassphrase?: string
 ): Promise<Blob> {
   const financialEvents = await readAllDecryptedEvents(masterKey);
-  const currencyContext = await loadCurrencyContext(masterKey, "XOF");
+  const currencyContext = await loadCurrencyContext(masterKey, DEFAULT_BASE_CURRENCY);
   const doc: WiseMoneyExport = {
     version: 2,
     exportedAt: Date.now(),

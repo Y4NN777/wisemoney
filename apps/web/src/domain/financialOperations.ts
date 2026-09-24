@@ -278,3 +278,25 @@ export async function readFinancialOperationsInRange(
     displayAmount: operation.amount == null ? null : convertUsingContext(operation.amount, displayCurrency, context),
   }));
 }
+
+const MOVEMENT_EVENT_TYPES = ["transaction_created", "transfer_created", "transaction_deleted"] as const;
+
+/**
+ * Cheap "has the user recorded any money movement?" check for UI mode decisions.
+ * Reads plaintext index keys only — never decrypts payloads (encryption boundary,
+ * db/schema.ts). A transaction counts while it exists: created and not since deleted.
+ */
+export async function hasAnyMoneyMovement(): Promise<boolean> {
+  const events = await db.financialEvents
+    .where("type")
+    .anyOf([...MOVEMENT_EVENT_TYPES])
+    .toArray();
+  const deletedEntityIds = new Set(
+    events
+      .filter((event) => event.type === "transaction_deleted")
+      .map((event) => event.entityId),
+  );
+  return events.some(
+    (event) => event.type !== "transaction_deleted" && !deletedEntityIds.has(event.entityId),
+  );
+}

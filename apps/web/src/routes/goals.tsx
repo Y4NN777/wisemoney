@@ -1,8 +1,8 @@
 import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
-import { Route as rootRoute } from "./__root.tsx";
+import { Route as vaultLayoutRoute } from "./_vault.tsx";
 
 export const Route = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => vaultLayoutRoute,
   path: "/goals",
   component: lazyRouteComponent(() => import("../ui/Goals/index.tsx")),
 });

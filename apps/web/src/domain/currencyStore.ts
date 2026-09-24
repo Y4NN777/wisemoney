@@ -7,6 +7,9 @@ import { convertMoney } from "@/types/money.ts";
 const DEFAULT_CURRENCY_STORAGE_KEY = "wisemoney_default_currency";
 const BASE_CURRENCY_SETTING_ID = "baseCurrency";
 
+/** Product default for new vaults (UEMOA/XOF persona, PRD §3). Single source — do not inline. */
+export const DEFAULT_BASE_CURRENCY = "XOF";
+
 type FxRate = {
   id: string;
   baseCurrency: string;
@@ -69,7 +72,7 @@ async function loadBaseCurrency(masterKey: MasterKey, fallbackCurrency: string):
 
 export async function loadCurrencyContext(
   masterKey: MasterKey,
-  fallbackCurrency = "XOF"
+  fallbackCurrency = DEFAULT_BASE_CURRENCY
 ): Promise<CurrencyContext> {
   const records = await db.fxRates.toArray();
   const rates = new Map<string, FxRate>();

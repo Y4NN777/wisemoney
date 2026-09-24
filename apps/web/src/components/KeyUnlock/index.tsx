@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent, type ReactNode } from "react";
 import {
   deriveMasterKey,
   createWebAuthnCredential,
@@ -10,10 +10,9 @@ import type { MasterKey } from "../../crypto/envelope.ts";
 import { db } from "../../db/schema.ts";
 import { lockSession, register, restoreSession } from "../../auth/session.ts";
 import { importJSON } from "../../exportImport/index.ts";
-import { RouterProvider } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { router } from "../../router.ts";
 import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContext.ts";
+import { clearCachedMasterKey, getCachedMasterKey, setCachedMasterKey } from "../../lib/vaultUnlocked.ts";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
 import { isEdgeConfigured } from "../../lib/capabilities.ts";
 import { ArrowLeft, ArrowRight, Bot, CalendarClock, ChevronDown, ChevronUp, Download, Eye, EyeOff, LockOpen, ShieldCheck, Upload, WalletCards, WifiOff } from "lucide-react";
@@ -45,9 +44,11 @@ function isStandaloneDisplayMode(): boolean {
 
 type KeyUnlockProps = {
   onVaultUnlockedChange: (unlocked: boolean) => void;
+  /** The unlocked application shell; rendered once the vault is open. */
+  children: ReactNode;
 };
 
-export default function KeyUnlock({ onVaultUnlockedChange }: KeyUnlockProps) {
+export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlockProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const translationRef = useRef(t);
@@ -67,11 +68,13 @@ export default function KeyUnlock({ onVaultUnlockedChange }: KeyUnlockProps) {
     setVaultUnlockFlow(meta?.webAuthnHandle != null ? "unlock-webauthn" : "unlock-passphrase");
     queryClient.clear();
     setMasterKey(mk);
+    setCachedMasterKey(mk);
     setFlow("app");
   };
 
   const lockVault = () => {
     lockSession();
+    clearCachedMasterKey();
     queryClient.clear();
     setMasterKey(null);
     setError(null);
@@ -85,13 +88,17 @@ export default function KeyUnlock({ onVaultUnlockedChange }: KeyUnlockProps) {
       if (meta == null) {
         setVaultUnlockFlow("setup");
         setFlow(isStandaloneDisplayMode() ? "restore" : "landing");
-      } else if (meta.webAuthnHandle != null) {
-        setVaultUnlockFlow("unlock-webauthn");
-        setFlow("landing");
-      } else {
-        setVaultUnlockFlow("unlock-passphrase");
-        setFlow("landing");
+        return;
       }
+      setVaultUnlockFlow(meta.webAuthnHandle != null ? "unlock-webauthn" : "unlock-passphrase");
+      // Resume an unlock from before a visit to a public page (the gate
+      // unmounts there); the cached key is memory-only (see vaultUnlocked.ts).
+      const cachedKey = getCachedMasterKey();
+      if (cachedKey != null) {
+        void openVault(cachedKey);
+        return;
+      }
+      setFlow("landing");
     }).catch(() => {
       if (active) {
         setError(translationRef.current("keyUnlock.errors.localStorage"));
@@ -162,7 +169,7 @@ export default function KeyUnlock({ onVaultUnlockedChange }: KeyUnlockProps) {
       />
     );
   } else {
-    content = <AppShell masterKey={masterKey!} onLock={lockVault} />;
+    content = <AppShell masterKey={masterKey!} onLock={lockVault}>{children}</AppShell>;
   }
 
   return (
@@ -562,9 +569,10 @@ function AuthTopBar({ onBack }: { onBack: () => void }) {
 type AppShellProps = {
   masterKey: MasterKey;
   onLock: () => void;
+  children: ReactNode;
 };
 
-function AppShell({ masterKey, onLock }: AppShellProps) {
+function AppShell({ masterKey, onLock, children }: AppShellProps) {
   const { t } = useTranslation();
   const [categoriesReady, setCategoriesReady] = useState(false);
 
@@ -595,7 +603,7 @@ function AppShell({ masterKey, onLock }: AppShellProps) {
   return (
     <VaultActionsContext.Provider value={{ lockVault: onLock }}>
       <MasterKeyContext.Provider value={masterKey}>
-        <RouterProvider router={router} />
+        {children}
       </MasterKeyContext.Provider>
     </VaultActionsContext.Provider>
   );

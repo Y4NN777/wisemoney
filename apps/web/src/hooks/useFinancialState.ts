@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Dexie, { type ObservabilitySet } from "dexie";
 import { useMasterKey } from "../lib/masterKeyContext.ts";
 import { getSnapshot, replayUpTo, readTransactionsInRange } from "../domain/financialState.ts";
-import { readFinancialOperationsInRange } from "../domain/financialOperations.ts";
-import { loadCurrencyContext } from "../domain/currencyStore.ts";
+import { readFinancialOperationsInRange, hasAnyMoneyMovement } from "../domain/financialOperations.ts";
+import { loadCurrencyContext, DEFAULT_BASE_CURRENCY } from "../domain/currencyStore.ts";
 import type { TransactionDisplay } from "../domain/financialState.ts";
 import {
   recordTransaction, updateTransaction, deleteTransaction, createAccount, updateAccount,
@@ -85,7 +85,7 @@ export function useCurrencyContext() {
   const scope = masterKeyScope(masterKey);
   return useQuery({
     queryKey: [...CURRENCY_CONTEXT_KEY, scope],
-    queryFn: () => loadCurrencyContext(masterKey, "XOF"),
+    queryFn: () => loadCurrencyContext(masterKey, DEFAULT_BASE_CURRENCY),
     staleTime: 30_000,
   });
 }
@@ -400,23 +400,25 @@ export function useFinancialOperationsInRange(start: number, end: number) {
   });
 }
 
-export function useFinancialOperations() {
+export function useFinancialOperations(options: { enabled?: boolean } = {}) {
   const masterKey = useMasterKey();
   const scope = masterKeyScope(masterKey);
   return useQuery({
     queryKey: [...OPERATIONS_KEY, scope, "all"],
     queryFn: () => readFinancialOperationsInRange(0, Number.MAX_SAFE_INTEGER, masterKey),
     staleTime: 30_000,
+    enabled: options.enabled ?? true,
   });
 }
 
-export function useHasTransactions() {
-  const masterKey = useMasterKey();
-  const scope = masterKeyScope(masterKey);
-
+/**
+ * Cheap "has the user recorded any money movement?" check — plaintext index reads
+ * only, no payload decryption. Consumed by the dashboard mode decision.
+ */
+export function useHasAnyMoneyMovement() {
   return useQuery<boolean>({
-    queryKey: [...TRANSACTIONS_KEY, scope, "any"],
-    queryFn: async () => (await readTransactionsInRange(0, Number.MAX_SAFE_INTEGER, masterKey)).length > 0,
+    queryKey: [...TRANSACTIONS_KEY, "hasMovement"],
+    queryFn: hasAnyMoneyMovement,
     staleTime: 30_000,
   });
 }

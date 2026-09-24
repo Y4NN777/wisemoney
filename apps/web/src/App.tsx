@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { RouterProvider } from "@tanstack/react-router";
 import { useRegisterSW } from "virtual:pwa-register/react";
-import KeyUnlock from "./components/KeyUnlock/index.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 import { Button } from "./components/ui/button.tsx";
 import { useTranslation } from "react-i18next";
@@ -11,14 +11,13 @@ import {
   markPwaUpdateReload,
   shouldReloadAfterControllerChange,
 } from "./pwa/updatePolicy.ts";
-import HelpPage from "./help/HelpPage.tsx";
-import { HELP_NAVIGATION_EVENT, isHelpPath } from "./help/navigation.ts";
 import { PwaInstallProvider } from "./pwa/install.tsx";
 import { notifyReminderQueueUpdated, registerReminderPeriodicSync } from "./pwa/reminderQueue.ts";
-import UpdatesPage from "./releases/UpdatesPage.tsx";
-import { openUpdates, UPDATES_NAVIGATION_EVENT, isUpdatesPath } from "./releases/navigation.ts";
+import { openUpdates } from "./releases/navigation.ts";
 import { PRODUCT_VERSION } from "./releases/releaseNotes.ts";
 import { WiseBotProvider } from "./help/WiseBotProvider.tsx";
+import { router } from "./router.ts";
+import { VaultUnlockedSetterContext } from "./lib/vaultUnlocked.ts";
 import { Check, Download, LoaderCircle, RotateCcw, X } from "lucide-react";
 
 type UpdateStage = "hidden" | "available" | "installing" | "finalizing" | "installed" | "failed";
@@ -223,43 +222,16 @@ function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
 
 export default function App() {
   const [vaultUnlocked, setVaultUnlocked] = useState(false);
-  const [publicPage, setPublicPage] = useState<"help" | "updates" | null>(() => {
-    if (isHelpPath()) return "help";
-    if (isUpdatesPath()) return "updates";
-    return null;
-  });
-
-  useEffect(() => {
-    const updateRoute = () => {
-      if (isHelpPath()) setPublicPage("help");
-      else if (isUpdatesPath()) setPublicPage("updates");
-      else setPublicPage(null);
-    };
-    window.addEventListener("popstate", updateRoute);
-    window.addEventListener(HELP_NAVIGATION_EVENT, updateRoute);
-    window.addEventListener(UPDATES_NAVIGATION_EVENT, updateRoute);
-    return () => {
-      window.removeEventListener("popstate", updateRoute);
-      window.removeEventListener(HELP_NAVIGATION_EVENT, updateRoute);
-      window.removeEventListener(UPDATES_NAVIGATION_EVENT, updateRoute);
-    };
-  }, []);
 
   return (
     <PwaInstallProvider>
-      <WiseBotProvider vaultUnlocked={vaultUnlocked}>
-        <Toaster />
-        <PwaUpdateHandler vaultUnlocked={vaultUnlocked} />
-        <div hidden={publicPage != null} aria-hidden={publicPage != null}>
-          <KeyUnlock onVaultUnlockedChange={setVaultUnlocked} />
-        </div>
-        <div hidden={publicPage !== "help"} aria-hidden={publicPage !== "help"}>
-          <HelpPage visible={publicPage === "help"} />
-        </div>
-        <div hidden={publicPage !== "updates"} aria-hidden={publicPage !== "updates"}>
-          <UpdatesPage visible={publicPage === "updates"} />
-        </div>
-      </WiseBotProvider>
+      <VaultUnlockedSetterContext.Provider value={setVaultUnlocked}>
+        <WiseBotProvider vaultUnlocked={vaultUnlocked}>
+          <Toaster />
+          <PwaUpdateHandler vaultUnlocked={vaultUnlocked} />
+          <RouterProvider router={router} />
+        </WiseBotProvider>
+      </VaultUnlockedSetterContext.Provider>
     </PwaInstallProvider>
   );
 }

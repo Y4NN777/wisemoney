@@ -1,6 +1,6 @@
 import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
 import type { FinancialOperationKind } from "../domain/financialOperations.ts";
-import { Route as rootRoute } from "./__root.tsx";
+import { Route as vaultLayoutRoute } from "./_vault.tsx";
 
 const operationKinds: readonly FinancialOperationKind[] = [
   "income",
@@ -47,7 +47,7 @@ export function parseOperationsSearch(search: Record<string, unknown>): Operatio
 }
 
 export const Route = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => vaultLayoutRoute,
   path: "/operations",
   validateSearch: parseOperationsSearch,
   component: lazyRouteComponent(() => import("../ui/Operations/index.tsx")),

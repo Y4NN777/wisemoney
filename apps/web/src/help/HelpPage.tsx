@@ -12,7 +12,7 @@ import { openUpdates } from "../releases/navigation.ts";
 import { useWiseBot } from "./WiseBotProvider.tsx";
 import { recordCoachNotificationClick } from "../coach/index.ts";
 
-export default function HelpPage({ visible }: { visible: boolean }) {
+export default function HelpPage() {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState("");
   const { openWiseBot } = useWiseBot();
@@ -29,10 +29,9 @@ export default function HelpPage({ visible }: { visible: boolean }) {
       window.history.replaceState(window.history.state, "", `/help#${encodeURIComponent(id)}`);
     }
     window.requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: "start" }));
-  }, [visible]);
+  }, []);
 
   useEffect(() => {
-    if (!visible) return;
     const handleShortcut = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
@@ -45,7 +44,7 @@ export default function HelpPage({ visible }: { visible: boolean }) {
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [visible]);
+  }, []);
 
   const platformInstruction = t(`helpPage.install.${install.platform}`);
 

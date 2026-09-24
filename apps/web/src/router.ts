@@ -1,5 +1,6 @@
 import { createRouter } from "@tanstack/react-router";
 import { Route as rootRoute } from "./routes/__root.tsx";
+import { Route as vaultLayoutRoute } from "./routes/_vault.tsx";
 import { Route as indexRoute } from "./routes/index.tsx";
 import { Route as captureRoute } from "./routes/capture.tsx";
 import { Route as assistantRoute } from "./routes/assistant.tsx";
@@ -11,20 +12,26 @@ import { Route as recurringRoute } from "./routes/recurring.tsx";
 import { Route as debtsRoute } from "./routes/debts.tsx";
 import { Route as plannedExpensesRoute } from "./routes/plannedExpenses.tsx";
 import { Route as operationsRoute } from "./routes/operations.tsx";
+import { Route as helpRoute } from "./routes/help.tsx";
+import { Route as updatesRoute } from "./routes/updates.tsx";
 import AppRouteError from "./errors/AppRouteError.tsx";
 
 const routeTree = rootRoute.addChildren([
-  indexRoute,
-  captureRoute,
-  assistantRoute,
-  planningRoute,
-  settingsRoute,
-  budgetsRoute,
-  goalsRoute,
-  recurringRoute,
-  debtsRoute,
-  plannedExpensesRoute,
-  operationsRoute,
+  helpRoute,
+  updatesRoute,
+  vaultLayoutRoute.addChildren([
+    indexRoute,
+    captureRoute,
+    assistantRoute,
+    planningRoute,
+    settingsRoute,
+    budgetsRoute,
+    goalsRoute,
+    recurringRoute,
+    debtsRoute,
+    plannedExpensesRoute,
+    operationsRoute,
+  ]),
 ]);
 
 export const router = createRouter({ routeTree, defaultErrorComponent: AppRouteError });

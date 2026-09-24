@@ -1,10 +1,14 @@
 import { PRODUCT_VERSION } from "./releaseNotes.ts";
 
-export const UPDATES_NAVIGATION_EVENT = "wisemoney:updates-navigation";
+// The router is imported lazily: a static import would create an evaluation-time
+// cycle (router.ts → routes → __root.tsx → this module) and break route creation.
+let routerPromise: Promise<typeof import("../router.ts")> | null = null;
+function loadRouter() {
+  routerPromise ??= import("../router.ts");
+  return routerPromise;
+}
 
-type UpdatesHistoryState = {
-  wisemoneyUpdates?: boolean;
-};
+let openedFromApp = false;
 
 export function isUpdatesPath(pathname = window.location.pathname): boolean {
   return pathname === "/updates" || pathname === "/updates/";
@@ -15,29 +19,20 @@ export function releaseAnchor(version = PRODUCT_VERSION): string {
 }
 
 export function openUpdates(version?: string): void {
-  const hash = version == null ? "" : `#${encodeURIComponent(releaseAnchor(version))}`;
-  const nextUrl = `/updates${hash}`;
-
-  if (isUpdatesPath()) {
-    window.history.replaceState(window.history.state, "", nextUrl);
-  } else {
-    const state: UpdatesHistoryState = {
-      ...(window.history.state as object | null),
-      wisemoneyUpdates: true,
-    };
-    window.history.pushState(state, "", nextUrl);
-  }
-  window.dispatchEvent(new Event(UPDATES_NAVIGATION_EVENT));
+  openedFromApp = true;
+  void loadRouter().then(({ router }) =>
+    router.navigate({
+      to: "/updates",
+      ...(version == null ? {} : { hash: releaseAnchor(version) }),
+    })
+  );
 }
 
 export function closeUpdates(): void {
-  const state = window.history.state as UpdatesHistoryState | null;
-  if (state?.wisemoneyUpdates === true && window.history.length > 1) {
-    window.history.back();
+  if (openedFromApp) {
+    openedFromApp = false;
+    void loadRouter().then(({ router }) => router.history.back());
     return;
   }
-
-  window.history.replaceState({}, "", "/");
-  window.dispatchEvent(new PopStateEvent("popstate"));
-  window.dispatchEvent(new Event(UPDATES_NAVIGATION_EVENT));
+  void loadRouter().then(({ router }) => router.navigate({ to: "/" }));
 }

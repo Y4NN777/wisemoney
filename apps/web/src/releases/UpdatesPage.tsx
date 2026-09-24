@@ -22,19 +22,18 @@ function formatReleaseDate(date: string, language: string): string {
   }).format(new Date(`${date}T12:00:00Z`));
 }
 
-export default function UpdatesPage({ visible }: { visible: boolean }) {
+export default function UpdatesPage() {
   const { t, i18n } = useTranslation();
   const language = i18n.resolvedLanguage ?? i18n.language;
   const currentContent = getReleaseContent(CURRENT_RELEASE, language);
 
   useEffect(() => {
-    if (!visible) return;
     const id = decodeURIComponent(window.location.hash.slice(1));
     window.requestAnimationFrame(() => {
       if (id.length > 0) document.getElementById(id)?.scrollIntoView({ block: "start" });
       else window.scrollTo({ top: 0 });
     });
-  }, [visible]);
+  }, []);
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
