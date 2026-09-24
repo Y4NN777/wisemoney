@@ -1265,7 +1265,21 @@
       "debts_one": "{{count}} unsettled item",
       "debts_other": "{{count}} unsettled items"
     },
-    "loadFailed": "Planning information could not be loaded."
+    "loadFailed": "Planning information could not be loaded.",
+    "section": {
+      "toggle_one": "{{count}} item",
+      "toggle_other": "{{count}} items",
+      "seeAll": "See all {{count}}"
+    },
+    "frequency": {
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "debtKinds": {
+      "debt": "I owe",
+      "receivable": "Owed to me"
+    }
   },
   "debts": {
     "aria": "Debts and receivables",

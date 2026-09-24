@@ -1265,7 +1265,21 @@
       "debts_one": "{{count}} élément non soldé",
       "debts_other": "{{count}} éléments non soldés"
     },
-    "loadFailed": "Impossible de charger les informations de planification."
+    "loadFailed": "Impossible de charger les informations de planification.",
+    "section": {
+      "toggle_one": "{{count}} élément",
+      "toggle_other": "{{count}} éléments",
+      "seeAll": "Voir les {{count}}"
+    },
+    "frequency": {
+      "weekly": "Chaque semaine",
+      "monthly": "Chaque mois",
+      "yearly": "Chaque année"
+    },
+    "debtKinds": {
+      "debt": "Je dois",
+      "receivable": "On me doit"
+    }
   },
   "debts": {
     "aria": "Dettes et créances",
