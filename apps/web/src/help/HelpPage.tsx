@@ -66,7 +66,7 @@ export default function HelpPage() {
           <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.65fr)]">
             <div className="px-4 py-12 sm:px-6 sm:py-16 lg:border-r lg:border-border lg:px-8 lg:py-24">
               <p className="mb-5 text-sm font-bold text-[#0077b6]">{t("helpPage.eyebrow")}</p>
-              <h1 className="max-w-5xl text-[clamp(3.25rem,8vw,8.5rem)] font-bold leading-[0.86] tracking-[-0.055em]">
+              <h1 className="max-w-3xl text-[clamp(2rem,5vw,4.25rem)] font-bold leading-[1.02] tracking-tight">
                 {t("helpPage.title")}
               </h1>
               <p className="mt-7 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-xl">
@@ -75,7 +75,7 @@ export default function HelpPage() {
             </div>
             <div className="grid min-h-64 grid-cols-2 border-t border-border lg:border-t-0">
               <div className="flex flex-col justify-between border-r border-border bg-[#0077b6] p-5 text-white sm:p-7">
-                <span className="text-7xl font-bold tabular-nums sm:text-8xl">{sections.length}</span>
+                <span className="text-4xl font-bold tabular-nums sm:text-5xl">{sections.length}</span>
                 <span className="max-w-32 text-sm leading-tight">{t("helpPage.paths")}</span>
               </div>
               <div className="help-orbit relative overflow-hidden rounded-2xl bg-muted p-5 sm:p-7" aria-hidden="true">
@@ -161,7 +161,7 @@ export default function HelpPage() {
                     <li id={section.id} key={`${section.id}-${query}`} className="scroll-mt-20">
                       <details className="group" open={query.length > 0 || window.location.hash === `#${section.id}`}>
                         <summary className="grid cursor-pointer list-none grid-cols-[4.25rem_1fr_2.5rem] gap-3 px-4 py-7 transition-colors hover:bg-muted sm:grid-cols-[6.5rem_1fr_3rem] sm:px-8 sm:py-9">
-                          <span className="text-4xl font-bold leading-none tracking-[-0.05em] text-[#0077b6] sm:text-6xl">
+                          <span className="text-3xl font-bold leading-none tracking-tight text-[#0077b6] sm:text-4xl">
                             {String(originalIndex + 1).padStart(2, "0")}
                           </span>
                           <span>

@@ -53,7 +53,7 @@ export default function UpdatesPage() {
           <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.65fr)]">
             <div className="px-4 py-12 sm:px-6 sm:py-16 lg:border-r lg:border-border lg:px-8 lg:py-24">
               <p className="text-sm font-bold text-[#0077b6]">{t("updatesPage.eyebrow")}</p>
-              <h1 className="mt-5 max-w-5xl text-[clamp(3.2rem,7.5vw,8rem)] font-bold leading-[0.88] tracking-[-0.055em]">
+              <h1 className="mt-5 max-w-3xl text-[clamp(2rem,5vw,4.25rem)] font-bold leading-[1.02] tracking-tight">
                 {t("updatesPage.title")}
               </h1>
               <p className="mt-8 max-w-3xl text-xl font-semibold leading-tight sm:text-3xl">
@@ -94,7 +94,7 @@ export default function UpdatesPage() {
                   key={highlight.id}
                   className="min-h-64 border-b border-border bg-card p-5 sm:p-8 sm:[&:nth-child(odd)]:border-r lg:border-r lg:[&:nth-child(3n)]:border-r-0"
                 >
-                  <span className="text-5xl font-bold leading-none tracking-[-0.05em] text-[#0077b6] tabular-nums">
+                  <span className="text-3xl font-bold leading-none tracking-tight text-[#0077b6] tabular-nums">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <h3 className="mt-10 text-xl font-bold leading-tight sm:text-2xl">{highlight.title}</h3>
