@@ -249,7 +249,7 @@ try {
     await appPage.screenshot({ path: `${outputDir}/setup-failure.png`, fullPage: true });
     throw new Error(`Vault setup did not reach Dashboard. Body:\n${await appPage.locator("body").innerText()}`, { cause: error });
   }
-  // First movement with zero accounts: the capture sheet silently creates the default account.
+  // First movement goes into the default account created at setup (the sheet would create one if none existed).
   await appPage.getByRole("button", { name: "Capture", exact: true }).click();
   await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("700");
   await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();

@@ -139,7 +139,7 @@
       "steps": {
         "device": {
           "title": "Votre argent, sur cet appareil",
-          "body": "WiseMoney garde vos comptes, budgets et échéances ici. Aucun compte à créer, rien n’est envoyé ailleurs."
+          "body": "WiseMoney garde vos comptes, budgets et échéances ici. Pas d’inscription, pas d’e-mail, rien n’est envoyé ailleurs."
         },
         "passphrase": {
           "title": "Une phrase privée, votre seule clé",
@@ -147,7 +147,7 @@
         },
         "firstMove": {
           "title": "Commencez par un mouvement",
-          "body": "Enregistrez ce que vous venez de dépenser ou de recevoir. Un compte Espèces est créé pour vous ; renommez-le ou ajoutez-en d’autres quand vous voulez."
+          "body": "Enregistrez ce que vous venez de dépenser ou de recevoir. Il ira dans Espèces, le compte préparé pour vous — renommez-le ou ajoutez-en d’autres quand vous voulez."
         }
       }
     }
@@ -1355,7 +1355,7 @@
       "action": "Enregistrer"
     },
     "accounts": {
-      "label": "Nommer votre compte, ou en ajouter un",
+      "label": "Nommer Espèces, ou ajouter un compte",
       "action": "Comptes"
     },
     "plan": {

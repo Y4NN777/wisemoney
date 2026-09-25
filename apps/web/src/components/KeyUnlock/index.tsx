@@ -13,7 +13,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContext.ts";
 import { clearCachedMasterKey, getCachedMasterKey, setCachedMasterKey } from "../../lib/vaultUnlocked.ts";
 import { recordPassphraseUnlock } from "../../lib/deviceUnlockOffer.ts";
-import { seedDefaultCategories } from "../../pillars/state/index.ts";
+import { createAccount, seedDefaultCategories } from "../../pillars/state/index.ts";
+import { DEFAULT_BASE_CURRENCY } from "../../domain/currencyStore.ts";
 import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, PlusCircle, ShieldCheck, Smartphone, Upload, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
@@ -590,6 +591,14 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
     void (async () => {
       try {
         const mk = await setupMasterKey(passphrase);
+        // A fresh space starts with one account in the setup language, so Home never reads
+        // "0 accounts" and the first movement has somewhere to go (onboarding rethink, 2026-09-25).
+        await createAccount({
+          name: t("captureSheet.cashName"),
+          type: "cash",
+          initialBalance: { minorUnits: 0, currency: DEFAULT_BASE_CURRENCY },
+          masterKey: mk,
+        });
         await onReady(mk);
       } catch {
         setError(t("keyUnlock.setup.errors.failed"));

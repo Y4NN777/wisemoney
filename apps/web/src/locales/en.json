@@ -139,7 +139,7 @@
       "steps": {
         "device": {
           "title": "Your money, on this device",
-          "body": "WiseMoney keeps your accounts, budgets and due dates here. No account to create, nothing sent anywhere."
+          "body": "WiseMoney keeps your accounts, budgets and due dates here. No sign-up, no e-mail, nothing sent anywhere."
         },
         "passphrase": {
           "title": "One passphrase, your only key",
@@ -147,7 +147,7 @@
         },
         "firstMove": {
           "title": "Start with one movement",
-          "body": "Record what you just spent or received. A Cash account is created for you; rename it or add others whenever you like."
+          "body": "Record what you just spent or received. It goes into Cash, the account set up for you — rename it or add others whenever you like."
         }
       }
     }
@@ -1355,7 +1355,7 @@
       "action": "Record"
     },
     "accounts": {
-      "label": "Name your account, or add another",
+      "label": "Name Cash, or add another account",
       "action": "Accounts"
     },
     "plan": {
