@@ -2,26 +2,6 @@ import type { FinancialOperation } from "../../domain/financialOperations.ts";
 import type { TransactionDisplay } from "../../domain/financialState.ts";
 import { selectAccountOperations } from "../../analytics/dashboard.ts";
 
-export type TransactionFilter = "day" | "week" | "month" | "all";
-
-export function getTransactionFilterBounds(
-  filter: TransactionFilter,
-  asOfTimestamp: number,
-  periodStart: number,
-  periodEnd: number,
-): { start: number; end: number } {
-  switch (filter) {
-    case "day":
-      return { start: new Date(asOfTimestamp).setHours(0, 0, 0, 0), end: asOfTimestamp };
-    case "week":
-      return { start: asOfTimestamp - 7 * 24 * 60 * 60 * 1000, end: asOfTimestamp };
-    case "month":
-      return { start: periodStart, end: Math.min(periodEnd, asOfTimestamp) };
-    case "all":
-      return { start: 0, end: asOfTimestamp };
-  }
-}
-
 /** Five compact rows fit under the two summary cards on a 375×812 viewport; three leave it half empty. */
 export const RECENT_MOVEMENT_LIMIT = 5;
 
@@ -52,7 +32,6 @@ export type HomeSectionId =
   | "assistant"
   | "charts"
   | "planningCards"
-  | "activity"
   | "aiInsight";
 
 export type HomeLayout = { aboveFold: HomeSectionId[]; belowFold: HomeSectionId[] };
@@ -66,6 +45,6 @@ export function selectHomeLayout(input: { canMutate: boolean }): HomeLayout {
     aboveFold: input.canMutate
       ? ["summary", "firstSteps", "quickActions", "attention", "recentMovements", "assistant"]
       : ["summary", "firstSteps", "attention", "recentMovements", "assistant"],
-    belowFold: ["charts", "planningCards", "activity", "aiInsight"],
+    belowFold: ["charts", "planningCards", "aiInsight"],
   };
 }

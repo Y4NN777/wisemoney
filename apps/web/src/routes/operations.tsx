@@ -1,3 +1,4 @@
+import { isActivityPreset, type ActivityPreset } from "../analytics/dateRanges.ts";
 import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
 import type { FinancialOperationKind } from "../domain/financialOperations.ts";
 import { Route as vaultLayoutRoute } from "./_vault.tsx";
@@ -27,6 +28,8 @@ export type OperationsSearch = {
   categoryId?: string;
   start?: number;
   end?: number;
+  /** Quick range; explicit start/end win over it. */
+  preset?: ActivityPreset;
 };
 
 export function parseOperationsSearch(search: Record<string, unknown>): OperationsSearch {
@@ -43,6 +46,7 @@ export function parseOperationsSearch(search: Record<string, unknown>): Operatio
   if (categoryId != null) result.categoryId = categoryId;
   if (start != null) result.start = start;
   if (end != null && (start == null || end >= start)) result.end = end;
+  if (isActivityPreset(search.preset) && start == null && end == null) result.preset = search.preset;
   return result;
 }
 

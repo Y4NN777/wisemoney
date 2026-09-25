@@ -6,9 +6,6 @@ const baseURL = process.env.WISEMONEY_SMOKE_URL ?? "http://127.0.0.1:4173";
 const outputDir = process.env.WISEMONEY_SMOKE_OUTPUT ?? "/tmp/wisemoney-playwright";
 const smokeDate = new Date();
 const smokeMonthName = smokeDate.toLocaleDateString("en", { month: "long" });
-const smokeMonthStart = new Date(smokeDate.getFullYear(), smokeDate.getMonth(), 1)
-  .toLocaleDateString("en", { month: "short", day: "numeric" });
-const smokePeriodEnd = smokeDate.toLocaleDateString("en", { month: "long", day: "numeric", year: "numeric" });
 await mkdir(outputDir, { recursive: true });
 
 const browser = await chromium.launch({
@@ -442,11 +439,16 @@ try {
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Smoke Cash", { exact: true }).waitFor();
   await appPage.getByRole("combobox", { name: "Account shown", exact: true }).click();
   await appPage.getByRole("option", { name: "All accounts", exact: true }).click();
-  await appPage.getByText("More about this month", { exact: true }).click();
+  // Date presets live on Activity now; "Month" is the default, "All" widens the range.
+  await appPage.getByRole("link", { name: "Activity", exact: true }).click();
+  const monthPreset = appPage.getByRole("tab", { name: "Month", exact: true });
+  await monthPreset.waitFor();
+  assert.equal(await monthPreset.getAttribute("aria-selected"), "true", "Activity should default to the month preset");
   await appPage.getByRole("tab", { name: "All", exact: true }).click();
-  await appPage.getByText(/^Through /).waitFor();
-  await appPage.getByRole("tab", { name: "Month", exact: true }).click();
-  await appPage.getByText(`${smokeMonthStart} – ${smokePeriodEnd}`, { exact: true }).waitFor();
+  assert.equal(await appPage.getByRole("tab", { name: "All", exact: true }).getAttribute("aria-selected"), "true", "All preset did not select");
+  assert.match(appPage.url(), /preset=all/, "preset is not carried in the URL");
+  await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
+  await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Open help", exact: true }).click();
   await appPage.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
   await appPage.getByLabel("Quick search").fill("total balance");

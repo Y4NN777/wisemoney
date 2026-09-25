@@ -33,19 +33,17 @@ import { comparePeriodAmounts } from "./periodComparison.ts";
 import {
   selectAccountDistribution,
   selectAccountOperations,
-  selectAccountTransactions,
   selectBalanceTimeline,
   selectCashFlowTimeline,
   selectExpensesByCategory,
-  selectPeriodTransactions,
   selectUpcomingCommitments,
   UNCATEGORIZED_CATEGORY_ID,
   } from "../../analytics/dashboard.ts";
 import { summarizeMonthlyActivity } from "../../analytics/operations.ts";
 import AppFaultPanel from "../../errors/AppFaultPanel.tsx";
 import { classifyAppError } from "../../errors/diagnostics.ts";
-import { formatMoney, formatDate, formatFilterDate, formatFilterRange, computePrevPeriod } from "./format.ts";
-import { type TransactionFilter, type HomeSectionId, getTransactionFilterBounds, indexTransactionsById, selectHomeLayout, selectRecentMovements, RECENT_MOVEMENT_LIMIT } from "./homeSelectors.ts";
+import { formatMoney, formatDate, computePrevPeriod } from "./format.ts";
+import { type HomeSectionId, indexTransactionsById, selectHomeLayout, selectRecentMovements, RECENT_MOVEMENT_LIMIT } from "./homeSelectors.ts";
 import RecentMovements from "./RecentMovements.tsx";
 import HomeFold from "./HomeFold.tsx";
 import AttentionCardHost from "./AttentionCardHost.tsx";
@@ -53,7 +51,6 @@ import { SpendingBar, CashFlowTrendChart, BalanceTrendChart } from "./HomeCharts
 import { HealthRail } from "./HomePlanningCards.tsx";
 import { InsightCard } from "./AiInsightCard.tsx";
 import { type TransactionEdit, amountInput } from "./transactionEdit.ts";
-import { TransactionActivity } from "./TransactionActivity.tsx";
 import { FirstTransactionDashboard } from "./FirstTransactionDashboard.tsx";
 import { DashboardPeriodHeader } from "./DashboardPeriodHeader.tsx";
 import { type PeriodComparisonSummary, FinancialOverview } from "./HomeSummary.tsx";
@@ -101,7 +98,6 @@ function DashboardContent({
 }) {
   const { t } = useTranslation();
   const masterKey = useMasterKey();
-  const [transactionFilter, setTransactionFilter] = useState<TransactionFilter>("month");
   const [aiInsight, setAiInsight] = useState<AIResult | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiCapability, setAiCapability] = useState<AICapability | null>(null);
@@ -125,31 +121,6 @@ function DashboardContent({
     () => selectAccountOperations(periodOperations, accountId),
     [accountId, periodOperations],
   );
-  const transactionBounds = useMemo(
-    () => getTransactionFilterBounds(transactionFilter, snapshot.asOfTimestamp, periodStart, periodEnd),
-    [transactionFilter, snapshot.asOfTimestamp, periodStart, periodEnd],
-  );
-  const listTransactions = useMemo(
-    () => selectAccountTransactions(selectPeriodTransactions(allTransactions ?? [], transactionBounds), accountId),
-    [accountId, allTransactions, transactionBounds],
-  );
-  const listTransactionsLoading = periodTransactionsLoading;
-  const filteredTransfers = useMemo(
-    () => snapshot.transfers.filter(
-      (transfer) => transfer.timestamp >= transactionBounds.start &&
-        transfer.timestamp <= transactionBounds.end &&
-        (accountId == null || transfer.fromAccountId === accountId || transfer.toAccountId === accountId),
-    ),
-    [accountId, snapshot.transfers, transactionBounds.end, transactionBounds.start],
-  );
-  const dateFilterContext = transactionFilter === "all"
-    ? t("dashboard.transactionsAllContext", { date: formatFilterDate(transactionBounds.end) })
-    : t("dashboard.transactionsRangeContext", {
-      range: formatFilterRange(transactionBounds.start, transactionBounds.end),
-    });
-  const transactionFilterContext = selectedAccount == null
-    ? dateFilterContext
-    : t("dashboard.accountTransactionsContext", { account: selectedAccount.name, period: dateFilterContext });
 
   useEffect(() => {
     let active = true;
@@ -304,7 +275,7 @@ function DashboardContent({
         movements={recentMovements}
         transactionsById={transactionsById}
         canMutate={canMutate}
-        loading={operationsLoading || listTransactionsLoading}
+        loading={operationsLoading || periodTransactionsLoading}
         activityContext={{ start: periodStart, end: periodEnd, ...(accountId == null ? {} : { accountId }) }}
         onEdit={(transaction) => setTransactionEdit({
           transaction,
@@ -516,26 +487,6 @@ function DashboardContent({
             </Card>
           )}
       </>
-    ),
-    activity: (
-          <TransactionActivity
-            snapshot={snapshot}
-            canMutate={canMutate}
-            filter={transactionFilter}
-            onFilterChange={setTransactionFilter}
-            filterContext={transactionFilterContext}
-            transactions={listTransactions}
-            loading={listTransactionsLoading}
-            transfers={filteredTransfers}
-            onEdit={(transaction) => setTransactionEdit({
-              transaction,
-              categoryId: transaction.categoryId,
-              direction: transaction.direction,
-              amount: amountInput(transaction),
-              note: transaction.note,
-            })}
-            onDelete={setTransactionToDelete}
-          />
     ),
     aiInsight: (
       <>

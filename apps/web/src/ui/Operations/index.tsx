@@ -12,6 +12,7 @@ import { useFinancialOperations, useFinancialState } from "../../hooks/useFinanc
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { formatMoney } from "../../types/money.ts";
 import { parseOperationsSearch, Route, type OperationsSearch } from "../../routes/operations.tsx";
+import { ACTIVITY_PRESETS, getActivityPresetBounds, type ActivityPreset } from "../../analytics/dateRanges.ts";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { exportActivityCSV, exportActivityXLSX, type ActivityExportLocale } from "../../exportImport/activity.ts";
 import { toast } from "sonner";
@@ -102,9 +103,11 @@ export default function Operations() {
   const search = parseOperationsSearch(typeof rawSearch === "object" && rawSearch != null ? rawSearch as Record<string, unknown> : {});
   const navigate = Route.useNavigate();
   const now = Date.now();
-  const currentDate = new Date(now);
-  const start = search.start ?? new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getTime();
-  const end = search.end ?? now;
+  // Without an explicit range the page shows a preset, "month" by default (the 1st to now).
+  const preset: ActivityPreset | null = search.start == null && search.end == null ? (search.preset ?? "month") : null;
+  const presetBounds = getActivityPresetBounds(preset ?? "month", now);
+  const start = search.start ?? presetBounds.start;
+  const end = search.end ?? presetBounds.end;
   const snapshotQuery = useFinancialState();
   const operationsQuery = useFinancialOperations();
   const [selected, setSelected] = useState<FinancialOperation | null>(null);
@@ -187,6 +190,21 @@ export default function Operations() {
         </div>
       </header>
 
+      <div role="tablist" aria-label={t("operations.presetsLabel")} className="grid grid-cols-4 gap-1 rounded-lg border border-border bg-muted p-1">
+        {ACTIVITY_PRESETS.map((candidate) => (
+          <button
+            key={candidate}
+            type="button"
+            role="tab"
+            aria-selected={preset === candidate}
+            onClick={() => updateSearch({ preset: candidate, start: undefined, end: undefined })}
+            className={`min-h-9 rounded-md px-2 text-sm font-medium transition-colors ${preset === candidate ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            {t(`operations.presets.${candidate}`)}
+          </button>
+        ))}
+      </div>
+
       <section aria-label={t("operations.summary")} className="grid divide-y divide-border overflow-hidden rounded-lg border border-border bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {([
           { key: "received", amount: totals.received, tone: totals.received.minorUnits > 0 ? "text-positive" : "text-foreground" },
@@ -232,8 +250,8 @@ export default function Operations() {
             <SelectContent><SelectItem value="all">{t("operations.allCategories")}</SelectItem>{snapshot.categories.map((item) => <SelectItem key={item.id} value={item.id}>{categoryDisplayName(item, t)}</SelectItem>)}</SelectContent>
           </Select>
           <div className="grid grid-cols-2 gap-2 sm:col-span-2">
-            <Input aria-label={t("operations.startDate")} type="date" value={localDateInput(start)} onChange={(event) => updateSearch({ start: inputTimestamp(event.target.value, false) })} />
-            <Input aria-label={t("operations.endDate")} type="date" value={localDateInput(end)} onChange={(event) => updateSearch({ end: inputTimestamp(event.target.value, true) })} />
+            <Input aria-label={t("operations.startDate")} type="date" value={localDateInput(start)} onChange={(event) => updateSearch({ preset: undefined, start: inputTimestamp(event.target.value, false) })} />
+            <Input aria-label={t("operations.endDate")} type="date" value={localDateInput(end)} onChange={(event) => updateSearch({ preset: undefined, end: inputTimestamp(event.target.value, true) })} />
           </div>
           <Button type="button" variant="ghost" size="sm" className="justify-start sm:col-span-2 xl:col-span-4" onClick={clearFilters}>
             <X className="mr-1 h-4 w-4" />{t("operations.clearFilters")}

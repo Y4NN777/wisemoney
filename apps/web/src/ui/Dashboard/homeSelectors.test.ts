@@ -3,7 +3,6 @@ import type { FinancialOperation } from "../../domain/financialOperations.ts";
 import type { TransactionDisplay } from "../../domain/financialState.ts";
 import {
   RECENT_MOVEMENT_LIMIT,
-  getTransactionFilterBounds,
   indexTransactionsById,
   selectHomeLayout,
   selectRecentMovements,
@@ -31,7 +30,7 @@ function operation(overrides: Partial<FinancialOperation> & { id: string; timest
   };
 }
 
-const ALL_SECTIONS: HomeSectionId[] = ["summary", "firstSteps", "quickActions", "attention", "recentMovements", "assistant", "charts", "planningCards", "activity", "aiInsight"];
+const ALL_SECTIONS: HomeSectionId[] = ["summary", "firstSteps", "quickActions", "attention", "recentMovements", "assistant", "charts", "planningCards", "aiInsight"];
 
 describe("selectRecentMovements", () => {
   const ops = [
@@ -69,24 +68,6 @@ describe("indexTransactionsById", () => {
     const index = indexTransactionsById([tx("1", "first"), tx("2", "second"), tx("1", "again")]);
     expect(index.size).toBe(2);
     expect(index.get("1")?.note).toBe("again");
-  });
-});
-
-describe("getTransactionFilterBounds", () => {
-  const asOf = new Date(2026, 8, 24, 15, 30).getTime();
-  const periodStart = new Date(2026, 8, 1).getTime();
-  const periodEnd = new Date(2026, 8, 30, 23, 59, 59, 999).getTime();
-
-  it("bounds day, month and all filters", () => {
-    expect(getTransactionFilterBounds("day", asOf, periodStart, periodEnd)).toEqual({ start: new Date(2026, 8, 24).getTime(), end: asOf });
-    expect(getTransactionFilterBounds("month", asOf, periodStart, periodEnd)).toEqual({ start: periodStart, end: asOf });
-    expect(getTransactionFilterBounds("all", asOf, periodStart, periodEnd).start).toBe(0);
-  });
-
-  it("keeps the week window inside the last seven days", () => {
-    const week = getTransactionFilterBounds("week", asOf, periodStart, periodEnd);
-    expect(week.end).toBe(asOf);
-    expect(asOf - week.start).toBeLessThanOrEqual(7 * 24 * 60 * 60 * 1000);
   });
 });
 

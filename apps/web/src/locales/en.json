@@ -246,13 +246,7 @@
       "reached": "Limit reached",
       "exceeded": "Budget exceeded"
     },
-    "transactions": "Transactions",
-    "transactionsRangeContext": "{{range}}",
-    "transactionsAllContext": "Through {{date}}",
-    "accountTransactionsContext": "{{account}} · {{period}}",
-    "addTransaction": "Add transaction",
     "noActivityTitle": "No activity in this range",
-    "transfers": "Transfers",
     "externalAccount": "External account",
     "unknownAccount": "Unknown account",
     "net": "Difference",
@@ -273,12 +267,6 @@
       "sameAsLastMonth": "same amount as last month",
       "moreThanLastMonth": "{{amount}} more than last month",
       "lessThanLastMonth": "{{amount}} less than last month"
-    },
-    "filters": {
-      "day": "Day",
-      "week": "7 days",
-      "month": "Month",
-      "all": "All"
     },
     "transactionActions": {
       "edit": "Edit transaction",
@@ -361,7 +349,14 @@
       "transfer": "Transfer",
       "goal_contribution": "Goal contribution",
       "recurring_realisation": "Completed recurring occurrence"
-    }
+    },
+    "presets": {
+      "day": "Day",
+      "week": "7 days",
+      "month": "Month",
+      "all": "All"
+    },
+    "presetsLabel": "Period"
   },
   "capture": {
     "heading": "Record money movement",

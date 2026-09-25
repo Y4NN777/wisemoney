@@ -246,13 +246,7 @@
       "reached": "Limite atteinte",
       "exceeded": "Budget dépassé"
     },
-    "transactions": "Transactions",
-    "transactionsRangeContext": "{{range}}",
-    "transactionsAllContext": "Jusqu’au {{date}}",
-    "accountTransactionsContext": "{{account}} · {{period}}",
-    "addTransaction": "Ajouter une transaction",
     "noActivityTitle": "Aucune activité sur cette période",
-    "transfers": "Transferts",
     "externalAccount": "Compte externe",
     "unknownAccount": "Compte inconnu",
     "net": "Différence",
@@ -273,12 +267,6 @@
       "sameAsLastMonth": "même montant que le mois dernier",
       "moreThanLastMonth": "{{amount}} de plus que le mois dernier",
       "lessThanLastMonth": "{{amount}} de moins que le mois dernier"
-    },
-    "filters": {
-      "day": "Jour",
-      "week": "7 jours",
-      "month": "Mois",
-      "all": "Tout"
     },
     "transactionActions": {
       "edit": "Modifier la transaction",
@@ -361,7 +349,14 @@
       "transfer": "Transfert",
       "goal_contribution": "Contribution à un objectif",
       "recurring_realisation": "Occurrence récurrente réalisée"
-    }
+    },
+    "presets": {
+      "day": "Jour",
+      "week": "7 jours",
+      "month": "Mois",
+      "all": "Tout"
+    },
+    "presetsLabel": "Période"
   },
   "capture": {
     "heading": "Enregistrer un mouvement d’argent",
