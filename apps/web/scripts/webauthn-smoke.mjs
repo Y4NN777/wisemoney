@@ -40,11 +40,12 @@ try {
   });
   await page.reload({ waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Start", exact: true }).last().click();
+  await page.getByRole("button", { name: "Skip", exact: true }).click();
   const passphrase = "WiseMoney-WebAuthn-Smoke-2026";
   await page.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await page.getByLabel("Confirm private passphrase", { exact: true }).fill(passphrase);
   await page.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
-  await page.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 90_000 });
+  await page.getByRole("heading", { name: "Your space is ready", exact: true }).waitFor({ timeout: 90_000 });
 
   // Device unlock is enabled after setup, from Settings > Security, by confirming the passphrase once.
   await page.getByRole("link", { name: "Settings", exact: true }).click();
@@ -102,7 +103,7 @@ try {
   await page.getByRole("button", { name: "Back to overview", exact: true }).click();
   await page.getByRole("button", { name: "Open my space", exact: true }).click();
   await page.getByRole("button", { name: "Open", exact: true }).click();
-  await page.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 30_000 });
+  await page.getByRole("heading", { name: "Your space is ready", exact: true }).waitFor({ timeout: 30_000 });
 
   await cdp.send("WebAuthn.removeVirtualAuthenticator", { authenticatorId });
   await context.close();

@@ -28,6 +28,7 @@ import { getDashboardMode } from "./dashboardMode.ts";
 import { useOpenCaptureSheet } from "../../components/CaptureSheet/index.tsx";
 import DeviceUnlockOffer from "../../components/DeviceUnlockOffer/index.tsx";
 import AssistantCard from "../../components/AssistantCard/index.tsx";
+import FirstSteps from "../../components/FirstSteps/index.tsx";
 import { comparePeriodAmounts } from "./periodComparison.ts";
 import {
   selectAccountDistribution,
@@ -294,6 +295,7 @@ function DashboardContent({
             activityContext={{ start: periodStart, end: periodEnd, accountId }}
           />
     ),
+    firstSteps: <FirstSteps snapshot={snapshot} hasMovement />,
     quickActions: canMutate ? <DashboardQuickActions /> : null,
     attention: <AttentionCardHost snapshot={snapshot} />,
     recentMovements: (

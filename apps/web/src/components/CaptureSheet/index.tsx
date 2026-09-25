@@ -14,7 +14,7 @@ import { Label } from "../ui/label.tsx";
 import { Button } from "../ui/button.tsx";
 import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx";
 import {
-  useCreateAccount, useCurrencyContext, useDeleteTransaction, useFinancialState,
+  useCreateAccount, useCurrencyContext, useDeleteTransaction, useFinancialState, useHasAnyMoneyMovement,
   useRecordGoalContribution, useRecordTransaction, useRecordTransfer, useTransactionsInRange,
 } from "../../hooks/useFinancialState.ts";
 import { convertUsingContext, DEFAULT_BASE_CURRENCY } from "../../domain/currencyStore.ts";
@@ -168,6 +168,8 @@ type TransactionFormProps = {
 function TransactionForm({ direction, onDone }: TransactionFormProps) {
   const { t } = useTranslation();
   const { accounts } = useActiveAccounts();
+  // False only before the very first movement: that save gets the explanatory message.
+  const hadMovement = useHasAnyMoneyMovement().data;
   const currencyContextQuery = useCurrencyContext();
   const recordTx = useRecordTransaction();
   const createAccountMutation = useCreateAccount();
@@ -236,7 +238,10 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
         ...(note ? { note } : {}),
         ...(dateIsToday ? {} : { occurredAt: isoDateToTimestamp(dateStr) }),
       });
-      toast.success(t(selectedDirection === "income" ? "capture.transaction.incomeRecorded" : "capture.transaction.expenseRecorded"), {
+      const accountName = accounts.find((account) => account.id === resolvedAccountId)?.name ?? t("captureSheet.cashName");
+      toast.success(hadMovement === false
+        ? t("captureSheet.firstSaved", { account: accountName })
+        : t(selectedDirection === "income" ? "capture.transaction.incomeRecorded" : "capture.transaction.expenseRecorded"), {
         action: {
           label: t("captureSheet.undo"),
           onClick: () => deleteTx.mutate({ originalEventId: recordedEventId }),

@@ -1,6 +1,6 @@
 # Onboarding rethink — guided first session
 
-Status: PROPOSED · 2026-09-25 · Follows `ux-simplification.md` decision 6 (one-step onboarding), which Y4NN found confusing on first use ("moi déjà j'étais confus").
+Status: APPROVED with amendments · 2026-09-25 (Y4NN: option "slides back, but softer" as the base) · Follows `ux-simplification.md` decision 6 (one-step onboarding), which Y4NN found confusing on first use ("moi déjà j'étais confus").
 
 ## Diagnosis
 
@@ -9,6 +9,8 @@ Status: PROPOSED · 2026-09-25 · Follows `ux-simplification.md` decision 6 (one
 - Wording adds doubt: the empty Home says "Votre compte est prêt" although no account exists yet and the thing created is a *space*; "Transaction" as a tab name means nothing to this persona.
 
 ## Decisions
+
+0. **A three-screen intro comes back, softened** (Y4NN, 2026-09-25): between *Start* and the passphrase, three quiet screens — one icon, one title, one sentence each — *Your money on this device* · *One passphrase, your only key* · *Start with one movement*; a *Skip* on every screen; the last button is the setup button. Decision 1's extra lines on the setup screen are therefore not added (the intro says it; no repetition).
 
 1. **The setup screen is the pitch and the commitment, on one screen.** Above the fields, three lines with icons: *Vos finances restent sur cet appareil* · *La phrase privée est votre seule clé — pas d'e-mail, pas de compte* · *Perdue = données perdues ; l'export sert de sauvegarde*. Title "Votre espace WiseMoney"; button "Créer mon espace". Nothing else is added; no slide is restored.
 2. **First-run Home is a checklist, not an empty dashboard.** "Premiers pas" replaces the current empty state until done: ① *Enregistrer un premier mouvement* (opens the sheet; Espèces is created silently) ② *Donner un nom à votre compte, ou en ajouter un* (Settings › Comptes) ③ *Poser un budget ou un objectif* (Plan). Each row is one tap, ticks when the underlying milestone exists (coach already tracks `hasTransaction`, `accountCount`, `planningUsed`), the card disappears when all three are done or is dismissed. One line under it names the tabs: *Accueil = où vous en êtes · Activité = ce qui s'est passé · Plan = ce qui vient*.

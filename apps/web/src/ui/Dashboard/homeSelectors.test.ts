@@ -31,7 +31,7 @@ function operation(overrides: Partial<FinancialOperation> & { id: string; timest
   };
 }
 
-const ALL_SECTIONS: HomeSectionId[] = ["summary", "quickActions", "attention", "recentMovements", "assistant", "charts", "planningCards", "activity", "aiInsight"];
+const ALL_SECTIONS: HomeSectionId[] = ["summary", "firstSteps", "quickActions", "attention", "recentMovements", "assistant", "charts", "planningCards", "activity", "aiInsight"];
 
 describe("selectRecentMovements", () => {
   const ops = [

@@ -14,7 +14,7 @@ import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContex
 import { clearCachedMasterKey, getCachedMasterKey, setCachedMasterKey } from "../../lib/vaultUnlocked.ts";
 import { recordPassphraseUnlock } from "../../lib/deviceUnlockOffer.ts";
 import { seedDefaultCategories } from "../../pillars/state/index.ts";
-import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, ShieldCheck, Upload, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, PlusCircle, ShieldCheck, Smartphone, Upload, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -29,6 +29,7 @@ type Flow =
   | "loading"
   | "landing"
   | "restore"
+  | "intro"
   | "setup"
   | "unlock-passphrase"
   | "unlock-webauthn"
@@ -129,7 +130,7 @@ export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlock
   } else if (flow === "landing") {
     content = (
       <LandingOnboarding
-        onStart={() => setFlow(vaultUnlockFlow)}
+        onStart={() => setFlow(vaultUnlockFlow === "setup" ? "intro" : vaultUnlockFlow)}
         hasVault={vaultUnlockFlow !== "setup"}
       />
     );
@@ -143,6 +144,8 @@ export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlock
         setError={setError}
       />
     );
+  } else if (flow === "intro") {
+    content = <IntroFlow onBack={() => setFlow("landing")} onComplete={() => setFlow("setup")} />;
   } else if (flow === "setup") {
     content = (
       <LocalSetup
@@ -186,6 +189,49 @@ type LandingOnboardingProps = {
   onStart: () => void;
   hasVault: boolean;
 };
+
+const INTRO_STEPS = ["device", "passphrase", "firstMove"] as const;
+
+/**
+ * Three quiet screens between Start and the passphrase (onboarding-rethink, Y4NN 2026-09-25:
+ * the slides back, "but softer"): one icon, one title, one sentence each, always skippable.
+ */
+function IntroFlow({ onBack, onComplete }: { onBack: () => void; onComplete: () => void }) {
+  const { t } = useTranslation();
+  const [stepIndex, setStepIndex] = useState(0);
+  const step = INTRO_STEPS[stepIndex]!;
+  const isLast = stepIndex === INTRO_STEPS.length - 1;
+  const icons = { device: <Smartphone className="h-7 w-7" />, passphrase: <KeyRound className="h-7 w-7" />, firstMove: <PlusCircle className="h-7 w-7" /> };
+  return (
+    <main aria-label={t("keyUnlock.intro.aria")} className="landing-grid flex min-h-dvh flex-col bg-background p-4 text-foreground">
+      <AuthTopBar onBack={stepIndex === 0 ? onBack : () => setStepIndex((index) => index - 1)} />
+      <section className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 py-8">
+        <div key={step} className="motion-enter flex flex-col items-start gap-5">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ocean-wash text-ocean-primary">{icons[step]}</span>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ocean-primary">
+            {t("keyUnlock.intro.stepLabel", { number: stepIndex + 1, total: INTRO_STEPS.length })}
+          </p>
+          <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">{t(`keyUnlock.intro.steps.${step}.title`)}</h1>
+          <p className="text-base leading-relaxed text-muted-foreground">{t(`keyUnlock.intro.steps.${step}.body`)}</p>
+        </div>
+        <div className="flex items-center justify-center gap-2" aria-hidden="true">
+          {INTRO_STEPS.map((candidate, index) => (
+            <span key={candidate} className={`h-2 rounded-full transition-all ${index === stepIndex ? "w-8 bg-ocean-primary" : "w-2 bg-border"}`} />
+          ))}
+        </div>
+        <div className="grid gap-3 sm:grid-cols-[auto_1fr]">
+          <Button type="button" variant="ghost" onClick={onComplete} className="justify-center">
+            {t("keyUnlock.intro.skip")}
+          </Button>
+          <Button type="button" onClick={isLast ? onComplete : () => setStepIndex((index) => index + 1)} className="h-12 justify-between px-5">
+            {isLast ? t("keyUnlock.setup.createVault") : t("common.next")}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </section>
+    </main>
+  );
+}
 
 function LandingOnboarding({ onStart, hasVault }: LandingOnboardingProps) {
   const { t } = useTranslation();

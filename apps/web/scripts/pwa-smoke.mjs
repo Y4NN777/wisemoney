@@ -236,12 +236,15 @@ try {
   });
   await appPage.goto(baseURL, { waitUntil: "networkidle" });
   await appPage.getByRole("button", { name: "Start", exact: true }).last().click();
+  // Intro: three screens, then the passphrase form (the last button shares the setup button's name).
+  for (let step = 0; step < 2; step++) await appPage.getByRole("button", { name: "Next", exact: true }).click();
+  await appPage.getByRole("button", { name: "Create private space", exact: true }).click();
   const passphrase = "WiseMoney-Smoke-Test-Only-2026";
   await appPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await appPage.getByLabel("Confirm private passphrase").fill(passphrase);
   await appPage.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
   try {
-    await appPage.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 90_000 });
+    await appPage.getByRole("heading", { name: "Your space is ready", exact: true }).waitFor({ timeout: 90_000 });
   } catch (error) {
     await appPage.screenshot({ path: `${outputDir}/setup-failure.png`, fullPage: true });
     throw new Error(`Vault setup did not reach Dashboard. Body:\n${await appPage.locator("body").innerText()}`, { cause: error });
@@ -570,7 +573,7 @@ try {
   await appPage.getByText("Cycle actions", { exact: true }).locator("..").getByText("0", { exact: true }).waitFor();
   await appPage.screenshot({ path: `${outputDir}/cycle-archive-history.png`, fullPage: true });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
-  await appPage.getByRole("heading", { name: "Your account is ready", exact: true }).waitFor({ timeout: 90_000 });
+  await appPage.getByRole("heading", { name: "Your space is ready", exact: true }).waitFor({ timeout: 90_000 });
 
   assert.deepEqual(appErrors, [], `app runtime errors:\n${appErrors.join("\n")}`);
   await appContext.close();

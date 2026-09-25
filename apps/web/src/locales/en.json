@@ -238,6 +238,25 @@
       "manualTitle": "If no install button appears:",
       "android": "Android Chrome: open the browser menu and choose Install app.",
       "ios": "iPhone Safari: use Share, then Add to Home Screen."
+    },
+    "intro": {
+      "aria": "Before you start",
+      "skip": "Skip",
+      "stepLabel": "{{number}} of {{total}}",
+      "steps": {
+        "device": {
+          "title": "Your money, on this device",
+          "body": "WiseMoney keeps your accounts, budgets and due dates here. No account to create, nothing sent anywhere."
+        },
+        "passphrase": {
+          "title": "One passphrase, your only key",
+          "body": "It protects everything. Nobody can recover it for you, so keep it somewhere safe — an export is your backup."
+        },
+        "firstMove": {
+          "title": "Start with one movement",
+          "body": "Record what you just spent or received. A Cash account is created for you; rename it or add others whenever you like."
+        }
+      }
     }
   },
   "nav": {
@@ -351,7 +370,7 @@
       }
     },
     "firstTransaction": {
-      "title": "Your account is ready",
+      "title": "Your space is ready",
       "body": "Record your first income or expense to unlock monthly activity and spending insights.",
       "action": "Record first transaction"
     },
@@ -634,7 +653,7 @@
       "goalsPlanning": "No goals yet. Create one in Planning."
     },
     "tabs": {
-      "transaction": "Transaction",
+      "transaction": "Expense / Income",
       "transfer": "Transfer",
       "goal": "Goal",
       "manage": "Manage"
@@ -1664,11 +1683,31 @@
     "transferNeedsAccounts": "Add a second account to transfer between your accounts.",
     "goalsEmpty": "Create a goal in Planning first, then record contributions here.",
     "openPlanning": "Open Planning",
-    "manageAccounts": "Manage accounts"
+    "manageAccounts": "Manage accounts",
+    "firstSaved": "Saved to {{account}} — find it in Activity"
   },
   "assistantCard": {
     "title": "Assistant",
     "body": "Ask about your month, get insights, and learn as you go.",
     "action": "Open assistant"
+  },
+  "firstSteps": {
+    "title": "First steps",
+    "body": "Three things, in any order. They tick themselves off as you go.",
+    "done": "done",
+    "dismiss": "Hide this",
+    "tabs": "Home = where you stand · Activity = what happened · Plan = what is coming",
+    "firstMovement": {
+      "label": "Record a first movement",
+      "action": "Record"
+    },
+    "accounts": {
+      "label": "Name your account, or add another",
+      "action": "Accounts"
+    },
+    "plan": {
+      "label": "Set a budget or a goal",
+      "action": "Open Plan"
+    }
   }
 }

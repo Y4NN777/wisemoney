@@ -238,6 +238,25 @@
       "manualTitle": "Si aucun bouton d'installation n'apparaît :",
       "android": "Chrome Android : ouvrez le menu du navigateur et choisissez Installer l'application.",
       "ios": "Safari iPhone : utilisez Partager, puis Ajouter à l'écran d'accueil."
+    },
+    "intro": {
+      "aria": "Avant de commencer",
+      "skip": "Passer",
+      "stepLabel": "{{number}} sur {{total}}",
+      "steps": {
+        "device": {
+          "title": "Votre argent, sur cet appareil",
+          "body": "WiseMoney garde vos comptes, budgets et échéances ici. Aucun compte à créer, rien n’est envoyé ailleurs."
+        },
+        "passphrase": {
+          "title": "Une phrase privée, votre seule clé",
+          "body": "Elle protège tout. Personne ne peut la récupérer pour vous : gardez-la en lieu sûr — un export sert de sauvegarde."
+        },
+        "firstMove": {
+          "title": "Commencez par un mouvement",
+          "body": "Enregistrez ce que vous venez de dépenser ou de recevoir. Un compte Espèces est créé pour vous ; renommez-le ou ajoutez-en d’autres quand vous voulez."
+        }
+      }
     }
   },
   "nav": {
@@ -351,7 +370,7 @@
       }
     },
     "firstTransaction": {
-      "title": "Votre compte est prêt",
+      "title": "Votre espace est prêt",
       "body": "Enregistrez votre premier revenu ou votre première dépense pour afficher l’activité mensuelle et l’analyse des dépenses.",
       "action": "Enregistrer la première transaction"
     },
@@ -634,7 +653,7 @@
       "goalsPlanning": "Aucun objectif. Créez-en un dans Planification."
     },
     "tabs": {
-      "transaction": "Transaction",
+      "transaction": "Dépense / Revenu",
       "transfer": "Transfert",
       "goal": "Objectif",
       "manage": "Gérer"
@@ -1664,11 +1683,31 @@
     "transferNeedsAccounts": "Ajoutez un second compte pour effectuer un virement entre vos comptes.",
     "goalsEmpty": "Créez d’abord un objectif dans Planification, puis consignez vos contributions ici.",
     "openPlanning": "Ouvrir Planification",
-    "manageAccounts": "Gérer les comptes"
+    "manageAccounts": "Gérer les comptes",
+    "firstSaved": "Enregistré dans {{account}} — retrouvez-le dans Activité"
   },
   "assistantCard": {
     "title": "Assistant",
     "body": "Posez vos questions sur votre mois, obtenez des éclairages et apprenez en avançant.",
     "action": "Ouvrir l’assistant"
+  },
+  "firstSteps": {
+    "title": "Premiers pas",
+    "body": "Trois choses, dans l’ordre que vous voulez. Elles se cochent toutes seules.",
+    "done": "fait",
+    "dismiss": "Masquer",
+    "tabs": "Accueil = où vous en êtes · Activité = ce qui s’est passé · Plan = ce qui vient",
+    "firstMovement": {
+      "label": "Enregistrer un premier mouvement",
+      "action": "Enregistrer"
+    },
+    "accounts": {
+      "label": "Nommer votre compte, ou en ajouter un",
+      "action": "Comptes"
+    },
+    "plan": {
+      "label": "Poser un budget ou un objectif",
+      "action": "Ouvrir Plan"
+    }
   }
 }
