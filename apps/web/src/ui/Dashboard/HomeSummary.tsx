@@ -56,7 +56,12 @@ export function FinancialOverview({
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
           <div>
-            <p className="text-xs font-medium text-ocean-primary">{accountName ?? t("dashboard.allActiveAccounts")}</p>
+            <p className="flex flex-wrap items-center gap-x-2 text-xs font-medium text-ocean-primary">
+              <span>{accountName ?? t("dashboard.allActiveAccounts")}</span>
+              <Link to="/settings" search={{ panel: "accounts" }} className="underline underline-offset-4 hover:text-ocean-dark">
+                {t("dashboard.manageAccounts")}
+              </Link>
+            </p>
             <CardTitle className="mt-1 text-base">
               {t(isCurrentPeriod ? "dashboard.availableToday" : "dashboard.balanceAtPeriodEnd")}
             </CardTitle>

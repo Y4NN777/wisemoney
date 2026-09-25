@@ -39,7 +39,7 @@ export const Route = createRoute({
     const parsed = parseCaptureSearch(search);
     if (parsed.tab === "manage") {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack redirect contract
-      throw redirect({ to: "/settings", replace: true });
+      throw redirect({ to: "/settings", search: { panel: parsed.section ?? "accounts" }, replace: true });
     }
     const sheetSearch: Record<string, unknown> = { capture: parsed.tab ?? "transaction" };
     if (parsed.direction != null) sheetSearch.direction = parsed.direction;

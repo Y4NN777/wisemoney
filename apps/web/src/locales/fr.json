@@ -569,7 +569,8 @@
       "more": "Plus sur ce mois",
       "less": "Moins",
       "aria": "Plus sur ce mois"
-    }
+    },
+    "manageAccounts": "Gérer les comptes"
   },
   "operations": {
     "title": "Activité",
@@ -1662,7 +1663,8 @@
     "add": "Ajouter",
     "transferNeedsAccounts": "Ajoutez un second compte pour effectuer un virement entre vos comptes.",
     "goalsEmpty": "Créez d’abord un objectif dans Planification, puis consignez vos contributions ici.",
-    "openPlanning": "Ouvrir Planification"
+    "openPlanning": "Ouvrir Planification",
+    "manageAccounts": "Gérer les comptes"
   },
   "assistantCard": {
     "title": "Assistant",

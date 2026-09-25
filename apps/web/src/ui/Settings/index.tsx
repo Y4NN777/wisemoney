@@ -5,7 +5,7 @@ import CurrencySection from "./CurrencySection.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck, Sparkles, SunMoon, WalletCards } from "lucide-react";
 import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
@@ -17,11 +17,12 @@ import CoachSettingsSection from "../../components/CoachSettingsSection.tsx";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
 import { ManagementSections } from "../Capture/ManagementSections.tsx";
 import type { ManageSection } from "../../routes/capture.tsx";
+import { Route as SettingsRoute, parseSettingsSearch } from "../../routes/settings.tsx";
 
-function AccountsCategoriesSection() {
+function AccountsCategoriesSection({ initialSection = "accounts" }: { initialSection?: ManageSection }) {
   const { t } = useTranslation();
   const { data: snapshot } = useFinancialState();
-  const [section, setSection] = useState<ManageSection>("accounts");
+  const [section, setSection] = useState<ManageSection>(initialSection);
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-2 overflow-hidden rounded-lg border border-border bg-muted" role="tablist" aria-label={t("capture.manage.sectionsLabel")}>
@@ -48,14 +49,21 @@ function SettingsPanel({
   title,
   description,
   children,
+  open = false,
 }: {
   icon: ReactNode;
   title: string;
   description: string;
   children: ReactNode;
+  /** Opened and scrolled into view on mount — used by deep links such as ?panel=accounts. */
+  open?: boolean;
 }) {
+  const panelRef = useRef<HTMLDetailsElement | null>(null);
+  useEffect(() => {
+    if (open) panelRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+  }, [open]);
   return (
-    <details className="group overflow-hidden rounded-lg border border-border bg-card">
+    <details ref={panelRef} open={open || undefined} className="group overflow-hidden rounded-lg border border-border bg-card">
       <summary className="interactive-surface flex cursor-pointer list-none items-center gap-3 p-4">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
           {icon}
@@ -74,6 +82,9 @@ function SettingsPanel({
 export default function Settings() {
   const { t } = useTranslation();
   const reminders = useReminders();
+  // The route's search type is circular through the lazy component; re-parse like Operations does.
+  const rawSearch: unknown = SettingsRoute.useSearch();
+  const { panel } = parseSettingsSearch(typeof rawSearch === "object" && rawSearch != null ? rawSearch as Record<string, unknown> : {});
   return (
     <main aria-label={t("settings.title")} className="app-page max-w-4xl">
       <div className="page-head">
@@ -118,8 +129,9 @@ export default function Settings() {
           icon={<WalletCards className="h-5 w-5" />}
           title={t("settings.sections.organization.title")}
           description={t("settings.sections.organization.description")}
+          open={panel != null}
         >
-          <AccountsCategoriesSection />
+          <AccountsCategoriesSection initialSection={panel ?? "accounts"} />
         </SettingsPanel>
         <SettingsPanel
           icon={<Bot className="h-5 w-5" />}

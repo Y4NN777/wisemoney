@@ -287,7 +287,12 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
 
       {accounts.length > 1 && (
         <div className="space-y-2">
-          <Label htmlFor="capture-sheet-account">{t("capture.transaction.account")}</Label>
+          <div className="flex items-center justify-between gap-2">
+            <Label htmlFor="capture-sheet-account">{t("capture.transaction.account")}</Label>
+            <Link to="/settings" search={{ panel: "accounts" }} className="text-xs font-medium text-ocean-primary underline underline-offset-4">
+              {t("captureSheet.manageAccounts")}
+            </Link>
+          </div>
           <Select value={accountId} onValueChange={setAccountId}>
             <SelectTrigger id="capture-sheet-account"><SelectValue placeholder={t("capture.transaction.selectAccount")} /></SelectTrigger>
             <SelectContent>

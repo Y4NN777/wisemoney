@@ -569,7 +569,8 @@
       "more": "More about this month",
       "less": "Less",
       "aria": "More about this month"
-    }
+    },
+    "manageAccounts": "Manage accounts"
   },
   "operations": {
     "title": "Activity",
@@ -1662,7 +1663,8 @@
     "add": "Add",
     "transferNeedsAccounts": "Add a second account to transfer between your accounts.",
     "goalsEmpty": "Create a goal in Planning first, then record contributions here.",
-    "openPlanning": "Open Planning"
+    "openPlanning": "Open Planning",
+    "manageAccounts": "Manage accounts"
   },
   "assistantCard": {
     "title": "Assistant",
