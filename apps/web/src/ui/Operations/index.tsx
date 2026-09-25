@@ -176,7 +176,6 @@ export default function Operations() {
       <header className="page-head">
         <div>
           <h1 className="page-title">{t("operations.title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("operations.description")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" disabled={exporting != null} onClick={() => { void handleExport("csv"); }}>

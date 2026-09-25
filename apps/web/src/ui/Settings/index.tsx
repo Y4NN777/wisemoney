@@ -53,7 +53,8 @@ function SettingsPanel({
 }: {
   icon: ReactNode;
   title: string;
-  description: string;
+  /** Optional: primary screens carry titles only (copy strip, 2026-09-25). */
+  description?: string;
   children: ReactNode;
   /** Opened and scrolled into view on mount — used by deep links such as ?panel=accounts. */
   open?: boolean;
@@ -70,7 +71,7 @@ function SettingsPanel({
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-semibold text-foreground">{title}</span>
-          <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{description}</span>
+          {description != null && <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{description}</span>}
         </span>
         <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
       </summary>
@@ -90,7 +91,6 @@ export default function Settings() {
       <div className="page-head">
         <div>
           <h1 className="page-title">{t("settings.title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("settings.description")}</p>
         </div>
       </div>
 
@@ -128,7 +128,6 @@ export default function Settings() {
         <SettingsPanel
           icon={<WalletCards className="h-5 w-5" />}
           title={t("settings.sections.organization.title")}
-          description={t("settings.sections.organization.description")}
           open={panel != null}
         >
           <AccountsCategoriesSection initialSection={panel ?? "accounts"} />
@@ -136,14 +135,12 @@ export default function Settings() {
         <SettingsPanel
           icon={<Bot className="h-5 w-5" />}
           title={t("settings.sections.coach.title")}
-          description={t("settings.sections.coach.description")}
         >
           <CoachSettingsSection />
         </SettingsPanel>
         <SettingsPanel
           icon={<BellRing className="h-5 w-5" />}
           title={t("settings.sections.reminders.title")}
-          description={t("settings.sections.reminders.description")}
         >
           <ReminderSettingsSection
             settings={reminders.settings}
@@ -157,21 +154,18 @@ export default function Settings() {
         <SettingsPanel
           icon={<Coins className="h-5 w-5" />}
           title={t("settings.sections.money.title")}
-          description={t("settings.sections.money.description")}
         >
           <CurrencySection />
         </SettingsPanel>
         <SettingsPanel
           icon={<DatabaseBackup className="h-5 w-5" />}
           title={t("settings.sections.data.title")}
-          description={t("settings.sections.data.description")}
         >
           <ExportImportSection />
         </SettingsPanel>
         <SettingsPanel
           icon={<Bot className="h-5 w-5" />}
           title={t("settings.sections.ai.title")}
-          description={t("settings.sections.ai.description")}
         >
           <Button asChild variant="outline" size="sm" className="mb-4 w-full gap-2 sm:w-auto">
             <Link to="/assistant">
@@ -184,7 +178,6 @@ export default function Settings() {
         <SettingsPanel
           icon={<ShieldCheck className="h-5 w-5" />}
           title={t("settings.sections.security.title")}
-          description={t("settings.sections.security.description")}
         >
           <DevicesSection />
         </SettingsPanel>

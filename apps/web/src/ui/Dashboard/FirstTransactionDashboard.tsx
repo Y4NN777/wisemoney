@@ -30,7 +30,6 @@ export function FirstTransactionDashboard({ snapshot, accountCount }: { snapshot
         />
         <div className="space-y-1">
           <h2 className="text-base font-semibold leading-none tracking-normal">{t("dashboard.firstTransaction.title")}</h2>
-          <p className="text-sm text-muted-foreground">{t("dashboard.firstTransaction.body")}</p>
         </div>
         <FirstSteps snapshot={snapshot} hasMovement={false} />
       </section>

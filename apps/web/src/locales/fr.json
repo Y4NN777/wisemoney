@@ -49,7 +49,7 @@
     },
     "login": {
       "passphraseTitle": "Phrase privée",
-      "passphraseDescription": "Cette phrase protège toutes vos données financières sur cet appareil. Elle ne peut pas être récupérée si elle est perdue, conservez-la donc en lieu sûr.",
+      "passphraseDescription": "Irrécupérable si perdue. Gardez-la en lieu sûr.",
       "errors": {
         "passwordsMismatch": "Les mots de passe ne correspondent pas"
       }
@@ -78,7 +78,6 @@
     "setup": {
       "aria": "Configuration de l'espace privé",
       "title": "Créer votre espace privé",
-      "description": "Choisissez une phrase privée pour protéger vos données financières sur cet appareil. Aucun compte requis.",
       "confirmPassphrase": "Confirmer la phrase privée",
       "submitting": "Configuration…",
       "createVault": "Créer l'espace privé",
@@ -167,8 +166,7 @@
     "accountCount": "{{count}} comptes",
     "title": "Tableau de bord",
     "firstTransaction": {
-      "title": "Votre espace est prêt",
-      "body": "Enregistrez votre premier revenu ou votre première dépense pour afficher l’activité mensuelle et l’analyse des dépenses."
+      "title": "Votre espace est prêt"
     },
     "attention": {
       "title": "À surveiller",
@@ -206,7 +204,7 @@
     "negativeCashFlow": "Dépenses supérieures aux revenus",
     "negativeCashFlowBody": "Les dépenses dépassent les revenus de {{amount}}.",
     "spendingFromBalance": "Dépenses prises sur le solde existant",
-    "spendingFromBalanceBody": "Vous avez enregistré {{amount}} de dépenses et aucun revenu ce mois-ci. Le solde initial reste séparé des revenus.",
+    "spendingFromBalanceBody": "{{amount}} dépensés, aucun revenu enregistré ce mois-ci.",
     "budgetExceeded": "Budget dépassé",
     "analyticsOverview": "Aperçu analytique",
     "cashFlowTrend": "Entrées et sorties d’argent",
@@ -219,19 +217,13 @@
     "balanceSummary": "Votre argent en bref",
     "totalBalance": "Solde total",
     "allActiveAccounts": "Tous les comptes actifs",
-    "selectedAccountContext": "Solde propre à ce compte. Les engagements non rattachés à un compte restent dans la vue globale.",
     "availableToday": "Argent disponible aujourd’hui",
     "balanceAtPeriodEnd": "Solde à la fin de la période",
     "afterCommitments": "Estimation après engagements",
-    "afterCommitmentsHelp": "Solde actuel moins les dépenses prévues, récurrentes et dettes actives dans la même devise.",
-    "balanceContext_one": "Somme des soldes de {{count}} compte actif. Ce chiffre est séparé de l’activité de la période.",
-    "balanceContext_other": "Somme des soldes de {{count}} comptes actifs. Ce chiffre est séparé de l’activité de la période.",
     "periodActivity": "Activité {{month}}",
     "moneyReceived": "Argent reçu",
     "moneySpent": "Argent dépensé",
     "periodDifference": "Différence",
-    "receivedMinusSpent": "Reçu moins dépensé",
-    "periodEquation": "{{income}} reçu − {{expenses}} dépensé = {{difference}} sur la période.",
     "accountCount_one": "{{count}} compte",
     "accountCount_other": "{{count}} comptes",
     "analyzing": "Analyse…",
@@ -273,23 +265,7 @@
     "greeting": {
       "morning": "Bonjour 👋",
       "afternoon": "Bel après-midi 👋",
-      "evening": "Bonsoir 👋",
-      "messages": [
-        "Chaque petit pas compte.",
-        "Votre argent, vos choix, votre rythme.",
-        "Un coup d’œil, et vous voilà à jour.",
-        "On garde le cap, tranquillement.",
-        "Les chiffres sont là. À vous de jouer.",
-        "Une vue claire aide à mieux décider.",
-        "Quelques minutes suffisent pour faire le point.",
-        "Vos priorités méritent une place claire.",
-        "Regardez ce qui entre, ce qui sort et ce qui arrive.",
-        "Un budget utile s’adapte à votre réalité.",
-        "Les petites dépenses méritent aussi un coup d’œil.",
-        "Des échéances visibles sont plus simples à anticiper.",
-        "Prévoir aujourd’hui vous laisse plus de choix demain.",
-        "Un point régulier simplifie la suite."
-      ]
+      "evening": "Bonsoir 👋"
     },
     "comparison": {
       "newThisMonth": "nouveau ce mois",
@@ -344,7 +320,6 @@
   },
   "operations": {
     "title": "Activité",
-    "description": "Comprenez ce qui est entré, sorti ou simplement passé d’un compte à l’autre.",
     "summary": "Résumé de la période",
     "income": "Revenus",
     "expenses": "Dépenses",
@@ -409,7 +384,7 @@
       "selectAccount": "Sélectionner un compte",
       "category": "Catégorie",
       "selectCategory": "Sélectionner une catégorie",
-      "note": "Note (optionnelle)",
+      "note": "Note",
       "notePlaceholder": "Note de transaction",
       "submitting": "Enregistrement…",
       "incomeRecorded": "Revenu enregistré",
@@ -432,7 +407,7 @@
       "externalPlaceholder": "Nom de la personne, du commerce ou du compte",
       "category": "Catégorie de la dépense",
       "amount": "Montant",
-      "note": "Note (optionnelle)",
+      "note": "Note",
       "notePlaceholder": "Note de transfert",
       "submitInternal": "Déplacer entre mes comptes",
       "submitExternal": "Enregistrer la dépense",
@@ -507,7 +482,7 @@
       "accountTypeCredit": "Crédit",
       "accountTypeInvestment": "Investissement",
       "accountBalance": "Solde initial",
-      "accountBalanceHelp": "Indiquez l’argent déjà disponible aujourd’hui. Il fixe le solde de départ, sans être compté comme un revenu du mois.",
+      "accountBalanceHelp": "Argent disponible aujourd’hui. Pas compté comme revenu.",
       "accountCurrency": "Devise du compte",
       "currencySearch": "Rechercher une devise ({{currency}})",
       "noCurrency": "Aucune devise correspondante.",
@@ -715,7 +690,7 @@
       "useLimited": "Utiliser le mode limité",
       "grantFull": "Accorder l'accès complet",
       "settingsTitle": "Paramètres de partage de données",
-      "settingsDescription": "Chaque fonctionnalité IA peut utiliser votre routage de fournisseurs configuré. Vous contrôlez la quantité de données partagées.",
+      "settingsDescription": "Choisissez ce que chaque fonction peut partager.",
       "statusFull": "Accès complet",
       "statusNotPrompted": "Non sollicité",
       "statusLimited": "Limité",
@@ -728,14 +703,14 @@
   "budgets": {
     "title": "Budgets",
     "howItWorksTitle": "Une catégorie relie vos dépenses au budget",
-    "howItWorksBody": "Chaque dépense enregistrée dans cette catégorie est comptée automatiquement pour le mois choisi, quel que soit le compte utilisé.",
+    "howItWorksBody": "Chaque dépense de cette catégorie compte pour le mois, automatiquement.",
     "add": "Ajouter un budget",
     "create": "Créer un budget",
     "createHelp": "Fixez une limite mensuelle pour une catégorie de dépenses.",
     "creating": "Création…",
     "category": "Catégorie",
     "categoryPlaceholder": "Sélectionner une catégorie",
-    "categoryHelp": "Vous n’aurez pas à sélectionner ce budget lors d’une dépense : choisissez simplement cette catégorie.",
+    "categoryHelp": "Les dépenses de cette catégorie y sont comptées automatiquement.",
     "name": "Nom",
     "namePlaceholder": "Ex. Courses mensuelles",
     "monthlyLimit": "Limite mensuelle ({{currency}})",
@@ -893,7 +868,7 @@
         "failed": "Échec de l'exportation",
         "encryptedFailed": "Échec de l'exportation chiffrée"
       },
-      "warning": "Les exportations JSON, CSV et XLSX en clair contiennent des données financières déchiffrées. Stockez-les en lieu sûr et supprimez-les après utilisation. Les exportations chiffrées sont protégées par votre phrase de passe."
+      "warning": "Les exports en clair contiennent vos données déchiffrées. Conservez-les en lieu sûr."
     },
     "import": {
       "title": "Importer",
@@ -936,7 +911,7 @@
       "configured": "Clé sauvegardée",
       "enter": "Entrez la clé d'accès {{provider}}"
     },
-    "footnote": "Vos clés sont protégées sur cet appareil et utilisées seulement quand vous demandez de l'aide à l'assistant.",
+    "footnote": "Les clés restent sur cet appareil et servent seulement quand vous sollicitez l’assistant.",
     "errors": {
       "saveFailed": "Échec de l'enregistrement de la clé",
       "loadFailed": "Échec du chargement des clés configurées"
@@ -1077,9 +1052,9 @@
       "allowSystem": "Autoriser les notifications système",
       "testFeedback": "Tester le retour",
       "foregroundSound": "Son lorsque WiseMoney est ouvert",
-      "soundHelp": "Un son discret peut être joué dans l’application. Lorsque WiseMoney est fermé, le son dépend des réglages du téléphone et du navigateur.",
+      "soundHelp": "Un son discret dans l’app. En dehors, c’est votre téléphone qui décide.",
       "exportCalendar": "Ajouter la revue au calendrier",
-      "bestEffort": "Lorsque WiseMoney est fermé, les notifications système peuvent arriver en retard. Le centre de rappels se met à jour à chaque ouverture ; ajouter l’échéance au calendrier reste le moyen le plus fiable.",
+      "bestEffort": "Les notifications peuvent arriver en retard quand l’app est fermée. Le calendrier reste plus fiable.",
       "permission": {
         "default": "Autorisation non demandée",
         "granted": "Notifications système autorisées",
@@ -1134,12 +1109,12 @@
   "coach": {
     "settings": {
       "inApp": "Conseils dans l’application",
-      "inAppHelp": "WiseBot peut proposer une étape utile au bon moment. Une seule carte apparaît par session.",
+      "inAppHelp": "Une suggestion par session, au bon moment.",
       "notifications": "Notifications de conseils",
       "notificationsHelp": "Facultatives, silencieuses et limitées à une par semaine. Votre navigateur décide du moment exact.",
       "pause": "Mettre en pause 14 jours",
       "reset": "Réinitialiser les conseils vus",
-      "privacy": "Les décisions restent sur cet appareil. Rien n’est envoyé à un service d’IA avant votre clic sur « Demander à WiseBot ».",
+      "privacy": "Rien ne quitte cet appareil tant que vous ne touchez pas « Demander à WiseBot ».",
       "permission": {
         "default": "Autorisation non demandée",
         "granted": "Notifications autorisées",
@@ -1150,7 +1125,6 @@
   },
   "settings": {
     "title": "Paramètres",
-    "description": "Choisissez d’abord l’essentiel. Ouvrez les autres sections seulement quand vous en avez besoin.",
     "appearance": {
       "title": "Apparence",
       "description": "Choisissez un affichage clair, sombre ou adapté automatiquement à votre appareil.",
@@ -1172,38 +1146,30 @@
     },
     "sections": {
       "coach": {
-        "title": "Aide WiseBot",
-        "description": "Conseils discrets dans l’application et notifications facultatives"
+        "title": "Aide WiseBot"
       },
       "reminders": {
-        "title": "Rappels et calendrier",
-        "description": "Échéances locales, notifications système et revue hebdomadaire"
+        "title": "Rappels et calendrier"
       },
       "money": {
-        "title": "Argent et devise",
-        "description": "Devise par défaut et taux de change"
+        "title": "Argent et devise"
       },
       "data": {
-        "title": "Données et sauvegarde",
-        "description": "Clôturer un cycle, exporter, restaurer ou déplacer votre espace privé"
+        "title": "Données et sauvegarde"
       },
       "ai": {
         "title": "Services d’assistant optionnels",
-        "description": "Connectez un fournisseur d’IA uniquement si vous voulez les fonctions intelligentes",
         "openAssistant": "Ouvrir l’assistant"
       },
       "security": {
-        "title": "Sécurité et session",
-        "description": "Verrouiller cet espace ou gérer une session en ligne"
+        "title": "Sécurité et session"
       },
       "organization": {
-        "title": "Comptes et catégories",
-        "description": "Créez ou renommez des comptes et des catégories selon votre réalité."
+        "title": "Comptes et catégories"
       }
     },
     "devices": {
       "title": "Espace privé et session",
-      "description": "Contrôlez l’accès à l’espace privé sur cet appareil.",
       "thisDevice": "Cet appareil",
       "active": "Actif",
       "localOnly": "Local uniquement",
@@ -1214,7 +1180,7 @@
       "signOutFailed": "Impossible de se déconnecter",
       "deviceUnlock": {
         "title": "Déverrouillage de l’appareil",
-        "description": "Ouvrez votre espace avec le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. La phrase privée reste la clé de récupération.",
+        "description": "Utilisez le verrouillage d’écran de cet appareil. La phrase privée reste la clé de récupération.",
         "enabled": "Le déverrouillage de l’appareil est activé sur cet appareil. La phrase privée reste la clé de récupération.",
         "enable": "Activer le déverrouillage de l’appareil",
         "disable": "Désactiver le déverrouillage de l’appareil",
@@ -1251,7 +1217,7 @@
       "defaultChangedBody": "Votre devise par défaut a été mise à jour.",
       "rateAdded": "Taux ajouté : {{pair}} = {{rate}}",
       "rateRemoved": "Taux supprimé",
-      "securityNote": "Les taux de change sont chiffrés et restent sur cet appareil. Les conversions utilisent l’arrondi au pair avec le taux décimal exact.",
+      "securityNote": "Les taux restent chiffrés sur cet appareil. Taux décimal exact, arrondi au pair.",
       "errors": {
         "failed": "Échec de la mise à jour des paramètres de devise",
         "loadFailed": "Échec du chargement des taux de change",
@@ -1380,7 +1346,7 @@
   },
   "firstSteps": {
     "title": "Premiers pas",
-    "body": "Trois choses, dans l’ordre que vous voulez. Elles se cochent toutes seules.",
+    "body": "Trois choses, dans l’ordre que vous voulez.",
     "done": "fait",
     "dismiss": "Masquer",
     "tabs": "Accueil = où vous en êtes · Activité = ce qui s’est passé · Plan = ce qui vient",

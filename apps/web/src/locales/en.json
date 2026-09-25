@@ -49,7 +49,7 @@
     },
     "login": {
       "passphraseTitle": "Private passphrase",
-      "passphraseDescription": "This passphrase protects all financial data on this device. It cannot be recovered if lost, so save it securely.",
+      "passphraseDescription": "Cannot be recovered if lost. Keep it safe.",
       "errors": {
         "passwordsMismatch": "Passwords do not match"
       }
@@ -78,7 +78,6 @@
     "setup": {
       "aria": "Set up private space",
       "title": "Create your private space",
-      "description": "Choose a private passphrase to protect your financial records on this device. No account required.",
       "confirmPassphrase": "Confirm private passphrase",
       "submitting": "Setting up…",
       "createVault": "Create private space",
@@ -167,8 +166,7 @@
     "accountCount": "{{count}} accounts",
     "title": "Dashboard",
     "firstTransaction": {
-      "title": "Your space is ready",
-      "body": "Record your first income or expense to unlock monthly activity and spending insights."
+      "title": "Your space is ready"
     },
     "attention": {
       "title": "Keep an eye on",
@@ -206,7 +204,7 @@
     "negativeCashFlow": "Spending above income",
     "negativeCashFlowBody": "Expenses exceed income by {{amount}}.",
     "spendingFromBalance": "Spending from the existing balance",
-    "spendingFromBalanceBody": "You recorded {{amount}} in expenses and no income this month. The opening balance remains separate from income.",
+    "spendingFromBalanceBody": "{{amount}} spent, no income recorded this month.",
     "budgetExceeded": "Budget exceeded",
     "analyticsOverview": "Analytics overview",
     "cashFlowTrend": "Money in and money out",
@@ -219,19 +217,13 @@
     "balanceSummary": "Your money at a glance",
     "totalBalance": "Total balance",
     "allActiveAccounts": "All active accounts",
-    "selectedAccountContext": "Balance for this account. Commitments that are not assigned to an account remain in the global view.",
     "availableToday": "Money available today",
     "balanceAtPeriodEnd": "Balance at the end of the period",
     "afterCommitments": "Estimate after commitments",
-    "afterCommitmentsHelp": "Current balance minus active planned expenses, recurring expenses, and debts in the same currency.",
-    "balanceContext_one": "Combined balance of {{count}} active account. This figure is separate from the period activity.",
-    "balanceContext_other": "Combined balance of {{count}} active accounts. This figure is separate from the period activity.",
     "periodActivity": "{{month}}'s Activity",
     "moneyReceived": "Money received",
     "moneySpent": "Money spent",
     "periodDifference": "Difference",
-    "receivedMinusSpent": "Received minus spent",
-    "periodEquation": "{{income}} received − {{expenses}} spent = {{difference}} for the period.",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "analyzing": "Analyzing…",
@@ -273,23 +265,7 @@
     "greeting": {
       "morning": "Good morning 👋",
       "afternoon": "Good afternoon 👋",
-      "evening": "Good evening 👋",
-      "messages": [
-        "Every small step counts.",
-        "Your money, your choices, your pace.",
-        "One quick look, and you’re up to date.",
-        "Steady progress, at your own pace.",
-        "The numbers are in. Your move.",
-        "A clear view helps you make better decisions.",
-        "A few minutes are enough to check in.",
-        "Your priorities deserve a clear place.",
-        "See what comes in, what goes out, and what is ahead.",
-        "A useful budget adapts to your reality.",
-        "Small expenses deserve a quick look too.",
-        "Visible due dates are easier to anticipate.",
-        "Planning today leaves you more choices tomorrow.",
-        "A regular check-in makes the next step simpler."
-      ]
+      "evening": "Good evening 👋"
     },
     "comparison": {
       "newThisMonth": "new this month",
@@ -344,7 +320,6 @@
   },
   "operations": {
     "title": "Activity",
-    "description": "See what came in, went out, or simply moved between your accounts.",
     "summary": "Period summary",
     "income": "Income",
     "expenses": "Expenses",
@@ -409,7 +384,7 @@
       "selectAccount": "Select account",
       "category": "Category",
       "selectCategory": "Select category",
-      "note": "Note (optional)",
+      "note": "Note",
       "notePlaceholder": "Transaction note",
       "submitting": "Recording…",
       "incomeRecorded": "Income recorded",
@@ -432,7 +407,7 @@
       "externalPlaceholder": "Person, business, or account name",
       "category": "Expense category",
       "amount": "Amount",
-      "note": "Note (optional)",
+      "note": "Note",
       "notePlaceholder": "Transfer note",
       "submitInternal": "Move between my accounts",
       "submitExternal": "Record the expense",
@@ -507,7 +482,7 @@
       "accountTypeCredit": "Credit",
       "accountTypeInvestment": "Investment",
       "accountBalance": "Opening balance",
-      "accountBalanceHelp": "Enter the money already available today. It sets the starting balance without counting as income for this month.",
+      "accountBalanceHelp": "Money available today. Not counted as income.",
       "accountCurrency": "Account currency",
       "currencySearch": "Search currency ({{currency}})",
       "noCurrency": "No matching currency.",
@@ -715,7 +690,7 @@
       "useLimited": "Use limited mode",
       "grantFull": "Grant full access",
       "settingsTitle": "Data Sharing Settings",
-      "settingsDescription": "Each AI feature can use your configured provider routing. You control how much data is shared.",
+      "settingsDescription": "Choose how much each feature may share.",
       "statusFull": "Full access",
       "statusNotPrompted": "Not prompted",
       "statusLimited": "Limited",
@@ -728,14 +703,14 @@
   "budgets": {
     "title": "Budgets",
     "howItWorksTitle": "A category connects expenses to the budget",
-    "howItWorksBody": "Every expense recorded in this category is counted automatically for the selected month, whichever account you use.",
+    "howItWorksBody": "Every expense in this category counts for the month, automatically.",
     "add": "Add Budget",
     "create": "Create Budget",
     "createHelp": "Set a monthly spending limit for one category.",
     "creating": "Creating…",
     "category": "Category",
     "categoryPlaceholder": "Select category",
-    "categoryHelp": "You will not need to select this budget when recording an expense: simply use this category.",
+    "categoryHelp": "Expenses in this category count towards it automatically.",
     "name": "Name",
     "namePlaceholder": "e.g. Monthly groceries",
     "monthlyLimit": "Monthly limit ({{currency}})",
@@ -893,7 +868,7 @@
         "failed": "Export failed",
         "encryptedFailed": "Encrypted export failed"
       },
-      "warning": "Plaintext JSON, CSV, and XLSX exports contain decrypted financial data. Store them securely and delete after use. Encrypted exports are protected by your passphrase."
+      "warning": "Plaintext exports contain your decrypted data. Store them securely."
     },
     "import": {
       "title": "Import",
@@ -936,7 +911,7 @@
       "configured": "Key saved",
       "enter": "Enter {{provider}} access key"
     },
-    "footnote": "Your keys are protected on this device and used only when you ask the assistant for help.",
+    "footnote": "Keys stay on this device and are used only when you ask the assistant.",
     "errors": {
       "saveFailed": "Failed to save key",
       "loadFailed": "Failed to load configured keys"
@@ -1077,9 +1052,9 @@
       "allowSystem": "Allow system notifications",
       "testFeedback": "Test feedback",
       "foregroundSound": "Sound while WiseMoney is open",
-      "soundHelp": "A quiet sound can play inside the app. When WiseMoney is closed, sound depends on your phone and browser settings.",
+      "soundHelp": "A quiet in-app sound. Outside the app, your phone decides.",
       "exportCalendar": "Add review to calendar",
-      "bestEffort": "While WiseMoney is closed, system notifications may arrive late. The reminder center refreshes whenever the app opens; adding the due date to your calendar remains the most reliable option.",
+      "bestEffort": "Notifications may arrive late while the app is closed. Your calendar is the reliable option.",
       "permission": {
         "default": "Permission not requested",
         "granted": "System notifications allowed",
@@ -1134,12 +1109,12 @@
   "coach": {
     "settings": {
       "inApp": "In-app tips",
-      "inAppHelp": "WiseBot can suggest a useful next step at the right time. Only one card appears per session.",
+      "inAppHelp": "One suggestion per session, at the right moment.",
       "notifications": "Tip notifications",
       "notificationsHelp": "Optional, silent, and limited to one per week. Your browser decides the exact delivery time.",
       "pause": "Pause for 14 days",
       "reset": "Reset seen tips",
-      "privacy": "Decisions stay on this device. Nothing is sent to an AI service until you tap “Ask WiseBot”.",
+      "privacy": "Nothing leaves this device until you tap “Ask WiseBot”.",
       "permission": {
         "default": "Permission not requested",
         "granted": "Notifications allowed",
@@ -1150,7 +1125,6 @@
   },
   "settings": {
     "title": "Settings",
-    "description": "Choose the essentials first. Open the other sections only when you need them.",
     "appearance": {
       "title": "Appearance",
       "description": "Choose a light, dark, or automatic appearance that follows your device.",
@@ -1172,38 +1146,30 @@
     },
     "sections": {
       "coach": {
-        "title": "WiseBot help",
-        "description": "Quiet in-app tips and optional notifications"
+        "title": "WiseBot help"
       },
       "reminders": {
-        "title": "Reminders and calendar",
-        "description": "Local deadlines, system notifications, and weekly review"
+        "title": "Reminders and calendar"
       },
       "money": {
-        "title": "Money and currency",
-        "description": "Default currency and exchange rates"
+        "title": "Money and currency"
       },
       "data": {
-        "title": "Data and backup",
-        "description": "Close a cycle, export, restore, or move your private space"
+        "title": "Data and backup"
       },
       "ai": {
         "title": "Optional assistant services",
-        "description": "Connect an AI provider only if you want smart features",
         "openAssistant": "Open assistant"
       },
       "security": {
-        "title": "Security and session",
-        "description": "Lock this space or manage an online session"
+        "title": "Security and session"
       },
       "organization": {
-        "title": "Accounts & categories",
-        "description": "Create or rename accounts and categories that fit your reality."
+        "title": "Accounts & categories"
       }
     },
     "devices": {
       "title": "Private space and session",
-      "description": "Control access to the private space on this device.",
       "thisDevice": "This device",
       "active": "Active",
       "localOnly": "Local only",
@@ -1214,7 +1180,7 @@
       "signOutFailed": "Could not sign out",
       "deviceUnlock": {
         "title": "Device unlock",
-        "description": "Open your space with this device’s screen lock instead of typing your passphrase. The passphrase stays the recovery key.",
+        "description": "Use this device’s screen lock. Your passphrase stays the recovery key.",
         "enabled": "Device unlock is on for this device. The passphrase stays the recovery key.",
         "enable": "Turn on device unlock",
         "disable": "Turn off device unlock",
@@ -1251,7 +1217,7 @@
       "defaultChangedBody": "Your default currency has been updated.",
       "rateAdded": "Rate added: {{pair}} = {{rate}}",
       "rateRemoved": "Rate removed",
-      "securityNote": "Exchange rates are encrypted and stay on this device. Conversions use half-even rounding with the exact decimal rate.",
+      "securityNote": "Rates stay encrypted on this device. Exact decimal rate, half-even rounding.",
       "errors": {
         "failed": "Failed to update currency settings",
         "loadFailed": "Failed to load exchange rates",
@@ -1380,7 +1346,7 @@
   },
   "firstSteps": {
     "title": "First steps",
-    "body": "Three things, in any order. They tick themselves off as you go.",
+    "body": "Three things, in any order.",
     "done": "done",
     "dismiss": "Hide this",
     "tabs": "Home = where you stand · Activity = what happened · Plan = what is coming",

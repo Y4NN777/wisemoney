@@ -12,8 +12,6 @@ import type { } from "../../pillars/intelligence/index.ts";
 import { useTranslation } from "react-i18next";
 
 import {
-  GREETING_MESSAGE_COUNT,
-  getDailyGreetingIndex,
   getGreetingTime,
   getNextGreetingRefreshAt,
 } from "./dashboardGreeting.ts";
@@ -77,7 +75,6 @@ export function DashboardPeriodHeader({
   }, []);
 
   const greetingTime = getGreetingTime(today);
-  const greetingIndex = getDailyGreetingIndex(today, GREETING_MESSAGE_COUNT);
   const isCurrentYear = selectedYear === today.getFullYear();
 
   return (
@@ -86,9 +83,6 @@ export function DashboardPeriodHeader({
         <h1 className="text-base font-semibold tracking-tight sm:text-xl">
           {t(`dashboard.greeting.${greetingTime}`)}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t(`dashboard.greeting.messages.${greetingIndex}`)}
-        </p>
       </div>
 
       <nav aria-label={t("dashboard.dashboardControls")} className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2 self-end sm:w-auto sm:self-auto">

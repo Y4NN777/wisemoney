@@ -38,7 +38,6 @@ export function FinancialOverview({
 }) {
   const { t } = useTranslation();
   const currency = snapshot.totalBalance.currency;
-  const activeAccountCount = snapshot.accounts.filter((account) => account.isActive).length;
   const net = snapshot.netCashFlow.minorUnits;
   const netTone = net === 0 ? "text-foreground" : net > 0 ? "text-positive" : "text-negative";
   const afterCommitments = accountName == null ? selectAvailableAfterCommitments(snapshot) : null;
@@ -72,18 +71,12 @@ export function FinancialOverview({
           <p className="break-words text-xl font-semibold tracking-tight tabular-nums sm:text-2xl">
             {formatMoney(snapshot.totalBalance.minorUnits, currency)}
           </p>
-          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            {accountName == null
-              ? t("dashboard.balanceContext", { count: activeAccountCount })
-              : t("dashboard.selectedAccountContext")}
-          </p>
           {afterCommitments != null && afterCommitments.minorUnits !== snapshot.totalBalance.minorUnits && (
             <div className="mt-4 border-t border-border pt-3">
               <div className="flex items-baseline justify-between gap-3">
                 <p className="text-xs font-medium text-muted-foreground">{t("dashboard.afterCommitments")}</p>
                 <p className="text-base font-semibold tabular-nums">{formatMoney(afterCommitments.minorUnits, afterCommitments.currency)}</p>
               </div>
-              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{t("dashboard.afterCommitmentsHelp")}</p>
             </div>
           )}
         </CardContent>
@@ -126,16 +119,8 @@ export function FinancialOverview({
               <p className={`mt-1 text-xl font-semibold tabular-nums ${netTone}`}>
                 {formatSignedMoney(net, currency)}
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">{t("dashboard.receivedMinusSpent")}</p>
             </div>
           </div>
-          <p className="rounded-md bg-accent/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
-            {t("dashboard.periodEquation", {
-              income: formatSignedMoney(snapshot.periodIncome.minorUnits, currency),
-              expenses: formatMoney(snapshot.periodExpenses.minorUnits, currency),
-              difference: formatSignedMoney(net, currency),
-            })}
-          </p>
           <Button asChild variant="outline" size="sm" className="w-full justify-between sm:w-auto">
             <Link to="/operations" search={{
               start: activityContext.start,

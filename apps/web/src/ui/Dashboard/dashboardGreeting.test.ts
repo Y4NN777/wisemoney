@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  GREETING_MESSAGE_COUNT,
-  getDailyGreetingIndex,
   getGreetingTime,
   getNextGreetingRefreshAt,
 } from "./dashboardGreeting.ts";
@@ -18,19 +16,6 @@ describe("getGreetingTime", () => {
 
   it("uses evening from 18:00", () => {
     expect(getGreetingTime(new Date(2026, 7, 10, 18))).toBe("evening");
-  });
-});
-
-describe("getDailyGreetingIndex", () => {
-  it("keeps the same message throughout a local calendar day", () => {
-    const morning = getDailyGreetingIndex(new Date(2026, 7, 10, 8), GREETING_MESSAGE_COUNT);
-    const evening = getDailyGreetingIndex(new Date(2026, 7, 10, 21), GREETING_MESSAGE_COUNT);
-    expect(morning).toBe(evening);
-  });
-
-  it("returns a valid index", () => {
-    expect(getDailyGreetingIndex(new Date(2026, 7, 10), GREETING_MESSAGE_COUNT)).toBeGreaterThanOrEqual(0);
-    expect(getDailyGreetingIndex(new Date(2026, 7, 10), GREETING_MESSAGE_COUNT)).toBeLessThan(GREETING_MESSAGE_COUNT);
   });
 });
 

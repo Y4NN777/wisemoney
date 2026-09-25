@@ -256,7 +256,7 @@ try {
   await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
   await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
-  await appPage.getByText(/Combined balance of 1 active account/).waitFor({ timeout: 90_000 });
+  await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Money available today", { exact: true }).waitFor({ timeout: 90_000 });
 
   const syncPage = await appContext.newPage();
   syncPage.on("pageerror", (error) => appErrors.push(`sync pageerror: ${error.message}`));
@@ -359,7 +359,7 @@ try {
   await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
   await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
   await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("1000");
-  await appPage.getByRole("dialog").getByLabel("Note (optional)", { exact: true }).fill("Smoke transaction");
+  await appPage.getByRole("dialog").getByLabel("Note", { exact: true }).fill("Smoke transaction");
   await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
@@ -391,7 +391,7 @@ try {
   await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
   await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
   await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("500");
-  await appPage.getByRole("dialog").getByLabel("Note (optional)", { exact: true }).fill("Smoke retained transaction");
+  await appPage.getByRole("dialog").getByLabel("Note", { exact: true }).fill("Smoke retained transaction");
   await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("button", { name: "Capture", exact: true }).click();
@@ -402,7 +402,7 @@ try {
   await appPage.getByRole("dialog").getByLabel(/To Account/).click();
   await appPage.getByRole("option", { name: /Smoke Savings/ }).click();
   await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("10000");
-  await appPage.getByRole("dialog").getByLabel("Note (optional)", { exact: true }).fill("Smoke transfer motive");
+  await appPage.getByRole("dialog").getByLabel("Note", { exact: true }).fill("Smoke transfer motive");
   await appPage.getByRole("dialog").getByRole("button", { name: "Move between my accounts", exact: true }).click();
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
@@ -439,7 +439,7 @@ try {
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("combobox", { name: "Account shown", exact: true }).click();
   await appPage.getByRole("option", { name: "Smoke Cash", exact: true }).click();
-  await appPage.getByText("Balance for this account. Commitments that are not assigned to an account remain in the global view.", { exact: true }).waitFor();
+  await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Smoke Cash", { exact: true }).waitFor();
   await appPage.getByRole("combobox", { name: "Account shown", exact: true }).click();
   await appPage.getByRole("option", { name: "All accounts", exact: true }).click();
   await appPage.getByText("More about this month", { exact: true }).click();

@@ -18,7 +18,7 @@ import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, PlusCircle, Shi
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import Logo from "../../components/Logo.tsx";
 import HelpActions from "../../components/HelpActions.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
@@ -607,9 +607,6 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
       <Card className="metric-surface w-full max-w-sm">
         <CardHeader>
           <CardTitle>{t("keyUnlock.setup.title")}</CardTitle>
-          <CardDescription>
-            {t("keyUnlock.setup.description")}
-          </CardDescription>
         </CardHeader>
         <CardContent>
           {error != null && (
