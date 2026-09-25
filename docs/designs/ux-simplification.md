@@ -14,5 +14,7 @@ Problem: users get lost; the loop costs too much (walkthrough: first expense ≈
 
 7. **Visual detail — box rounding**: boxes stay rounded, but *consistently*. `index.css` defines the radius scale twice (fixed values at ~L125–130, then overridden at ~L258–261), so components round unevenly; rebuilt screens use one radius scale (cards / controls / focus ring) from a single token set.
 
+8. **Copy — titles, not prose** (2026-09-25, reference MyMoney): no paragraph under a title on a primary screen (Home, Activity, Plan, Settings, setup); helper text is one line or lives in Help; chrome labels ≤ 6 words. Measured at 375 px after the strip: setup 17 words in the first viewport, Home 43, Activity 38, Settings 55. Guarded by `src/i18n.test.ts`.
+
 Non-goals: no crypto changes, no feature removal, Swiss-ledger visual system unchanged.
 Constraints: CONTRACT.md invariants and `dashboard-monthly-activity.md` semantics (transfers neutral, destination-determines-nature) apply as-is — not restated here.

@@ -30,6 +30,34 @@ describe("localization resources", () => {
     expect(en.nav.dashboardShort).toBe("Home");
   });
 
+  it("keeps primary screens free of prose and chrome labels short", () => {
+    // Copy rule (ux-simplification decision 8, 2026-09-25): titles carry primary screens; explanations live in Help.
+    const words = (value: string | undefined) => (value ?? "").trim().split(/\s+/).filter(Boolean).length;
+    for (const resource of [en, fr]) {
+      const r = resource as Record<string, Record<string, unknown>>;
+      expect(r.settings!.description).toBeUndefined();
+      expect(r.operations!.description).toBeUndefined();
+      expect((r.keyUnlock!.setup as Record<string, unknown>).description).toBeUndefined();
+      expect((r.dashboard!.greeting as Record<string, unknown>).messages).toBeUndefined();
+      for (const section of Object.values(r.settings!.sections as Record<string, Record<string, string>>)) {
+        expect(section.description).toBeUndefined();
+        expect(words(section.title)).toBeLessThanOrEqual(4);
+      }
+      for (const group of ["nav", "planning.links", "capture.tabs"]) {
+        const node = group.split(".").reduce<unknown>((acc, key) => (acc as Record<string, unknown>)[key], resource) as Record<string, string>;
+        for (const [key, value] of Object.entries(node)) {
+          if (key.endsWith("Aria")) continue;
+          expect(words(value), `${group}.${key}`).toBeLessThanOrEqual(6);
+        }
+      }
+      for (const step of ["firstMovement", "accounts", "plan"]) {
+        const node = (r.firstSteps as Record<string, Record<string, string>>)[step]!;
+        expect(words(node.label), `firstSteps.${step}.label`).toBeLessThanOrEqual(7);
+        expect(words(node.action), `firstSteps.${step}.action`).toBeLessThanOrEqual(3);
+      }
+    }
+  });
+
   it("keeps deployment and infrastructure vocabulary out of every user-facing string", () => {
     // ux-simplification decision 6: the product never talks about servers, deployments or its own plumbing.
     const forbidden = [
