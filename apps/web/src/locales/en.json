@@ -1,7 +1,5 @@
 {
   "app": {
-    "name": "WiseMoney",
-    "loading": "Loading…",
     "updateAvailable": "Update available",
     "updateDescription": "Installing it restarts WiseMoney and safely locks your space. Your data stays on this device.",
     "updateNow": "Update",
@@ -50,26 +48,11 @@
       "localStorage": "Unable to open local storage"
     },
     "login": {
-      "title": "Create Account",
-      "description": "Set up your private space and optional online account",
-      "titleSignIn": "Sign In",
-      "descriptionSignIn": "Sign in to access your private space",
-      "email": "Email",
-      "password": "Password",
-      "confirmPassword": "Confirm password",
       "passphraseTitle": "Private passphrase",
       "passphraseDescription": "This passphrase protects all financial data on this device. It cannot be recovered if lost, so save it securely.",
-      "register": "Register",
-      "signIn": "Sign In",
-      "submitting": "Submitting…",
       "errors": {
-        "allFieldsRequired": "All fields are required",
-        "passwordsMismatch": "Passwords do not match",
-        "generic": "An error occurred"
-      },
-      "toggleSignIn": "Sign in",
-      "toggleRegister": "No account yet? ",
-      "toggleRegisterAction": "Register"
+        "passwordsMismatch": "Passwords do not match"
+      }
     },
     "unlock": {
       "aria": "Open WiseMoney",
@@ -150,95 +133,6 @@
         "failed": "Restore failed"
       }
     },
-    "preview": {
-      "aria": "WiseMoney workspace preview",
-      "kicker": "Sample workspace",
-      "title": "Dashboard, quick entry, and planning in one private space",
-      "offlineReady": "Offline ready",
-      "rows": {
-        "cashFlow": "Cash flow",
-        "budgetChecks": "Budget checks",
-        "savingsGoals": "Savings goals"
-      },
-      "rowStates": {
-        "live": "Live",
-        "review": "Review",
-        "track": "Track"
-      },
-      "metrics": {
-        "accounts": "Track balances",
-        "capture": "Log expenses",
-        "planning": "Review budgets",
-        "settings": "Add services"
-      },
-      "status": {
-        "vault": "Space",
-        "local": "Local",
-        "network": "Network",
-        "offline": "Offline",
-        "services": "Services",
-        "optional": "Optional"
-      },
-      "deviceLabel": "Mobile app",
-      "deviceBody": "Install once, then open WiseMoney from the home screen when your connection is weak or unavailable."
-    },
-    "help": {
-      "aria": "WiseMoney help center and FAQ",
-      "kicker": "Help center",
-      "title": "Answers before you create anything",
-      "body": "This guide covers the main things you need to know about WiseMoney: accounts, expenses, planning, offline use, and optional services.",
-      "faqKicker": "FAQ",
-      "faqTitle": "Common questions",
-      "guide": {
-        "private": {
-          "title": "Your private space",
-          "body": "This is where WiseMoney keeps your accounts, expenses, budgets, goals, and settings. You unlock it with your private passphrase."
-        },
-        "install": {
-          "title": "Install on your phone",
-          "body": "You can add WiseMoney to your home screen. It then opens like a normal app instead of a browser tab."
-        },
-        "offline": {
-          "title": "Works without internet",
-          "body": "You can open the app, add expenses, and review your finances even when the connection is weak or unavailable."
-        },
-        "assistant": {
-          "title": "Assistant is optional",
-          "body": "Smart suggestions stay turned off until you choose to set them up. The app still works without them."
-        }
-      },
-      "faq": {
-        "data": {
-          "question": "Where is my data stored?",
-          "answer": "Your records are saved on this device first. They are protected by the private passphrase you create during setup."
-        },
-        "internet": {
-          "question": "Can I use WiseMoney without internet?",
-          "answer": "Yes. You can add expenses, manage accounts, review budgets, and open the app without an active connection after setup."
-        },
-        "install": {
-          "question": "How do I install the app?",
-          "answer": "On Android, open your browser menu and choose Install app. On iPhone, use Share, then Add to Home Screen."
-        },
-        "ai": {
-          "question": "Do I need the assistant?",
-          "answer": "No. The assistant is optional. If it is not set up, WiseMoney will hide or disable smart actions instead of asking you to use them."
-        },
-        "sync": {
-          "question": "What about online backup and sync?"
-        }
-      }
-    },
-    "install": {
-      "title": "Install WiseMoney on this device",
-      "body": "Install the app before you need it offline. Your private space and main screens stay available from the home screen.",
-      "installed": "WiseMoney is installed on this device.",
-      "button": "Install app",
-      "failed": "The installation prompt could not be opened.",
-      "manualTitle": "If no install button appears:",
-      "android": "Android Chrome: open the browser menu and choose Install app.",
-      "ios": "iPhone Safari: use Share, then Add to Home Screen."
-    },
     "intro": {
       "aria": "Before you start",
       "skip": "Skip",
@@ -266,115 +160,16 @@
     "dashboardShort": "Home",
     "capture": "Capture",
     "settings": "Settings",
-    "budgets": "Budgets",
-    "goals": "Goals",
-    "recurring": "Recurring",
     "activity": "Activity",
     "plan": "Plan"
   },
-  "helpCenter": {
-    "open": "Open help center",
-    "shortLabel": "Help",
-    "title": "Help Center",
-    "description": "Find simple explanations for your figures, accounts, planning, offline access, and optional services.",
-    "faqTitle": "Questions users often ask",
-    "installNote": "Install WiseMoney from your browser menu before relying on it without internet.",
-    "figures": {
-      "title": "Understand my figures",
-      "description": "Dashboard terms explained simply, with examples.",
-      "signs": {
-        "title": "+ and − before an amount",
-        "body": "+ means money entered an account. − means money left the account. For example, +100 received raises the balance; −20 spent lowers it."
-      },
-      "balance": {
-        "title": "Total balance",
-        "body": "This is the money currently available across all your active accounts. It is not only the money received this month."
-      },
-      "income": {
-        "title": "Income",
-        "body": "This is all money received during the selected period: salary, sales, payments received, or other money coming in."
-      },
-      "expenses": {
-        "title": "Expenses",
-        "body": "This is all money that left during the selected period: purchases, bills, transport, or other payments."
-      },
-      "moneyLeft": {
-        "title": "Period difference",
-        "body": "WiseMoney calculates money received minus money spent. For example, 100 received − 60 spent = a +40 difference. This result only covers the period; the available balance is shown separately."
-      },
-      "comparison": {
-        "title": "More or less than last month",
-        "body": "The comparison shows the real difference from the previous month. If the previous month was zero, WiseMoney says “new this month” instead of showing a misleading +100%."
-      },
-      "budget": {
-        "title": "Budget and percentage used",
-        "body": "A budget is a limit you choose. 75% used means 75 parts out of 100 of that limit have been spent, leaving 25%."
-      }
-    },
-    "journey": {
-      "accounts": {
-        "title": "Create accounts",
-        "body": "Add cash, mobile money, bank, or card accounts from Capture > Manage."
-      },
-      "capture": {
-        "title": "Record money movement",
-        "body": "Add income, expenses, transfers, and goal contributions. You can do this without internet."
-      },
-      "planning": {
-        "title": "Plan the month",
-        "body": "Create budgets, goals, and recurring payments so the dashboard can show useful progress."
-      },
-      "dashboard": {
-        "title": "Review the dashboard",
-        "body": "Check money received, money spent, what remains, goals, and upcoming payments."
-      },
-      "services": {
-        "title": "Add extras only if needed",
-        "body": "The assistant and online backup are optional. Set them up from Settings only when you want them."
-      }
-    },
-    "faq": {
-      "account": {
-        "question": "What should I create first?",
-        "answer": "Start with one account, such as cash, mobile money, a bank account, or a card. Then record your first expense or income."
-      },
-      "expense": {
-        "question": "Where do I add expenses?",
-        "answer": "Open Capture, choose Transaction, enter the amount, pick an account and category, then save it."
-      },
-      "offline": {
-        "question": "Can I use the app without internet?",
-        "answer": "Yes. WiseMoney keeps the main app available on this device, so you can add records and review your finances without a connection."
-      },
-      "assistant": {
-        "question": "Do I have to use the assistant?",
-        "answer": "No. The assistant is optional. If it is not set up, WiseMoney keeps the normal finance tools available."
-      },
-      "sync": {
-        "question": "Can I back up or sync online?"
-      }
-    }
-  },
   "dashboard": {
     "accountCount": "{{count}} accounts",
-    "loadFailed": "Failed to load financial data",
     "title": "Dashboard",
-    "setup": {
-      "title": "Start with one account",
-      "body": "Add the place where you keep money. WiseMoney will use it to calculate balances and organize future transactions.",
-      "action": "Create an account",
-      "steps": {
-        "account": "Create an account",
-        "transaction": "Record money movement",
-        "review": "Review your dashboard"
-      }
-    },
     "firstTransaction": {
       "title": "Your space is ready",
-      "body": "Record your first income or expense to unlock monthly activity and spending insights.",
-      "action": "Record first transaction"
+      "body": "Record your first income or expense to unlock monthly activity and spending insights."
     },
-    "alerts": "Alerts",
     "attention": {
       "title": "Keep an eye on",
       "description": "Useful items that need your attention.",
@@ -395,22 +190,9 @@
     "goalProgress": "Goal progress",
     "cashMargin": "Share of income not spent",
     "cashMarginFooter": "Income received minus expenses",
-    "netWorth": "Net Worth",
-    "periodRange": "Period",
     "income": "Income",
     "expenses": "Expenses",
-    "netCashFlow": "Period difference",
-    "accounts": "Accounts",
-    "budgetAlerts": "Budget Alerts",
-    "budgetAlertsNone": "No budget alerts",
-    "goalsOverview": "Goals Overview",
-    "noGoals": "No active goals",
-    "recurringOverview": "Upcoming Recurring",
-    "noRecurring": "No recurring items",
-    "categories": "Categories",
-    "categorySpending": "Category Spending",
     "categoryNone": "No spending this period",
-    "recentTransactions": "Recent Transactions",
     "noTransactions": "No transactions this period",
     "viewAll": "View All",
     "viewMonthlyActivity": "View this month’s activity",
@@ -419,18 +201,6 @@
     "addIncome": "Add income",
     "makeTransfer": "Make a transfer",
     "planExpense": "Plan an expense",
-    "budgetStatus": "Budget Status",
-    "spent": "spent",
-    "limit": "limit",
-    "used": "used",
-    "complete": "complete",
-    "saved": "saved",
-    "target": "target",
-    "startingPeriod": "Start of month",
-    "periodToDate": "Period to date",
-    "emptyState": "Welcome! Start by adding an account and recording your first transaction.",
-    "tips": "Tips",
-    "netCashFlowNegative": "Your spending exceeds your income this period",
     "missingFxTitle": "Some totals are incomplete",
     "missingFxBody": "Add an exchange rate from {{currencies}} to {{baseCurrency}} in Settings to include those amounts.",
     "negativeCashFlow": "Spending above income",
@@ -438,7 +208,6 @@
     "spendingFromBalance": "Spending from the existing balance",
     "spendingFromBalanceBody": "You recorded {{amount}} in expenses and no income this month. The opening balance remains separate from income.",
     "budgetExceeded": "Budget exceeded",
-    "budgetExceededBody": "\"{{name}}\" exceeded its budget of {{amount}}.",
     "analyticsOverview": "Analytics overview",
     "cashFlowTrend": "Money in and money out",
     "balanceTrend": "Balance evolution",
@@ -465,7 +234,6 @@
     "periodEquation": "{{income}} received − {{expenses}} spent = {{difference}} for the period.",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
-    "spendingBreakdown": "Spending breakdown",
     "analyzing": "Analyzing…",
     "analyzePeriod": "Analyze this period",
     "insightLoadFailed": "Could not load insight right now.",
@@ -495,12 +263,9 @@
     "transfers": "Transfers",
     "externalAccount": "External account",
     "unknownAccount": "Unknown account",
-    "welcome": "Welcome to WiseMoney",
-    "total": "Total",
     "net": "Difference",
     "previousMonth": "Previous month",
     "nextMonth": "Next month",
-    "monthNavigation": "Month navigation",
     "dashboardControls": "Dashboard period and account",
     "accountFilter": "Account shown",
     "allAccounts": "All accounts",
@@ -563,20 +328,6 @@
       "updateFailed": "Could not update transaction.",
       "deleteFailed": "Could not delete transaction."
     },
-    "months": [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ],
     "deviceUnlockOffer": {
       "title": "Unlock faster next time",
       "body": "Use this device’s screen lock instead of typing your passphrase. Turn it on in Settings.",
@@ -638,19 +389,11 @@
     }
   },
   "capture": {
-    "title": "Capture",
     "heading": "Record money movement",
     "ariaLabel": "Capture transaction",
-    "prerequisite": {
-      "accountTitle": "Create an account first",
-      "accountBody": "Transactions and transfers need an active account so WiseMoney can keep balances accurate.",
-      "createAccount": "Create an account"
-    },
     "empty": {
-      "accountsManage": "No accounts yet. Create one in Manage.",
       "categoriesManage": "No categories yet. Create one in Manage.",
-      "noOtherAccounts": "No other accounts available.",
-      "goalsPlanning": "No goals yet. Create one in Planning."
+      "noOtherAccounts": "No other accounts available."
     },
     "tabs": {
       "transaction": "Expense / Income",
@@ -659,9 +402,7 @@
       "manage": "Manage"
     },
     "transaction": {
-      "title": "Record Transaction",
       "amount": "Amount",
-      "direction": "Direction",
       "expense": "Expense",
       "income": "Income",
       "account": "Account",
@@ -670,19 +411,16 @@
       "selectCategory": "Select category",
       "note": "Note (optional)",
       "notePlaceholder": "Transaction note",
-      "submit": "Record Transaction",
       "submitting": "Recording…",
       "incomeRecorded": "Income recorded",
       "expenseRecorded": "Expense recorded",
       "errors": {
         "validAmount": "Enter a valid amount",
         "selectCategory": "Select a category",
-        "selectAccount": "Select an account",
         "failed": "Failed to record transaction"
       }
     },
     "transfer": {
-      "title": "Send or move money",
       "from": "From Account",
       "fromPlaceholder": "Select source account",
       "destinationType": "Where is the money going?",
@@ -694,7 +432,6 @@
       "externalPlaceholder": "Person, business, or account name",
       "category": "Expense category",
       "amount": "Amount",
-      "amountPlaceholder": "0.00",
       "note": "Note (optional)",
       "notePlaceholder": "Transfer note",
       "submitInternal": "Move between my accounts",
@@ -708,7 +445,6 @@
       "addRate": "Add the rate in Settings",
       "errors": {
         "validAmount": "Enter a valid amount",
-        "selectFrom": "Select a source account",
         "selectInternalDestination": "Select the WiseMoney account that will receive the money",
         "enterExternalDestination": "Enter who receives the money",
         "selectCategory": "Select the category for this expense",
@@ -718,12 +454,8 @@
       }
     },
     "goal": {
-      "title": "Contribute to Goal",
       "selectGoal": "Select goal",
       "amount": "Amount",
-      "amountPlaceholder": "0.00",
-      "note": "Note (optional)",
-      "notePlaceholder": "Contribution note",
       "submit": "Add Contribution",
       "submitting": "Adding…",
       "recorded": "Goal contribution added",
@@ -816,7 +548,6 @@
     "plannedExpenses": {
       "title": "Planned expenses",
       "description": "Prepare one-off expenses without changing balances until you confirm payment.",
-      "pendingSummary": "Planned expenses pending",
       "add": "Add a planned expense",
       "createTitle": "Add a planned expense",
       "createDescription": "No account or transaction is created at this stage.",
@@ -1111,17 +842,11 @@
       "eventCount_one": "{{count}} event",
       "eventCount_other": "{{count}} events",
       "dialogTitle": "Close the current cycle",
-      "dialogDescription": "Reset stays locked until both files have been downloaded and you explicitly confirm the action.",
       "prepareDescription": "Name the cycle and protect its backup.",
       "confirmDescription": "Download both files before closing this cycle.",
       "progressLabel": "Cycle closure steps",
       "prepareStage": "Prepare",
       "confirmStage": "Confirm",
-      "steps": {
-        "backup": "Create an encrypted, restorable backup",
-        "report": "Create a readable XLSX statement",
-        "reset": "Confirm before opening a new cycle"
-      },
       "label": "Cycle name",
       "labelPlaceholder": "For example, Business 2026",
       "protectionTitle": "Protect the backup",
@@ -1225,7 +950,6 @@
   },
   "planning": {
     "title": "Planning",
-    "cardTitle": "Budgets, Goals & Recurring",
     "cardDescription": "Plan your spending, save toward goals, and track recurring transactions",
     "links": {
       "budgets": "Budgets",
@@ -1246,25 +970,14 @@
       "debts_one": "{{count}} unsettled item",
       "debts_other": "{{count}} unsettled items"
     },
-    "loadFailed": "Planning information could not be loaded.",
     "section": {
       "toggle_one": "{{count}} item",
       "toggle_other": "{{count}} items",
       "seeAll": "See all {{count}}"
-    },
-    "frequency": {
-      "weekly": "Weekly",
-      "monthly": "Monthly",
-      "yearly": "Yearly"
-    },
-    "debtKinds": {
-      "debt": "I owe",
-      "receivable": "Owed to me"
     }
   },
   "debts": {
     "aria": "Debts and receivables",
-    "kicker": "Planning",
     "title": "Debts & Receivables",
     "add": "Add",
     "adding": "Adding…",
@@ -1362,7 +1075,6 @@
       "hour": "Review time",
       "thresholds": "Budget thresholds",
       "allowSystem": "Allow system notifications",
-      "test": "Test a notification",
       "testFeedback": "Test feedback",
       "foregroundSound": "Sound while WiseMoney is open",
       "soundHelp": "A quiet sound can play inside the app. When WiseMoney is closed, sound depends on your phone and browser settings.",
@@ -1437,7 +1149,6 @@
     }
   },
   "settings": {
-    "system": "System",
     "title": "Settings",
     "description": "Choose the essentials first. Open the other sections only when you need them.",
     "appearance": {
@@ -1495,16 +1206,12 @@
       "description": "Control access to the private space on this device.",
       "thisDevice": "This device",
       "active": "Active",
-      "offline": "Offline",
       "localOnly": "Local only",
       "onlineReady": "Online backup ready",
       "localOnlyMessage": "Your space, accounts, budgets, and transactions stay on this device.",
-      "language": "Language",
-      "session": "Session",
       "lock": "Lock private space",
       "signOut": "Sign out of all sessions",
       "signOutFailed": "Could not sign out",
-      "unknown": "Unknown",
       "deviceUnlock": {
         "title": "Device unlock",
         "description": "Open your space with this device’s screen lock instead of typing your passphrase. The passphrase stays the recovery key.",
@@ -1522,8 +1229,6 @@
     "currency": {
       "title": "Currency settings",
       "description": "Set your default currency and manage exchange rates",
-      "primary": "Primary Currency",
-      "supported": "Supported Currencies",
       "default": "Default currency",
       "defaultHelp": "African currencies are listed first. New accounts use this currency; existing accounts are unchanged.",
       "search": "Search code or currency",
@@ -1547,8 +1252,6 @@
       "rateAdded": "Rate added: {{pair}} = {{rate}}",
       "rateRemoved": "Rate removed",
       "securityNote": "Exchange rates are encrypted and stay on this device. Conversions use half-even rounding with the exact decimal rate.",
-      "save": "Save",
-      "saving": "Saving…",
       "errors": {
         "failed": "Failed to update currency settings",
         "loadFailed": "Failed to load exchange rates",
@@ -1627,7 +1330,6 @@
       "imageAttached": "Image attached",
       "imageCost": "The image is resized and cleaned before sending. This request uses 2 units.",
       "imageError": "Choose a valid image smaller than 10 MB.",
-      "imageAttachedLabel": "Image attached",
       "consent": {
         "title": "Before using WiseBot",
         "body": "This confirmation applies only to WiseBot. Your encrypted WiseMoney vault remains separate.",
@@ -1651,30 +1353,15 @@
     }
   },
   "common": {
-    "save": "Save",
     "cancel": "Cancel",
-    "done": "Done",
-    "delete": "Delete",
-    "edit": "Edit",
     "close": "Close",
     "back": "Back",
     "next": "Next",
-    "confirm": "Confirm",
-    "search": "Search",
-    "filter": "Filter",
-    "loading": "Loading…",
-    "error": "Error",
-    "success": "Success",
-    "noData": "No data",
     "retry": "Retry",
     "undo": "Undo",
     "unknown": "Unknown",
-    "yes": "Yes",
-    "no": "No",
-    "optional": "optional",
     "noCategories": "No categories yet. Create one in Manage."
   },
-  "errors": {},
   "captureSheet": {
     "cashName": "Cash",
     "date": "Date",

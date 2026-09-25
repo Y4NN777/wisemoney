@@ -1,7 +1,5 @@
 {
   "app": {
-    "name": "WiseMoney",
-    "loading": "Chargement…",
     "updateAvailable": "Mise à jour disponible",
     "updateDescription": "Son installation redémarre WiseMoney et verrouille votre espace en toute sécurité. Vos données restent sur cet appareil.",
     "updateNow": "Mettre à jour",
@@ -50,26 +48,11 @@
       "localStorage": "Impossible d’ouvrir le stockage local"
     },
     "login": {
-      "title": "Créer un compte",
-      "description": "Configurez votre espace privé et votre compte en ligne optionnel",
-      "titleSignIn": "Connexion",
-      "descriptionSignIn": "Connectez-vous pour accéder à votre espace privé",
-      "email": "E-mail",
-      "password": "Mot de passe",
-      "confirmPassword": "Confirmer le mot de passe",
       "passphraseTitle": "Phrase privée",
       "passphraseDescription": "Cette phrase protège toutes vos données financières sur cet appareil. Elle ne peut pas être récupérée si elle est perdue, conservez-la donc en lieu sûr.",
-      "register": "S'inscrire",
-      "signIn": "Se connecter",
-      "submitting": "Envoi…",
       "errors": {
-        "allFieldsRequired": "Tous les champs sont requis",
-        "passwordsMismatch": "Les mots de passe ne correspondent pas",
-        "generic": "Une erreur est survenue"
-      },
-      "toggleSignIn": "Se connecter",
-      "toggleRegister": "Pas encore de compte ? ",
-      "toggleRegisterAction": "S'inscrire"
+        "passwordsMismatch": "Les mots de passe ne correspondent pas"
+      }
     },
     "unlock": {
       "aria": "Ouvrir WiseMoney",
@@ -150,95 +133,6 @@
         "failed": "Échec de la restauration"
       }
     },
-    "preview": {
-      "aria": "Aperçu de l'espace WiseMoney",
-      "kicker": "Espace d'exemple",
-      "title": "Tableau de bord, saisie rapide et planification dans un seul espace privé",
-      "offlineReady": "Prêt hors ligne",
-      "rows": {
-        "cashFlow": "Flux de trésorerie",
-        "budgetChecks": "Suivi des budgets",
-        "savingsGoals": "Objectifs d'épargne"
-      },
-      "rowStates": {
-        "live": "Actif",
-        "review": "Revoir",
-        "track": "Suivre"
-      },
-      "metrics": {
-        "accounts": "Suivre les soldes",
-        "capture": "Saisir les dépenses",
-        "planning": "Revoir les budgets",
-        "settings": "Ajouter des services"
-      },
-      "status": {
-        "vault": "Espace",
-        "local": "Local",
-        "network": "Réseau",
-        "offline": "Hors ligne",
-        "services": "Services",
-        "optional": "Optionnels"
-      },
-      "deviceLabel": "Application mobile",
-      "deviceBody": "Installez une fois, puis ouvrez WiseMoney depuis l'écran d'accueil quand la connexion est faible ou indisponible."
-    },
-    "help": {
-      "aria": "Centre d'aide et FAQ WiseMoney",
-      "kicker": "Centre d'aide",
-      "title": "Des réponses avant de créer quoi que ce soit",
-      "body": "Ce guide couvre l'essentiel de WiseMoney : comptes, dépenses, planification, utilisation hors ligne et services optionnels.",
-      "faqKicker": "FAQ",
-      "faqTitle": "Questions fréquentes",
-      "guide": {
-        "private": {
-          "title": "Votre espace privé",
-          "body": "C'est l'endroit où WiseMoney garde vos comptes, dépenses, budgets, objectifs et paramètres. Vous l'ouvrez avec votre phrase privée."
-        },
-        "install": {
-          "title": "Installer sur votre téléphone",
-          "body": "Vous pouvez ajouter WiseMoney à votre écran d'accueil. L'application s'ouvre ensuite comme une app normale au lieu d'un onglet du navigateur."
-        },
-        "offline": {
-          "title": "Fonctionne sans internet",
-          "body": "Vous pouvez ouvrir l'app, ajouter des dépenses et consulter vos finances même quand la connexion est faible ou absente."
-        },
-        "assistant": {
-          "title": "L'assistant est optionnel",
-          "body": "Les suggestions intelligentes restent désactivées tant que vous ne choisissez pas de les configurer. L'app fonctionne sans elles."
-        }
-      },
-      "faq": {
-        "data": {
-          "question": "Où sont stockées mes données ?",
-          "answer": "Vos données sont d'abord enregistrées sur cet appareil. Elles sont protégées par la phrase privée que vous créez pendant la configuration."
-        },
-        "internet": {
-          "question": "Puis-je utiliser WiseMoney sans internet ?",
-          "answer": "Oui. Vous pouvez ajouter des dépenses, gérer les comptes, consulter les budgets et ouvrir l'app sans connexion active après la configuration."
-        },
-        "install": {
-          "question": "Comment installer l'application ?",
-          "answer": "Sur Android, ouvrez le menu du navigateur et choisissez Installer l'application. Sur iPhone, utilisez Partager, puis Ajouter à l'écran d'accueil."
-        },
-        "ai": {
-          "question": "Ai-je besoin de l'assistant ?",
-          "answer": "Non. L'assistant est optionnel. S'il n'est pas configuré, WiseMoney masque ou désactive les actions intelligentes au lieu de vous forcer à les utiliser."
-        },
-        "sync": {
-          "question": "Et la sauvegarde en ligne ?"
-        }
-      }
-    },
-    "install": {
-      "title": "Installer WiseMoney sur cet appareil",
-      "body": "Installez l'application avant d'en avoir besoin hors ligne. Votre espace privé et les écrans principaux restent disponibles depuis l'écran d'accueil.",
-      "installed": "WiseMoney est installé sur cet appareil.",
-      "button": "Installer l'app",
-      "failed": "La demande d'installation n'a pas pu être ouverte.",
-      "manualTitle": "Si aucun bouton d'installation n'apparaît :",
-      "android": "Chrome Android : ouvrez le menu du navigateur et choisissez Installer l'application.",
-      "ios": "Safari iPhone : utilisez Partager, puis Ajouter à l'écran d'accueil."
-    },
     "intro": {
       "aria": "Avant de commencer",
       "skip": "Passer",
@@ -266,115 +160,16 @@
     "dashboardShort": "Accueil",
     "capture": "Saisie",
     "settings": "Paramètres",
-    "budgets": "Budgets",
-    "goals": "Objectifs",
-    "recurring": "Récurrents",
     "activity": "Activité",
     "plan": "Plan"
   },
-  "helpCenter": {
-    "open": "Ouvrir le centre d'aide",
-    "shortLabel": "Aide",
-    "title": "Centre d'aide",
-    "description": "Retrouvez ici des explications simples sur vos chiffres, vos comptes, la planification, l'accès hors ligne et les services optionnels.",
-    "faqTitle": "Questions fréquentes",
-    "installNote": "Installez WiseMoney depuis le menu du navigateur avant de compter dessus sans internet.",
-    "figures": {
-      "title": "Comprendre mes chiffres",
-      "description": "Les mots du tableau de bord expliqués simplement, avec des exemples.",
-      "signs": {
-        "title": "+ et − devant un montant",
-        "body": "+ signifie que l’argent entre dans un compte. − signifie que l’argent sort du compte. Exemple : +10 000 F reçus augmente le solde ; −2 000 F dépensés le diminue."
-      },
-      "balance": {
-        "title": "Solde total",
-        "body": "C’est l’argent disponible maintenant dans tous vos comptes actifs réunis. Ce n’est pas seulement l’argent reçu ce mois-ci."
-      },
-      "income": {
-        "title": "Revenus",
-        "body": "C’est tout l’argent reçu pendant la période choisie : salaire, vente, paiement reçu ou autre entrée d’argent."
-      },
-      "expenses": {
-        "title": "Dépenses",
-        "body": "C’est tout l’argent sorti pendant la période choisie : achats, factures, transport ou autres paiements."
-      },
-      "moneyLeft": {
-        "title": "Différence de la période",
-        "body": "WiseMoney calcule argent reçu moins argent dépensé. Exemple : 100 000 F reçus − 60 000 F dépensés = +40 000 F de différence. Ce résultat concerne seulement la période ; le solde disponible est affiché séparément."
-      },
-      "comparison": {
-        "title": "De plus ou de moins que le mois dernier",
-        "body": "La comparaison montre la différence réelle avec le mois précédent. Si le mois précédent était à zéro, WiseMoney écrit « nouveau ce mois » au lieu d’afficher un +100 % trompeur."
-      },
-      "budget": {
-        "title": "Budget et pourcentage utilisé",
-        "body": "Un budget est une limite que vous choisissez. 75 % utilisé signifie que 75 parts sur 100 de cette limite ont déjà été dépensées ; il en reste 25 %."
-      }
-    },
-    "journey": {
-      "accounts": {
-        "title": "Créer des comptes",
-        "body": "Ajoutez des comptes espèces, mobile money, banque ou carte depuis Saisie > Gérer."
-      },
-      "capture": {
-        "title": "Enregistrer les mouvements financiers",
-        "body": "Ajoutez revenus, dépenses, transferts et contributions aux objectifs. Vous pouvez le faire sans internet."
-      },
-      "planning": {
-        "title": "Planifier le mois",
-        "body": "Créez des budgets, objectifs et paiements récurrents pour que le tableau de bord montre une progression utile."
-      },
-      "dashboard": {
-        "title": "Consulter le tableau de bord",
-        "body": "Vérifiez l’argent reçu, l’argent dépensé, ce qu’il reste, les objectifs et les paiements à venir."
-      },
-      "services": {
-        "title": "Ajouter les extras seulement si besoin",
-        "body": "L'assistant et la sauvegarde en ligne sont optionnels. Configurez-les depuis Paramètres uniquement quand vous les voulez."
-      }
-    },
-    "faq": {
-      "account": {
-        "question": "Que dois-je créer en premier ?",
-        "answer": "Commencez avec un compte, par exemple espèces, mobile money, banque ou carte. Enregistrez ensuite votre première dépense ou votre premier revenu."
-      },
-      "expense": {
-        "question": "Où ajouter mes dépenses ?",
-        "answer": "Ouvrez Saisie, choisissez Transaction, entrez le montant, sélectionnez un compte et une catégorie, puis enregistrez."
-      },
-      "offline": {
-        "question": "Puis-je utiliser l'app sans internet ?",
-        "answer": "Oui. WiseMoney garde l'application principale disponible sur cet appareil, pour ajouter des données et consulter vos finances sans connexion."
-      },
-      "assistant": {
-        "question": "Suis-je obligé d'utiliser l'assistant ?",
-        "answer": "Non. L'assistant est optionnel. S'il n'est pas configuré, WiseMoney garde les outils normaux de gestion financière disponibles."
-      },
-      "sync": {
-        "question": "Puis-je sauvegarder ou synchroniser en ligne ?"
-      }
-    }
-  },
   "dashboard": {
     "accountCount": "{{count}} comptes",
-    "loadFailed": "Échec du chargement des données financières",
     "title": "Tableau de bord",
-    "setup": {
-      "title": "Commencez par un compte",
-      "body": "Ajoutez l’endroit où vous conservez votre argent. WiseMoney l’utilisera pour calculer les soldes et organiser les futures transactions.",
-      "action": "Créer un compte",
-      "steps": {
-        "account": "Créer un compte",
-        "transaction": "Enregistrer un mouvement",
-        "review": "Consulter votre tableau de bord"
-      }
-    },
     "firstTransaction": {
       "title": "Votre espace est prêt",
-      "body": "Enregistrez votre premier revenu ou votre première dépense pour afficher l’activité mensuelle et l’analyse des dépenses.",
-      "action": "Enregistrer la première transaction"
+      "body": "Enregistrez votre premier revenu ou votre première dépense pour afficher l’activité mensuelle et l’analyse des dépenses."
     },
-    "alerts": "Alertes",
     "attention": {
       "title": "À surveiller",
       "description": "Les éléments utiles qui demandent votre attention.",
@@ -395,22 +190,9 @@
     "goalProgress": "Progression des objectifs",
     "cashMargin": "Part des revenus non dépensée",
     "cashMarginFooter": "Revenus reçus moins dépenses",
-    "netWorth": "Patrimoine net",
-    "periodRange": "Période",
     "income": "Revenus",
     "expenses": "Dépenses",
-    "netCashFlow": "Différence de la période",
-    "accounts": "Comptes",
-    "budgetAlerts": "Alertes budgétaires",
-    "budgetAlertsNone": "Aucune alerte budgétaire",
-    "goalsOverview": "Aperçu des objectifs",
-    "noGoals": "Aucun objectif actif",
-    "recurringOverview": "Récurrents à venir",
-    "noRecurring": "Aucun élément récurrent",
-    "categories": "Catégories",
-    "categorySpending": "Dépenses par catégorie",
     "categoryNone": "Aucune dépense cette période",
-    "recentTransactions": "Transactions récentes",
     "noTransactions": "Aucune transaction cette période",
     "viewAll": "Tout voir",
     "viewMonthlyActivity": "Voir l’activité du mois",
@@ -419,18 +201,6 @@
     "addIncome": "Ajouter un revenu",
     "makeTransfer": "Faire un transfert",
     "planExpense": "Prévoir une dépense",
-    "budgetStatus": "État des budgets",
-    "spent": "dépensé",
-    "limit": "limite",
-    "used": "utilisé",
-    "complete": "complété",
-    "saved": "économisé",
-    "target": "objectif",
-    "startingPeriod": "Début de mois",
-    "periodToDate": "Période en cours",
-    "emptyState": "Bienvenue ! Commencez par ajouter un compte et enregistrer votre première transaction.",
-    "tips": "Conseils",
-    "netCashFlowNegative": "Vos dépenses dépassent vos revenus cette période",
     "missingFxTitle": "Certains totaux sont incomplets",
     "missingFxBody": "Ajoutez un taux de change de {{currencies}} vers {{baseCurrency}} dans les paramètres pour inclure ces montants.",
     "negativeCashFlow": "Dépenses supérieures aux revenus",
@@ -438,7 +208,6 @@
     "spendingFromBalance": "Dépenses prises sur le solde existant",
     "spendingFromBalanceBody": "Vous avez enregistré {{amount}} de dépenses et aucun revenu ce mois-ci. Le solde initial reste séparé des revenus.",
     "budgetExceeded": "Budget dépassé",
-    "budgetExceededBody": "« {{name}} » a dépassé son budget de {{amount}}.",
     "analyticsOverview": "Aperçu analytique",
     "cashFlowTrend": "Entrées et sorties d’argent",
     "balanceTrend": "Évolution du solde",
@@ -465,7 +234,6 @@
     "periodEquation": "{{income}} reçu − {{expenses}} dépensé = {{difference}} sur la période.",
     "accountCount_one": "{{count}} compte",
     "accountCount_other": "{{count}} comptes",
-    "spendingBreakdown": "Détail des dépenses",
     "analyzing": "Analyse…",
     "analyzePeriod": "Analyser cette période",
     "insightLoadFailed": "Impossible de charger l’analyse pour le moment.",
@@ -495,12 +263,9 @@
     "transfers": "Transferts",
     "externalAccount": "Compte externe",
     "unknownAccount": "Compte inconnu",
-    "welcome": "Bienvenue dans WiseMoney",
-    "total": "Total",
     "net": "Différence",
     "previousMonth": "Mois précédent",
     "nextMonth": "Mois suivant",
-    "monthNavigation": "Navigation par mois",
     "dashboardControls": "Période et compte du tableau de bord",
     "accountFilter": "Compte affiché",
     "allAccounts": "Tous les comptes",
@@ -563,20 +328,6 @@
       "updateFailed": "Impossible de modifier la transaction.",
       "deleteFailed": "Impossible de supprimer la transaction."
     },
-    "months": [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre"
-    ],
     "deviceUnlockOffer": {
       "title": "Déverrouillez plus vite la prochaine fois",
       "body": "Utilisez le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. Activez-le dans les réglages.",
@@ -638,19 +389,11 @@
     }
   },
   "capture": {
-    "title": "Saisie",
     "heading": "Enregistrer un mouvement d’argent",
     "ariaLabel": "Saisie d’une transaction",
-    "prerequisite": {
-      "accountTitle": "Créez d’abord un compte",
-      "accountBody": "Les transactions et transferts nécessitent un compte actif afin que WiseMoney tienne les soldes à jour.",
-      "createAccount": "Créer un compte"
-    },
     "empty": {
-      "accountsManage": "Aucun compte. Créez-en un dans Gérer.",
       "categoriesManage": "Aucune catégorie. Créez-en une dans Gérer.",
-      "noOtherAccounts": "Aucun autre compte disponible.",
-      "goalsPlanning": "Aucun objectif. Créez-en un dans Planification."
+      "noOtherAccounts": "Aucun autre compte disponible."
     },
     "tabs": {
       "transaction": "Dépense / Revenu",
@@ -659,9 +402,7 @@
       "manage": "Gérer"
     },
     "transaction": {
-      "title": "Enregistrer une transaction",
       "amount": "Montant",
-      "direction": "Sens",
       "expense": "Dépense",
       "income": "Revenu",
       "account": "Compte",
@@ -670,19 +411,16 @@
       "selectCategory": "Sélectionner une catégorie",
       "note": "Note (optionnelle)",
       "notePlaceholder": "Note de transaction",
-      "submit": "Enregistrer la transaction",
       "submitting": "Enregistrement…",
       "incomeRecorded": "Revenu enregistré",
       "expenseRecorded": "Dépense enregistrée",
       "errors": {
         "validAmount": "Entrez un montant valide",
         "selectCategory": "Sélectionnez une catégorie",
-        "selectAccount": "Sélectionnez un compte",
         "failed": "Échec de l'enregistrement de la transaction"
       }
     },
     "transfer": {
-      "title": "Envoyer ou déplacer de l’argent",
       "from": "Compte source",
       "fromPlaceholder": "Sélectionner le compte source",
       "destinationType": "Où va l’argent ?",
@@ -694,7 +432,6 @@
       "externalPlaceholder": "Nom de la personne, du commerce ou du compte",
       "category": "Catégorie de la dépense",
       "amount": "Montant",
-      "amountPlaceholder": "0,00",
       "note": "Note (optionnelle)",
       "notePlaceholder": "Note de transfert",
       "submitInternal": "Déplacer entre mes comptes",
@@ -708,7 +445,6 @@
       "addRate": "Ajouter le taux dans Paramètres",
       "errors": {
         "validAmount": "Entrez un montant valide",
-        "selectFrom": "Sélectionnez un compte source",
         "selectInternalDestination": "Sélectionnez le compte WiseMoney qui recevra l’argent",
         "enterExternalDestination": "Indiquez qui reçoit l’argent",
         "selectCategory": "Sélectionnez la catégorie de cette dépense",
@@ -718,12 +454,8 @@
       }
     },
     "goal": {
-      "title": "Contribuer à un objectif",
       "selectGoal": "Sélectionner un objectif",
       "amount": "Montant",
-      "amountPlaceholder": "0,00",
-      "note": "Note (optionnelle)",
-      "notePlaceholder": "Note de contribution",
       "submit": "Ajouter la contribution",
       "submitting": "Ajout…",
       "recorded": "Contribution ajoutée à l’objectif",
@@ -816,7 +548,6 @@
     "plannedExpenses": {
       "title": "Dépenses prévues",
       "description": "Préparez des dépenses ponctuelles sans modifier les soldes avant la confirmation du paiement.",
-      "pendingSummary": "Dépenses prévues en attente",
       "add": "Ajouter une dépense prévue",
       "createTitle": "Ajouter une dépense prévue",
       "createDescription": "Aucun compte ni aucune transaction n’est créé à ce stade.",
@@ -1111,17 +842,11 @@
       "eventCount_one": "{{count}} événement",
       "eventCount_other": "{{count}} événements",
       "dialogTitle": "Clôturer le cycle actuel",
-      "dialogDescription": "Le reset reste verrouillé jusqu’au téléchargement des deux fichiers et à votre confirmation explicite.",
       "prepareDescription": "Donnez un nom au cycle et protégez son backup.",
       "confirmDescription": "Téléchargez les deux fichiers avant de clôturer ce cycle.",
       "progressLabel": "Étapes de clôture du cycle",
       "prepareStage": "Préparer",
       "confirmStage": "Confirmer",
-      "steps": {
-        "backup": "Créer un backup chiffré et restaurable",
-        "report": "Créer un relevé XLSX lisible",
-        "reset": "Confirmer avant d’ouvrir un nouveau cycle"
-      },
       "label": "Nom du cycle",
       "labelPlaceholder": "Ex. Activité 2026",
       "protectionTitle": "Protéger le backup",
@@ -1225,7 +950,6 @@
   },
   "planning": {
     "title": "Planification",
-    "cardTitle": "Budgets, objectifs et récurrents",
     "cardDescription": "Planifiez vos dépenses, épargnez vers des objectifs et suivez les transactions récurrentes",
     "links": {
       "budgets": "Budgets",
@@ -1246,25 +970,14 @@
       "debts_one": "{{count}} élément non soldé",
       "debts_other": "{{count}} éléments non soldés"
     },
-    "loadFailed": "Impossible de charger les informations de planification.",
     "section": {
       "toggle_one": "{{count}} élément",
       "toggle_other": "{{count}} éléments",
       "seeAll": "Voir les {{count}}"
-    },
-    "frequency": {
-      "weekly": "Chaque semaine",
-      "monthly": "Chaque mois",
-      "yearly": "Chaque année"
-    },
-    "debtKinds": {
-      "debt": "Je dois",
-      "receivable": "On me doit"
     }
   },
   "debts": {
     "aria": "Dettes et créances",
-    "kicker": "Planification",
     "title": "Dettes & Créances",
     "add": "Ajouter",
     "adding": "Ajout…",
@@ -1362,7 +1075,6 @@
       "hour": "Heure de la revue",
       "thresholds": "Seuils de budget",
       "allowSystem": "Autoriser les notifications système",
-      "test": "Tester une notification",
       "testFeedback": "Tester le retour",
       "foregroundSound": "Son lorsque WiseMoney est ouvert",
       "soundHelp": "Un son discret peut être joué dans l’application. Lorsque WiseMoney est fermé, le son dépend des réglages du téléphone et du navigateur.",
@@ -1437,7 +1149,6 @@
     }
   },
   "settings": {
-    "system": "Système",
     "title": "Paramètres",
     "description": "Choisissez d’abord l’essentiel. Ouvrez les autres sections seulement quand vous en avez besoin.",
     "appearance": {
@@ -1495,16 +1206,12 @@
       "description": "Contrôlez l’accès à l’espace privé sur cet appareil.",
       "thisDevice": "Cet appareil",
       "active": "Actif",
-      "offline": "Hors ligne",
       "localOnly": "Local uniquement",
       "onlineReady": "Sauvegarde en ligne prête",
       "localOnlyMessage": "Votre espace, vos comptes, vos budgets et vos transactions restent sur cet appareil.",
-      "language": "Langue",
-      "session": "Session",
       "lock": "Verrouiller l’espace privé",
       "signOut": "Déconnexion de toutes les sessions",
       "signOutFailed": "Impossible de se déconnecter",
-      "unknown": "Inconnu",
       "deviceUnlock": {
         "title": "Déverrouillage de l’appareil",
         "description": "Ouvrez votre espace avec le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. La phrase privée reste la clé de récupération.",
@@ -1522,8 +1229,6 @@
     "currency": {
       "title": "Paramètres de devise",
       "description": "Définissez votre devise par défaut et gérez les taux de change",
-      "primary": "Devise principale",
-      "supported": "Devises prises en charge",
       "default": "Devise par défaut",
       "defaultHelp": "Les devises africaines sont affichées en premier. Les nouveaux comptes utilisent cette devise ; les comptes existants restent inchangés.",
       "search": "Rechercher un code ou une devise",
@@ -1547,8 +1252,6 @@
       "rateAdded": "Taux ajouté : {{pair}} = {{rate}}",
       "rateRemoved": "Taux supprimé",
       "securityNote": "Les taux de change sont chiffrés et restent sur cet appareil. Les conversions utilisent l’arrondi au pair avec le taux décimal exact.",
-      "save": "Enregistrer",
-      "saving": "Enregistrement…",
       "errors": {
         "failed": "Échec de la mise à jour des paramètres de devise",
         "loadFailed": "Échec du chargement des taux de change",
@@ -1627,7 +1330,6 @@
       "imageAttached": "Image jointe",
       "imageCost": "L’image est redimensionnée et nettoyée avant l’envoi. Cette demande utilise 2 unités.",
       "imageError": "Choisissez une image valide de moins de 10 Mo.",
-      "imageAttachedLabel": "Image jointe",
       "consent": {
         "title": "Avant d’utiliser WiseBot",
         "body": "Cette confirmation concerne uniquement WiseBot. Votre coffre WiseMoney chiffré reste séparé.",
@@ -1651,30 +1353,15 @@
     }
   },
   "common": {
-    "save": "Enregistrer",
     "cancel": "Annuler",
-    "done": "Terminé",
-    "delete": "Supprimer",
-    "edit": "Modifier",
     "close": "Fermer",
     "back": "Retour",
     "next": "Suivant",
-    "confirm": "Confirmer",
-    "search": "Rechercher",
-    "filter": "Filtrer",
-    "loading": "Chargement…",
-    "error": "Erreur",
-    "success": "Succès",
-    "noData": "Aucune donnée",
     "retry": "Réessayer",
     "undo": "Annuler",
     "unknown": "Inconnu",
-    "yes": "Oui",
-    "no": "Non",
-    "optional": "optionnelle",
     "noCategories": "Aucune catégorie. Créez-en une dans Gérer."
   },
-  "errors": {},
   "captureSheet": {
     "cashName": "Espèces",
     "date": "Date",
