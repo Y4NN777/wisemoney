@@ -52,7 +52,7 @@ export default function UpdatesPage() {
         <section id={releaseAnchor(CURRENT_RELEASE.version)} className="scroll-mt-16 border-b border-border">
           <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.65fr)]">
             <div className="px-4 py-12 sm:px-6 sm:py-16 lg:border-r lg:border-border lg:px-8 lg:py-24">
-              <p className="text-sm font-bold text-[#0077b6]">{t("updatesPage.eyebrow")}</p>
+              <p className="text-sm font-bold text-ocean-primary">{t("updatesPage.eyebrow")}</p>
               <h1 className="mt-5 max-w-3xl text-[clamp(2rem,5vw,4.25rem)] font-bold leading-[1.02] tracking-tight">
                 {t("updatesPage.title")}
               </h1>
@@ -64,7 +64,7 @@ export default function UpdatesPage() {
               </p>
             </div>
 
-            <aside className="grid min-h-72 grid-rows-[1fr_auto] bg-[#0077b6] text-white">
+            <aside className="grid min-h-72 grid-rows-[1fr_auto] bg-primary text-white">
               <div className="flex items-start justify-between gap-4 p-5 sm:p-8">
                 <span className="text-sm font-bold">{t("updatesPage.current")}</span>
                 <span className="rounded-full border border-white/40 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]">
@@ -94,7 +94,7 @@ export default function UpdatesPage() {
                   key={highlight.id}
                   className="min-h-64 border-b border-border bg-card p-5 sm:p-8 sm:[&:nth-child(odd)]:border-r lg:border-r lg:[&:nth-child(3n)]:border-r-0"
                 >
-                  <span className="text-3xl font-bold leading-none tracking-tight text-[#0077b6] tabular-nums">
+                  <span className="text-3xl font-bold leading-none tracking-tight text-ocean-primary tabular-nums">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <h3 className="mt-10 text-xl font-bold leading-tight sm:text-2xl">{highlight.title}</h3>
@@ -120,14 +120,14 @@ export default function UpdatesPage() {
                     key={release.version}
                     className="scroll-mt-16 grid gap-4 border-b border-border px-4 py-7 last:border-b-0 sm:grid-cols-[9rem_1fr_auto] sm:items-center sm:px-8"
                   >
-                    <a href={`#${releaseAnchor(release.version)}`} className="text-3xl font-bold tracking-[-0.04em] text-[#0077b6] tabular-nums">
+                    <a href={`#${releaseAnchor(release.version)}`} className="text-3xl font-bold tracking-[-0.04em] text-ocean-primary tabular-nums">
                       {release.version}
                     </a>
                     <div>
                       <p className="font-bold">{content.title}</p>
                       <p className="mt-1 text-sm text-muted-foreground">{formatReleaseDate(release.releasedAt, language)}</p>
                     </div>
-                    <a className="inline-flex items-center gap-2 text-sm font-bold text-[#0077b6] hover:underline" href={release.githubUrl} target="_blank" rel="noreferrer">
+                    <a className="inline-flex items-center gap-2 text-sm font-bold text-ocean-primary hover:underline" href={release.githubUrl} target="_blank" rel="noreferrer">
                       {t("updatesPage.technicalDetails")} <ArrowUpRight className="h-4 w-4" />
                     </a>
                   </li>
@@ -138,7 +138,7 @@ export default function UpdatesPage() {
         </section>
       </main>
 
-      <footer className="bg-[#0077b6] text-white">
+      <footer className="bg-primary text-white">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-5 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div>
             <p className="text-xl font-bold">{t("updatesPage.needHelp")}</p>

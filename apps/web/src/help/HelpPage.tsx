@@ -65,7 +65,7 @@ export default function HelpPage() {
         <section className="border-b border-border">
           <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.65fr)]">
             <div className="px-4 py-12 sm:px-6 sm:py-16 lg:border-r lg:border-border lg:px-8 lg:py-24">
-              <p className="mb-5 text-sm font-bold text-[#0077b6]">{t("helpPage.eyebrow")}</p>
+              <p className="mb-5 text-sm font-bold text-ocean-primary">{t("helpPage.eyebrow")}</p>
               <h1 className="max-w-3xl text-[clamp(2rem,5vw,4.25rem)] font-bold leading-[1.02] tracking-tight">
                 {t("helpPage.title")}
               </h1>
@@ -74,22 +74,22 @@ export default function HelpPage() {
               </p>
             </div>
             <div className="grid min-h-64 grid-cols-2 border-t border-border lg:border-t-0">
-              <div className="flex flex-col justify-between border-r border-border bg-[#0077b6] p-5 text-white sm:p-7">
+              <div className="flex flex-col justify-between border-r border-border bg-primary p-5 text-white sm:p-7">
                 <span className="text-4xl font-bold tabular-nums sm:text-5xl">{sections.length}</span>
                 <span className="max-w-32 text-sm leading-tight">{t("helpPage.paths")}</span>
               </div>
               <div className="help-orbit relative overflow-hidden rounded-2xl bg-muted p-5 sm:p-7" aria-hidden="true">
-                <div className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0077b6]" />
-                <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0077b6] bg-card" />
-                <div className="absolute left-[calc(50%-0.5rem)] top-[calc(50%-0.5rem)] h-4 w-4 bg-[#0077b6]" />
-                <div className="absolute left-[18%] top-[22%] h-3 w-3 bg-[#0077b6]" />
-                <div className="absolute bottom-[20%] right-[16%] h-3 w-3 rounded-full border border-[#0077b6] bg-card" />
+                <div className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border border-ocean-primary" />
+                <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-ocean-primary bg-card" />
+                <div className="absolute left-[calc(50%-0.5rem)] top-[calc(50%-0.5rem)] h-4 w-4 bg-primary" />
+                <div className="absolute left-[18%] top-[22%] h-3 w-3 bg-primary" />
+                <div className="absolute bottom-[20%] right-[16%] h-3 w-3 rounded-full border border-ocean-primary bg-card" />
               </div>
             </div>
           </div>
         </section>
 
-        <section className="border-b border-border bg-[#0077b6] text-white sm:hidden">
+        <section className="border-b border-border bg-primary text-white sm:hidden">
           <div className="px-4 py-5">
             <Bot className="h-6 w-6" />
             <h2 className="mt-4 text-xl font-bold">{t("helpPage.chat.mobileTitle")}</h2>
@@ -112,7 +112,7 @@ export default function HelpPage() {
               {t("helpPage.searchLabel")}
             </label>
             <div className="relative bg-background p-2 sm:p-3">
-              <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#0077b6] sm:left-6" />
+              <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-ocean-primary sm:left-6" />
               <Input
                 ref={searchRef}
                 id="help-search"
@@ -120,7 +120,7 @@ export default function HelpPage() {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("helpPage.searchPlaceholder")}
-                className="h-12 border-foreground/20 bg-background pl-10 pr-14 text-base shadow-none hover:border-[#0077b6]/50 focus-visible:border-[#0077b6] focus-visible:ring-[#0077b6]"
+                className="h-12 border-foreground/20 bg-background pl-10 pr-14 text-base shadow-none hover:border-primary/50 focus-visible:border-primary focus-visible:ring-ring"
               />
               <kbd className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 rounded-md border border-foreground/20 bg-muted px-2 py-1 text-[11px] text-muted-foreground sm:block">⌘ K</kbd>
             </div>
@@ -133,8 +133,8 @@ export default function HelpPage() {
             <ol className="space-y-1">
               {sections.map((section, index) => (
                 <li key={section.id}>
-                  <a href={`#${section.id}`} className="grid grid-cols-[2.25rem_1fr] py-2 text-sm leading-tight text-muted-foreground hover:text-[#0077b6]">
-                    <span className="font-bold tabular-nums text-[#0077b6]">{String(index + 1).padStart(2, "0")}</span>
+                  <a href={`#${section.id}`} className="grid grid-cols-[2.25rem_1fr] py-2 text-sm leading-tight text-muted-foreground hover:text-ocean-primary">
+                    <span className="font-bold tabular-nums text-ocean-primary">{String(index + 1).padStart(2, "0")}</span>
                     {section.title}
                   </a>
                 </li>
@@ -161,14 +161,14 @@ export default function HelpPage() {
                     <li id={section.id} key={`${section.id}-${query}`} className="scroll-mt-20">
                       <details className="group" open={query.length > 0 || window.location.hash === `#${section.id}`}>
                         <summary className="grid cursor-pointer list-none grid-cols-[4.25rem_1fr_2.5rem] gap-3 px-4 py-7 transition-colors hover:bg-muted sm:grid-cols-[6.5rem_1fr_3rem] sm:px-8 sm:py-9">
-                          <span className="text-3xl font-bold leading-none tracking-tight text-[#0077b6] sm:text-4xl">
+                          <span className="text-3xl font-bold leading-none tracking-tight text-ocean-primary sm:text-4xl">
                             {String(originalIndex + 1).padStart(2, "0")}
                           </span>
                           <span>
                             <span className="block text-xl font-bold leading-tight sm:text-3xl">{section.title}</span>
                             <span className="mt-2 block max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">{section.summary}</span>
                           </span>
-                          <span className="flex h-8 w-8 items-center justify-center rounded-md border border-foreground/20 text-xl leading-none text-[#0077b6] group-open:bg-[#0077b6] group-open:text-white">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-md border border-foreground/20 text-xl leading-none text-ocean-primary group-open:bg-primary group-open:text-white">
                             <span className="group-open:hidden">+</span><span className="hidden group-open:inline">−</span>
                           </span>
                         </summary>
@@ -177,13 +177,13 @@ export default function HelpPage() {
                           <ol className="divide-y divide-border">
                             {section.steps.map((step, index) => (
                               <li key={step} className="grid grid-cols-[2rem_1fr] gap-3 px-4 py-4 text-sm leading-relaxed sm:px-8 sm:text-base">
-                                <span className="font-bold tabular-nums text-[#0077b6]">{index + 1}.</span>
+                                <span className="font-bold tabular-nums text-ocean-primary">{index + 1}.</span>
                                 <span>{step}</span>
                               </li>
                             ))}
                             {section.id === "installation" && (
                               <li className="px-4 py-5 sm:px-8">
-                                <div className="border-l-2 border-[#0077b6] bg-card p-4">
+                                <div className="border-l-2 border-ocean-primary bg-card p-4">
                                   <p className="text-sm font-bold">{t("helpPage.install.yourDevice")}</p>
                                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{platformInstruction}</p>
                                   {!install.installed && install.canPrompt && (
@@ -191,7 +191,7 @@ export default function HelpPage() {
                                       <Download className="h-4 w-4" /> {t("helpPage.install.prompt")}
                                     </Button>
                                   )}
-                                  {install.installed && <p className="mt-3 text-sm font-semibold text-[#0077b6]">{t("helpPage.install.installed")}</p>}
+                                  {install.installed && <p className="mt-3 text-sm font-semibold text-ocean-primary">{t("helpPage.install.installed")}</p>}
                                 </div>
                               </li>
                             )}
@@ -206,7 +206,7 @@ export default function HelpPage() {
           </section>
         </div>
 
-        <section className="border-y border-border bg-[#0077b6] text-white">
+        <section className="border-y border-border bg-primary text-white">
           <div className="mx-auto grid max-w-[1440px] md:grid-cols-2">
             <div className="border-b border-white/25 p-6 md:border-b-0 md:border-r md:p-10">
               <ShieldCheck className="h-6 w-6" />

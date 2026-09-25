@@ -151,11 +151,13 @@
 
 /* ---------- DARK mode — same palette, inverted surfaces ---------- */
 .dark {
-  --ocean-primary: #00b4d8;
-  --ocean-secondary: #00b4d8;
-  --ocean-dark: #7dd3ed;
-  --ocean-light: #00b4d8;
-  --ocean-wash: #16303a;
+  /* Dark accents stay in the button's blue family, not cyan: #1a8fd1 reads at 5.2:1 on the
+     background and 4.8:1 on cards (AA text); buttons keep --primary #0077b6 under white text. */
+  --ocean-primary: #1a8fd1;
+  --ocean-secondary: #1a8fd1;
+  --ocean-dark: #6cbcec;
+  --ocean-light: #1a8fd1;
+  --ocean-wash: #162838;
   --background: #111318;
   --foreground: #f7f7f8;
   --card: #191c22;
