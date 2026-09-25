@@ -24,4 +24,14 @@ void i18n
     },
   });
 
+// Every date and number formatter reads document.documentElement.lang; keep it in step with
+// i18next itself rather than with a component effect, so a render right after a language
+// change never formats with the previous language.
+i18n.on("languageChanged", (language) => {
+  if (typeof document !== "undefined") document.documentElement.lang = language.startsWith("fr") ? "fr" : "en";
+});
+if (typeof document !== "undefined" && i18n.resolvedLanguage != null) {
+  document.documentElement.lang = i18n.resolvedLanguage.startsWith("fr") ? "fr" : "en";
+}
+
 export default i18n;

@@ -1,5 +1,4 @@
 import { Languages } from "lucide-react";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select.tsx";
 
@@ -16,10 +15,6 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
   const { i18n, t } = useTranslation();
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language ?? "en";
   const currentLanguage = resolvedLanguage.startsWith("fr") ? "fr" : "en";
-
-  useEffect(() => {
-    document.documentElement.lang = currentLanguage;
-  }, [currentLanguage]);
 
   const changeLanguage = (language: string) => {
     void i18n.changeLanguage(language);
