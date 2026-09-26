@@ -163,9 +163,17 @@ try {
       assert.ok(wiseBotBox.width <= 410, "desktop: WiseBot exceeded its floating-panel width");
     }
     await page.screenshot({ path: `${outputDir}/${device.name}-wisebot.png`, fullPage: true });
-    await page.getByRole("heading", { name: "Before using WiseBot", exact: true }).waitFor();
+    await page.getByText("Questions go to Google. Nothing from your vault.", { exact: true }).waitFor();
+    const suggestedQuestions = page.getByRole("list", { name: "Suggested questions", exact: true }).getByRole("button");
+    assert.equal(await suggestedQuestions.count(), 3, `${device.name}: WiseBot offers no suggested questions`);
+    assert.equal(await page.getByRole("button", { name: "Send question", exact: true }).isDisabled(), true, `${device.name}: send is enabled before consent`);
+    await page.getByRole("button", { name: "More", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Review WiseBot information", exact: true }).click();
     await page.getByText("Your question and optional image are sent to Google to generate the answer.", { exact: true }).waitFor();
-    await page.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Hide WiseBot information", exact: true }).click();
+    await page.getByRole("button", { name: "OK", exact: true }).click();
+    assert.equal(await page.getByRole("button", { name: "Send question", exact: true }).isDisabled(), true, `${device.name}: send is enabled with an empty question`);
+    await page.getByRole("dialog", { name: "WiseBot", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Quick search").fill("backup");
     await page.getByText("Back up, export, and start a new cycle", { exact: true }).waitFor();
     await page.getByRole("button", { name: "See what’s new", exact: true }).click();

@@ -1,9 +1,11 @@
-import { ArrowLeft, Bot, ImagePlus, LoaderCircle, Send, ShieldCheck, Trash2, WifiOff, X } from "lucide-react";
+import { ArrowLeft, BookOpen, ImagePlus, LoaderCircle, MoreVertical, Send, ShieldCheck, Trash2, WifiOff, X } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent, type ClipboardEvent, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import Logo from "../components/Logo.tsx";
 import { Button } from "../components/ui/button.tsx";
 import { findRelevantHelpSections, localTaskAnswer, type HelpSection } from "./corpus.ts";
+import { openHelp } from "./navigation.ts";
+import { suggestedTasks } from "./suggestions.ts";
 import type { SafeHelpContext } from "./context.ts";
 import {
   streamHelpMessage,
@@ -63,7 +65,9 @@ export default function HelpChat({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [consentAccepted, setConsentAccepted] = useState(() => hasHelpProviderConsent());
-  const [showConsent, setShowConsent] = useState(() => !hasHelpProviderConsent());
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
@@ -136,7 +140,8 @@ export default function HelpChat({
     const keepFocusInside = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        closePanel();
+        if (menuRef.current?.querySelector("[role=menu]") != null) setMenuOpen(false);
+        else closePanel();
         return;
       }
       if (event.key !== "Tab" || panelRef.current == null) return;
@@ -185,12 +190,11 @@ export default function HelpChat({
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    const question = input.trim();
-    if (question.length === 0 || !online || submitting || imageBusy) return;
-    if (!consentAccepted) {
-      setShowConsent(true);
-      return;
-    }
+    ask(input.trim());
+  };
+
+  const ask = (question: string) => {
+    if (question.length === 0 || !online || submitting || imageBusy || !consentAccepted) return;
 
     const previousSectionIds = messages.flatMap((message) => message.role === "assistant" && message.sectionIds?.[0] != null ? [message.sectionIds[0]] : []).slice(-3);
     const selectedSections = findRelevantHelpSections(sections, question, 4, previousSectionIds, safeContext.surfaceId);
@@ -288,8 +292,28 @@ export default function HelpChat({
   const acceptConsent = () => {
     grantHelpProviderConsent();
     setConsentAccepted(true);
-    setShowConsent(false);
   };
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = (event: PointerEvent) => {
+      if (menuRef.current != null && !menuRef.current.contains(event.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, [menuOpen]);
+
+  const openGuide = (sectionId: string) => {
+    closePanel();
+    openHelp(sectionId);
+  };
+
+  const suggestions = suggestedTasks(sections, safeContext.surfaceId);
+  const suggest = (title: string) => {
+    if (consentAccepted) ask(title);
+    else setInput(title);
+  };
+  const busy = submitting || imageBusy;
 
   return (
     <div className={open ? "fixed inset-0 z-[70] sm:inset-auto sm:bottom-7 sm:right-7" : `fixed right-4 z-40 sm:bottom-7 sm:right-7 ${vaultUnlocked ? "bottom-[calc(4.75rem+var(--safe-area-bottom))]" : "bottom-5"}`}>
@@ -308,25 +332,34 @@ export default function HelpChat({
             aria-label={t("helpPage.chat.title")}
             className="wisebot-panel relative z-10 flex h-[100dvh] w-screen flex-col overflow-hidden bg-background text-foreground sm:mb-3 sm:h-[min(680px,calc(100dvh-7rem))] sm:w-[min(410px,calc(100vw-2rem))] sm:rounded-2xl sm:border sm:border-foreground/20 sm:shadow-[0_18px_48px_rgba(16,24,32,0.16)]"
           >
-          <header className="grid min-h-14 grid-cols-[3.25rem_1fr_2.75rem_2.75rem_2.75rem] border-b border-border">
-            <div className="flex items-center justify-center border-r border-border bg-ocean-primary">
-              <button type="button" onClick={closePanel} aria-label={t("common.back")} className="flex h-full w-full items-center justify-center sm:hidden">
-                <ArrowLeft className="h-5 w-5 text-white" />
-              </button>
-              <Logo variant="icon" className="hidden h-7 w-7 sm:block" />
-            </div>
-            <div className="min-w-0 px-3 py-2.5">
+          <header className="flex min-h-14 items-center gap-2 border-b border-border px-2">
+            <button type="button" onClick={closePanel} aria-label={t("common.back")} className="flex h-10 w-10 items-center justify-center rounded-full sm:hidden">
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <span className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ocean-wash sm:flex" aria-hidden="true">
+              <Logo variant="icon" className="h-6 w-6" />
+            </span>
+            <div className="min-w-0 flex-1">
               <h2 className="truncate text-sm font-bold">{t("helpPage.chat.title")}</h2>
-              <p className="truncate text-xs text-muted-foreground">{t("helpPage.chat.scope")}</p>
+              <p className="truncate text-xs text-muted-foreground">{online ? t("helpPage.chat.status.ready") : t("helpPage.chat.status.offline")}</p>
             </div>
-            <button type="button" onClick={() => setShowConsent((current) => !current)} className="flex items-center justify-center border-l border-border" aria-label={t("helpPage.chat.consent.review")}>
-              <ShieldCheck className="h-4 w-4" />
-            </button>
-            <button type="button" onClick={resetConversation} className="flex items-center justify-center border-l border-border" aria-label={t("helpPage.chat.newConversation")}>
-              <Trash2 className="h-4 w-4" />
-            </button>
-            <button type="button" onClick={closePanel} className="flex items-center justify-center border-l border-border" aria-label={t("common.close")}>
-              <X className="h-4 w-4" />
+            <div ref={menuRef} className="relative">
+              <button type="button" onClick={() => setMenuOpen((current) => !current)} aria-haspopup="menu" aria-expanded={menuOpen} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted" aria-label={t("helpPage.chat.menu")}>
+                <MoreVertical className="h-5 w-5" />
+              </button>
+              {menuOpen && (
+                <div role="menu" aria-label={t("helpPage.chat.menu")} className="absolute right-0 top-11 z-20 min-w-48 rounded-lg border border-border bg-popover p-1 text-sm text-popover-foreground shadow-lg">
+                  <button type="button" role="menuitem" onClick={() => { setShowPrivacy((current) => !current); setMenuOpen(false); }} className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-accent hover:text-accent-foreground">
+                    <ShieldCheck className="h-4 w-4 text-ocean-primary" />{t("helpPage.chat.consent.review")}
+                  </button>
+                  <button type="button" role="menuitem" onClick={() => { resetConversation(); setMenuOpen(false); }} className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-accent hover:text-accent-foreground">
+                    <Trash2 className="h-4 w-4 text-ocean-primary" />{t("helpPage.chat.newConversation")}
+                  </button>
+                </div>
+              )}
+            </div>
+            <button type="button" onClick={closePanel} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted" aria-label={t("common.close")}>
+              <X className="h-5 w-5" />
             </button>
           </header>
 
@@ -338,70 +371,85 @@ export default function HelpChat({
           )}
 
           <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3" aria-live="polite">
-            {showConsent && (
+            {showPrivacy && (
               <section className="rounded-lg border border-ocean-primary bg-ocean-wash p-3 text-left" aria-label={t("helpPage.chat.consent.title")}>
                 <div className="flex items-start gap-2">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-ocean-primary" />
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <h3 className="text-sm font-bold">{t("helpPage.chat.consent.title")}</h3>
-                    <p className="mt-1 text-xs leading-relaxed text-foreground/70">{t("helpPage.chat.consent.body")}</p>
                     <ul className="mt-2 list-disc space-y-1 pl-4 text-xs leading-relaxed text-foreground/70">
                       <li>{t("helpPage.chat.consent.google")}</li>
                       <li>{t("helpPage.chat.consent.scope")}</li>
                       <li>{t("helpPage.chat.consent.sensitive")}</li>
                     </ul>
-                    {!consentAccepted && (
-                      <Button type="button" size="sm" className="mt-3" onClick={acceptConsent}>
-                        {t("helpPage.chat.consent.accept")}
-                      </Button>
-                    )}
                   </div>
+                  <button type="button" onClick={() => setShowPrivacy(false)} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-background/60" aria-label={t("helpPage.chat.consent.hide")}>
+                    <X className="h-4 w-4" />
+                  </button>
                 </div>
               </section>
             )}
-            {!showConsent && messages.length === 0 && !online && (
-              <div className="grid min-h-full content-center gap-3 px-5 text-left">
+            {messages.length === 0 && !online && (
+              <div className="grid min-h-full content-center gap-3 px-2 text-left">
                 <WifiOff className="h-7 w-7 text-ocean-primary" />
                 <p className="text-sm font-semibold">{t("helpPage.chat.offlineFallback")}</p>
-                <div className="grid border-t border-border">
-                  {sections.slice(0, 3).map((section, index) => (
-                    <a key={section.id} href={`#${section.id}`} onClick={closePanel} className="grid grid-cols-[2rem_1fr] border-b border-border py-3 text-sm text-ocean-primary">
-                      <span className="font-bold tabular-nums">{String(index + 1).padStart(2, "0")}</span>
-                      <span className="font-semibold">{section.title}</span>
-                    </a>
+                <div className="grid gap-2">
+                  {suggestions.map((section) => (
+                    <button key={section.id} type="button" onClick={() => openGuide(section.id)} className="flex items-center gap-2 rounded-lg border border-border px-3 py-2.5 text-left text-sm font-semibold text-ocean-primary hover:bg-muted">
+                      <BookOpen className="h-4 w-4 shrink-0" />{section.title}
+                    </button>
                   ))}
                 </div>
               </div>
             )}
-            {!showConsent && messages.length === 0 && online && (
-              <div className="grid min-h-full content-center gap-3 px-5 text-left">
-                <Bot className="h-7 w-7 text-ocean-primary" />
+            {messages.length === 0 && online && (
+              <div className="grid min-h-full content-end gap-3 px-1 pb-2 text-left">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ocean-wash" aria-hidden="true">
+                  <Logo variant="icon" className="h-7 w-7" />
+                </span>
                 <p className="text-sm font-semibold">{t("helpPage.chat.welcome")}</p>
-                <p className="text-xs leading-relaxed text-muted-foreground">{t("helpPage.chat.privacy")}</p>
+                <ul className="flex flex-wrap gap-2" aria-label={t("helpPage.chat.suggestions")}>
+                  {suggestions.map((section) => (
+                    <li key={section.id}>
+                      <button type="button" onClick={() => suggest(section.title)} disabled={busy} className="rounded-full border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
+                        {section.title}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
-            {!showConsent && messages.map((message) => (
-              <article key={message.id} className={message.role === "user" ? "ml-8 border border-ocean-primary bg-ocean-primary p-3 text-sm text-white" : "mr-5 border-l-2 border-ocean-primary bg-muted p-3 text-sm"}>
-                {message.role === "assistant" && message.text.length > 0
-                  ? <HelpMessageMarkdown text={message.text} />
-                  : <p className="whitespace-pre-wrap leading-relaxed">{message.text || (submitting ? t("helpPage.chat.writing") : t("helpPage.chat.unavailable"))}</p>}
-                {message.imageAttached === true && <p className="mt-2 text-xs text-white/75">{t("helpPage.chat.imageAttached")}</p>}
-                {message.role === "assistant" && message.text.length > 0 && message.sectionIds != null && (
-                  <div className="mt-3 flex flex-wrap gap-1.5 border-t border-foreground/10 pt-2">
-                    {message.sectionIds.map((id) => {
-                      const section = sections.find((candidate) => candidate.id === id);
-                      return section == null ? null : (
-                        <a key={id} href={`#${id}`} className="text-xs font-semibold text-ocean-primary underline underline-offset-2">
-                          {section.title}
-                        </a>
-                      );
-                    })}
-                  </div>
+            {messages.map((message) => (
+              <article key={message.id} className={message.role === "user" ? "flex justify-end" : "flex items-end gap-2"}>
+                {message.role === "assistant" && (
+                  <span className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ocean-wash" aria-hidden="true">
+                    <Logo variant="icon" className="h-5 w-5" />
+                  </span>
                 )}
+                <div className={message.role === "user"
+                  ? "max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3.5 py-2.5 text-sm text-primary-foreground"
+                  : "min-w-0 max-w-[88%] rounded-2xl rounded-bl-sm bg-muted px-3.5 py-2.5 text-sm"}>
+                  {message.role === "assistant" && message.text.length > 0
+                    ? <HelpMessageMarkdown text={message.text} />
+                    : <p className="whitespace-pre-wrap leading-relaxed">{message.text || (submitting ? t("helpPage.chat.writing") : t("helpPage.chat.unavailable"))}</p>}
+                  {message.imageAttached === true && <p className="mt-2 text-xs text-primary-foreground/75">{t("helpPage.chat.imageAttached")}</p>}
+                  {message.role === "assistant" && message.text.length > 0 && message.sectionIds != null && message.sectionIds.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1.5 border-t border-foreground/10 pt-2">
+                      {message.sectionIds.map((id) => {
+                        const section = sections.find((candidate) => candidate.id === id);
+                        return section == null ? null : (
+                          <button key={id} type="button" onClick={() => openGuide(id)} className="inline-flex items-center gap-1 rounded-full bg-card px-2.5 py-1 text-xs font-semibold text-ocean-primary hover:bg-ocean-wash" aria-label={t("helpPage.chat.guideLink", { title: section.title })}>
+                            <BookOpen className="h-3.5 w-3.5" />{section.title}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </article>
             ))}
 
-            {!showConsent && ticket?.status === "waiting" && (
+            {ticket?.status === "waiting" && (
               <div className="rounded-lg border border-border bg-card p-3 text-xs" role="status">
                 <div className="flex items-center gap-2 font-semibold">
                   <LoaderCircle className="h-4 w-4 animate-spin text-ocean-primary" />
@@ -411,14 +459,21 @@ export default function HelpChat({
                 <Button type="button" variant="outline" size="sm" className="mt-2" onClick={cancelPending}>{t("common.cancel")}</Button>
               </div>
             )}
-            {!showConsent && submitting && ticket?.status !== "waiting" && (
+            {submitting && ticket?.status !== "waiting" && (
               <Button type="button" variant="outline" size="sm" onClick={cancelPending}>{t("helpPage.chat.stop")}</Button>
             )}
-            {!showConsent && error != null && <p className="border-l-2 border-destructive bg-muted p-3 text-xs" role="alert">{error}</p>}
+            {error != null && <p className="rounded-lg border-l-2 border-destructive bg-muted p-3 text-xs" role="alert">{error}</p>}
             <div ref={endRef} />
           </div>
 
-          {!showConsent && <footer className="border-t border-border bg-card p-3 pb-[calc(0.75rem+var(--safe-area-bottom))] sm:pb-3">
+          <footer className="border-t border-border bg-card p-3 pb-[calc(0.75rem+var(--safe-area-bottom))] sm:pb-3">
+            {!consentAccepted && (
+              <div className="mb-2 flex items-center gap-2 rounded-lg bg-ocean-wash px-3 py-2 text-xs" role="note">
+                <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-primary" />
+                <span className="min-w-0 flex-1 leading-snug">{t("helpPage.chat.consent.line")}</span>
+                <Button type="button" size="sm" className="h-8" onClick={acceptConsent}>{t("helpPage.chat.consent.ok")}</Button>
+              </div>
+            )}
             {ticket != null && (
               <p className="mb-2 text-[11px] text-muted-foreground">
                 {t("helpPage.chat.quota", { count: ticket.remainingUnits })}
@@ -436,7 +491,7 @@ export default function HelpChat({
             )}
             <form onSubmit={handleSubmit} className="grid grid-cols-[2.5rem_1fr_2.5rem] items-end gap-2">
               <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" onChange={handleFile} />
-              <Button type="button" variant="outline" size="icon" disabled={!online || submitting || imageBusy} onClick={() => fileInputRef.current?.click()} aria-label={t("helpPage.chat.addImage")}>
+              <Button type="button" variant="outline" size="icon" className="rounded-full" disabled={!online || busy} onClick={() => fileInputRef.current?.click()} aria-label={t("helpPage.chat.addImage")}>
                 {imageBusy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
               </Button>
               <textarea
@@ -444,17 +499,17 @@ export default function HelpChat({
                 onChange={(event) => setInput(event.target.value)}
                 onPaste={handlePaste}
                 maxLength={2000}
-                rows={2}
+                rows={1}
                 disabled={!online || submitting}
                 placeholder={t("helpPage.chat.placeholder")}
                 aria-label={t("helpPage.chat.placeholder")}
-                className="min-h-10 resize-none rounded-md border border-input bg-background px-3 py-2 text-base text-foreground focus-visible:border-primary sm:text-sm"
+                className="min-h-10 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-base text-foreground focus-visible:border-primary sm:text-sm"
               />
-              <Button type="submit" size="icon" disabled={!online || submitting || imageBusy || input.trim().length === 0} aria-label={t("helpPage.chat.send")}>
+              <Button type="submit" size="icon" className="rounded-full" disabled={!online || busy || !consentAccepted || input.trim().length === 0} aria-label={t("helpPage.chat.send")}>
                 <Send className="h-4 w-4" />
               </Button>
             </form>
-          </footer>}
+          </footer>
           </section>
         </>
       )}

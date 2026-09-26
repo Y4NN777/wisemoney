@@ -1284,7 +1284,6 @@
       "newConversation": "Nouvelle conversation",
       "stop": "Arrêter la réponse",
       "welcome": "Que souhaitez-vous faire dans WiseMoney ?",
-      "privacy": "Votre question et l’image facultative restent dans ce navigateur jusqu’à ce qu’une place soit disponible. Cet assistant ne peut pas lire votre coffre financier.",
       "offline": "WiseBot nécessite Internet — toute l’aide écrite reste disponible hors ligne.",
       "offlineFallback": "WiseBot attend la connexion. Ces parcours restent disponibles hors ligne.",
       "placeholder": "Demandez comment utiliser WiseMoney",
@@ -1304,13 +1303,21 @@
       "imageError": "Choisissez une image valide de moins de 10 Mo.",
       "consent": {
         "title": "Avant d’utiliser WiseBot",
-        "body": "Cette confirmation concerne uniquement WiseBot. Votre coffre WiseMoney chiffré reste séparé.",
         "google": "Votre question et l’image facultative sont envoyées à Google pour générer la réponse.",
         "scope": "WiseBot explique WiseMoney et ne peut accéder ni au coffre, ni aux comptes, ni aux transactions, ni à l’écran.",
         "sensitive": "N’incluez aucune information personnelle ou financière dans un message ou une image.",
-        "accept": "J’ai compris et je continue",
-        "review": "Relire les informations de WiseBot"
-      }
+        "review": "Relire les informations de WiseBot",
+        "line": "Les questions vont chez Google. Rien de votre coffre.",
+        "ok": "OK",
+        "hide": "Masquer les informations de WiseBot"
+      },
+      "status": {
+        "ready": "Prêt",
+        "offline": "Hors ligne"
+      },
+      "menu": "Plus",
+      "suggestions": "Questions suggérées",
+      "guideLink": "Ouvrir le guide : {{title}}"
     },
     "footer": {
       "privateTitle": "Vos comptes restent privés",

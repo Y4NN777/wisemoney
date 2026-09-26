@@ -1284,7 +1284,6 @@
       "newConversation": "New conversation",
       "stop": "Stop response",
       "welcome": "What would you like to do in WiseMoney?",
-      "privacy": "Your question and optional image stay in this browser until a place is available. This assistant cannot read your financial vault.",
       "offline": "WiseBot requires Internet — all written help remains available offline.",
       "offlineFallback": "WiseBot is waiting for a connection. These guides remain available offline.",
       "placeholder": "Ask how to use WiseMoney",
@@ -1304,13 +1303,21 @@
       "imageError": "Choose a valid image smaller than 10 MB.",
       "consent": {
         "title": "Before using WiseBot",
-        "body": "This confirmation applies only to WiseBot. Your encrypted WiseMoney vault remains separate.",
         "google": "Your question and optional image are sent to Google to generate the answer.",
         "scope": "WiseBot explains how to use WiseMoney and cannot access your vault, accounts, transactions, or screen.",
         "sensitive": "Do not include personal or financial information in a message or image.",
-        "accept": "I understand and continue",
-        "review": "Review WiseBot information"
-      }
+        "review": "Review WiseBot information",
+        "line": "Questions go to Google. Nothing from your vault.",
+        "ok": "OK",
+        "hide": "Hide WiseBot information"
+      },
+      "status": {
+        "ready": "Ready",
+        "offline": "Offline"
+      },
+      "menu": "More",
+      "suggestions": "Suggested questions",
+      "guideLink": "Open the guide: {{title}}"
     },
     "footer": {
       "privateTitle": "Your accounts stay private",
