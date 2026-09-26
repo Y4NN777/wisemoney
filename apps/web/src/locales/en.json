@@ -1356,15 +1356,17 @@
     "continue": "Continue",
     "finish": "Finish",
     "accounts": {
-      "label": "Accounts",
-      "title": "Your accounts",
-      "body": "Money lives in accounts: cash, mobile money, bank. Name the one we made for you, or add another.",
+      "label": "Currency & accounts",
+      "title": "Currency and accounts",
+      "body": "Pick the currency you count in, then name the account we made for you or add another: cash, mobile money, bank.",
       "nameLabel": "Rename {{name}}",
       "save": "Save",
       "addAnother": "Add another account",
       "add": "Add account",
       "invalid": "Give the account a name and a valid opening balance.",
-      "done": "Accounts ready."
+      "done": "Accounts ready.",
+      "currencyLabel": "Main currency",
+      "currencyHint": "Guessed from your phone. Change it now; accounts keep their currency once they hold movements."
     },
     "movement": {
       "label": "First movement",

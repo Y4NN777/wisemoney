@@ -10,6 +10,27 @@ const BASE_CURRENCY_SETTING_ID = "baseCurrency";
 /** Product default for new vaults (UEMOA/XOF persona, PRD §3). Single source — do not inline. */
 export const DEFAULT_BASE_CURRENCY = "XOF";
 
+const REGION_CURRENCIES: Readonly<Record<string, string>> = {
+  BF: "XOF", CI: "XOF", SN: "XOF", ML: "XOF", NE: "XOF", TG: "XOF", BJ: "XOF", GW: "XOF",
+  CM: "XAF", GA: "XAF", CG: "XAF", TD: "XAF", CF: "XAF", GQ: "XAF",
+  GH: "GHS", NG: "NGN", MA: "MAD", DZ: "DZD", TN: "TND", KE: "KES", ZA: "ZAR", EG: "EGP",
+  FR: "EUR", BE: "EUR", DE: "EUR", ES: "EUR", IT: "EUR", PT: "EUR", NL: "EUR", LU: "EUR", IE: "EUR", AT: "EUR", FI: "EUR", GR: "EUR",
+  CH: "CHF", GB: "GBP", US: "USD", CA: "CAD",
+};
+
+/**
+ * First-session default (onboarding rethink, 2026-09-26): the phone's locale region picks the
+ * starting currency; a language without a region, or an unknown region, falls back to XOF,
+ * the product's home market. The user can change it on the first step.
+ */
+export function guessBaseCurrency(languages: readonly string[]): string {
+  for (const tag of languages) {
+    const region = tag.split(/[-_]/)[1]?.toUpperCase();
+    if (region != null && region in REGION_CURRENCIES) return REGION_CURRENCIES[region]!;
+  }
+  return DEFAULT_BASE_CURRENCY;
+}
+
 type FxRate = {
   id: string;
   baseCurrency: string;

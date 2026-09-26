@@ -241,12 +241,19 @@ try {
   await appPage.getByLabel("Confirm private passphrase").fill(passphrase);
   await appPage.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
   try {
-    await appPage.getByRole("heading", { name: "Your accounts", exact: true }).waitFor({ timeout: 90_000 });
+    await appPage.getByRole("heading", { name: "Currency and accounts", exact: true }).waitFor({ timeout: 90_000 });
   } catch (error) {
     await appPage.screenshot({ path: `${outputDir}/setup-failure.png`, fullPage: true });
     throw new Error(`Vault setup did not reach Dashboard. Body:\n${await appPage.locator("body").innerText()}`, { cause: error });
   }
-  // First session, step 1: add a second account (the default "Cash" stays), then continue.
+  // First session, step 1: the currency is guessed from the browser locale (en-US -> USD); switch it
+  // to XOF, which swaps the empty default account, then add a second account and continue.
+  const currencyPicker = appPage.getByRole("button", { name: "Main currency", exact: true });
+  await currencyPicker.filter({ hasText: "USD — US Dollar" }).waitFor();
+  await currencyPicker.click();
+  await appPage.getByPlaceholder(/Search currency/).fill("XOF");
+  await appPage.getByRole("option", { name: /^XOF/ }).click();
+  await currencyPicker.filter({ hasText: "XOF — " }).waitFor();
   await appPage.getByRole("button", { name: "Add another account", exact: true }).click();
   await appPage.getByLabel("Account name", { exact: true }).fill("Smoke Cash");
   await appPage.getByLabel("Opening balance", { exact: true }).fill("50000");

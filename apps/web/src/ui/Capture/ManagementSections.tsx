@@ -84,7 +84,7 @@ function currencyOptions(locale: string): AccountCurrencyOption[] {
     .sort((left, right) => left.region === right.region ? left.name.localeCompare(right.name) : left.region === "Africa" ? -1 : 1);
 }
 
-function AccountCurrencyPicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+export function AccountCurrencyPicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");

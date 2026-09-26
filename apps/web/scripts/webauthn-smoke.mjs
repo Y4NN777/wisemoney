@@ -45,7 +45,7 @@ try {
   await page.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await page.getByLabel("Confirm private passphrase", { exact: true }).fill(passphrase);
   await page.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
-  await page.getByRole("heading", { name: "Your accounts", exact: true }).waitFor({ timeout: 90_000 });
+  await page.getByRole("heading", { name: "Currency and accounts", exact: true }).waitFor({ timeout: 90_000 });
 
   // Device unlock is enabled after setup, from Settings > Security, by confirming the passphrase once.
   await page.getByRole("link", { name: "Settings", exact: true }).click();
@@ -103,7 +103,7 @@ try {
   await page.getByRole("button", { name: "Back to overview", exact: true }).click();
   await page.getByRole("button", { name: "Open my space", exact: true }).click();
   await page.getByRole("button", { name: "Open", exact: true }).click();
-  await page.getByRole("heading", { name: "Your accounts", exact: true }).waitFor({ timeout: 30_000 });
+  await page.getByRole("heading", { name: "Currency and accounts", exact: true }).waitFor({ timeout: 30_000 });
 
   await cdp.send("WebAuthn.removeVirtualAuthenticator", { authenticatorId });
   await context.close();

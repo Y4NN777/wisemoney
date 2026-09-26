@@ -10,7 +10,8 @@ import type { FinancialStateSnapshot } from "../domain/financialState.ts";
 import { categoryDisplayName } from "../lib/categoryName.ts";
 import { formatMoney, parseMajorUnits } from "../types/money.ts";
 import { useCreateAccount, useCreateBudget, useCreateGoal, useUpdateAccount } from "../hooks/useFinancialState.ts";
-import { useSaveFirstSession } from "./hooks.ts";
+import { AccountCurrencyPicker } from "../ui/Capture/ManagementSections.tsx";
+import { useChangeStartingCurrency, useSaveFirstSession } from "./hooks.ts";
 import { FIRST_SESSION_STEPS, isAccountsStepDone, isPlanStepDone, type FirstSessionState, type FirstSessionStep } from "./firstSession.ts";
 
 const ACCOUNT_TYPES = ["cash", "mobile_money", "checking", "savings", "credit", "investment"] as const;
@@ -69,7 +70,7 @@ export default function FirstSessionFlow({
         <h1 className="text-lg font-semibold sm:text-xl">{t(`firstSession.${cursor}.title`)}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{t(`firstSession.${cursor}.body`)}</p>
         <div className="mt-5">
-          {cursor === "accounts" && <AccountsStep snapshot={snapshot} done={isAccountsStepDone(snapshot, defaultAccountNames)} />}
+          {cursor === "accounts" && <AccountsStep snapshot={snapshot} hasMovement={hasMovement} done={isAccountsStepDone(snapshot, defaultAccountNames)} />}
           {cursor === "movement" && <MovementStep done={hasMovement} />}
           {cursor === "plan" && <PlanStep snapshot={snapshot} done={isPlanStepDone(snapshot) || state?.planLater === true} onLater={() => persist({ planLater: true })} />}
           {cursor === "tour" && <TourStep />}
@@ -92,8 +93,9 @@ export default function FirstSessionFlow({
   );
 }
 
-function AccountsStep({ snapshot, done }: { snapshot: FinancialStateSnapshot; done: boolean }) {
+function AccountsStep({ snapshot, hasMovement, done }: { snapshot: FinancialStateSnapshot; hasMovement: boolean; done: boolean }) {
   const { t } = useTranslation();
+  const changeCurrency = useChangeStartingCurrency();
   const updateAccount = useUpdateAccount();
   const createAccount = useCreateAccount();
   const accounts = snapshot.accounts.filter((account) => account.isActive);
@@ -124,6 +126,11 @@ function AccountsStep({ snapshot, done }: { snapshot: FinancialStateSnapshot; do
 
   return (
     <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="accCurrency">{t("firstSession.accounts.currencyLabel")}</Label>
+        <AccountCurrencyPicker value={snapshot.baseCurrency} onChange={(currency) => changeCurrency.mutate({ currency, snapshot, hasMovement })} />
+        <p className="text-xs text-muted-foreground">{t("firstSession.accounts.currencyHint")}</p>
+      </div>
       <ul className="divide-y divide-border rounded-lg border border-border">
         {accounts.map((account) => (
           <li key={account.id} className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center">

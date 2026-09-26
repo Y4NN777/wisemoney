@@ -16,7 +16,7 @@ import { recordPassphraseUnlock } from "../../lib/deviceUnlockOffer.ts";
 import { hasSeenIntro, markIntroSeen } from "../../lib/introSeen.ts";
 import { saveFirstSessionState } from "../../firstSession/firstSession.ts";
 import { createAccount, seedDefaultCategories } from "../../pillars/state/index.ts";
-import { DEFAULT_BASE_CURRENCY } from "../../domain/currencyStore.ts";
+import { guessBaseCurrency, setStoredBaseCurrency } from "../../domain/currencyStore.ts";
 import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, ShieldCheck, Smartphone, Upload, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
@@ -595,10 +595,12 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
         const mk = await setupMasterKey(passphrase);
         // A fresh space starts with one account in the setup language, so Home never reads
         // "0 accounts" and the first movement has somewhere to go (onboarding rethink, 2026-09-25).
+        const startingCurrency = guessBaseCurrency(typeof navigator === "undefined" ? [] : navigator.languages);
+        await setStoredBaseCurrency(startingCurrency, mk);
         await createAccount({
           name: t("captureSheet.cashName"),
           type: "cash",
-          initialBalance: { minorUnits: 0, currency: DEFAULT_BASE_CURRENCY },
+          initialBalance: { minorUnits: 0, currency: startingCurrency },
           masterKey: mk,
         });
         // A new space starts its guided first session; spaces without this record (created

@@ -1356,15 +1356,17 @@
     "continue": "Continuer",
     "finish": "Terminer",
     "accounts": {
-      "label": "Comptes",
-      "title": "Vos comptes",
-      "body": "L’argent vit dans des comptes : espèces, mobile money, banque. Nommez celui que nous avons créé, ou ajoutez-en un.",
+      "label": "Devise et comptes",
+      "title": "Devise et comptes",
+      "body": "Choisissez la devise dans laquelle vous comptez, puis nommez le compte créé pour vous ou ajoutez-en un : espèces, mobile money, banque.",
       "nameLabel": "Renommer {{name}}",
       "save": "Enregistrer",
       "addAnother": "Ajouter un compte",
       "add": "Ajouter le compte",
       "invalid": "Donnez un nom au compte et un solde de départ valide.",
-      "done": "Comptes prêts."
+      "done": "Comptes prêts.",
+      "currencyLabel": "Devise principale",
+      "currencyHint": "Devinée depuis votre téléphone. Changez-la maintenant ; un compte garde sa devise dès qu’il contient des mouvements."
     },
     "movement": {
       "label": "Premier mouvement",
