@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContext.ts";
 import { clearCachedMasterKey, getCachedMasterKey, setCachedMasterKey } from "../../lib/vaultUnlocked.ts";
 import { recordPassphraseUnlock } from "../../lib/deviceUnlockOffer.ts";
+import { hasSeenIntro, markIntroSeen } from "../../lib/introSeen.ts";
 import { createAccount, seedDefaultCategories } from "../../pillars/state/index.ts";
 import { DEFAULT_BASE_CURRENCY } from "../../domain/currencyStore.ts";
 import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, PlusCircle, ShieldCheck, Smartphone, Upload, WifiOff } from "lucide-react";
@@ -131,7 +132,7 @@ export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlock
   } else if (flow === "landing") {
     content = (
       <LandingOnboarding
-        onStart={() => setFlow(vaultUnlockFlow === "setup" ? "intro" : vaultUnlockFlow)}
+        onStart={() => setFlow(hasSeenIntro() ? vaultUnlockFlow : "intro")}
         hasVault={vaultUnlockFlow !== "setup"}
       />
     );
@@ -146,7 +147,7 @@ export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlock
       />
     );
   } else if (flow === "intro") {
-    content = <IntroFlow onBack={() => setFlow("landing")} onComplete={() => setFlow("setup")} />;
+    content = <IntroFlow onBack={() => setFlow("landing")} onComplete={() => { markIntroSeen(); setFlow(vaultUnlockFlow); }} />;
   } else if (flow === "setup") {
     content = (
       <LocalSetup
