@@ -5,7 +5,7 @@
 | **Title** | WiseMoney — Software Requirements Specification |
 | **Date** | 2026-06-02 |
 | **Version** | SRS v0.1 (derived from PRD v0.1) |
-| **Revision** | Rev 2026-06-02 — Gate-2: FR-AUTH added; multi-tenant proxy; multi-provider MVP; CSV/XLSX/JSON export; consent in localStorage. Rev 2026-06-05 — OQ-06 resolved (client auth token storage; see §15). |
+| **Revision** | Rev 2026-06-02 — Gate-2: FR-AUTH added; multi-tenant proxy; multi-provider MVP; CSV/XLSX/JSON export; consent in localStorage. Rev 2026-06-05 — OQ-06 resolved (client auth token storage; see §15). Rev 2026-09-26 — §5.5 managed literacy gateway (FR-LRN-08…11); FR-LRN-02 scoped to the BYO path (ADR-0013). |
 | **Status** | Draft |
 | **Owner** | Nathan (software architecture) |
 | **Source** | `docs/PRD.md` v0.1; `docs/intake/intent-v0.1.md` v0.1 |
@@ -262,6 +262,10 @@ explanations tied to their real transactions and state.
 user asks "why am I overspending?" or equivalent, the answer must reference the
 user's own data, not generic advice.
 
+> Rev 2026-09-26: this requirement is met on the BYO-key path only. The managed
+> literacy gateway (§5.5) answers general questions without any vault data
+> (ADR-0013).
+
 **FR-LRN-03** `[MVP]` The system must trigger contextual learning prompts in
 response to relevant user actions (e.g. a budget breach, a large unusual
 transaction), offering a just-in-time educational nudge.
@@ -287,6 +291,25 @@ fundamentals (for educational purposes only — no trading capability).
 configured for teaching: simplified explanations, example-based answers, and
 step-by-step breakdowns. This is a routing concern internal to the AI orchestration
 layer, transparent to the user.
+
+### 5.5 Managed literacy gateway (added 2026-09-26, ADR-0013)
+
+**FR-LRN-08** `[MVP]` When a managed literacy gateway is configured, general
+teaching questions are answered through it without a BYO key. Its request carries
+only the typed question, the locale, recent turns, grounding unit ids, and the
+help-style safe context. Any vault-derived value, aggregate included, is rejected
+by the gateway schema (CONTRACT INV-EGR-04).
+
+**FR-LRN-09** `[MVP]` Answers are grounded in a bilingual, versioned literacy
+corpus shipped with the app (`docs/literacy/corpus-v0.md`), whose units name their
+source, licence status, and "as of" date for any figure. Units are readable offline.
+
+**FR-LRN-10** `[MVP]` The tutor carries its own per-feature consent (FR-CONSENT-02)
+and a permanent "education, not advice" disclosure; consent for help or for any
+other AI feature does not extend to it.
+
+**FR-LRN-11** `[MVP]` The tutor states which path produced an answer (managed
+corpus tutor or the user's own provider) whenever both are available.
 
 ---
 

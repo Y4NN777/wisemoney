@@ -31,7 +31,8 @@
 - `docs/ARCHITECTURE.md` — system architecture
 - `docs/THREAT_MODEL.md` — STRIDE security threat model
 - `docs/diagrams/C4/` — C4 diagrams (Context / Container / Component)
-- `docs/adr/` — architecture decision records (ADR-0001…0012)
+- `docs/adr/` — architecture decision records (ADR-0001…0013; 0013 proposed)
+- `docs/literacy/corpus-v0.md` — literacy corpus inventory (Track 3)
 - `docs/runbooks/` — operational runbooks (mixed: active local procedures +
   pre-production outlines)
 - `docs/intake/intent-v0.1.md` — source intent + full decision log (locked + Gate-1…5)
@@ -87,6 +88,8 @@
   unification, instant capture sheet, one-step onboarding, three-tab IA, Home first
   viewport, Plan sections, radius scale, vocabulary sweep, import-boundary lint
   (`docs/plans/ux-simplification-implementation.md`).
+- Required first session with a locale-guessed currency step, WiseBot panel rework
+  (2026-09-26, `docs/plans/first-session-wisebot-literacy.md` Tracks 1–2).
 
 ### Tracked Follow-Ups
 
@@ -101,6 +104,8 @@
   double-issuance race.
 - Add Postgres-backed integration tests for edge handlers.
 - Implement BYO direct-provider orchestration.
+- Literacy tutor on Gemma: on ADR-0013 approval, build `api/learn`, route the literacy
+  pillar, ship corpus v0 units as data (`docs/plans/first-session-wisebot-literacy.md`).
 - Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
 - Activity page date presets (day/week/month), then drop `TransactionActivity` from Home.
 

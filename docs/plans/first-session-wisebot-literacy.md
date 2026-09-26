@@ -1,8 +1,10 @@
 # First session · WiseBot UI · Literacy AI — plan
 
-Status: PROPOSED · 2026-09-26 · From Y4NN's review of the guided first session ("the checklist must be forcefully executed — see TickTick"), the WiseBot panel and the learning AI.
+Status: Tracks 1–2 DONE, Track 3 planned (ADR-0013 proposed) · 2026-09-26 · From Y4NN's review of the guided first session ("the checklist must be forcefully executed — see TickTick"), the WiseBot panel and the learning AI.
 
 ## Track 1 — First session as a required, task-shaped flow (TickTick pattern)
+
+Done 2026-09-26 (`45eb8a4`, `79bd998`). Step ① became "Currency and accounts": the base currency is guessed from the phone locale (region → currency, XOF fallback), editable while the space has no movement; the empty default account follows it.
 
 Replaces the dismissible "First steps" card (`components/FirstSteps`) and the three intro screens' role as the only guidance.
 
@@ -17,6 +19,8 @@ Replaces the dismissible "First steps" card (`components/FirstSteps`) and the th
 5. Verify: fresh space at 375 px FR/EN — the user cannot reach the dashboard without an account named and a movement recorded; reload mid-flow resumes at the right step; restore of a backup with data skips the flow; smokes updated (setup walk + first movement now happen inside the stepper).
 
 ## Track 2 — WiseBot panel rework
+
+Done 2026-09-26 (`8bbcb37`): header without cell borders and an overflow menu, one-line consent above the composer, three corpus suggestions, bubbles with guide chips that open the help entry from any page.
 
 Measured today (375 px): header = 4 hard-bordered cells (back · title · shield · trash · ×); consent = a bordered card with three bullets before anything else; empty state = icon + question + two privacy sentences; composer = image button + field + send.
 
@@ -35,3 +39,5 @@ Facts: help WiseBot = `api/help/_helpGateway.ts`, Gemma via the Gemini API, serv
 3. **Implementation slices after approval:** `api/learn` gateway mirroring the help gateway (key `LEARN_GEMMA_API_KEY`, model allow-list, redacted context per INV-EGR); literacy pillar routes "teaching" to it when the managed learning gateway is configured, BYO otherwise; corpus v0 wired as grounding; consent copy updated.
 
 Sequencing proposed: Track 1 → Track 2 → Track 3 research runs in parallel with 1–2 (agents), its implementation after the ADR is approved.
+
+Track 3 state 2026-09-26: research logged (`docs/research/2026-09-26-literacy-gemma.md`); ADR-0013 proposed; SRS §5.5 (FR-LRN-08…11) and CONTRACT INV-EGR-04 added; corpus v0 inventory at `docs/literacy/corpus-v0.md`. Next, on approval: `api/learn` gateway (key `LITERACY_GEMINI_API_KEY`), literacy pillar routing, corpus units as data, consent key and disclosure.

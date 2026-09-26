@@ -12,6 +12,7 @@
 Rev 2026-06-02 — Gate-5: INV-EGR-03 amended to mode-split (managed = server-enforced; BYO-key = client-side, user-as-principal) per THREAT_MODEL §5.
 Rev 2026-06-05 — §8 provider list updated (NVIDIA hosted removed; OpenRouter added); MVP-scoping note added recording managed=redacted-only at MVP and deferred full-egress (ADR-0011).
 Rev 2026-06-05b — §5: INV-AUTH-06 (client token storage) and INV-AUTH-07 (session/lock coupling) added; refresh-token reuse-detection obligation noted; §8 "Must not change" list updated. OQ-06 resolved. (Y4NN decision 2026-06-05; ADR-0012.)
+Rev 2026-09-26 — §3: INV-EGR-04 added (managed literacy gateway carries no vault-derived data; ADR-0013, SRS §5.5).
 Rev 2026-06-05c — §4: INV-KEY-03 clarified to name the transient in-memory raw master-key bytes that wrapping for WebAuthn daily-unlock unavoidably requires; zeroing obligation made explicit; the persistent-storage prohibition restated unambiguously. Intent unchanged. (Mishmar review 2026-06-05; ADR-0012; ARCHITECTURE §7.)
 
 > This document states invariants and guarantees that must hold for the lifetime
@@ -159,6 +160,16 @@ structurally eliminate the local-first, no-cloud-dependency property that define
 BYO-key mode (INV-AUTH-05). The distinction is therefore architectural, not a
 gap. Managed mode carries the full server-enforcement burden; BYO-key mode
 carries an explicit user-as-principal acceptance of client-only enforcement.*
+
+**INV-EGR-04** The managed literacy gateway (`api/learn`, ADR-0013) must not
+carry any vault-derived value: no amounts, balances, merchants, categories, budget
+or goal figures, and none of the FR-CONSENT-07 aggregates. Its request schema is
+closed (question, locale, recent turns, grounding unit ids, safe context) and the
+gateway rejects any other field, independent of client consent state.
+
+*Why: the destination is free-tier Gemma on the Gemini API, whose terms allow
+training and human review of submitted content; a schema that admits aggregates
+would move financial data under those terms with no server-side guarantee left.*
 
 ---
 
