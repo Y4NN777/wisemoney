@@ -30,6 +30,17 @@ describe("localization resources", () => {
     expect(en.nav.dashboardShort).toBe("Home");
   });
 
+  it("ships the twelve month names used by the period stepper", () => {
+    // Regression guard: dashboard.months is an array read as `dashboard.months.${index}`; a
+    // key purge on 2026-09-25 dropped it and the stepper showed "dashboard.months.8".
+    for (const resource of [en, fr]) {
+      const months = (resource as Record<string, Record<string, unknown>>).dashboard!.months;
+      expect(Array.isArray(months)).toBe(true);
+      expect(months).toHaveLength(12);
+      expect((months as string[]).every((name) => name.trim().length > 0)).toBe(true);
+    }
+  });
+
   it("keeps primary screens free of prose and chrome labels short", () => {
     // Copy rule (ux-simplification decision 8, 2026-09-25): titles carry primary screens; explanations live in Help.
     const words = (value: string | undefined) => (value ?? "").trim().split(/\s+/).filter(Boolean).length;

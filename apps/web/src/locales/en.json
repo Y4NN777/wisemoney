@@ -104,7 +104,8 @@
       "glimpse": {
         "caption": "Your numbers appear here, and stay on this device.",
         "footer": "Protected by your passphrase"
-      }
+      },
+      "howItWorks": "How it works"
     },
     "restore": {
       "aria": "Restore an existing WiseMoney space",
@@ -304,7 +305,21 @@
       "less": "Less",
       "aria": "More about this month"
     },
-    "manageAccounts": "Manage accounts"
+    "manageAccounts": "Manage accounts",
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ]
   },
   "operations": {
     "title": "Activity",

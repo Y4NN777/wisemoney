@@ -104,7 +104,8 @@
       "glimpse": {
         "caption": "Vos chiffres apparaissent ici, et restent sur cet appareil.",
         "footer": "Protégé par votre phrase privée"
-      }
+      },
+      "howItWorks": "Comment ça marche"
     },
     "restore": {
       "aria": "Restaurer un espace WiseMoney existant",
@@ -304,7 +305,21 @@
       "less": "Moins",
       "aria": "Plus sur ce mois"
     },
-    "manageAccounts": "Gérer les comptes"
+    "manageAccounts": "Gérer les comptes",
+    "months": [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ]
   },
   "operations": {
     "title": "Activité",
