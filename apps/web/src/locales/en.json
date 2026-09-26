@@ -145,10 +145,6 @@
         "passphrase": {
           "title": "One passphrase, your only key",
           "body": "It protects everything. Nobody can recover it for you, so keep it somewhere safe — an export is your backup."
-        },
-        "firstMove": {
-          "title": "Start with one movement",
-          "body": "Record what you just spent or received. It goes into Cash, the account set up for you — rename it or add others whenever you like."
         }
       }
     }
@@ -1354,23 +1350,60 @@
     "body": "Ask about your month, get insights, and learn as you go.",
     "action": "Open assistant"
   },
-  "firstSteps": {
-    "title": "First steps",
-    "body": "Three things, in any order.",
-    "done": "done",
-    "dismiss": "Hide this",
-    "tabs": "Home = where you stand · Activity = what happened · Plan = what is coming",
-    "firstMovement": {
-      "label": "Record a first movement",
-      "action": "Record"
-    },
+  "firstSession": {
+    "aria": "First steps",
+    "progressAria": "Setup progress",
+    "continue": "Continue",
+    "finish": "Finish",
     "accounts": {
-      "label": "Name Cash, or add another account",
-      "action": "Accounts"
+      "label": "Accounts",
+      "title": "Your accounts",
+      "body": "Money lives in accounts: cash, mobile money, bank. Name the one we made for you, or add another.",
+      "nameLabel": "Rename {{name}}",
+      "save": "Save",
+      "addAnother": "Add another account",
+      "add": "Add account",
+      "invalid": "Give the account a name and a valid opening balance.",
+      "done": "Accounts ready."
+    },
+    "movement": {
+      "label": "First movement",
+      "title": "Your first movement",
+      "body": "Record something you spent or received today. This is the gesture you will repeat most.",
+      "record": "Record a movement",
+      "done": "Recorded. Find it in Activity."
     },
     "plan": {
-      "label": "Set a budget or a goal",
-      "action": "Open Plan"
+      "label": "One plan",
+      "title": "One plan",
+      "body": "A monthly budget for a category, or a goal to save towards. You can add more later.",
+      "budget": "A budget",
+      "goal": "A goal",
+      "save": "Save",
+      "later": "Later",
+      "invalid": "Name, category and amount are needed.",
+      "done": "Plan set."
+    },
+    "tour": {
+      "label": "Where things are",
+      "title": "Where things are",
+      "body": "Four places; that is the whole app.",
+      "home": {
+        "title": "Home",
+        "body": "Where you stand: balance, this month, what needs you."
+      },
+      "activity": {
+        "title": "Activity",
+        "body": "Everything that happened, by day, with filters and export."
+      },
+      "plan": {
+        "title": "Plan",
+        "body": "Budgets, goals, planned and recurring items, debts."
+      },
+      "capture": {
+        "title": "The + button",
+        "body": "Record a movement, a transfer or a goal contribution from anywhere."
+      }
     }
   }
 }

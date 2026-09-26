@@ -1,4 +1,3 @@
-import FirstSteps from "../../components/FirstSteps/index.tsx";
 
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 
@@ -31,7 +30,6 @@ export function FirstTransactionDashboard({ snapshot, accountCount }: { snapshot
         <div className="space-y-1">
           <h2 className="text-base font-semibold leading-none tracking-normal">{t("dashboard.firstTransaction.title")}</h2>
         </div>
-        <FirstSteps snapshot={snapshot} hasMovement={false} />
       </section>
     </main>
   );

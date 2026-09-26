@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo, useEffect, type ReactNode } from "react";
+import { Fragment, useRef, useState, useMemo, useEffect, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { useDeleteTransaction, useFinancialOperations, useFinancialState, useHasAnyMoneyMovement, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
@@ -28,7 +28,9 @@ import { getDashboardMode } from "./dashboardMode.ts";
 import { useOpenCaptureSheet } from "../../components/CaptureSheet/index.tsx";
 import DeviceUnlockOffer from "../../components/DeviceUnlockOffer/index.tsx";
 import AssistantCard from "../../components/AssistantCard/index.tsx";
-import FirstSteps from "../../components/FirstSteps/index.tsx";
+import FirstSessionFlow from "../../firstSession/FirstSessionFlow.tsx";
+import { useFirstSessionState } from "../../firstSession/hooks.ts";
+import { selectFirstSessionStep, type FirstSessionStep } from "../../firstSession/firstSession.ts";
 import { comparePeriodAmounts } from "./periodComparison.ts";
 import {
   selectAccountDistribution,
@@ -266,7 +268,6 @@ function DashboardContent({
             activityContext={{ start: periodStart, end: periodEnd, accountId }}
           />
     ),
-    firstSteps: <FirstSteps snapshot={snapshot} hasMovement />,
     quickActions: canMutate ? <DashboardQuickActions /> : null,
     attention: <AttentionCardHost snapshot={snapshot} />,
     recentMovements: (
@@ -591,7 +592,7 @@ function DashboardContent({
 
 // ── Export default ────────────────────────────────────────────────────────
 export default function Dashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const now = new Date();
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
@@ -600,6 +601,12 @@ export default function Dashboard() {
 
   const currentQuery = useFinancialState();
   const hasMovementQuery = useHasAnyMoneyMovement();
+  const firstSessionQuery = useFirstSessionState();
+  // The step in view lags the derived step (see FirstSessionFlow); it is remembered here because
+  // Dashboard never unmounts while the flow may (operations query turning on shows a skeleton).
+  const [firstSessionCursor, setFirstSessionCursor] = useState<FirstSessionStep | null>(null);
+  const firstSessionStart = useRef<FirstSessionStep | null>(null);
+  const defaultAccountNames = [...new Set([...i18n.languages.map((language) => t("captureSheet.cashName", { lng: language })), "Cash", "Espèces"])];
   const operationsQuery = useFinancialOperations({ enabled: hasMovementQuery.data === true });
   const historicalQuery = useHistoricalState(selectedYear, selectedMonth);
 
@@ -654,6 +661,28 @@ export default function Dashboard() {
   }
 
   const activeAccountCount = currentQuery.data.accounts.filter((account) => account.isActive).length;
+  if (firstSessionQuery.isLoading) return null;
+  const firstSessionStep = selectFirstSessionStep({
+    snapshot: currentQuery.data,
+    hasMovement: hasMovementQuery.data === true,
+    state: firstSessionQuery.data ?? null,
+    defaultAccountNames,
+  });
+  if (firstSessionStep !== "done") {
+    if (firstSessionStart.current == null) firstSessionStart.current = firstSessionStep;
+    const cursor = firstSessionCursor ?? firstSessionStart.current;
+    return (
+      <FirstSessionFlow
+        snapshot={currentQuery.data}
+        hasMovement={hasMovementQuery.data === true}
+        state={firstSessionQuery.data ?? null}
+        derivedStep={firstSessionStep}
+        defaultAccountNames={defaultAccountNames}
+        cursor={cursor !== "done" ? cursor : firstSessionStep}
+        onCursorChange={setFirstSessionCursor}
+      />
+    );
+  }
   const dashboardMode = getDashboardMode(hasMovementQuery.data === true);
   if (dashboardMode === "first-transaction") {
     return <FirstTransactionDashboard snapshot={currentQuery.data} accountCount={activeAccountCount} />;

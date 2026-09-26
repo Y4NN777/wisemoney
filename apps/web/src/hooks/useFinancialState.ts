@@ -32,7 +32,7 @@ const OPERATIONS_KEY = ["financialOperations"] as const;
 const CURRENCY_CONTEXT_KEY = ["currencyContext"] as const;
 const masterKeyScopes = new WeakMap<MasterKey, string>();
 
-function masterKeyScope(masterKey: MasterKey): string {
+export function masterKeyScope(masterKey: MasterKey): string {
   const existing = masterKeyScopes.get(masterKey);
   if (existing != null) return existing;
   const scope = crypto.randomUUID();

@@ -14,9 +14,10 @@ import { MasterKeyContext, VaultActionsContext } from "../../lib/masterKeyContex
 import { clearCachedMasterKey, getCachedMasterKey, setCachedMasterKey } from "../../lib/vaultUnlocked.ts";
 import { recordPassphraseUnlock } from "../../lib/deviceUnlockOffer.ts";
 import { hasSeenIntro, markIntroSeen } from "../../lib/introSeen.ts";
+import { saveFirstSessionState } from "../../firstSession/firstSession.ts";
 import { createAccount, seedDefaultCategories } from "../../pillars/state/index.ts";
 import { DEFAULT_BASE_CURRENCY } from "../../domain/currencyStore.ts";
-import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, PlusCircle, ShieldCheck, Smartphone, Upload, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, KeyRound, LockKeyhole, LockOpen, ShieldCheck, Smartphone, Upload, WifiOff } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
@@ -192,7 +193,7 @@ type LandingOnboardingProps = {
   hasVault: boolean;
 };
 
-const INTRO_STEPS = ["device", "passphrase", "firstMove"] as const;
+const INTRO_STEPS = ["device", "passphrase"] as const;
 
 /**
  * Three quiet screens between Start and the passphrase (onboarding-rethink, Y4NN 2026-09-25:
@@ -203,7 +204,7 @@ function IntroFlow({ onBack, onComplete }: { onBack: () => void; onComplete: () 
   const [stepIndex, setStepIndex] = useState(0);
   const step = INTRO_STEPS[stepIndex]!;
   const isLast = stepIndex === INTRO_STEPS.length - 1;
-  const icons = { device: <Smartphone className="h-7 w-7" />, passphrase: <KeyRound className="h-7 w-7" />, firstMove: <PlusCircle className="h-7 w-7" /> };
+  const icons = { device: <Smartphone className="h-7 w-7" />, passphrase: <KeyRound className="h-7 w-7" /> };
   return (
     <main aria-label={t("keyUnlock.intro.aria")} className="landing-grid flex min-h-dvh flex-col bg-background p-4 text-foreground">
       <AuthTopBar onBack={stepIndex === 0 ? onBack : () => setStepIndex((index) => index - 1)} />
@@ -600,6 +601,9 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
           initialBalance: { minorUnits: 0, currency: DEFAULT_BASE_CURRENCY },
           masterKey: mk,
         });
+        // A new space starts its guided first session; spaces without this record (created
+        // before it existed, or restored from an older backup) are never forced through it.
+        await saveFirstSessionState({ completed: false, planLater: false }, mk);
         await onReady(mk);
       } catch {
         setError(t("keyUnlock.setup.errors.failed"));

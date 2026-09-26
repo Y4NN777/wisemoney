@@ -25,7 +25,6 @@ export function indexTransactionsById(transactions: readonly TransactionDisplay[
 
 export type HomeSectionId =
   | "summary"
-  | "firstSteps"
   | "quickActions"
   | "attention"
   | "recentMovements"
@@ -43,8 +42,8 @@ export type HomeLayout = { aboveFold: HomeSectionId[]; belowFold: HomeSectionId[
 export function selectHomeLayout(input: { canMutate: boolean }): HomeLayout {
   return {
     aboveFold: input.canMutate
-      ? ["summary", "firstSteps", "quickActions", "attention", "recentMovements", "assistant"]
-      : ["summary", "firstSteps", "attention", "recentMovements", "assistant"],
+      ? ["summary", "quickActions", "attention", "recentMovements", "assistant"]
+      : ["summary", "attention", "recentMovements", "assistant"],
     belowFold: ["charts", "planningCards", "aiInsight"],
   };
 }

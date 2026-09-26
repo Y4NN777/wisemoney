@@ -61,10 +61,10 @@ describe("localization resources", () => {
           expect(words(value), `${group}.${key}`).toBeLessThanOrEqual(6);
         }
       }
-      for (const step of ["firstMovement", "accounts", "plan"]) {
-        const node = (r.firstSteps as Record<string, Record<string, string>>)[step]!;
-        expect(words(node.label), `firstSteps.${step}.label`).toBeLessThanOrEqual(7);
-        expect(words(node.action), `firstSteps.${step}.action`).toBeLessThanOrEqual(3);
+      for (const step of ["accounts", "movement", "plan", "tour"]) {
+        const node = (r.firstSession as Record<string, Record<string, string>>)[step]!;
+        expect(words(node.label), `firstSession.${step}.label`).toBeLessThanOrEqual(4);
+        expect(words(node.title), `firstSession.${step}.title`).toBeLessThanOrEqual(4);
       }
     }
   });

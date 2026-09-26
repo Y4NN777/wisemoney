@@ -233,26 +233,42 @@ try {
   });
   await appPage.goto(baseURL, { waitUntil: "networkidle" });
   await appPage.getByRole("button", { name: "Start", exact: true }).last().click();
-  // Intro: three screens, then the passphrase form (the last button shares the setup button's name).
-  for (let step = 0; step < 2; step++) await appPage.getByRole("button", { name: "Next", exact: true }).click();
+  // Intro: two screens, then the passphrase form (the last button shares the setup button's name).
+  await appPage.getByRole("button", { name: "Next", exact: true }).click();
   await appPage.getByRole("button", { name: "Create private space", exact: true }).click();
   const passphrase = "WiseMoney-Smoke-Test-Only-2026";
   await appPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await appPage.getByLabel("Confirm private passphrase").fill(passphrase);
   await appPage.locator("form").getByRole("button", { name: "Create private space", exact: true }).click();
   try {
-    await appPage.getByRole("heading", { name: "Your space is ready", exact: true }).waitFor({ timeout: 90_000 });
+    await appPage.getByRole("heading", { name: "Your accounts", exact: true }).waitFor({ timeout: 90_000 });
   } catch (error) {
     await appPage.screenshot({ path: `${outputDir}/setup-failure.png`, fullPage: true });
     throw new Error(`Vault setup did not reach Dashboard. Body:\n${await appPage.locator("body").innerText()}`, { cause: error });
   }
-  // First movement goes into the default account created at setup (the sheet would create one if none existed).
-  await appPage.getByRole("button", { name: "Capture", exact: true }).click();
+  // First session, step 1: add a second account (the default "Cash" stays), then continue.
+  await appPage.getByRole("button", { name: "Add another account", exact: true }).click();
+  await appPage.getByLabel("Account name", { exact: true }).fill("Smoke Cash");
+  await appPage.getByLabel("Opening balance", { exact: true }).fill("50000");
+  await appPage.getByRole("button", { name: "Add account", exact: true }).click();
+  await appPage.getByText("Accounts ready.", { exact: true }).waitFor({ timeout: 30_000 });
+  await appPage.getByRole("button", { name: "Continue", exact: true }).click();
+  // Step 2: the first movement, recorded through the sheet from the step's own button.
+  await appPage.getByRole("heading", { name: "Your first movement", exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "Record a movement", exact: true }).click();
   await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("700");
   await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
   await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
   await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
+  await appPage.getByText("Recorded. Find it in Activity.", { exact: true }).waitFor({ timeout: 30_000 });
+  await appPage.getByRole("button", { name: "Continue", exact: true }).click();
+  // Step 3: planning is optional here; step 4 ends the first session and reveals the dashboard.
+  await appPage.getByRole("heading", { name: "One plan", exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "Later", exact: true }).click();
+  await appPage.getByRole("button", { name: "Continue", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Where things are", exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "Finish", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Money available today", { exact: true }).waitFor({ timeout: 90_000 });
 
   const syncPage = await appContext.newPage();
@@ -325,7 +341,7 @@ try {
 
   await appPage.getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Accounts & categories", { exact: true }).click();
-  for (const [name, balance] of [["Smoke Cash", "50000"], ["Smoke Savings", "0"]]) {
+  for (const [name, balance] of [["Smoke Savings", "0"]]) {
     await appPage.getByRole("button", { name: "New", exact: true }).last().click();
     await appPage.getByLabel("Account name", { exact: true }).fill(name);
     await appPage.getByLabel("Opening balance", { exact: true }).fill(balance);
