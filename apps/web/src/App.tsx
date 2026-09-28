@@ -117,6 +117,14 @@ function PwaUpdateNotice({
   );
 }
 
+/**
+ * Detection latency dominates the perceived update time (measured 2026-09-26: the
+ * install, activation and reboot take about two seconds, one of them a fixed Chromium
+ * delay). A check is a conditional GET of the 32 KB worker script answered with 304,
+ * so polling every minute while the app is open is cheap.
+ */
+const UPDATE_CHECK_INTERVAL_MS = 60 * 1000;
+
 function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [stage, setStage] = useState<UpdateStage>(() => hasPwaUpdateReload() ? "installed" : "hidden");
@@ -157,7 +165,7 @@ function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
     };
 
     checkForUpdate();
-    const interval = window.setInterval(checkForUpdate, 5 * 60 * 1000);
+    const interval = window.setInterval(checkForUpdate, UPDATE_CHECK_INTERVAL_MS);
     document.addEventListener("visibilitychange", checkWhenVisible);
     window.addEventListener("focus", checkForUpdate);
     window.addEventListener("online", checkForUpdate);
