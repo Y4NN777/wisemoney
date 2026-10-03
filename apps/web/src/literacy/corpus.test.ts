@@ -7,6 +7,7 @@ import {
   getLiteracyUnits,
   unitAsMarkdown,
 } from "./corpus.ts";
+import { LITERACY_STARTERS } from "./starters.ts";
 
 const en = getLiteracyUnits("en");
 const fr = getLiteracyUnits("fr-BF");
@@ -61,5 +62,29 @@ describe("literacy corpus v0", () => {
   it("renders a unit as markdown with locale punctuation", () => {
     expect(unitAsMarkdown(getLiteracyUnit("en", "betting")!)).toContain("**Example:** 1,000 F a day");
     expect(unitAsMarkdown(getLiteracyUnit("fr", "betting")!)).toContain("**Exemple :** 1 000 F de paris par jour");
+  });
+});
+
+describe("beginner starter questions", () => {
+  it("are phrased as questions in both languages and point at existing lessons", () => {
+    expect(LITERACY_STARTERS.length).toBeGreaterThanOrEqual(3);
+    for (const starter of LITERACY_STARTERS) {
+      expect(starter.question.en.trim().endsWith("?")).toBe(true);
+      expect(starter.question.fr.trim().endsWith("?")).toBe(true);
+      expect(starter.unitIds.length).toBeGreaterThan(0);
+      expect(starter.unitIds.length).toBeLessThanOrEqual(3);
+      for (const id of starter.unitIds) {
+        expect(getLiteracyUnit("en", id), `${starter.id} -> ${id}`).not.toBeNull();
+        expect(getLiteracyUnit("fr", id), `${starter.id} -> ${id}`).not.toBeNull();
+      }
+    }
+  });
+
+  it("never use a lesson title as the question", () => {
+    const titles = new Set([...en, ...fr].map((unit) => unit.title));
+    for (const starter of LITERACY_STARTERS) {
+      expect(titles.has(starter.question.en)).toBe(false);
+      expect(titles.has(starter.question.fr)).toBe(false);
+    }
   });
 });

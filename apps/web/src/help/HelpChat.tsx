@@ -46,6 +46,7 @@ export default function HelpChat({
   safeContext,
   onOpenChange,
   vaultUnlocked,
+  launcherHidden = false,
 }: {
   sections: HelpSection[];
   openRequest: number;
@@ -53,6 +54,7 @@ export default function HelpChat({
   safeContext: SafeHelpContext;
   onOpenChange?: (open: boolean) => void;
   vaultUnlocked: boolean;
+  launcherHidden?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -514,7 +516,7 @@ export default function HelpChat({
         </>
       )}
 
-      {!open && (
+      {!open && !launcherHidden && (
         <button
           type="button"
           onClick={() => {

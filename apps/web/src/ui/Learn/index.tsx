@@ -9,6 +9,7 @@ import { Button } from "../../components/ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../components/ui/dialog.tsx";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
+import { useHideWiseBotLauncher } from "../../help/WiseBotProvider.tsx";
 import { getAICapability } from "../../lib/capabilities.ts";
 import {
   LITERACY_AREAS,
@@ -17,6 +18,7 @@ import {
   literacyLocale,
   type LiteracyUnit,
 } from "../../literacy/corpus.ts";
+import { LITERACY_STARTERS } from "../../literacy/starters.ts";
 import { TutorUnavailableError, askTutor, type TutorAnswer } from "../../pillars/literacy/index.ts";
 
 type TutorMessage = {
@@ -27,7 +29,6 @@ type TutorMessage = {
 };
 
 const MAX_QUESTION_LENGTH = 2_000;
-const SUGGESTED_UNIT_IDS = ["first-income", "betting", "compound-interest"];
 
 function useOnline(): boolean {
   const [online, setOnline] = useState(() => navigator.onLine);
@@ -48,6 +49,7 @@ export default function Learn() {
   const locale = literacyLocale(i18n.resolvedLanguage ?? i18n.language);
   const units = getLiteracyUnits(locale);
   const online = useOnline();
+  useHideWiseBotLauncher();
   const capability = useQuery({ queryKey: AI_CAPABILITY_QUERY_KEY, queryFn: getAICapability });
 
   const [messages, setMessages] = useState<TutorMessage[]>([]);
@@ -140,10 +142,10 @@ export default function Learn() {
                 <h2 className="text-sm font-semibold">{t("learn.tutor.title")}</h2>
               </div>
               <ul className="flex flex-wrap gap-2" aria-label={t("learn.tutor.suggestions")}>
-                {SUGGESTED_UNIT_IDS.flatMap((id) => units.find((unit) => unit.id === id) ?? []).map((unit) => (
-                  <li key={unit.id}>
-                    <button type="button" onClick={() => ask(unit.title, [unit.id])} disabled={busy} className="rounded-full border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
-                      {unit.title}
+                {LITERACY_STARTERS.map((starter) => (
+                  <li key={starter.id}>
+                    <button type="button" onClick={() => ask(starter.question[locale], starter.unitIds)} disabled={busy} className="rounded-2xl border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
+                      {starter.question[locale]}
                     </button>
                   </li>
                 ))}

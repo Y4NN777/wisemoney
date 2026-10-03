@@ -16,6 +16,8 @@ type WiseBotContextValue = {
   isOpen: boolean;
   openWiseBot: (input?: WiseBotOpenInput) => void;
   closeWiseBot: () => void;
+  /** Hides the floating launcher until the returned function is called. */
+  hideLauncher: () => () => void;
 };
 
 const WiseBotContext = createContext<WiseBotContextValue | null>(null);
@@ -30,6 +32,7 @@ export function WiseBotProvider({ children, vaultUnlocked }: { children: ReactNo
   const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith("fr") ? "fr" : "en";
   const sections = useMemo(() => getHelpSections(locale), [locale]);
   const [isOpen, setIsOpen] = useState(false);
+  const [launcherHolds, setLauncherHolds] = useState(0);
   const [request, setRequest] = useState(() => ({
     id: 0,
     prompt: "",
@@ -56,13 +59,17 @@ export function WiseBotProvider({ children, vaultUnlocked }: { children: ReactNo
   }, [locale]);
 
   const closeWiseBot = useCallback(() => setIsOpen(false), []);
+  const hideLauncher = useCallback(() => {
+    setLauncherHolds((count) => count + 1);
+    return () => setLauncherHolds((count) => Math.max(0, count - 1));
+  }, []);
 
   useEffect(() => {
     const openFromEvent = (event: Event) => openWiseBot((event as CustomEvent<WiseBotOpenInput>).detail ?? {});
     window.addEventListener(WISEBOT_OPEN_EVENT, openFromEvent);
     return () => window.removeEventListener(WISEBOT_OPEN_EVENT, openFromEvent);
   }, [openWiseBot]);
-  const value = useMemo(() => ({ isOpen, openWiseBot, closeWiseBot }), [closeWiseBot, isOpen, openWiseBot]);
+  const value = useMemo(() => ({ isOpen, openWiseBot, closeWiseBot, hideLauncher }), [closeWiseBot, hideLauncher, isOpen, openWiseBot]);
 
   return (
     <WiseBotContext.Provider value={value}>
@@ -73,6 +80,7 @@ export function WiseBotProvider({ children, vaultUnlocked }: { children: ReactNo
         initialPrompt={request.prompt}
         safeContext={request.context}
         vaultUnlocked={vaultUnlocked}
+        launcherHidden={launcherHolds > 0}
         onOpenChange={setIsOpen}
       />
     </WiseBotContext.Provider>
@@ -83,4 +91,14 @@ export function useWiseBot(): WiseBotContextValue {
   const value = useContext(WiseBotContext);
   if (value == null) throw new Error("useWiseBot must be used within WiseBotProvider");
   return value;
+}
+
+/**
+ * A page with its own chat composer (the Learn tutor) hides the floating WiseBot launcher while it
+ * is mounted: the launcher sat on top of the send button at 375 px. WiseBot stays reachable from
+ * the header help button.
+ */
+export function useHideWiseBotLauncher(): void {
+  const { hideLauncher } = useWiseBot();
+  useEffect(() => hideLauncher(), [hideLauncher]);
 }

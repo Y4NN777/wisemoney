@@ -292,14 +292,17 @@ try {
   await appPage.getByRole("link", { name: "Learn about money", exact: true }).click();
   await appPage.getByRole("heading", { name: "Learn", exact: true }).waitFor();
   await appPage.getByText("Education, not advice.", { exact: true }).waitFor();
+  assert.equal(await appPage.getByRole("button", { name: "Open WiseBot", exact: true }).count(), 0, "the WiseBot launcher covers the tutor composer on the learn page");
   await appPage.getByRole("button", { name: "Your first income", exact: true }).last().click();
   const lessonDialog = appPage.getByRole("dialog", { name: "Your first income", exact: true });
   await lessonDialog.getByText("Example", { exact: true }).waitFor();
   await lessonDialog.getByText(/OECD\/INFE Core Competencies Framework/).waitFor();
   await lessonDialog.getByRole("button", { name: "Close", exact: true }).click();
   await appPage.getByText("Tutor answers go through Google. Nothing from your vault.", { exact: true }).waitFor();
-  await appPage.getByRole("list", { name: "Suggested lessons", exact: true }).getByRole("button", { name: "Betting is not an income", exact: true }).click();
-  await appPage.getByText(/Bookmakers build a margin into every odd/).waitFor();
+  const starters = appPage.getByRole("list", { name: "Questions to start with", exact: true }).getByRole("button");
+  assert.equal(await starters.count(), 4, "learn page does not offer four beginner questions");
+  await starters.filter({ hasText: "Someone says they can double my money. Is it real?" }).click();
+  await appPage.getByText(/A pyramid scheme pays early members with newcomers/).waitFor();
   await appPage.getByText("Lesson on this device", { exact: true }).waitFor();
   assert.deepEqual(learnRequests, [], "a question left the browser before the tutor notice was accepted");
   await appPage.getByLabel("Ask a money question").fill("zzzz qqqq");
@@ -309,6 +312,7 @@ try {
   await appPage.screenshot({ path: `${outputDir}/learn.png`, fullPage: true });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "Open WiseBot", exact: true }).waitFor();
 
   const syncPage = await appContext.newPage();
   syncPage.on("pageerror", (error) => appErrors.push(`sync pageerror: ${error.message}`));
