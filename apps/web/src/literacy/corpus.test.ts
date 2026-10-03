@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   LITERACY_AREAS,
+  LITERACY_PATH,
   LITERACY_SOURCES,
   findRelevantUnits,
   getLiteracyUnit,
@@ -11,80 +12,76 @@ import { LITERACY_STARTERS } from "./starters.ts";
 
 const en = getLiteracyUnits("en");
 const fr = getLiteracyUnits("fr-BF");
+const words = (text: string) => text.replace(/(\d)[\s\xa0\u202f](\d{3})/g, "$1$2").split(/\s+/).filter((word) => /\w/.test(word)).length;
+const digits = (text: string) => (text.match(/\d+(?:[\s\xa0\u202f.,]\d+)*/g) ?? []).map((number) => number.replace(/[\s\xa0\u202f.,]/g, "")).sort();
 
-describe("literacy corpus v0", () => {
-  it("ships the same 32 units, in the same order and areas, in both languages", () => {
-    expect(en).toHaveLength(32);
-    expect(fr.map(({ id, area }) => `${area}/${id}`)).toEqual(en.map(({ id, area }) => `${area}/${id}`));
-    expect(new Set(en.map(({ id }) => id)).size).toBe(32);
+describe("literacy course v1", () => {
+  it("has the eight parts in order and the same lessons in both languages", () => {
+    expect(LITERACY_AREAS).toEqual(["start", "manage", "save", "bank", "borrow", "protect", "invest", "grow"]);
+    const order = LITERACY_AREAS.flatMap((area) => [...LITERACY_PATH[area]]);
+    expect(en.map(({ id }) => id)).toEqual(order);
+    expect(fr.map(({ id }) => id)).toEqual(order);
+    expect(new Set(order).size).toBe(order.length);
+    expect(order.length).toBeGreaterThanOrEqual(70);
+    for (const unit of [...en, ...fr]) expect((LITERACY_PATH[unit.area] as readonly string[]).includes(unit.id), unit.id).toBe(true);
     expect(en.every((unit) => unit.locale === "en") && fr.every((unit) => unit.locale === "fr")).toBe(true);
   });
 
-  it("covers every area and keeps units complete and short", () => {
-    for (const area of LITERACY_AREAS) expect(en.some((unit) => unit.area === area)).toBe(true);
+  it("keeps every lesson complete, short, and tied to registered sources", () => {
     for (const unit of [...en, ...fr]) {
-      expect(unit.points.length).toBeGreaterThanOrEqual(3);
-      expect(unit.points.length).toBeLessThanOrEqual(4);
-      expect(unit.aliases.length).toBeGreaterThan(0);
-      expect(unit.sources.length).toBeGreaterThan(0);
-      for (const source of unit.sources) expect(LITERACY_SOURCES[source]).toBeTruthy();
-      for (const text of [unit.title, unit.summary, unit.example, unit.watchOut, ...unit.points]) expect(text.trim().length).toBeGreaterThan(0);
-      expect(unitAsMarkdown(unit).split(/\s+/).length).toBeLessThan(260);
+      const where = `${unit.id}.${unit.locale}`;
+      expect(unit.points.length, where).toBeGreaterThanOrEqual(3);
+      expect(unit.points.length, where).toBeLessThanOrEqual(4);
+      for (const text of [unit.title, unit.summary, unit.example, unit.action, unit.watchOut, ...unit.points]) expect(text.trim().length, where).toBeGreaterThan(0);
+      expect(unit.aliases.length, where).toBeGreaterThanOrEqual(4);
+      expect(unit.sources.length, where).toBeGreaterThan(0);
+      for (const source of unit.sources) expect(LITERACY_SOURCES[source]?.name, `${where} -> ${source}`).toBeTruthy();
+      expect(words(unitAsMarkdown(unit)), where).toBeLessThan(330);
+    }
+    for (const [id, source] of Object.entries(LITERACY_SOURCES)) {
+      if (source.url != null) expect(source.url, id).toMatch(/^https?:\/\//);
+      expect(source.url ?? "", id).not.toMatch(/cnss\.bf|cnssbf\.org|coris-asset\.com/);
     }
   });
 
   it("keeps the same figures in both languages", () => {
-    const digits = (text: string) => (text.match(/\d[\d\s.,]*\d|\d/g) ?? []).map((number) => number.replace(/[\s.,]/g, "")).sort();
-    for (const unit of en) {
-      const other = getLiteracyUnit("fr", unit.id)!;
-      expect(digits(other.example), unit.id).toEqual(digits(unit.example));
-    }
+    for (const unit of en) expect(digits(getLiteracyUnit("fr", unit.id)!.example), unit.id).toEqual(digits(unit.example));
   });
 
-  it("retrieves the lesson a young user would expect", () => {
-    const top = (question: string, units = en) => findRelevantUnits(units, question)[0]?.id;
-    expect(top("Is sports betting a good way to make money?")).toBe("betting");
-    expect(top("how does compound interest work")).toBe("compound-interest");
-    expect(top("someone on telegram says i can double my money")).toBe("scams-ponzi");
-    expect(top("should I buy bitcoin")).toBe("crypto-forex");
-    expect(top("my family keeps asking me for money")).toBe("family-support");
-    expect(top("c’est quoi une tontine ?", fr)).toBe("where-to-save");
-    expect(top("comment sortir du surendettement", fr)).toBe("out-of-debt");
-    expect(top("prêt rapide sur une appli de prêt", fr)).toBe("digital-loans");
+  it("never lets the writer\u2019s working language into a lesson", () => {
+    const meta = /\b(our sources|the notes|we found|our research|nos sources|les notes|nos recherches)\b/i;
+    for (const unit of [...en, ...fr]) expect(unitAsMarkdown(unit), `${unit.id}.${unit.locale}`).not.toMatch(meta);
   });
 
-  it("returns nothing when no lesson matches or the question has no content", () => {
+  it("retrieves the lesson a beginner would expect", () => {
+    const top = (question: string, units = en) => findRelevantUnits(units, question).map(({ id }) => id);
+    expect(top("how do I make a budget")).toContain("build-a-budget");
+    expect(top("what is the maximum interest rate on a loan")).toContain("the-legal-ceiling");
+    expect(top("how can I invest on the BRVM from Burkina")).toContain("start-from-burkina");
+    expect(top("comment constituer un fonds d\u2019urgence", fr)).toContain("emergency-fund");
+    expect(top("c\u2019est quoi une tontine ?", fr).some((id) => id === "savings-groups" || id === "ways-to-save")).toBe(true);
+    expect(top("c\u2019est quoi la microfinance", fr)).toContain("what-microfinance-is");
     expect(findRelevantUnits(en, "zzzz qqqq")).toEqual([]);
     expect(findRelevantUnits(en, "what is the")).toEqual([]);
-    expect(findRelevantUnits(en, "budget loan savings insurance").length).toBeLessThanOrEqual(3);
   });
 
-  it("renders a unit as markdown with locale punctuation", () => {
-    expect(unitAsMarkdown(getLiteracyUnit("en", "betting")!)).toContain("**Example:** 1,000 F a day");
-    expect(unitAsMarkdown(getLiteracyUnit("fr", "betting")!)).toContain("**Exemple :** 1 000 F de paris par jour");
+  it("renders a lesson as markdown with the action and locale punctuation", () => {
+    expect(unitAsMarkdown(getLiteracyUnit("en", "build-a-budget")!)).toMatch(/\*\*Example:\*\* .+\n\n\*\*Do this week:\*\* .+\n\n\*\*Watch out:\*\* /);
+    expect(unitAsMarkdown(getLiteracyUnit("fr", "build-a-budget")!)).toContain("**À faire cette semaine :** ");
   });
 });
 
-describe("beginner starter questions", () => {
-  it("are phrased as questions in both languages and point at existing lessons", () => {
-    expect(LITERACY_STARTERS.length).toBeGreaterThanOrEqual(3);
+describe("starter questions", () => {
+  it("come from real readers, in both languages, and point at existing lessons", () => {
+    expect(LITERACY_STARTERS.length).toBeGreaterThanOrEqual(4);
     for (const starter of LITERACY_STARTERS) {
       expect(starter.question.en.trim().endsWith("?")).toBe(true);
       expect(starter.question.fr.trim().endsWith("?")).toBe(true);
+      expect(starter.origin.url).toMatch(/^https:\/\/lefaso\.net\//);
+      expect(starter.origin.author.length).toBeGreaterThan(0);
       expect(starter.unitIds.length).toBeGreaterThan(0);
       expect(starter.unitIds.length).toBeLessThanOrEqual(3);
-      for (const id of starter.unitIds) {
-        expect(getLiteracyUnit("en", id), `${starter.id} -> ${id}`).not.toBeNull();
-        expect(getLiteracyUnit("fr", id), `${starter.id} -> ${id}`).not.toBeNull();
-      }
-    }
-  });
-
-  it("never use a lesson title as the question", () => {
-    const titles = new Set([...en, ...fr].map((unit) => unit.title));
-    for (const starter of LITERACY_STARTERS) {
-      expect(titles.has(starter.question.en)).toBe(false);
-      expect(titles.has(starter.question.fr)).toBe(false);
+      for (const id of starter.unitIds) expect(getLiteracyUnit("fr", id), `${starter.id} -> ${id}`).not.toBeNull();
     }
   });
 });

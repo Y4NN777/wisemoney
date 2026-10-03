@@ -61,8 +61,8 @@ describe("askTutor", () => {
     const chunks: string[] = [];
     const answer = await askTutor({ question: "comment marchent les intérêts composés", locale: "fr", history: [], online: false }, { onText: (text) => chunks.push(text) });
     expect(answer.path).toBe("lesson");
-    expect(answer.unitIds).toEqual(["compound-interest"]);
-    expect(chunks.join("")).toContain("Règle de 72");
+    expect(answer.unitIds).toEqual(["interest-and-time"]);
+    expect(chunks.join("")).toContain("Voir les intérêts grandir avec le temps");
     expect(stream.streamLearnMessage).not.toHaveBeenCalled();
     expect(admission.requestLocalTicket).not.toHaveBeenCalled();
   });
@@ -70,9 +70,9 @@ describe("askTutor", () => {
   it("falls back to the lesson when the gateway fails before any text", async () => {
     stream.streamLearnMessage.mockRejectedValue(new Error("tutor-unavailable"));
     const chunks: string[] = [];
-    const answer = await askTutor({ question: "explain", locale: "en", history: [], unitIds: ["inflation"], online: true }, { onText: (text) => chunks.push(text) });
+    const answer = await askTutor({ question: "explain", locale: "en", history: [], unitIds: ["rising-prices"], online: true }, { onText: (text) => chunks.push(text) });
     expect(answer.path).toBe("lesson");
-    expect(chunks.join("")).toContain("Inflation: why prices rise");
+    expect(chunks.join("")).toContain("Understand what rising prices do to savings");
     expect(admission.finishLocalTicket).toHaveBeenCalledWith("t1", false);
   });
 

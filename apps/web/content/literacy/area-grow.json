@@ -1,0 +1,1215 @@
+{
+  "area": "grow",
+  "sourceRegistry": {
+    "sec-investor-gov": {
+      "name": "US SEC, Investor.gov — Beginners' Guide to Asset Allocation, Diversification, and Rebalancing; What is Risk?; Gauge Your Risk Tolerance; Understanding Fees; Figure Out Your Finances; Define Your Goals (undated pages, read 2026-10-03; no reuse statement found)",
+      "url": "https://www.investor.gov/additional-resources/general-resources/publications-research/info-sheets/beginners-guide-asset"
+    },
+    "sec-roadmap": {
+      "name": "US SEC, Office of Investor Education and Advocacy — Saving and Investing: A Roadmap To Your Financial Security Through Saving and Investing (SEC Pub. 009, 2011)",
+      "url": "https://www.sec.gov/investor/pubs/sec-guide-to-savings-and-investing.pdf"
+    },
+    "amf-fr": {
+      "name": "Autorité des marchés financiers (France) — Espace épargnants: Horizon de placement (2018), Mieux se connaître en tant qu'épargnant (2022), Comprendre les frais des placements financiers (2023), Bien diversifier son épargne pour atteindre ses objectifs (2023)",
+      "url": "https://www.amf-france.org/fr/espace-epargnants/savoir-bien-investir/cadrer-son-projet/fixer-son-horizon-de-placement"
+    },
+    "asic-moneysmart": {
+      "name": "ASIC Moneysmart (Australia) — Develop an investing plan (18 June 2026); Investment diversification (1 October 2026); glossary: Net worth (23 August 2019). Cite-only",
+      "url": "https://moneysmart.gov.au/how-to-invest/develop-an-investing-plan"
+    },
+    "wikifin": {
+      "name": "FSMA (Belgium), Wikifin — Investir petit à petit avec un plan d'investissement (21 April 2026); Comment gérer son portefeuille d'investissement ? (27 March 2026). Cite-only",
+      "url": "https://www.wikifin.be/fr/epargner-et-investir/comment-investir-et-repartition-des-risques/comment-investir/investir-petit"
+    },
+    "mes-questions-dargent": {
+      "name": "Banque de France, portail Mes questions d'argent — Quelques notions d'épargne avant d'investir (undated, read 2026-10-03). Cite-only",
+      "url": "https://www.mesquestionsdargent.fr/epargne-et-placements/notions-epargne-avant-investir"
+    },
+    "banque-de-france": {
+      "name": "Banque de France, L'éco en bref — Taux d'intérêt nominal et réel (July 2026)",
+      "url": "https://www.banque-france.fr/fr/publications-et-statistiques/publications/taux-dinteret-nominal-et-reel"
+    },
+    "amf-umoa": {
+      "name": "AMF-UMOA — Guide de l'investisseur and Glossaire (page Épargnant, read 2026-10-03)",
+      "url": "https://www.amf-umoa.org/accueil/epargnant"
+    },
+    "brvm": {
+      "name": "BRVM — Comment investir à la BRVM (undated page, read 2026-10-03)",
+      "url": "https://www.brvm.org/fr/comment-investir-la-brvm"
+    },
+    "coris-bourse": {
+      "name": "SGI Coris Bourse (Burkina Faso) — Investisseurs particuliers and Devenir client (site © 2026, read 2026-10-03)",
+      "url": "https://coris-bourse.com/nos-services-produits/particuliers"
+    },
+    "ifi-bf": {
+      "name": "Image Finances Internationales, SGI IFI (Burkina Faso) — product pages and brochure (September 2026, read 2026-10-03)",
+      "url": "https://image-finance.com/"
+    },
+    "nsia-capital": {
+      "name": "NSIA Capital (Côte d'Ivoire) — Grille tarifaire 2026, valid from 1 July 2026",
+      "url": "https://nsiacapital.com/wp-content/uploads/2026/07/Grille-Tarifaire-NSIA-Capital-2026-Version-clientele-01072026-V2.pdf"
+    },
+    "jpal-ipa": {
+      "name": "J-PAL — evaluation summary pages: Why Do Defaults Affect Behavior? (Afghanistan); Pay Me Later (Malawi); Savings Defaults and Payment Delays for Cash Transfers (Malawi) (read 2026-10-03)",
+      "url": "https://www.povertyactionlab.org/evaluation/deferring-wages-and-labor-supply-malawi"
+    },
+    "vie-publique": {
+      "name": "Vie-publique.fr (DILA, France) — Qu'est-ce qu'un impôt ? (last modified 10 December 2025); Impôts directs et indirects; Impôt proportionnel et impôt progressif. Open licence: Licence Ouverte / Etalab 2.0",
+      "url": "https://www.vie-publique.fr/fiches/21826-quest-ce-quun-impot-definition-de-limpot"
+    },
+    "economie-gouv-fr": {
+      "name": "Ministère de l'Économie (France), economie.gouv.fr — Les impôts, de quoi parle-t-on ? (2024 data). Open licence: Licence Ouverte / Etalab 2.0",
+      "url": "https://www.economie.gouv.fr/aqsmi/les-impots-de-quoi-parle-t"
+    },
+    "cra-canada": {
+      "name": "Canada Revenue Agency — Learn about your taxes: Purpose of taxes, lesson Why you pay taxes (read 2026-10-03; non-commercial reproduction only)",
+      "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/educational-programs/purpose-taxes.html"
+    },
+    "cgi-bf": {
+      "name": "Direction générale des impôts (Burkina Faso) — Code général des impôts, Version 2024 (online text, read 2026-10-03)",
+      "url": "https://dgi.bf/verification/CGI"
+    },
+    "bf-law-004-2021": {
+      "name": "Burkina Faso — Loi n°004-2021/AN du 6 avril 2021 portant régime de sécurité sociale applicable aux travailleurs salariés et assimilés",
+      "url": "https://www.assembleenationale.bf/storage/Loi/kh5PSt0jXMbbmdzEE89bH08kf5dw27KYt24h7EAa.pdf"
+    },
+    "bf-decree-2023-0129": {
+      "name": "Burkina Faso — Décret n°2023-0129/PRES-TRANS/PM/MFPTPS/MEFP du 24 février 2023 fixant le taux d'appel des cotisations de sécurité sociale (effect from 30 August 2022)",
+      "url": "https://www.fonction-publique.gov.bf/fileadmin/user_upload/storage/01_MARS_2023-_DECRET___N_2023___0129.pdf"
+    },
+    "bf-decree-2023-0132": {
+      "name": "Burkina Faso — Décret n°2023-0132/PRES-TRANS/PM/MFPTPS/MEFP du 24 février 2023 fixant l'âge de départ à la retraite des travailleurs salariés et assimilés (effect from 30 August 2022)",
+      "url": "https://www.fonction-publique.gov.bf/fileadmin/user_upload/storage/01_MARS_2023-DECRET__N_2023_0132.pdf"
+    },
+    "bf-law-003-2021": {
+      "name": "Burkina Faso — Loi n°003-2021/AN du 1er avril 2021 portant régime de sécurité sociale applicable aux agents publics de l'État",
+      "url": "https://www.assembleenationale.bf/storage/Loi/nVdn1BkjelHB5LKlIQkIRVmMprgjneWeYmeqBcEc.pdf"
+    },
+    "cipres": {
+      "name": "CIPRES — Caisse nationale de sécurité sociale du Burkina Faso (profile page, read 2026-10-03)",
+      "url": "https://lacipres.org/caisse-nationale-de-securite-sociale-du-burkina-faso/"
+    },
+    "mebf-cefore": {
+      "name": "Maison de l'Entreprise du Burkina Faso, CEFORE — Formalités de création d'entreprises pour les personnes physiques (sheet dated 1 June 2026) and CEFORE page",
+      "url": "https://www.me.bf/wp-content/uploads/2026/05/P1-Creation-Personne-Physique-010626.pdf"
+    },
+    "sidwaya": {
+      "name": "Sidwaya — Rétro 2025, financements publics : les fonds nationaux passent de 14 à 4 (press, on the Council of Ministers of 20 November 2025)",
+      "url": "https://www.sidwaya.info/retro-2025-financements-publics-les-fonds-nationaux-passent-de-14-a-4-pour-plus-defficacite/"
+    }
+  },
+  "lessons": [
+    {
+      "id": "what-a-portfolio-is",
+      "sources": [
+        "amf-umoa",
+        "brvm",
+        "sec-investor-gov",
+        "amf-fr",
+        "sec-roadmap"
+      ],
+      "en": {
+        "title": "See everything you hold as one whole",
+        "summary": "Your portfolio is all the investments you hold, taken together. What counts is how the whole behaves, not each piece on its own.",
+        "points": [
+          "The regional market regulator uses the word portfolio for the securities you hold: shares, bonds, fund units. They are listed in your securities account, as money is listed in a bank account.",
+          "A fund is itself a portfolio: many securities owned in common and run by a management company. One unit gives you a small piece of all of them.",
+          "Investments do not all move the same way at the same time. When some fall, others may rise, so the whole moves less than its riskiest piece.",
+          "Each quarter, your broker gives you a statement showing the value of your portfolio, your cash balance and the movements on your account."
+        ],
+        "example": "Aminata holds shares worth 40,000 F and bonds worth 40,000 F: 80,000 F in all. Her shares fall to 34,000 F, her bonds rise to 42,000 F. The whole is worth 34,000 + 42,000 = 76,000 F. Her shares lost 6,000 ÷ 40,000 = 15%. Her portfolio lost 4,000 ÷ 80,000 = 5%.",
+        "action": "List on one page every investment you hold, with its value today, and add them up.",
+        "watchOut": "Spreading your money reduces risk but does not remove it: the whole portfolio can still lose value.",
+        "aliases": [
+          "portfolio",
+          "what is a portfolio",
+          "all my investments",
+          "everything i hold",
+          "securities account",
+          "my shares and bonds",
+          "see the whole",
+          "portfolio value"
+        ]
+      },
+      "fr": {
+        "title": "Voir vos placements comme un seul ensemble",
+        "summary": "Votre portefeuille, c'est l'ensemble de vos placements, pris ensemble. Ce qui compte, c'est le comportement de l'ensemble, pas celui de chaque morceau.",
+        "points": [
+          "Le régulateur du marché régional appelle portefeuille les titres que vous détenez : actions, obligations, parts de fonds. Ils sont inscrits sur votre compte titres, comme l'argent sur un compte bancaire.",
+          "Un fonds est lui-même un portefeuille : beaucoup de titres détenus en commun et gérés par une société de gestion. Une part vous donne un petit morceau de tous.",
+          "Les placements ne bougent pas tous dans le même sens au même moment. Quand certains baissent, d'autres peuvent monter : l'ensemble bouge moins que son morceau le plus risqué.",
+          "Chaque trimestre, votre intermédiaire vous remet un relevé qui indique la valeur de votre portefeuille, votre solde en espèces et les mouvements de votre compte."
+        ],
+        "example": "Aminata détient des actions pour 40 000 F et des obligations pour 40 000 F : 80 000 F en tout. Ses actions tombent à 34 000 F, ses obligations montent à 42 000 F. L'ensemble vaut 34 000 + 42 000 = 76 000 F. Ses actions ont perdu 6 000 ÷ 40 000 = 15 %. Son portefeuille a perdu 4 000 ÷ 80 000 = 5 %.",
+        "action": "Listez sur une page tous vos placements, avec leur valeur d'aujourd'hui, et faites le total.",
+        "watchOut": "Répartir son argent réduit le risque sans le supprimer : tout le portefeuille peut encore perdre de la valeur.",
+        "aliases": [
+          "portefeuille",
+          "c'est quoi un portefeuille",
+          "tous mes placements",
+          "tout ce que je détiens",
+          "compte titres",
+          "mes actions et obligations",
+          "voir l'ensemble",
+          "valeur du portefeuille"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "The word portfolio is used for securities (shares, bonds, fund units) recorded in the securities account, compared to a cheque account",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md Appendix 2, Glossaire, entry COMPTE TITRES (also §2.1 Glossary)"
+        },
+        {
+          "claim": "A fund (FCP) is a portfolio of securities in co-ownership run by a management company; a SICAV share is a piece of a portfolio",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md Appendix 2, entries FCP and SICAV"
+        },
+        {
+          "claim": "Investments do not move together; rises of some offset falls of others; several asset categories give the portfolio a smoother ride",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] key teaching points; [AMF-FR-DIV] décorrélation"
+        },
+        {
+          "claim": "Quarterly statement with portfolio valuation, cash balance and movements",
+          "source": "brvm",
+          "where": "R3-1-market-institutions.md §2.2 BRVM, How to invest (B1), 'Statements'"
+        },
+        {
+          "claim": "Diversification cannot guarantee against losses",
+          "source": "sec-roadmap",
+          "where": "T4.md (d) Diversification [SEC]"
+        },
+        {
+          "claim": "Example figures (40,000 + 40,000; 34,000 + 42,000 = 76,000; 15% and 5%) are a made-up illustration of the offsetting idea",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] 'smoother ride' (arithmetic recomputed by the writer)"
+        }
+      ]
+    },
+    {
+      "id": "choose-your-mix",
+      "sources": [
+        "sec-investor-gov",
+        "amf-fr",
+        "coris-bourse",
+        "sec-roadmap"
+      ],
+      "en": {
+        "title": "Choose the mix that fits your goals",
+        "summary": "Asset allocation means deciding what part of your portfolio goes into shares, bonds and cash. It depends on when you need the money and how much loss you can bear.",
+        "points": [
+          "According to the US regulator, shares have carried the most risk and the highest returns; bonds move less and earn less; cash is safest but earns least.",
+          "Start from each goal and its date. The French regulator calls under 3 years short term, 3 to 10 years medium term, and long term beyond that.",
+          "Money needed soon belongs in safe, available places. For a distant goal, too little risk may leave you short; too much may mean the money is missing when needed.",
+          "No mix is right for everyone. As a published example, Coris Bourse in Burkina showed four profiles in October 2026, from 100% bonds to 70% shares and 30% bonds."
+        ],
+        "example": "Salif has 150,000 F. He needs 50,000 F within 2 years to repair his motorbike: short term, so he keeps it in savings. The other 100,000 F is for a goal 12 years away. He chooses half shares, half bonds: 100,000 × 50% = 50,000 F in each.",
+        "action": "Write each of your goals with its date, then mark it short, medium or long term.",
+        "watchOut": "Do not change your mix because one market is rising fast. Change it when your goal or its date changes.",
+        "aliases": [
+          "asset allocation",
+          "how to split my money",
+          "shares or bonds",
+          "how much in shares",
+          "my mix",
+          "short term long term",
+          "investment horizon",
+          "where to put my money",
+          "share of each investment"
+        ]
+      },
+      "fr": {
+        "title": "Choisir la répartition adaptée à vos objectifs",
+        "summary": "Répartir ses placements, c'est décider quelle part du portefeuille va aux actions, aux obligations et à l'argent disponible. Cela dépend de la date du besoin et de la perte que vous pouvez supporter.",
+        "points": [
+          "Selon le régulateur américain, les actions ont porté le plus de risque et de rendement ; les obligations bougent et rapportent moins ; l'argent disponible est le plus sûr mais rapporte le moins.",
+          "Partez de chaque objectif et de sa date. Pour le régulateur français, le court terme va jusqu'à 3 ans, le moyen terme de 3 à 10 ans, le long terme au-delà.",
+          "L'argent utile bientôt va dans des placements sûrs et disponibles. Pour un objectif lointain, trop peu de risque peut ne pas suffire ; trop de risque, et l'argent peut manquer le jour venu.",
+          "Aucune répartition ne convient à tout le monde. Exemple publié : Coris Bourse, au Burkina, affichait en octobre 2026 quatre profils, de 100 % obligations à 70 % actions et 30 % obligations."
+        ],
+        "example": "Salif a 150 000 F. Il lui faut 50 000 F d'ici 2 ans pour réparer sa moto : court terme, il les garde en épargne. Les 100 000 F restants servent un objectif dans 12 ans. Il choisit moitié actions, moitié obligations : 100 000 × 50 % = 50 000 F de chaque côté.",
+        "action": "Écrivez chacun de vos objectifs avec sa date, puis notez-le court, moyen ou long terme.",
+        "watchOut": "Ne changez pas votre répartition parce qu'un marché monte vite. Changez-la quand votre objectif ou sa date change.",
+        "aliases": [
+          "allocation d'actifs",
+          "répartition des placements",
+          "comment répartir mon argent",
+          "actions ou obligations",
+          "combien en actions",
+          "court terme long terme",
+          "horizon de placement",
+          "où mettre mon argent",
+          "part de chaque placement"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Asset allocation = dividing a portfolio among stocks, bonds and cash; depends on time horizon and ability to tolerate risk",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] Definitions"
+        },
+        {
+          "claim": "Stocks: greatest risk and highest returns (historically); bonds less volatile, more modest returns; cash safest, lowest return",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] key teaching points, three asset categories"
+        },
+        {
+          "claim": "Short term under 3 years, medium 3 to 10 years, long term over 10 years",
+          "source": "amf-fr",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [AMF-FR-HOR] definition"
+        },
+        {
+          "claim": "Very short horizon: risk-free, available placement; too little risk may not meet the goal, too much and the money may not be there",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] key teaching points; [AMF-FR-HOR]; T4.md (e) [SEC]"
+        },
+        {
+          "claim": "No single allocation model is right for every goal",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] key teaching points"
+        },
+        {
+          "claim": "Coris Bourse four mandate profiles: 100% bonds (horizon 1 to 2 years) to 70% shares / 30% bonds (5 years and more), read 3 October 2026",
+          "source": "coris-bourse",
+          "where": "R3-2-brokers-funds-fees.md §2.1 Coris Bourse, 'Four mandate profiles'"
+        },
+        {
+          "claim": "Do not change allocation on relative performance; the most common reason to change is a change in time horizon",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] key teaching points (last two bullets)"
+        },
+        {
+          "claim": "Example: 150,000 − 50,000 = 100,000; 100,000 × 50% = 50,000 (illustration; the 50/50 split is the learner's own choice, not a recommendation)",
+          "source": "sec-roadmap",
+          "where": "T4.md (e) [SEC] goals of five years or less avoid risky investments (arithmetic by the writer)"
+        }
+      ]
+    },
+    {
+      "id": "know-your-risk-profile",
+      "sources": [
+        "sec-investor-gov",
+        "asic-moneysmart",
+        "amf-fr",
+        "mes-questions-dargent",
+        "coris-bourse",
+        "wikifin",
+        "sec-roadmap"
+      ],
+      "en": {
+        "title": "Know how much risk you can bear",
+        "summary": "Your risk profile says how much loss you can accept, in your mind and in your pocket. Know it before you choose any investment.",
+        "points": [
+          "Risk tolerance is both your ability and your willingness to lose part or all of the money you invested, in exchange for a chance of higher gains.",
+          "Ability depends on your situation: your age, your goals, your health and how easily you could recover from a loss.",
+          "Test your willingness: how would you feel if your investments lost 20% overnight? If you would worry and take your money out, high-risk investments are not for you.",
+          "A serious intermediary first asks about your situation, goals and knowledge. In Burkina, Coris Bourse's online form has an investment-profile step."
+        ],
+        "example": "Fatou has 50,000 F invested. A fall of 20% means 50,000 × 20% = 10,000 F lost, and 40,000 F left. She stays calm at that idea. But she needs the money in one year for school fees and cannot wait for prices to recover. Her ability to bear the loss is low.",
+        "action": "Write down the largest amount you could lose without touching your daily needs or your emergency savings.",
+        "watchOut": "Profile tests on sellers' websites may lean towards their own products. Answer honestly, and review your profile when your life changes.",
+        "aliases": [
+          "risk profile",
+          "risk tolerance",
+          "how much can i lose",
+          "am i cautious",
+          "afraid of losing money",
+          "investor profile",
+          "cautious balanced dynamic",
+          "can i sleep at night",
+          "risk test"
+        ]
+      },
+      "fr": {
+        "title": "Savoir quel risque vous pouvez supporter",
+        "summary": "Votre profil de risque dit quelle perte vous pouvez accepter, dans votre tête et dans votre poche. Connaissez-le avant de choisir un placement.",
+        "points": [
+          "La tolérance au risque, c'est à la fois votre capacité et votre volonté de perdre une partie ou la totalité de l'argent placé, en échange d'une chance de gagner plus.",
+          "La capacité dépend de votre situation : votre âge, vos objectifs, votre santé et la facilité avec laquelle vous pourriez vous remettre d'une perte.",
+          "Testez votre volonté : que ressentiriez-vous si vos placements perdaient 20 % du jour au lendemain ? Si vous vous inquiétez et retirez votre argent, les placements très risqués ne sont pas pour vous.",
+          "Un intermédiaire sérieux vous interroge d'abord sur votre situation, vos objectifs et vos connaissances. Le formulaire en ligne de Coris Bourse, au Burkina, comporte une étape « profil d'investissement »."
+        ],
+        "example": "Fatou a 50 000 F placés. Une baisse de 20 %, c'est 50 000 × 20 % = 10 000 F perdus, et 40 000 F restants. Cette idée ne l'inquiète pas. Mais il lui faut cet argent dans un an pour la scolarité et elle ne peut pas attendre que les cours remontent. Sa capacité à supporter la perte est faible.",
+        "action": "Notez la plus grosse somme que vous pourriez perdre sans toucher à vos besoins quotidiens ni à votre épargne de précaution.",
+        "watchOut": "Les tests de profil sur les sites des vendeurs peuvent pencher vers leurs propres produits. Répondez franchement, et revoyez votre profil quand votre vie change.",
+        "aliases": [
+          "profil de risque",
+          "tolérance au risque",
+          "combien puis-je perdre",
+          "suis-je prudent",
+          "peur de perdre mon argent",
+          "profil d'investisseur",
+          "prudent équilibré dynamique",
+          "dormir tranquille",
+          "test de risque"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Risk tolerance = ability and willingness to lose some or all of the original investment for greater potential returns",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] Definitions, Risk tolerance"
+        },
+        {
+          "claim": "Factors: age, capacity to recover from financial loss, financial goals, health",
+          "source": "asic-moneysmart",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [ASIC-MS] definition (risk tolerance)"
+        },
+        {
+          "claim": "Self-test: a 20% drop overnight; if you would worry and withdraw, high-risk investments are not for you",
+          "source": "asic-moneysmart",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [ASIC-MS] self-test question"
+        },
+        {
+          "claim": "Providers must identify the client's situation, goals, horizon, capacity to bear losses, knowledge and experience (French rule, used as method); a broker selling before asking about goals is a bad sign",
+          "source": "amf-fr",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [AMF-FR-CON]; T4.md (i) [SEC]"
+        },
+        {
+          "claim": "Coris Bourse online account form has step 3 'Profil d'investissement'; 'exigées par la réglementation AMF-UMOA' (read 3 October 2026)",
+          "source": "coris-bourse",
+          "where": "R3-2-brokers-funds-fees.md §2.1 Coris Bourse, 'Online account opening exists'"
+        },
+        {
+          "claim": "Decide the sum you would be ready to lose",
+          "source": "mes-questions-dargent",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [MQDA] Risk"
+        },
+        {
+          "claim": "Money needed within a short time should not be in risky investments: you may have to sell at a loss (basis of the example)",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-RISK] short-term goal, five years or less"
+        },
+        {
+          "claim": "Risk questionnaires on commercial sites may be biased towards products sold; the profile must be updated regularly",
+          "source": "wikifin",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] Education vs advice; [WIKIFIN] investor profile"
+        },
+        {
+          "claim": "Example: 50,000 × 20% = 10,000; 50,000 − 10,000 = 40,000 (illustration)",
+          "source": "asic-moneysmart",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [ASIC-MS] self-test question (arithmetic by the writer)"
+        }
+      ]
+    },
+    {
+      "id": "keep-your-mix-in-balance",
+      "sources": [
+        "sec-investor-gov",
+        "asic-moneysmart",
+        "coris-bourse"
+      ],
+      "en": {
+        "title": "Bring your mix back into balance",
+        "summary": "Over time some investments grow faster than others and your mix drifts. Rebalancing means bringing it back to the mix you chose.",
+        "points": [
+          "If shares rise while bonds stand still, shares take a bigger part of your portfolio, and its overall risk rises with them.",
+          "Three ways to rebalance: sell some of what has grown too big and buy what is too small; buy the small part with new money; or direct your regular deposits to it.",
+          "When: on fixed dates, such as every six or twelve months, or when one part moves beyond a limit you set in advance. It works best when done rarely.",
+          "Check the cost first. Selling and buying can bring broker fees and tax. Using new money avoids selling."
+        ],
+        "example": "Rasmané chose half shares, half bonds, with 50,000 F in each. His shares rise to 75,000 F; his bonds stay at 50,000 F. Total: 125,000 F. Shares are now 75,000 ÷ 125,000 = 60%. Half of 125,000 is 62,500 F. He sells 75,000 − 62,500 = 12,500 F of shares and buys bonds with it.",
+        "action": "Work out today's percentage of each part of your portfolio and compare it with the mix you chose.",
+        "watchOut": "Each sale or purchase can cost fees. Coris Bourse's fee list was not found published: ask your broker for its fees in writing first.",
+        "aliases": [
+          "rebalancing",
+          "rebalance my portfolio",
+          "my mix has changed",
+          "too much in shares",
+          "back to my mix",
+          "sell what went up",
+          "when to rebalance",
+          "adjust my investments"
+        ]
+      },
+      "fr": {
+        "title": "Ramener votre répartition à l'équilibre",
+        "summary": "Avec le temps, certains placements grossissent plus vite que d'autres et votre répartition se déforme. Rééquilibrer, c'est revenir à la répartition que vous aviez choisie.",
+        "points": [
+          "Si les actions montent pendant que les obligations ne bougent pas, les actions prennent plus de place dans votre portefeuille, et son risque d'ensemble monte avec elles.",
+          "Trois façons : vendre un peu de ce qui a trop grossi pour acheter ce qui est trop petit ; acheter la petite part avec de l'argent nouveau ; ou y diriger vos versements réguliers.",
+          "Quand : à dates fixes, par exemple tous les six ou douze mois, ou quand une part dépasse une limite fixée à l'avance. Cela marche mieux quand on le fait rarement.",
+          "Regardez d'abord le coût. Vendre et acheter peut entraîner des frais d'intermédiaire et de l'impôt. Utiliser de l'argent nouveau évite de vendre."
+        ],
+        "example": "Rasmané a choisi moitié actions, moitié obligations, avec 50 000 F de chaque côté. Ses actions montent à 75 000 F ; ses obligations restent à 50 000 F. Total : 125 000 F. Les actions pèsent 75 000 ÷ 125 000 = 60 %. La moitié de 125 000, c'est 62 500 F. Il vend 75 000 − 62 500 = 12 500 F d'actions et achète des obligations avec.",
+        "action": "Calculez le pourcentage actuel de chaque part de votre portefeuille et comparez-le à la répartition choisie.",
+        "watchOut": "Chaque vente ou achat peut coûter des frais. La grille de Coris Bourse n'a pas été trouvée publiée : demandez d'abord les frais par écrit à votre intermédiaire.",
+        "aliases": [
+          "rééquilibrage",
+          "rééquilibrer mon portefeuille",
+          "ma répartition a changé",
+          "trop d'actions",
+          "revenir à ma répartition",
+          "vendre ce qui a monté",
+          "quand rééquilibrer",
+          "ajuster mes placements"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Rebalancing = bringing the portfolio back to the original allocation; some investments grow faster than others",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] Definitions, Rebalancing"
+        },
+        {
+          "claim": "If shares rise while bonds fall or stay, more of the portfolio is in shares and overall risk rises",
+          "source": "asic-moneysmart",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [ASIC-MS] definition + method (rebalancing)"
+        },
+        {
+          "claim": "Three ways to rebalance (sell over-weighted and buy under-weighted; buy with new money; alter continuous contributions)",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] METHOD — how to rebalance"
+        },
+        {
+          "claim": "When: every six or twelve months, or when a weight moves beyond a percentage set in advance; best done relatively infrequently",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] METHOD, 'When'"
+        },
+        {
+          "claim": "Consider transaction fees or tax consequences before rebalancing; selling may create a tax bill",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] METHOD; [ASIC-MS] rebalancing"
+        },
+        {
+          "claim": "Coris Bourse fee grid: not found (no tariff page or PDF), read 3 October 2026",
+          "source": "coris-bourse",
+          "where": "R3-2-brokers-funds-fees.md §2.1 Coris Bourse, last row 'Fee grid … NOT FOUND'"
+        },
+        {
+          "claim": "Example: 75,000 + 50,000 = 125,000; 75,000 ÷ 125,000 = 60%; 125,000 ÷ 2 = 62,500; 75,000 − 62,500 = 12,500 (same pattern as the SEC 60% to 80% example)",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [SEC-AA] WORKED EXAMPLE (figures and arithmetic by the writer)"
+        }
+      ]
+    },
+    {
+      "id": "manage-it-yourself-or-delegate",
+      "sources": [
+        "amf-umoa",
+        "coris-bourse",
+        "ifi-bf",
+        "nsia-capital",
+        "wikifin",
+        "sec-roadmap"
+      ],
+      "en": {
+        "title": "Manage it yourself or delegate",
+        "summary": "You can run your portfolio yourself, hand it to a professional under a contract called a mandate, or buy units of a fund. Each way has its price and its limits.",
+        "points": [
+          "Direct management: you decide and give your orders to the broker. You see everything, but the regional regulator warns that a beginner may misread the market and decide badly.",
+          "Management under mandate: a professional decides for you within a signed contract. The regulator notes the know-how, but also a high cost and clauses that can lock you in.",
+          "Collective management: you buy units of a fund. The regulator lists a modest starting amount and spread risk, against loss of control over the contents and high pricing.",
+          "In Burkina, Coris Bourse and IFI offer self-managed and managed accounts. Their mandate fees and minimum amounts were not found published: ask for them in writing."
+        ],
+        "example": "A broker in Côte d'Ivoire published, from July 2026, a mandate fee of 0.333% of the portfolio per quarter, before tax. On 500,000 F: 500,000 × 0.333% = 1,665 F per quarter, so 1,665 × 4 = 6,660 F a year. No broker in Burkina Faso was found to publish this fee.",
+        "action": "Ask one broker, in writing, for its mandate contract, all its fees and the minimum amount it requires.",
+        "watchOut": "Before delegating, check that the firm is licensed by the AMF-UMOA, read the mandate before signing and ask for time to think.",
+        "aliases": [
+          "manage myself",
+          "management under mandate",
+          "delegate my portfolio",
+          "self-managed account",
+          "managed account",
+          "who manages my money",
+          "pay someone to invest for me",
+          "mandate fees",
+          "portfolio management"
+        ]
+      },
+      "fr": {
+        "title": "Gérer vous-même ou déléguer",
+        "summary": "Vous pouvez gérer votre portefeuille vous-même, le confier à un professionnel par un contrat appelé mandat, ou acheter des parts de fonds. Chaque formule a son prix et ses limites.",
+        "points": [
+          "Gestion directe : vous décidez et transmettez vos ordres à l'intermédiaire. Vous voyez tout, mais le régulateur régional prévient qu'un débutant peut mal comprendre le marché et mal décider.",
+          "Gestion sous mandat : un professionnel décide pour vous dans le cadre d'un contrat signé. Le régulateur relève le savoir-faire, mais aussi un coût élevé et des clauses qui peuvent vous bloquer.",
+          "Gestion collective : vous achetez des parts de fonds. Le régulateur cite une mise de départ modeste et un risque réparti, contre une perte de contrôle sur le contenu et une tarification élevée.",
+          "Au Burkina, Coris Bourse et IFI proposent des comptes en gestion libre et des comptes gérés. Leurs frais de mandat et leurs montants minimums n'ont pas été trouvés publiés : demandez-les par écrit."
+        ],
+        "example": "Un intermédiaire de Côte d'Ivoire a publié, à partir de juillet 2026, une commission de mandat de 0,333 % du portefeuille par trimestre, hors taxes. Sur 500 000 F : 500 000 × 0,333 % = 1 665 F par trimestre, soit 1 665 × 4 = 6 660 F par an. Aucun intermédiaire du Burkina Faso n'a été trouvé publiant ce tarif.",
+        "action": "Demandez par écrit à un intermédiaire son contrat de mandat, tous ses frais et le montant minimum exigé.",
+        "watchOut": "Avant de déléguer, vérifiez que la société est agréée par l'AMF-UMOA, lisez le mandat avant de signer et demandez un temps de réflexion.",
+        "aliases": [
+          "gérer moi-même",
+          "gestion sous mandat",
+          "gestion libre",
+          "déléguer mon portefeuille",
+          "compte géré",
+          "qui gère mon argent",
+          "payer quelqu'un pour investir",
+          "frais de mandat",
+          "gestion de portefeuille"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Direct management: the saver takes the decisions and passes them to the intermediary; advantage visibility; risk of misunderstanding and untimely decisions for the inexperienced",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md Appendix 1, Guide de l'investisseur, 'A - La gestion directe'"
+        },
+        {
+          "claim": "Private management under mandate: discretionary, based on a mandate; advantages (professional know-how); drawbacks (blocking clauses, high cost, suited to larger wealth)",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md Appendix 1, 'B - La gestion privée'"
+        },
+        {
+          "claim": "Collective management through funds: advantages (modest investment possible, spread of risk); drawbacks (loss of control over contents, high pricing)",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md Appendix 1, 'C - La gestion collective'"
+        },
+        {
+          "claim": "Coris Bourse: 'Gestion libre' and 'Gestion sous mandat'; fee grid not found (read 3 October 2026)",
+          "source": "coris-bourse",
+          "where": "R3-2-brokers-funds-fees.md §2.1 Coris Bourse, 'Management modes' and 'Fee grid … NOT FOUND'; §5 NOT FOUND, Burkina Faso brokers"
+        },
+        {
+          "claim": "IFI: 'Comptes libres' and 'Comptes gérés'; the client gives IFI a mandate; no fee grid or minimum found",
+          "source": "ifi-bf",
+          "where": "R3-2-brokers-funds-fees.md §2.3 IFI, 'Management modes' and last row NOT FOUND"
+        },
+        {
+          "claim": "NSIA Capital 2026 grid (valid from 1 July 2026, before tax): mandate commission 0.333% per quarter of the portfolio under management",
+          "source": "nsia-capital",
+          "where": "R3-2-brokers-funds-fees.md §2.5 NSIA Capital grid, line 'Commission de gestion sous mandat'"
+        },
+        {
+          "claim": "Example arithmetic: 500,000 × 0.333% = 1,665; 1,665 × 4 = 6,660",
+          "source": "nsia-capital",
+          "where": "R3-2-brokers-funds-fees.md §2.5 (arithmetic by the writer; the 500,000 F portfolio is fictional)"
+        },
+        {
+          "claim": "The more active the intermediary, the more it probably costs",
+          "source": "wikifin",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [WIKIFIN-PF] last bullet"
+        },
+        {
+          "claim": "Precautions: check the AMF-UMOA licence, read contracts (securities account, mandate) before signing, ask for time to reflect",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md Appendix 1, 'Quelques précautions à prendre'"
+        },
+        {
+          "claim": "Ask the professional how they are paid and the total cost of doing business",
+          "source": "sec-roadmap",
+          "where": "T4.md CHECKLISTS, questions for an investment professional"
+        }
+      ]
+    },
+    {
+      "id": "invest-regularly",
+      "sources": [
+        "wikifin",
+        "amf-fr",
+        "jpal-ipa",
+        "sec-roadmap",
+        "sec-investor-gov"
+      ],
+      "en": {
+        "title": "Invest small amounts regularly, for years",
+        "summary": "You do not need a large sum. Putting in a fixed small amount at regular dates, over many years, lets time work for you.",
+        "points": [
+          "Investing the same amount at regular dates, whether prices are high or low, gives you an average purchase price and lowers the risk of buying everything at the wrong moment.",
+          "Time is your ally. Gains left invested earn gains, like a snowball. In the French regulator's illustration, at 5% a year a sum is multiplied by about 4.3 in 30 years.",
+          "The longer you hold, the better this method's chances; ten years or more is already long. No gain is guaranteed, and costs reduce what you really earn.",
+          "Automatic helps. In a study in Afghanistan, employees enrolled by default were 40 percentage points more likely to save. In Malawi, deposits made by hand gave much lower savings than automatic ones."
+        ],
+        "example": "Issa puts 5,000 F each month into units of a fund. Month 1, a unit costs 1,000 F: he gets 5. Month 2, it costs 1,250 F: he gets 4. Month 3, it costs 625 F: he gets 8. He paid 15,000 F for 17 units: 15,000 ÷ 17 = about 882 F per unit on average.",
+        "action": "Choose a fixed amount and a fixed day each month, then ask your bank or broker whether the transfer can be automatic.",
+        "watchOut": "Invest regularly only money you will not need for years, once your emergency savings are in place.",
+        "aliases": [
+          "invest regularly",
+          "invest a little each month",
+          "small amounts",
+          "investment plan",
+          "automatic saving",
+          "start early",
+          "compound growth",
+          "snowball effect",
+          "long term investing"
+        ]
+      },
+      "fr": {
+        "title": "Investir de petites sommes régulièrement, pendant des années",
+        "summary": "Pas besoin d'une grosse somme. Verser un petit montant fixe à dates régulières, pendant de nombreuses années, fait travailler le temps pour vous.",
+        "points": [
+          "Investir le même montant à dates régulières, que les cours soient hauts ou bas, vous donne un prix d'achat moyen et réduit le risque de tout acheter au mauvais moment.",
+          "Le temps est votre allié : les gains laissés en place font boule de neige. Selon le régulateur français, à 5 % par an, une somme est multipliée par environ 4,3 en 30 ans.",
+          "Plus vous gardez longtemps, plus cette méthode a de chances de réussir ; dix ans ou plus, c'est déjà long. Aucun gain n'est garanti, et les frais réduisent ce que vous gagnez vraiment.",
+          "L'automatique aide. Dans une étude en Afghanistan, les salariés inscrits d'office épargnaient plus souvent, de 40 points de pourcentage. Au Malawi, verser à la main a donné nettement moins d'épargne que l'automatique."
+        ],
+        "example": "Issa met 5 000 F chaque mois dans des parts d'un fonds. Mois 1, la part coûte 1 000 F : il en obtient 5. Mois 2, elle coûte 1 250 F : il en obtient 4. Mois 3, elle coûte 625 F : il en obtient 8. Il a payé 15 000 F pour 17 parts : 15 000 ÷ 17 = environ 882 F la part en moyenne.",
+        "action": "Choisissez un montant fixe et un jour fixe par mois, puis demandez à votre banque ou intermédiaire si le versement peut être automatique.",
+        "watchOut": "N'investissez régulièrement que l'argent dont vous n'aurez pas besoin avant des années, une fois votre épargne de précaution en place.",
+        "aliases": [
+          "investir régulièrement",
+          "investir un peu chaque mois",
+          "petites sommes",
+          "plan d'investissement",
+          "épargne automatique",
+          "commencer tôt",
+          "intérêts composés",
+          "effet boule de neige",
+          "investir à long terme"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Investing a fixed amount at regular moments, whatever the prices, gives an average purchase price and reduces the risk of buying everything at the wrong time",
+          "source": "wikifin",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [WIKIFIN] METHOD (periodic investing)"
+        },
+        {
+          "claim": "Invest regularly, as early as possible; time is the most precious ally; snowball effect; compounding = earning on the money and on what it earned",
+          "source": "amf-fr",
+          "where": "T4.md (h) Compound growth, regular investing [AMF] and [SEC]"
+        },
+        {
+          "claim": "1 over 30 years at 5% becomes 4.32 (AMF illustration; 1.05^30 = 4.32 recomputed)",
+          "source": "amf-fr",
+          "where": "T4.md WORKED EXAMPLES [AMF] EUR"
+        },
+        {
+          "claim": "The longer the holding period, the better the chances; 10 years or more is already very long; no guarantee; costs reduce the effective return",
+          "source": "wikifin",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [WIKIFIN] second and third bullets"
+        },
+        {
+          "claim": "Afghanistan: employees defaulted to a 5% contribution were 40 percentage points more likely to contribute than those defaulted to 0%",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md §4.2 C-ii.1 evidence table, row 'Why Do Defaults Affect Behavior? … Afghanistan'"
+        },
+        {
+          "claim": "Malawi (tea workers): manual deposits resulted in substantially lower savings than automatic deposits",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md §4.2 C-ii.4 evidence table, row 'Pay Me Later' (Brune, Chyn, Kerwin)"
+        },
+        {
+          "claim": "Paying yourself first by automatic deposit from pay into a savings or investment account (method behind the action)",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic D [SEC-FIN] 'paying themselves first'"
+        },
+        {
+          "claim": "Priority to available, risk-free emergency savings; invest only money not needed sooner",
+          "source": "amf-fr",
+          "where": "T4.md (a) [AMF] and (e) [AMF]"
+        },
+        {
+          "claim": "Example: 5,000 ÷ 1,000 = 5; 5,000 ÷ 1,250 = 4; 5,000 ÷ 625 = 8; 3 × 5,000 = 15,000; 5 + 4 + 8 = 17; 15,000 ÷ 17 = 882.35 (fictional prices illustrating the Wikifin method)",
+          "source": "wikifin",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [WIKIFIN] METHOD (arithmetic by the writer)"
+        }
+      ]
+    },
+    {
+      "id": "measure-your-return",
+      "sources": [
+        "mes-questions-dargent",
+        "banque-de-france",
+        "amf-fr"
+      ],
+      "en": {
+        "title": "Measure what your money really earned",
+        "summary": "A return is what an investment earned, shown as a percentage. To know what you really keep, take away fees and tax, then the rise in prices.",
+        "points": [
+          "A return is the financial gain from an investment, written as a percentage of the amount invested, most often for one year.",
+          "Gross return is before fees and tax; net return is after. In an example from the French regulator, a fund earning 5% a year gross left 1.7% a year net after fees.",
+          "Real return takes rising prices into account: it is roughly the return minus the yearly rise in prices. If prices rise faster than your return, the real return is negative.",
+          "Over several years, working out the yearly average needs a method that the beginner guides consulted do not give. Ask your intermediary for the net yearly return in writing."
+        ],
+        "example": "Awa invests 100,000 F. One year later it is worth 106,000 F: a gross gain of 6,000 F, or 6%. Fees took 2,000 F: net gain 6,000 − 2,000 = 4,000 F, or 4%. Prices rose 3% that year: real return about 4% − 3% = 1%.",
+        "action": "Take one investment or savings account and compute last year's net return: gain minus fees, divided by the amount invested.",
+        "watchOut": "A return shown before fees, tax and rising prices looks better than what you will really keep.",
+        "aliases": [
+          "return",
+          "how much did i earn",
+          "calculate my gain",
+          "gross and net return",
+          "real return",
+          "after fees",
+          "return per year",
+          "percentage gain",
+          "did my money grow"
+        ]
+      },
+      "fr": {
+        "title": "Mesurer ce que votre argent a vraiment rapporté",
+        "summary": "Le rendement, c'est ce qu'un placement a rapporté, exprimé en pourcentage. Pour savoir ce qui vous reste vraiment, retirez les frais et l'impôt, puis la hausse des prix.",
+        "points": [
+          "Le rendement est le gain financier d'un placement, exprimé en pourcentage de la somme placée, le plus souvent pour un an.",
+          "Le rendement brut s'entend avant frais et impôt ; le net, après. Dans un exemple du régulateur français, un fonds rapportant 5 % par an brut a laissé 1,7 % par an net après frais.",
+          "Le rendement réel tient compte de la hausse des prix : à peu près le rendement moins la hausse des prix de l'année. Si les prix montent plus vite, il est négatif.",
+          "Sur plusieurs années, calculer la moyenne par an demande une méthode que les guides pour débutants consultés ne donnent pas. Demandez par écrit à votre intermédiaire le rendement net par an."
+        ],
+        "example": "Awa place 100 000 F. Un an plus tard, cela vaut 106 000 F : un gain brut de 6 000 F, soit 6 %. Les frais ont pris 2 000 F : gain net 6 000 − 2 000 = 4 000 F, soit 4 %. Les prix ont monté de 3 % cette année-là : rendement réel d'environ 4 % − 3 % = 1 %.",
+        "action": "Prenez un placement ou un compte d'épargne et calculez le rendement net de l'an dernier : gain moins frais, divisé par la somme placée.",
+        "watchOut": "Un rendement affiché avant frais, impôt et hausse des prix paraît meilleur que ce que vous garderez vraiment.",
+        "aliases": [
+          "rendement",
+          "combien j'ai gagné",
+          "calculer mon gain",
+          "rendement brut et net",
+          "rendement réel",
+          "après les frais",
+          "rendement par an",
+          "gain en pourcentage",
+          "mon argent a-t-il grandi"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Return = financial gain of an investment, expressed as a percentage; gross vs net after fees and tax",
+          "source": "mes-questions-dargent",
+          "where": "R3-3-portfolio-inflation-open.md Topic A [MQDA] Return (DEFINITION); Topic C [MQDA]"
+        },
+        {
+          "claim": "Rates are usually expressed as a yearly percentage; 1,000 placed for a year at 2% gives 1,020, a gain of 20 (one-year method: gain compared with the amount)",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [BDF-TAUX] definitions and worked examples (infographic)"
+        },
+        {
+          "claim": "AMF example: gross 5% a year, net average annual return 1.7% after fees over 5 years (1,000 to 1,090 instead of 1,276)",
+          "source": "amf-fr",
+          "where": "R3-3-portfolio-inflation-open.md Topic C [AMF-FR-FRAIS] worked example"
+        },
+        {
+          "claim": "Real rate ≈ nominal rate − inflation rate; negative if inflation is higher; shows the real return on savings",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [BDF-TAUX] FORMULA and key teaching points"
+        },
+        {
+          "claim": "No beginner source read gives a step-by-step method for an annualised return (gap)",
+          "source": "amf-fr",
+          "where": "R3-3-portfolio-inflation-open.md Topic A 'Measuring a return … what was found' (GAP line)"
+        },
+        {
+          "claim": "Example: 106,000 − 100,000 = 6,000 = 6%; 6,000 − 2,000 = 4,000 = 4%; 4% − 3% = 1% (fictional figures; arithmetic by the writer)",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [BDF-TAUX] FORMULA"
+        }
+      ]
+    },
+    {
+      "id": "know-what-you-own-and-owe",
+      "sources": [
+        "sec-investor-gov",
+        "asic-moneysmart",
+        "sec-roadmap"
+      ],
+      "en": {
+        "title": "Know what you own and owe",
+        "summary": "Your net worth is everything you own minus everything you owe. Writing it down once a year shows whether you are moving forward.",
+        "points": [
+          "On one side, list everything you own: money put aside, investments, things of value. These are your assets.",
+          "On the other side, list everything you owe: loans, credit, money due to other people. These are your liabilities, or debts.",
+          "Subtract what you owe from what you own. The result is your net worth: positive if you own more than you owe, negative if you owe more.",
+          "Redo the list every year to follow your progress. A negative figure is no reason to give up: following a plan helps turn it positive."
+        ],
+        "example": "Mariam owns 80,000 F in a savings account, 15,000 F in mobile money and a motorbike she could sell for 250,000 F: 80,000 + 15,000 + 250,000 = 345,000 F. She owes 120,000 F on a loan and 10,000 F to a cousin: 130,000 F. Her net worth: 345,000 − 130,000 = 215,000 F.",
+        "action": "Write your two lists today, date the page and keep it to compare next year.",
+        "watchOut": "Take an honest look: a debt you leave off the list makes your net worth look better than it is.",
+        "aliases": [
+          "net worth",
+          "what i own",
+          "what i owe",
+          "assets and debts",
+          "my wealth",
+          "am i getting richer",
+          "list my debts",
+          "financial situation",
+          "where do i stand"
+        ]
+      },
+      "fr": {
+        "title": "Savoir ce que vous possédez et devez",
+        "summary": "Votre valeur nette, c'est tout ce que vous possédez moins tout ce que vous devez. L'écrire une fois par an montre si vous avancez.",
+        "points": [
+          "D'un côté, listez tout ce que vous possédez : argent mis de côté, placements, biens de valeur. Ce sont vos actifs.",
+          "De l'autre côté, listez tout ce que vous devez : prêts, crédits, argent dû à d'autres personnes. Ce sont vos passifs, ou dettes.",
+          "Retirez ce que vous devez de ce que vous possédez. Le résultat est votre valeur nette : positive si vous possédez plus que vous ne devez, négative si vous devez plus.",
+          "Refaites la liste chaque année pour suivre vos progrès. Un chiffre négatif n'est pas une raison d'abandonner : suivre un plan aide à le rendre positif."
+        ],
+        "example": "Mariam possède 80 000 F sur un compte d'épargne, 15 000 F en mobile money et une moto qu'elle pourrait vendre 250 000 F : 80 000 + 15 000 + 250 000 = 345 000 F. Elle doit 120 000 F sur un prêt et 10 000 F à un cousin : 130 000 F. Sa valeur nette : 345 000 − 130 000 = 215 000 F.",
+        "action": "Écrivez vos deux listes aujourd'hui, datez la page et gardez-la pour comparer l'an prochain.",
+        "watchOut": "Soyez honnête avec vous-même : une dette oubliée dans la liste fait paraître votre valeur nette meilleure qu'elle n'est.",
+        "aliases": [
+          "valeur nette",
+          "patrimoine",
+          "ce que je possède",
+          "ce que je dois",
+          "actifs et dettes",
+          "ma richesse",
+          "est-ce que je m'enrichis",
+          "lister mes dettes",
+          "situation financière"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Net worth statement: list what you own (assets) on one side",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic D [SEC-FIN] DEFINITION + METHOD (net worth)"
+        },
+        {
+          "claim": "List what you owe (liabilities or debts) on the other side",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic D [SEC-FIN] DEFINITION + METHOD (net worth)"
+        },
+        {
+          "claim": "Subtract liabilities from assets; positive or negative net worth; definition as the difference between everything owned and all debts",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic D [SEC-FIN]; [ASIC-MS] glossary 'Net worth'"
+        },
+        {
+          "claim": "Update the statement every year; do not be discouraged by a negative net worth, a financial plan helps turn it positive",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic D [SEC-FIN] second bullet"
+        },
+        {
+          "claim": "'Take an honest look at your entire financial situation'; know your current situation (assets, liabilities, net worth)",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic D [SEC-FIN]; T4.md (j) [SEC]"
+        },
+        {
+          "claim": "Example: 80,000 + 15,000 + 250,000 = 345,000; 120,000 + 10,000 = 130,000; 345,000 − 130,000 = 215,000 (fictional)",
+          "source": "sec-investor-gov",
+          "where": "R3-3-portfolio-inflation-open.md Topic D [SEC-FIN] method (arithmetic by the writer)"
+        }
+      ]
+    },
+    {
+      "id": "taxes-in-plain-words",
+      "sources": [
+        "vie-publique",
+        "economie-gouv-fr",
+        "cra-canada",
+        "cgi-bf",
+        "bf-decree-2023-0129"
+      ],
+      "en": {
+        "title": "Understand taxes and your wage tax",
+        "summary": "A tax is a compulsory payment to public authorities that pays for public services. In Burkina Faso, employees pay a wage tax that the employer withholds every month.",
+        "points": [
+          "A tax is a compulsory payment to public authorities, with no direct service in return. It pays for public services such as schools, health care and roads.",
+          "In Burkina Faso, every employee owes the wage tax, IUTS (tax code, 2024 version). The employer withholds it each month and must give you a document showing the amount.",
+          "Monthly IUTS brackets on taxable pay, article 112: 0% up to 30,000 F; 12.1% to 50,000; 13.9% to 80,000; 15.7% to 120,000; 18.4% to 170,000; 21.7% to 250,000; 25% above.",
+          "Self-employed people with yearly sales under 15 million F pay one contribution, the CME, in place of several taxes: a yearly amount set by sales and by town."
+        ],
+        "example": "Adama's base pay is 80,000 F a month, with no allowances. The code removes 25% for work costs: 80,000 × 25% = 20,000 F. It also removes his pension contribution of 5.5%: 4,400 F. Taxable pay: 80,000 − 20,000 − 4,400 = 55,600 F. The highest bracket it reaches is the 13.9% one.",
+        "action": "Look at a payslip, yours or a relative's, and find the line showing the IUTS withheld.",
+        "watchOut": "Social contributions are not taxes: they open a right to a benefit. The 2026 finance law could not be read: confirm rates with the tax office.",
+        "aliases": [
+          "tax",
+          "what is a tax",
+          "why pay taxes",
+          "wage tax",
+          "iuts",
+          "tax on my salary",
+          "tax brackets",
+          "micro-business tax",
+          "cme",
+          "payslip deduction"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre l'impôt et l'impôt sur votre salaire",
+        "summary": "Un impôt est un versement obligatoire aux administrations publiques, qui finance les services publics. Au Burkina Faso, les salariés paient un impôt sur le salaire que l'employeur retient chaque mois.",
+        "points": [
+          "Un impôt est un versement obligatoire aux administrations publiques, sans contrepartie directe. Il finance les services publics, comme l'école, la santé et les routes.",
+          "Au Burkina Faso, tout salarié doit l'impôt sur le salaire, l'IUTS (code des impôts, version 2024). L'employeur le retient chaque mois et doit vous remettre une pièce indiquant le montant.",
+          "Tranches mensuelles de l'IUTS sur le salaire imposable, article 112 : 0 % jusqu'à 30 000 F ; 12,1 % à 50 000 ; 13,9 % à 80 000 ; 15,7 % à 120 000 ; 18,4 % à 170 000 ; 21,7 % à 250 000 ; 25 % au-delà.",
+          "Les indépendants vendant moins de 15 millions de F par an paient une seule contribution, la CME, au lieu de plusieurs impôts : un montant annuel selon les ventes et la ville."
+        ],
+        "example": "Adama a un salaire de base de 80 000 F par mois, sans indemnités. Le code retire 25 % pour frais professionnels : 80 000 × 25 % = 20 000 F. Il retire aussi sa cotisation de retraite de 5,5 % : 4 400 F. Salaire imposable : 80 000 − 20 000 − 4 400 = 55 600 F. La tranche la plus haute atteinte est celle de 13,9 %.",
+        "action": "Regardez un bulletin de paie, le vôtre ou celui d'un proche, et repérez la ligne de l'IUTS retenu.",
+        "watchOut": "Les cotisations sociales ne sont pas des impôts : elles ouvrent droit à une prestation. La loi de finances 2026 n'a pas été lue : confirmez les taux aux impôts.",
+        "aliases": [
+          "impôt",
+          "c'est quoi un impôt",
+          "pourquoi payer l'impôt",
+          "impôt sur le salaire",
+          "iuts",
+          "retenue sur mon salaire",
+          "tranches d'impôt",
+          "impôt des petites entreprises",
+          "cme",
+          "bulletin de paie"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "A tax is a compulsory payment to public administrations, without counterpart; it finances public services (education, health care, roads)",
+          "source": "vie-publique",
+          "where": "R3-3-portfolio-inflation-open.md Topic E [VP-1] DEFINITION; [ECO-FR] WHY; [CRA] WHY list"
+        },
+        {
+          "claim": "IUTS is due by all employees in Burkina Faso (art. 107); computed and withheld monthly by the employer (art. 112); employer must give a document stating the amounts withheld (art. 115 4)",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6 table, rows 'Who pays', 'Withheld monthly by the employer', 'Employer pays it over … payslip proof'"
+        },
+        {
+          "claim": "IUTS bracket table: 0–30,000 0%; 30,100–50,000 12.10%; 50,100–80,000 13.90%; 80,100–120,000 15.70%; 120,100–170,000 18.40%; 170,100–250,000 21.70%; 250,100 and above 25% (CGI art. 112, version 2024)",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6 table, row 'Bracket table (monthly taxable income)'"
+        },
+        {
+          "claim": "CME: independent activity with annual turnover under 15,000,000 F (art. 533); it stands for several taxes (art. 532); annual tariff grid by turnover class and zone (art. 536)",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6 table, rows 'CME: what it is', 'CME: who', and 'CME tariff grid, CGI Art. 536'"
+        },
+        {
+          "claim": "Deductions before the table: pension withholdings within 8% of base salary; flat 25% allowance on base salary for professional costs (art. 111)",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6 table, row 'Deductions before the table'"
+        },
+        {
+          "claim": "Employee pension contribution 5.5% (Décret 2023-0129, art. 3), below the 8% limit",
+          "source": "bf-decree-2023-0129",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, row 'Employee rate: 5.5 %'"
+        },
+        {
+          "claim": "Example: 80,000 × 25% = 20,000; 80,000 × 5.5% = 4,400; 80,000 − 20,000 − 4,400 = 55,600, which falls in the 50,100–80,000 bracket (13.9%). The tax amount itself is deliberately not computed",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6 table, rows 'Deductions before the table' and 'Bracket table' (arithmetic by the writer)"
+        },
+        {
+          "claim": "Social contributions differ from taxes: they open a right to a benefit",
+          "source": "vie-publique",
+          "where": "R3-3-portfolio-inflation-open.md Topic E [VP-1] 'What a tax is not'; [ECO-FR]"
+        },
+        {
+          "claim": "Finance laws for 2024 and 2025 did not amend art. 112; the adopted 2026 law is an image scan and was not read; the DGI 'Version 2024' page may not include 2025 and 2026 laws",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6, table 'Did the finance laws for 2024, 2025 or 2026 change …' and 'Limits of this check'"
+        }
+      ]
+    },
+    {
+      "id": "retirement-in-burkina",
+      "sources": [
+        "bf-law-004-2021",
+        "bf-decree-2023-0129",
+        "bf-decree-2023-0132",
+        "bf-law-003-2021",
+        "cipres"
+      ],
+      "en": {
+        "title": "Know how retirement works in Burkina",
+        "summary": "A pension is built by contributions paid during working life. Employees are covered by the CNSS, civil servants by the CARFO, and self-employed people can join the CNSS voluntarily.",
+        "points": [
+          "The CNSS covers every worker under the labour code, including apprentices and interns. A 2023 decree sets the employee's share at 5.5% of pay and the employer's at 16%.",
+          "For an old-age pension, the 2021 law requires at least 180 months of insurance, that is 15 years, and reaching retirement age: from 56 to 63 depending on the job category.",
+          "Self-employed people can take voluntary insurance at the CNSS: 14% for the pension branch, paid entirely by them. The amounts in F CFA and the pension age were not found published.",
+          "Civil servants are covered by the CARFO, under a 2021 law: the agent and the employer both contribute. Its rates and retirement ages were not found: ask the CARFO."
+        ],
+        "example": "Boukary is an employee paid 100,000 F a month. His share: 100,000 × 5.5% = 5,500 F, withheld from his pay. His employer pays 100,000 × 16% = 16,000 F, of which 8.5%, or 8,500 F, goes to pensions. Each month, 5,500 + 8,500 = 14,000 F is paid towards his pension.",
+        "action": "Count how many months you have contributed so far and compare with the 180 months required.",
+        "watchOut": "Some online guides still show an older split of the employer's 16%, and two different ceilings. The 2023 decree is the reference: confirm with the CNSS.",
+        "aliases": [
+          "retirement",
+          "pension",
+          "cnss",
+          "carfo",
+          "pension contributions",
+          "voluntary insurance",
+          "retirement age",
+          "self-employed retirement",
+          "old age",
+          "how many years to contribute"
+        ]
+      },
+      "fr": {
+        "title": "Savoir comment marche la retraite au Burkina",
+        "summary": "Une pension se construit par des cotisations versées pendant la vie de travail. Les salariés relèvent de la CNSS, les fonctionnaires de la CARFO, et les indépendants peuvent adhérer volontairement à la CNSS.",
+        "points": [
+          "La CNSS couvre tout travailleur soumis au code du travail, apprentis et stagiaires compris. Un décret de 2023 fixe la part du salarié à 5,5 % du salaire, celle de l'employeur à 16 %.",
+          "Pour une pension de vieillesse, la loi de 2021 exige au moins 180 mois d'assurance, soit 15 ans, et l'âge de la retraite : de 56 à 63 ans selon la catégorie d'emploi.",
+          "Les indépendants peuvent souscrire une assurance volontaire à la CNSS : 14 % pour les pensions, entièrement à leur charge. Les montants en F CFA et l'âge de la pension n'ont pas été trouvés.",
+          "Les agents publics relèvent de la CARFO (loi de 2021) : l'agent et l'employeur cotisent tous deux. Ses taux et ses âges de retraite n'ont pas été trouvés : demandez à la CARFO."
+        ],
+        "example": "Boukary est salarié, payé 100 000 F par mois. Sa part : 100 000 × 5,5 % = 5 500 F, retenus sur son salaire. Son employeur verse 100 000 × 16 % = 16 000 F, dont 8,5 %, soit 8 500 F, vont aux pensions. Chaque mois, 5 500 + 8 500 = 14 000 F sont versés pour sa pension.",
+        "action": "Comptez combien de mois vous avez déjà cotisé et comparez avec les 180 mois exigés.",
+        "watchOut": "Des guides en ligne affichent encore une ancienne répartition des 16 % de l'employeur, et deux plafonds différents. Le décret de 2023 fait référence : confirmez auprès de la CNSS.",
+        "aliases": [
+          "retraite",
+          "pension",
+          "cnss",
+          "carfo",
+          "cotisations de retraite",
+          "assurance volontaire",
+          "âge de la retraite",
+          "retraite des indépendants",
+          "vieillesse",
+          "combien d'années cotiser"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Covered: all workers under the labour code; students of vocational schools, interns, apprentices and national volunteers are treated as employees (Loi 004-2021, art. 4)",
+          "source": "bf-law-004-2021",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, row 'Who is covered'"
+        },
+        {
+          "claim": "Employer 16% = 8.5% pensions + 1.5% occupational risks + 6% family benefits (art. 2); employee 5.5% for pensions (art. 3); decree signed 24 February 2023, effect from 30 August 2022",
+          "source": "bf-decree-2023-0129",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, rows 'Employer rate: 16 %' and 'Employee rate: 5.5 %'"
+        },
+        {
+          "claim": "Old-age pension conditions: at least 180 months of insurance and having stopped salaried work, at retirement age (Loi 004-2021, art. 84); 180 ÷ 12 = 15 years",
+          "source": "bf-law-004-2021",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, row 'Pension conditions: 180 months'"
+        },
+        {
+          "claim": "Retirement ages: 56 (workers), 58 (employees), 60 (supervisors, managers), 63 (doctors, pharmacists, higher-education teachers in the private sector)",
+          "source": "bf-decree-2023-0132",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, row 'Retirement ages (employees)'"
+        },
+        {
+          "claim": "Voluntary insurance: legal basis (Loi 004-2021, art. 5–6); rate 14% for the pension branch, entirely borne by the insured (Décret 2023-0129, art. 3); open to self-employed and informal-economy workers (2008 order as cited by CIPRES)",
+          "source": "bf-decree-2023-0129",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, rows 'Voluntary insurance: legal basis', 'Voluntary insured rate: 14 %', 'Voluntary insurance: who'"
+        },
+        {
+          "claim": "Voluntary-insurance amounts in F CFA, income classes and pension age: not found; CNSS websites could not be used on 3 October 2026",
+          "source": "cipres",
+          "where": "R3-5-burkina-facts.md Item 7 'NOT FOUND for CNSS' and §4 NOT FOUND table, item 7"
+        },
+        {
+          "claim": "CARFO: Loi 003-2021 for State public agents; old-age, invalidity, death branch; contributions borne by employer and agent; rate set by decree; rates and retirement ages not found",
+          "source": "bf-law-003-2021",
+          "where": "R3-5-burkina-facts.md Item 7 CARFO table and 'CARFO contribution rates and civil-servant retirement ages: NOT FOUND'"
+        },
+        {
+          "claim": "Conflict: third-party guides give employer 16% = 5.5% + 3.5% + 7% (matching the repealed 2003 decree); ceilings of 300,000 and 800,000 F appear only in search summaries; the decree is the authority",
+          "source": "bf-decree-2023-0129",
+          "where": "R3-5-burkina-facts.md §3 Conflicts between sources, point 1"
+        },
+        {
+          "claim": "Example: 100,000 × 5.5% = 5,500; 100,000 × 16% = 16,000; 100,000 × 8.5% = 8,500; 5,500 + 8,500 = 14,000 (pay assumed below the ceiling, whose figure was not read in a legal text)",
+          "source": "bf-decree-2023-0129",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table (arithmetic by the writer)"
+        }
+      ]
+    },
+    {
+      "id": "make-your-activity-official",
+      "sources": [
+        "mebf-cefore",
+        "cgi-bf",
+        "sidwaya"
+      ],
+      "en": {
+        "title": "Make your small business official",
+        "summary": "In Burkina Faso, a small business is registered at one desk, the CEFORE. The cost is published. Then come a simple yearly contribution and a few duties.",
+        "points": [
+          "The CEFORE, at the Maison de l'Entreprise, handles in one place the trade register, the tax number (IFU), the trader's card and the CNSS employer notice. It has desks in 14 towns.",
+          "Published cost for a sole owner, on the sheet dated 1 June 2026: 46,000 F at the desk, 47,380 F online. The Maison de l'Entreprise also offers two free trainings.",
+          "Under 15 million F of yearly sales, you pay the micro-business contribution. You must declare your activity to the tax office within 30 days, record receipts and expenses, and issue invoices.",
+          "Public funding: the press reported that in November 2025 the State merged 14 funds into 4, one being the FBDES Tõogo. Its current conditions are not published: ask for them in writing."
+        ],
+        "example": "Safiatou runs a hair salon in Koudougou and sells for 1,200,000 F a year. Registering as a sole owner costs 46,000 F at the CEFORE. In the 2024 tax code, sales up to 1,500,000 F in Koudougou mean a contribution of 6,000 F a year. It can be paid in four parts: 6,000 ÷ 4 = 1,500 F each.",
+        "action": "Get the CEFORE sheet for sole owners and tick the documents you already have.",
+        "watchOut": "No official processing time is printed on the CEFORE sheets: ask at the desk. Do not rely on loan conditions still shown on former funds' websites.",
+        "aliases": [
+          "register my business",
+          "make my business official",
+          "cefore",
+          "cost to register a business",
+          "trade register",
+          "ifu",
+          "micro-business tax",
+          "leave the informal sector",
+          "fund for entrepreneurs",
+          "start a business in burkina"
+        ]
+      },
+      "fr": {
+        "title": "Rendre votre activité officielle",
+        "summary": "Au Burkina Faso, une petite entreprise se déclare à un guichet unique, le CEFORE. Le coût est publié. Viennent ensuite une contribution annuelle simple et quelques obligations.",
+        "points": [
+          "Le CEFORE de la Maison de l'Entreprise, présent dans 14 villes, traite en un lieu le registre du commerce, le numéro fiscal (IFU), la carte de commerçant et la notification employeur CNSS.",
+          "Coût publié pour un entrepreneur individuel, sur la fiche datée du 1er juin 2026 : 46 000 F au guichet, 47 380 F en ligne. La Maison de l'Entreprise offre aussi deux formations gratuites.",
+          "Sous 15 millions de F de ventes par an, vous payez la contribution des micro-entreprises. Il faut déclarer l'activité aux impôts sous 30 jours, noter recettes et dépenses, délivrer des factures.",
+          "Financement public : la presse a rapporté qu'en novembre 2025 l'État a regroupé 14 fonds en 4, dont le FBDES Tõogo. Ses conditions actuelles ne sont pas publiées : demandez-les par écrit."
+        ],
+        "example": "Safiatou tient un salon de coiffure à Koudougou et vend pour 1 200 000 F par an. Se déclarer comme entrepreneur individuel coûte 46 000 F au CEFORE. Dans le code des impôts 2024, des ventes jusqu'à 1 500 000 F à Koudougou donnent une contribution de 6 000 F par an. Elle peut se payer en quatre fois : 6 000 ÷ 4 = 1 500 F chaque fois.",
+        "action": "Procurez-vous la fiche CEFORE des entrepreneurs individuels et cochez les pièces que vous avez déjà.",
+        "watchOut": "Aucun délai de traitement n'est imprimé sur les fiches du CEFORE : demandez-le au guichet. Ne vous fiez pas aux conditions de prêt encore affichées par les anciens fonds.",
+        "aliases": [
+          "déclarer mon entreprise",
+          "rendre mon activité officielle",
+          "cefore",
+          "coût pour créer une entreprise",
+          "registre du commerce",
+          "ifu",
+          "impôt des micro-entreprises",
+          "sortir de l'informel",
+          "fonds pour entrepreneurs",
+          "créer une entreprise au burkina"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Sole proprietor formalities done at CEFORE: RCCM, tax existence declaration and IFU, trader's professional card, CNSS employer notification",
+          "source": "mebf-cefore",
+          "where": "R3-5-burkina-facts.md Item 8 table, row 'Sole proprietor (personne physique): formalities done at CEFORE'"
+        },
+        {
+          "claim": "CEFORE listed in 14 towns (Banfora, Bobo-Dioulasso, Dédougou, Dori, Fada N'gourma, Gaoua, Kaya, Koudougou, Koupéla, Manga, Ouagadougou, Ouahigouya, Tenkodogo, Ziniaré)",
+          "source": "mebf-cefore",
+          "where": "R3-5-burkina-facts.md Item 8 table, row 'CEFORE locations'"
+        },
+        {
+          "claim": "Cost, sole proprietor: 46,000 F CFA; online filing 47,380 F CFA (www.creerentreprise.bf); sheet dated 01/06/2026",
+          "source": "mebf-cefore",
+          "where": "R3-5-burkina-facts.md Item 8 table, row 'Cost, sole proprietor'"
+        },
+        {
+          "claim": "MEBF offers two free trainings (business creation; managing the new business)",
+          "source": "mebf-cefore",
+          "where": "R3-5-burkina-facts.md Item 8 table, row 'Free training'"
+        },
+        {
+          "claim": "CME applies under 15,000,000 F of annual turnover (art. 533); declaration of existence within 30 days, minimal cash accounting of receipts and expenses, invoices (art. 539)",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6 table, rows 'CME: who' and 'CME obligations'"
+        },
+        {
+          "claim": "Council of Ministers of 20 November 2025: 14 national funds regrouped into 4; FBDES 'Tõogo' absorbs FAARF, AFP-PME and others (press)",
+          "source": "sidwaya",
+          "where": "R3-5-burkina-facts.md Item 8, table 'Public funds for entrepreneurs after the 2025 reform', rows 1–3"
+        },
+        {
+          "claim": "Current conditions, rates and application steps of FBDES 'Tõogo': not found; old FAARF conditions are pre-merger and must not be presented as current",
+          "source": "sidwaya",
+          "where": "R3-5-burkina-facts.md Item 8, 'NOT FOUND: current conditions …' and row 'Old FAARF conditions'"
+        },
+        {
+          "claim": "CME grid (art. 536): class 8, turnover 0 to 1,500,000 F, zone B = 6,000 F a year; Koudougou is in zone B; payable by quarters (art. 537 3)",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6, 'CME tariff grid', zones paragraph, and row 'CME payable in quarters'"
+        },
+        {
+          "claim": "Example: 6,000 ÷ 4 = 1,500 (Safiatou and her sales figure are fictional)",
+          "source": "cgi-bf",
+          "where": "R3-5-burkina-facts.md Item 6 CME grid (arithmetic by the writer)"
+        },
+        {
+          "claim": "Official CEFORE processing delay: not printed on the sheets or the CEFORE page",
+          "source": "mebf-cefore",
+          "where": "R3-5-burkina-facts.md Item 8, 'NOT FOUND for item 8'"
+        }
+      ]
+    }
+  ],
+  "leftOut": [
+    "what-a-portfolio-is: no source gives a formal definition of 'portfolio' as a topic; the lesson uses the word as the AMF-UMOA glossary and the BRVM use it, without a quoted definition.",
+    "choose-your-mix / know-your-risk-profile: no regional (UEMOA) teaching text on asset allocation or risk tolerance was found; the method comes from the US, French and Australian regulators, the only local element being what Coris Bourse publishes.",
+    "manage-it-yourself-or-delegate: mandate fees and minimum amounts of brokers in Burkina Faso (not published); 'advised management' as a named mode in Burkina Faso (not found; only the AMF-UMOA guide mentions advised accounts in passing).",
+    "measure-your-return: a step-by-step method for an average yearly (annualised) return over several years; only the one-year gross, net and real return are taught.",
+    "know-what-you-own-and-owe: no French-language source defines personal net worth with a method; the French wording 'valeur nette' is the writer's translation of the SEC and Moneysmart term.",
+    "taxes-in-plain-words: the IUTS amount for a given salary is not computed (the notes quote the bracket table but not the rule for applying it slice by slice); dependants' reduction and exempt allowances left out for length; the adopted 2026 finance law was not read; direct versus indirect taxes left out for length.",
+    "retirement-in-burkina: CNSS contribution ceiling (figure not read in a legal text); voluntary-insurance amounts in F CFA, income classes and pension age; CARFO contribution rates and civil-servant retirement ages; how a pension amount is calculated; general retirement-saving products.",
+    "make-your-activity-official: official CEFORE processing time; conditions and cost of the OHADA 'entreprenant' status in Burkina Faso; current conditions, rates and application steps of the FBDES 'Tõogo' fund.",
+    "invest-regularly: no published automatic or scheduled investment plan was found for a broker or fund in Burkina Faso; the evidence on automatic saving comes from studies in Afghanistan and Malawi, and one Malawi study found that a default raised bank balances without raising total savings."
+  ]
+}

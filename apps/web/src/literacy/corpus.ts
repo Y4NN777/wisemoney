@@ -1,26 +1,23 @@
 // Reached by the Vercel functions in api/: relative imports here must use .js specifiers (api/serverGraph.test.ts).
 import { LITERACY_UNITS_EN } from "./corpus.en.js";
 import { LITERACY_UNITS_FR } from "./corpus.fr.js";
+import { LITERACY_PATH } from "./path.js";
+
+export { LITERACY_SOURCES, type LiteracySource } from "./sources.js";
+export { LITERACY_PATH };
 
 /**
- * Literacy corpus v0 (ADR-0013): modern, international financial literacy written for young
- * Africans. Original text structured on the competency frameworks named in LITERACY_SOURCES.
- * Editorial draft: no local expert review yet (docs/literacy/corpus-v0.md).
+ * Literacy course v1 (ADR-0013, research logs of 2026-10-03). Every lesson was written from cited
+ * sources, never from model knowledge: docs/literacy/course-v1.md lists them and
+ * docs/literacy/evidence-v1.md traces each claim. The lesson files, the path and the source
+ * registry are generated from content/literacy/area-*.json by tools/literacy/assemble.py.
  */
-export const LITERACY_CORPUS_VERSION = "0.1.0-2026-10-03";
+export const LITERACY_CORPUS_VERSION = "1.0.0-2026-10-03";
 
 export type LiteracyLocale = "en" | "fr";
 
-export const LITERACY_AREAS = ["earn", "spend", "digital", "grow", "borrow", "protect"] as const;
-export type LiteracyAreaId = typeof LITERACY_AREAS[number];
-
-export const LITERACY_SOURCES = {
-  "oecd-infe-youth": "OECD/INFE Core Competencies Framework on Financial Literacy for Youth (2015)",
-  "eu-oecd-digital": "EU/OECD-INFE Financial Competence Framework for Adults (2022), digital finance competences",
-  bceao: "BCEAO (Central Bank of West African States)",
-  brvm: "BRVM (Bourse Régionale des Valeurs Mobilières)",
-} as const;
-export type LiteracySourceId = keyof typeof LITERACY_SOURCES;
+export type LiteracyAreaId = keyof typeof LITERACY_PATH;
+export const LITERACY_AREAS = Object.keys(LITERACY_PATH) as LiteracyAreaId[];
 
 export type LiteracyUnit = {
   id: string;
@@ -30,9 +27,12 @@ export type LiteracyUnit = {
   summary: string;
   points: string[];
   example: string;
+  /** One small thing to do this week: the course treats behaviour as part of literacy. */
+  action: string;
   watchOut: string;
   aliases: string[];
-  sources: LiteracySourceId[];
+  /** Ids in LITERACY_SOURCES. */
+  sources: string[];
 };
 
 export const MAX_GROUNDING_UNITS = 3;
@@ -65,8 +65,8 @@ function terms(question: string): string[] {
 
 /**
  * Lexical retrieval, same shape as the help corpus. Aliases are the curated search terms, so they
- * weigh most; a generic word in a title ("buy") must not beat a precise alias ("bitcoin").
- * Returns an empty list when nothing matches, so the caller can tell "no lesson covers this".
+ * weigh most; a generic word in a title must not beat a precise alias. Returns an empty list when
+ * nothing matches, so the caller can tell "no lesson covers this".
  */
 export function findRelevantUnits(units: readonly LiteracyUnit[], question: string, limit = MAX_GROUNDING_UNITS): LiteracyUnit[] {
   const wanted = terms(question);
@@ -74,7 +74,7 @@ export function findRelevantUnits(units: readonly LiteracyUnit[], question: stri
   return units.map((unit, index) => {
     const title = normalize(unit.title);
     const aliases = normalize(unit.aliases.join(" "));
-    const body = normalize([unit.summary, ...unit.points, unit.example, unit.watchOut].join(" "));
+    const body = normalize([unit.summary, ...unit.points, unit.example, unit.action, unit.watchOut].join(" "));
     const score = wanted.reduce((total, term) => total + (aliases.includes(term) ? 12 : 0) + (title.includes(term) ? 8 : 0) + (body.includes(term) ? 2 : 0), 0);
     return { unit, index, score };
   }).filter(({ score }) => score > 0)
@@ -83,16 +83,20 @@ export function findRelevantUnits(units: readonly LiteracyUnit[], question: stri
     .map(({ unit }) => unit);
 }
 
-/** The lesson as plain Markdown: the offline answer, and the trusted context sent to the tutor. */
+const LABELS: Record<LiteracyLocale, { example: string; action: string; watchOut: string }> = {
+  en: { example: "**Example:**", action: "**Do this week:**", watchOut: "**Watch out:**" },
+  fr: { example: "**Exemple :**", action: "**À faire cette semaine :**", watchOut: "**Attention :**" },
+};
+
+/** The lesson as plain Markdown: the on-device answer, and the trusted context sent to the tutor. */
 export function unitAsMarkdown(unit: LiteracyUnit): string {
-  const labels = unit.locale === "fr"
-    ? { example: "Exemple", watchOut: "Attention" }
-    : { example: "Example", watchOut: "Watch out" };
+  const labels = LABELS[unit.locale];
   return [
     `**${unit.title}**`,
     unit.summary,
     unit.points.map((point) => `- ${point}`).join("\n"),
-    `**${labels.example} :** ${unit.example}`.replace(" :", unit.locale === "fr" ? " :" : ":"),
-    `**${labels.watchOut} :** ${unit.watchOut}`.replace(" :", unit.locale === "fr" ? " :" : ":"),
+    `${labels.example} ${unit.example}`,
+    `${labels.action} ${unit.action}`,
+    `${labels.watchOut} ${unit.watchOut}`,
   ].join("\n\n");
 }

@@ -1,0 +1,532 @@
+{
+  "area": "manage",
+  "sourceRegistry": {
+    "ilo-ci-2023": {
+      "name": "ILO — Éducation financière pour les cultivateurs et les travailleurs ruraux en Côte d'Ivoire, Gérez mieux votre argent, Livret de l'apprenant (2023)",
+      "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_emp/%40emp_ent/documents/instructionalmaterial/wcms_900276.pdf"
+    },
+    "ilo-iyb": {
+      "name": "ILO — Improve Your Business (IYB): Record Keeping; Planning for Your Business; French edition GERME: la tenue des registres (2015)",
+      "url": "https://researchrepository.ilo.org/esploro/outputs/encyclopediaEntry/Improve-your-business/995219387802676"
+    },
+    "cfpb-ymyg": {
+      "name": "CFPB — Your Money, Your Goals: A financial empowerment toolkit (2020)",
+      "url": "https://files.consumerfinance.gov/f/documents/cfpb_your-money-your-goals_financial-empowerment_toolkit.pdf"
+    },
+    "cfpb-building-blocks": {
+      "name": "CFPB — Learn about the building blocks of financial capability (page last modified 12 December 2024)",
+      "url": "https://www.consumerfinance.gov/consumer-tools/educator-tools/youth-financial-education/learn/"
+    },
+    "fdic-money-smart": {
+      "name": "FDIC — Money Smart for Young Adults, Module 4: Your Spending and Saving Plan, Participant Guide (2022)",
+      "url": "https://catalog.fdic.gov/catalog/sfc/servlet.shepherd/document/download/069t000000ghq5IAAQ"
+    },
+    "fdic-money-smart-adults": {
+      "name": "FDIC — Money Smart for Adults, Module 1: Your Money Values and Influences, Participant Guide (2018)",
+      "url": "https://www.fdic.gov/consumer-resource-center/money-smart-adults"
+    },
+    "oecd-infe-2023": {
+      "name": "OECD — OECD/INFE 2023 International Survey of Adult Financial Literacy (2023)",
+      "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2023/12/oecd-infe-2023-international-survey-of-adult-financial-literacy_8ce94e2c/56003a32-en.pdf"
+    },
+    "fcac-budget": {
+      "name": "Financial Consumer Agency of Canada — Making a budget (read 2026-10-03)",
+      "url": "https://www.canada.ca/en/financial-consumer-agency/services/make-budget.html"
+    },
+    "fcac-strategy": {
+      "name": "Financial Consumer Agency of Canada — Make Change that Counts: National Financial Literacy Strategy 2021-2026 (2021)",
+      "url": "https://www.canada.ca/en/financial-consumer-agency/programs/financial-literacy/financial-literacy-strategy-2021-2026.html"
+    },
+    "asic-moneysmart": {
+      "name": "ASIC Moneysmart (Australia) — Track your spending (last updated 30 July 2026)",
+      "url": "https://moneysmart.gov.au/budgeting/track-your-spending"
+    },
+    "banque-de-france": {
+      "name": "Banque de France — Mes questions d'argent: Comment faire ses comptes ?",
+      "url": "https://www.mesquestionsdargent.fr"
+    },
+    "aflatoun": {
+      "name": "Aflatoun — AflaYouth manuel, French sample (2024, sample published 2026-01)",
+      "url": "https://aflatoun.org/wp-content/uploads/2026/01/AflaYouth_FR_AllBooks_Sample.pdf"
+    },
+    "finscope-bf-2016": {
+      "name": "FinMark Trust — Burkina Faso Youth Dashboard, FinScope 2016 (dashboard 2017)",
+      "url": "https://www.finmark.org.za/system/documents/files/000/000/235/original/Burkina-Faso_Dashboard_Youth_English.pdf"
+    },
+    "st-pif-2023": {
+      "name": "ST-PIF (Burkina Faso) — Cahier du participant, Séminaire de formation en éducation financière (December 2023; read from a third-party upload)",
+      "url": "https://fr.scribd.com/document/744857863/inclusion-financiere"
+    },
+    "lefaso": {
+      "name": "LeFaso.net — Cédric Zongo, Chronique finances personnelles (14 February 2019 and 16 March 2019); workshop report (7 January 2020)",
+      "url": "https://lefaso.net/spip.php?article88020"
+    }
+  },
+  "lessons": [
+    {
+      "id": "money-in-money-out",
+      "sources": ["aflatoun", "fdic-money-smart", "ilo-ci-2023", "st-pif-2023"],
+      "en": {
+        "title": "Know what comes in and goes out",
+        "summary": "Your income is the money that comes in. Your expenses are the money that goes out. The difference between the two tells you where you stand.",
+        "points": [
+          "Income is the money you receive or earn: pay from a job, money from an activity you run, gifts.",
+          "Expenses are the money that goes out: everything you use your income for.",
+          "Subtract your expenses from your income. If something is left, you have a surplus: extra money you can plan to save, share or spend.",
+          "If the result is below zero, you have a shortfall: your income does not cover your expenses. You then have to earn more, spend less, or go into debt."
+        ],
+        "example": "This month Awa earns 40,000 F CFA from her sales and receives a gift of 5,000 F: 40,000 + 5,000 = 45,000 F of income. She spends 38,000 F. 45,000 − 38,000 = 7,000 F: a surplus. Had she spent 48,000 F, the result would be 45,000 − 48,000 = −3,000 F: a shortfall of 3,000 F.",
+        "action": "Write down all the money you received this month and all the money you spent, then subtract.",
+        "watchOut": "A shortfall is always paid for somehow, often with debt. A basic rule taught in Burkina Faso: spend less than you earn.",
+        "aliases": ["income", "expenses", "money in", "money out", "what i earn", "what i spend", "surplus", "shortfall", "money left over", "not enough money"]
+      },
+      "fr": {
+        "title": "Savoir ce qui entre et ce qui sort",
+        "summary": "Votre revenu, c'est l'argent qui rentre. Vos dépenses, c'est l'argent qui sort. La différence entre les deux vous dit où vous en êtes.",
+        "points": [
+          "Le revenu est l'argent que vous recevez ou gagnez : la paie d'un emploi, l'argent d'une activité que vous menez, des cadeaux.",
+          "Les dépenses sont l'argent qui sort : tout ce à quoi vous utilisez votre revenu.",
+          "Retirez vos dépenses de votre revenu. S'il reste quelque chose, vous avez un excédent : de l'argent en plus que vous pouvez prévoir d'épargner, de partager ou de dépenser.",
+          "Si le résultat est en dessous de zéro, vous avez un manque : votre revenu ne couvre pas vos dépenses. Il faut alors gagner plus, dépenser moins ou s'endetter."
+        ],
+        "example": "Ce mois-ci, Awa gagne 40 000 F CFA avec ses ventes et reçoit un cadeau de 5 000 F : 40 000 + 5 000 = 45 000 F de revenu. Elle dépense 38 000 F. 45 000 − 38 000 = 7 000 F : un excédent. Si elle avait dépensé 48 000 F, le résultat serait 45 000 − 48 000 = −3 000 F : un manque de 3 000 F.",
+        "action": "Notez tout l'argent que vous avez reçu ce mois-ci et tout l'argent que vous avez dépensé, puis faites la soustraction.",
+        "watchOut": "Un manque se paie toujours d'une façon ou d'une autre, souvent par une dette. Une règle de base enseignée au Burkina Faso : dépenser moins que ce qu'on gagne.",
+        "aliases": ["revenu", "dépenses", "argent qui rentre", "argent qui sort", "ce que je gagne", "ce que je dépense", "excédent", "manque d'argent", "argent qui reste", "fin de mois difficile"]
+      },
+      "evidence": [
+        { "claim": "Income is money you receive or earn (job, business, gifts); income is money coming in, an expense is money going out", "source": "aflatoun", "where": "T3.md, INCOME (AflaYouth 1.1)" },
+        { "claim": "Income: money you receive; expenses: how you use your income; income lines include pay, self-employment income, gifts", "source": "fdic-money-smart", "where": "T1.md (2) Income and work, FDIC M4 p.2" },
+        { "claim": "Positive result: extra income you can plan to share, spend or save", "source": "fdic-money-smart", "where": "T1.md (3), FDIC M4 p.3" },
+        { "claim": "Saving = income − expenses", "source": "ilo-ci-2023", "where": "ILO-CI.md B.1 definitions, p.46" },
+        { "claim": "Negative result: increase income, decrease expenses, or incur debt; income does not cover expenses", "source": "fdic-money-smart", "where": "T1.md (3), FDIC M4 p.3; also ILO-CI.md B.2 p.41" },
+        { "claim": "Rule taught in Burkina Faso: spend less than you earn", "source": "st-pif-2023", "where": "R3-4 BF-0, key teaching point 9" },
+        { "claim": "Example figures (45,000; 7,000; −3,000) are invented for illustration and recomputed", "source": "ilo-ci-2023", "where": "method only: ILO-CI.md B.3 tracking sheet p.46" }
+      ]
+    },
+    {
+      "id": "essential-and-non-essential",
+      "sources": ["ilo-ci-2023", "cfpb-ymyg", "fcac-budget", "cfpb-building-blocks"],
+      "en": {
+        "title": "Tell needs from wants",
+        "summary": "Some spending is essential: it answers a need. Other spending is non-essential: it answers a want. Knowing the difference tells you what to give up first when money is short.",
+        "points": [
+          "Essential spending covers needs, the things you must have to live. Non-essential spending covers wants, the things you would like to have but can live without.",
+          "The line is not the same for everyone. A mobile phone is a need for someone who works with it, and a want for someone who only calls friends.",
+          "People also spend to feel good. The feeling does not last, so be careful with this kind of purchase.",
+          "List your needs and your wants with their cost. If you do not have enough for everything, pay for the needs first and give up some wants."
+        ],
+        "example": "Issa has 30,000 F CFA. Needs: food 15,000 F, transport 6,000 F, phone credit for work 3,000 F, so 24,000 F. Wants: shoes 8,000 F, an outing 3,000 F, so 11,000 F. Total: 24,000 + 11,000 = 35,000 F, which is 5,000 F too much. He drops the shoes: 24,000 + 3,000 = 27,000 F, and 3,000 F is left.",
+        "action": "List what you plan to buy this week in two columns, needs and wants, with the cost of each.",
+        "watchOut": "Do not treat saving as a want. Money set aside for emergencies is essential spending.",
+        "aliases": ["needs and wants", "essential spending", "non-essential spending", "what to cut", "do i really need it", "priorities", "spending to feel good", "treat myself", "useless spending"]
+      },
+      "fr": {
+        "title": "Distinguer les besoins des envies",
+        "summary": "Certaines dépenses sont essentielles : elles répondent à un besoin. D'autres sont non essentielles : elles répondent à une envie. Connaître la différence vous dit à quoi renoncer d'abord quand l'argent manque.",
+        "points": [
+          "Les dépenses essentielles couvrent les besoins, ce qu'il vous faut pour vivre. Les dépenses non essentielles couvrent les envies, ce que vous aimeriez avoir mais dont vous pouvez vous passer.",
+          "La limite n'est pas la même pour tout le monde. Un téléphone est un besoin pour celui qui travaille avec, et une envie pour celui qui appelle seulement ses amis.",
+          "On dépense aussi pour se sentir bien. Ce sentiment ne dure pas, alors soyez prudent avec ce genre d'achat.",
+          "Faites la liste de vos besoins et de vos envies avec leur coût. Si vous n'avez pas assez pour tout, payez d'abord les besoins et renoncez à certaines envies."
+        ],
+        "example": "Issa a 30 000 F CFA. Besoins : nourriture 15 000 F, transport 6 000 F, crédit téléphone pour le travail 3 000 F, soit 24 000 F. Envies : chaussures 8 000 F, une sortie 3 000 F, soit 11 000 F. Total : 24 000 + 11 000 = 35 000 F, soit 5 000 F de trop. Il renonce aux chaussures : 24 000 + 3 000 = 27 000 F, et il reste 3 000 F.",
+        "action": "Écrivez ce que vous comptez acheter cette semaine en deux colonnes, besoins et envies, avec le coût de chaque chose.",
+        "watchOut": "Ne rangez pas l'épargne parmi les envies. L'argent mis de côté pour les urgences est une dépense essentielle.",
+        "aliases": ["besoins et envies", "dépenses essentielles", "dépenses non essentielles", "quoi supprimer", "est-ce que j'en ai besoin", "priorités", "dépenser pour se sentir bien", "se faire plaisir", "dépenses inutiles"]
+      },
+      "evidence": [
+        { "claim": "Essential spending corresponds to needs, non-essential spending to wants", "source": "ilo-ci-2023", "where": "ILO-CI.md B.1 definitions, p.26" },
+        { "claim": "Needs are things you must have to live; wants are things you would like but can survive without", "source": "cfpb-ymyg", "where": "T1.md (3), CFPB p.78" },
+        { "claim": "What is non-essential for one person can be essential for another; mobile phone example", "source": "ilo-ci-2023", "where": "ILO-CI.md B.2, p.28; also R3-6 section 3.4 (FCAC Making a budget)" },
+        { "claim": "People spend to feel good; the feeling is only temporary", "source": "ilo-ci-2023", "where": "ILO-CI.md B.2, p.28" },
+        { "claim": "Needs and wants sheet with costs; if not enough money, give up some non-essential spending", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3 Besoins / envies sheet, p.28" },
+        { "claim": "Spend to meet needs before wants", "source": "cfpb-building-blocks", "where": "R3-6 section 3.2, adult behaviours" },
+        { "claim": "Saving for emergencies is essential, an absolute need", "source": "ilo-ci-2023", "where": "ILO-CI.md B.2 Messages clés, p.30" },
+        { "claim": "Example figures (24,000; 11,000; 35,000; 27,000; 3,000) are invented for illustration and recomputed", "source": "ilo-ci-2023", "where": "method only: ILO-CI.md B.3 sheet p.28" }
+      ]
+    },
+    {
+      "id": "build-a-budget",
+      "sources": ["ilo-ci-2023", "st-pif-2023", "banque-de-france", "lefaso"],
+      "en": {
+        "title": "Build your first budget",
+        "summary": "A budget is a tool for deciding and planning how you use your money so that you reach your goals. It is written for a set period, often a month.",
+        "points": [
+          "A budget lists the income you expect over a period and shows how it will be spent.",
+          "It has three parts: your income, your expenses and your saving.",
+          "Sort your lines into fixed and variable. Fixed lines are the same every month. Variable lines change from one month to the next.",
+          "The last line, income minus expenses, must be a positive number. Check that expenses do not exceed income, decide how much to save, then adjust."
+        ],
+        "example": "Aminata's month. Income: a fixed wage of 50,000 F CFA and variable sales of 10,000 F, so 60,000 F. Expenses: rent 15,000 F, food 20,000 F, transport 8,000 F, phone 4,000 F, clothes 5,000 F, so 52,000 F. Last line: 60,000 − 52,000 = 8,000 F. It is positive, so she can plan to save 8,000 F.",
+        "action": "Write your budget for next month before the month begins: expected income, planned expenses, planned saving.",
+        "watchOut": "If the last line is negative, your income is not enough to cover your expenses. Go back over the list before the month starts.",
+        "aliases": ["budget", "make a budget", "plan my money", "monthly plan", "fixed expenses", "variable expenses", "how to organise my money", "plan my salary", "budget parts"]
+      },
+      "fr": {
+        "title": "Construire votre premier budget",
+        "summary": "Un budget est un outil pour décider et planifier l'usage de votre argent afin d'atteindre vos objectifs. On l'écrit pour une période définie, souvent un mois.",
+        "points": [
+          "Un budget liste les revenus que vous attendez sur une période et montre comment ils seront dépensés.",
+          "Il a trois parties : vos revenus, vos dépenses et votre épargne.",
+          "Classez vos lignes en fixes et variables. Les lignes fixes sont les mêmes chaque mois. Les lignes variables changent d'un mois à l'autre.",
+          "La dernière ligne, revenus moins dépenses, doit être un nombre positif. Vérifiez que les dépenses ne dépassent pas les revenus, décidez combien épargner, puis ajustez."
+        ],
+        "example": "Le mois d'Aminata. Revenus : un salaire fixe de 50 000 F CFA et des ventes variables de 10 000 F, soit 60 000 F. Dépenses : loyer 15 000 F, nourriture 20 000 F, transport 8 000 F, téléphone 4 000 F, vêtements 5 000 F, soit 52 000 F. Dernière ligne : 60 000 − 52 000 = 8 000 F. Elle est positive : Aminata peut prévoir d'épargner 8 000 F.",
+        "action": "Écrivez votre budget du mois prochain avant que le mois commence : revenus attendus, dépenses prévues, épargne prévue.",
+        "watchOut": "Si la dernière ligne est négative, vos revenus ne suffisent pas à couvrir vos dépenses. Reprenez la liste avant le début du mois.",
+        "aliases": ["budget", "faire un budget", "planifier mon argent", "plan du mois", "dépenses fixes", "dépenses variables", "comment organiser mon argent", "gérer mon salaire", "parties d'un budget"]
+      },
+      "evidence": [
+        { "claim": "A budget is a decision and planning tool to manage money so as to reach goals", "source": "ilo-ci-2023", "where": "ILO-CI.md B.1 definitions, p.41" },
+        { "claim": "A budget summarises estimated income and shows how it will be spent over a defined period", "source": "st-pif-2023", "where": "R3-4 BF-0, key teaching point 5" },
+        { "claim": "Three main parts of a budget: income, expenses, saving", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3 budget template and quiz B3 (p.25); also R3-4 BF-0 budget template" },
+        { "claim": "Budget template separates fixed income from variable income", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3 budget template, pp.33–42" },
+        { "claim": "Distinguish fixed expenses from variable expenses", "source": "banque-de-france", "where": "T2.md BUDGET [S, BdF] (fetch summary; no definition given in the notes)" },
+        { "claim": "The income minus expenses line must be a positive number; otherwise income is insufficient", "source": "ilo-ci-2023", "where": "ILO-CI.md B.2, p.41" },
+        { "claim": "Steps: make sure expenses do not exceed income, decide how much to save, review and adjust", "source": "st-pif-2023", "where": "R3-4 BF-0, key teaching point 6" },
+        { "claim": "Write the budget before the month begins", "source": "lefaso", "where": "R3-4 BF-13 (a) point 3, https://lefaso.net/spip.php?article88020 (14 February 2019)" },
+        { "claim": "Example figures (60,000; 52,000; 8,000) are invented for illustration and recomputed", "source": "ilo-ci-2023", "where": "method only: ILO-CI.md B.3 budget template" }
+      ]
+    },
+    {
+      "id": "track-your-spending",
+      "sources": ["ilo-ci-2023", "asic-moneysmart", "fcac-budget", "finscope-bf-2016", "lefaso"],
+      "en": {
+        "title": "Write down where your money goes",
+        "summary": "Tracking means writing down every sum that comes in and every sum that goes out. It shows where your money really goes and whether you are following your budget.",
+        "points": [
+          "For each sum, write the date, what it was for and the amount. Keep one list for income and one for expenses.",
+          "Next to each expense, mark whether it was planned or unplanned.",
+          "At the end of the period, add up both lists. Total income minus total expenses is what you saved. Compare it with your budget.",
+          "Small purchases add up quickly and many people are surprised by the total. Include cash purchases, which are easy to forget."
+        ],
+        "example": "Salif's week. 3 May: transport 500 F CFA, planned. 4 May: food 2,000 F, planned. 5 May: phone repair 1,500 F, unplanned. 6 May: food 1,000 F, planned. Total: 500 + 2,000 + 1,500 + 1,000 = 5,000 F. He received 6,000 F that week: 6,000 − 5,000 = 1,000 F left. Unplanned spending: 1,500 F.",
+        "action": "Write down every expense for the next seven days: date, what it was for, amount, planned or not.",
+        "watchOut": "Do not rely on memory. In a 2016 survey in Burkina Faso, only 10 % of young people tracked their spending very accurately.",
+        "aliases": ["track spending", "write down expenses", "where does my money go", "expense notebook", "spending list", "planned and unplanned", "do my accounts", "follow my money", "money disappears"]
+      },
+      "fr": {
+        "title": "Noter où va votre argent",
+        "summary": "Suivre son argent, c'est noter chaque somme qui rentre et chaque somme qui sort. Cela montre où va vraiment votre argent et si vous respectez votre budget.",
+        "points": [
+          "Pour chaque somme, notez la date, à quoi elle a servi et le montant. Tenez une liste pour les revenus et une pour les dépenses.",
+          "À côté de chaque dépense, indiquez si elle était planifiée ou non planifiée.",
+          "À la fin de la période, faites le total des deux listes. Le total des revenus moins le total des dépenses, c'est ce que vous avez épargné. Comparez avec votre budget.",
+          "Les petits achats s'additionnent vite et beaucoup de gens sont surpris par le total. Comptez aussi les achats en espèces, faciles à oublier."
+        ],
+        "example": "La semaine de Salif. 3 mai : transport 500 F CFA, planifié. 4 mai : nourriture 2 000 F, planifié. 5 mai : réparation du téléphone 1 500 F, non planifié. 6 mai : nourriture 1 000 F, planifié. Total : 500 + 2 000 + 1 500 + 1 000 = 5 000 F. Il a reçu 6 000 F cette semaine : 6 000 − 5 000 = 1 000 F restants. Dépenses non planifiées : 1 500 F.",
+        "action": "Notez chaque dépense pendant les sept prochains jours : date, à quoi elle a servi, montant, planifiée ou non.",
+        "watchOut": "Ne comptez pas sur votre mémoire. Dans une enquête de 2016 au Burkina Faso, seuls 10 % des jeunes suivaient leurs dépenses de façon très précise.",
+        "aliases": ["suivre mes dépenses", "noter mes dépenses", "où va mon argent", "cahier de dépenses", "liste des dépenses", "planifié et non planifié", "faire ses comptes", "suivi de l'argent", "mon argent disparaît"]
+      },
+      "evidence": [
+        { "claim": "Income tracking sheet: date, description of the source, amount; expense tracking sheet: date, description, amount spent", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3 Fiches de suivi B.3.1 and B.3.2, pp.45–46; also R3-4 BF-13 (d) (date, description, amount)" },
+        { "claim": "Each expense is marked planned or not planned", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3 Fiche de suivi des dépenses, p.46" },
+        { "claim": "Total expenses, total income, saving = income − expenses", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3, p.46" },
+        { "claim": "Compare the budget with what you actually spend at the end of each month", "source": "fcac-budget", "where": "R3-6 section 3.4, FCAC Making a budget" },
+        { "claim": "Tracking shows where money goes; people are surprised when they add up; small purchases add up fast; include cash purchases", "source": "asic-moneysmart", "where": "R3-6 section 3.4, Moneysmart Track your spending" },
+        { "claim": "Write down everything you spend for a period", "source": "asic-moneysmart", "where": "R3-6 section 3.4 (Moneysmart: next couple of weeks; the seven days in the action is a shorter start)" },
+        { "claim": "FinScope Burkina Faso 2016, youth 35 and under: expenditure accuracy 10 % very accurate", "source": "finscope-bf-2016", "where": "B.md, SURVEY — FinScope Burkina Faso 2016" },
+        { "claim": "Example figures (5,000; 6,000; 1,000; 1,500) are invented for illustration and recomputed", "source": "ilo-ci-2023", "where": "method only: ILO-CI.md B.3 tracking sheets" }
+      ]
+    },
+    {
+      "id": "keep-your-papers",
+      "sources": ["ilo-iyb", "ilo-ci-2023", "fcac-budget", "banque-de-france"],
+      "en": {
+        "title": "Keep your receipts and money papers",
+        "summary": "A receipt is written proof that money was paid for a good or a service. Kept in order, your receipts and other money papers protect you and help you do your accounts.",
+        "points": [
+          "A receipt proves that you paid. Without it, you may be unable to take a faulty or expired product back to the seller.",
+          "If the seller has no printed receipt, ask for one written by hand and signed by the person who served you.",
+          "Keep all your financial documents in one place, for example a plastic folder. You can sort them, for example with a different colour of paper for each supplier.",
+          "Receipts and bills are also a trace of your spending. Use them when you write down your expenses."
+        ],
+        "example": "Rasmané buys a charger for 2,500 F CFA and a lamp for 4,000 F: 2,500 + 4,000 = 6,500 F. He asks the seller for a hand-written, signed receipt for 6,500 F and puts it in his folder. The next day the lamp does not work. He goes back with the receipt as proof of his purchase.",
+        "action": "Choose one folder or envelope today and put in it every receipt you get this week.",
+        "watchOut": "A receipt thrown away proves nothing. Keep it at least until you are sure the product works.",
+        "aliases": ["receipt", "receipts", "keep papers", "proof of payment", "bills", "financial documents", "where to keep receipts", "return a product", "paper from the shop"]
+      },
+      "fr": {
+        "title": "Garder vos reçus et vos papiers",
+        "summary": "Un reçu est la preuve écrite qu'une somme a été payée pour un bien ou un service. Bien rangés, vos reçus et vos autres papiers d'argent vous protègent et vous aident à faire vos comptes.",
+        "points": [
+          "Un reçu prouve que vous avez payé. Sans lui, vous risquez de ne pas pouvoir rapporter au vendeur un produit défectueux ou périmé.",
+          "Si le vendeur n'a pas de reçu imprimé, demandez-en un écrit à la main et signé par la personne qui vous a servi.",
+          "Gardez tous vos documents financiers au même endroit, par exemple une pochette plastique. Vous pouvez les classer, par exemple avec un papier de couleur différente pour chaque fournisseur.",
+          "Les reçus et les factures sont aussi une trace de vos dépenses. Servez-vous-en quand vous notez vos dépenses."
+        ],
+        "example": "Rasmané achète un chargeur à 2 500 F CFA et une lampe à 4 000 F : 2 500 + 4 000 = 6 500 F. Il demande au vendeur un reçu écrit à la main et signé pour 6 500 F et le range dans sa pochette. Le lendemain, la lampe ne marche pas. Il retourne voir le vendeur avec le reçu comme preuve de son achat.",
+        "action": "Choisissez aujourd'hui une pochette ou une enveloppe et mettez-y chaque reçu que vous recevez cette semaine.",
+        "watchOut": "Un reçu jeté ne prouve plus rien. Gardez-le au moins jusqu'à être sûr que le produit marche.",
+        "aliases": ["reçu", "reçus", "garder ses papiers", "preuve de paiement", "factures", "documents financiers", "où ranger les reçus", "rapporter un produit", "ticket de caisse", "papier de la boutique"]
+      },
+      "evidence": [
+        { "claim": "Receipt: written proof that money was received in payment for goods or services", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-RK EN glossary" },
+        { "claim": "Case: a receipt is thrown away and expired products cannot be returned", "source": "ilo-ci-2023", "where": "ILO-CI.md B.4 cases without amounts, p.51" },
+        { "claim": "Hand-written receipt signed by the shop employee; a different colour of paper per supplier; plastic folder holding all financial documents", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3 Receipt system, p.51" },
+        { "claim": "Keep all your receipts and bills (tip for sticking to a budget)", "source": "fcac-budget", "where": "R3-6 section 3.4, FCAC Making a budget" },
+        { "claim": "Note and keep traces of spending, such as till receipts", "source": "banque-de-france", "where": "T2.md BUDGET [S, BdF] (fetch summary)" },
+        { "claim": "Example figures (2,500; 4,000; 6,500) are invented for illustration and recomputed", "source": "ilo-ci-2023", "where": "method only: ILO-CI.md B.3 Receipt system, p.51" }
+      ]
+    },
+    {
+      "id": "stick-to-your-budget",
+      "sources": ["ilo-ci-2023", "fcac-budget"],
+      "en": {
+        "title": "Make your budget hold",
+        "summary": "Writing a budget is the first step. Keeping to it depends on a few simple habits, and on changing the budget when your situation changes.",
+        "points": [
+          "Look at your planned expenses regularly and keep them in mind. Write down everything you spend.",
+          "Put a reserve for unexpected needs in your budget, and keep the money you save in a separate place so you are not tempted to spend it.",
+          "If you spend more than planned on one line, spend less on another to make up for it.",
+          "When an emergency comes or your situation changes, adjust your budget. If you share money with a family, ask everyone to help build the budget and keep to it."
+        ],
+        "example": "Awa planned 6,000 F CFA for transport and 5,000 F for outings: 6,000 + 5,000 = 11,000 F. Transport ends up costing 8,000 F, which is 2,000 F more. She brings outings down to 3,000 F: 8,000 + 3,000 = 11,000 F. Her total has not changed and her saving is untouched.",
+        "action": "Compare what you planned with what you spent this week and choose one line to reduce.",
+        "watchOut": "Avoiding thinking about money only makes money problems worse. Look at your budget even when the figures are bad.",
+        "aliases": ["stick to a budget", "follow my budget", "budget tips", "i always overspend", "spending more than planned", "adjust my budget", "reserve for surprises", "budget discipline", "family budget"]
+      },
+      "fr": {
+        "title": "Tenir votre budget",
+        "summary": "Écrire un budget est la première étape. Le respecter dépend de quelques habitudes simples, et d'un budget que vous modifiez quand votre situation change.",
+        "points": [
+          "Regardez régulièrement les dépenses que vous avez planifiées et gardez-les en tête. Notez tout ce que vous dépensez.",
+          "Prévoyez dans votre budget une réserve pour les besoins imprévus, et gardez l'argent épargné dans un endroit à part pour ne pas être tenté de le dépenser.",
+          "Si vous dépensez plus que prévu sur une ligne, dépensez moins sur une autre pour compenser.",
+          "En cas d'urgence ou de changement dans votre situation, ajustez votre budget. Si vous partagez l'argent avec une famille, demandez à chacun de participer au budget et de s'y tenir."
+        ],
+        "example": "Awa a prévu 6 000 F CFA pour le transport et 5 000 F pour les sorties : 6 000 + 5 000 = 11 000 F. Le transport lui coûte finalement 8 000 F, soit 2 000 F de plus. Elle ramène les sorties à 3 000 F : 8 000 + 3 000 = 11 000 F. Son total n'a pas changé et son épargne reste intacte.",
+        "action": "Comparez ce que vous aviez prévu et ce que vous avez dépensé cette semaine, puis choisissez une ligne à réduire.",
+        "watchOut": "Éviter de penser à l'argent ne fait qu'aggraver les problèmes d'argent. Regardez votre budget même quand les chiffres sont mauvais.",
+        "aliases": ["respecter son budget", "tenir mon budget", "conseils budget", "je dépasse toujours", "dépenser plus que prévu", "ajuster mon budget", "réserve pour les imprévus", "discipline budgétaire", "budget de la famille"]
+      },
+      "evidence": [
+        { "claim": "Regularly look at planned expenses and keep them in mind; write down all expenses", "source": "ilo-ci-2023", "where": "ILO-CI.md B.6 Conseils pour respecter votre budget, p.47" },
+        { "claim": "Plan a reserve for unforeseen needs; keep saved money in a separate place so as not to be tempted", "source": "ilo-ci-2023", "where": "ILO-CI.md B.6, p.47" },
+        { "claim": "If you spend more than planned on one item, spend less on another to compensate", "source": "ilo-ci-2023", "where": "ILO-CI.md B.6, p.47" },
+        { "claim": "Adjust the budget in an emergency or when the financial situation changes; ask the whole family to take part and keep to it", "source": "ilo-ci-2023", "where": "ILO-CI.md B.2 Messages clés p.43; B.6 p.47" },
+        { "claim": "Update the budget with any changes; compare the budget with actual spending", "source": "fcac-budget", "where": "R3-6 section 3.4, FCAC Making a budget" },
+        { "claim": "Avoiding thinking about money only makes problems worse", "source": "ilo-ci-2023", "where": "ILO-CI.md B.2, p.52" },
+        { "claim": "Example figures (11,000; 8,000; 3,000) are invented for illustration and recomputed", "source": "ilo-ci-2023", "where": "method only: ILO-CI.md B.6, p.47" }
+      ]
+    },
+    {
+      "id": "irregular-income",
+      "sources": ["ilo-ci-2023", "cfpb-ymyg", "st-pif-2023"],
+      "en": {
+        "title": "Budget when your income changes",
+        "summary": "An irregular income is one that is not the same every month. You can still budget: work from an average income and let the good months cover the weak ones.",
+        "points": [
+          "Build your budget on an average income: add up what you earn over several months and divide by the number of months.",
+          "In months when you earn more than the average, save the extra. In months when you earn less, use that saving to fill the gap.",
+          "Take the seasons of your activity into account. For some people a budget over six months or a year is more practical than a monthly one.",
+          "Saving matters even more when income varies. Irregular income is one reason people in Burkina Faso give for finding saving hard."
+        ],
+        "example": "Over four months Issa earns 60,000 F CFA, 75,000 F, 30,000 F and 35,000 F: 200,000 F in all. 200,000 ÷ 4 = 50,000 F on average. He budgets 50,000 F a month. In the two good months he sets aside 10,000 + 25,000 = 35,000 F. In the two weak months he takes out 20,000 + 15,000 = 35,000 F.",
+        "action": "Add up what you earned in each of the last few months and divide by the number of months.",
+        "watchOut": "A good month is not your normal income. If you spend all of it, nothing is left to cover the weak months.",
+        "aliases": ["irregular income", "income changes every month", "no fixed salary", "average income", "good months and bad months", "seasonal work", "daily earnings", "informal work", "budget without salary"]
+      },
+      "fr": {
+        "title": "Faire un budget avec un revenu irrégulier",
+        "summary": "Un revenu irrégulier, c'est ne pas gagner la même somme chaque mois. Vous pouvez quand même faire un budget : partez d'un revenu moyen et laissez les bons mois couvrir les mois faibles.",
+        "points": [
+          "Faites votre budget sur un revenu moyen : additionnez ce que vous gagnez sur plusieurs mois et divisez par le nombre de mois.",
+          "Les mois où vous gagnez plus que la moyenne, épargnez le surplus. Les mois où vous gagnez moins, utilisez cette épargne pour combler l'écart.",
+          "Tenez compte des saisons de votre activité. Pour certains, un budget sur six mois ou sur un an est plus pratique qu'un budget mensuel.",
+          "Épargner compte encore plus quand le revenu varie. Les revenus irréguliers sont une des raisons citées au Burkina Faso pour expliquer la difficulté à épargner."
+        ],
+        "example": "En quatre mois, Issa gagne 60 000 F CFA, 75 000 F, 30 000 F et 35 000 F : 200 000 F en tout. 200 000 ÷ 4 = 50 000 F en moyenne. Il fait son budget sur 50 000 F par mois. Les deux bons mois, il met de côté 10 000 + 25 000 = 35 000 F. Les deux mois faibles, il reprend 20 000 + 15 000 = 35 000 F.",
+        "action": "Additionnez ce que vous avez gagné chacun des derniers mois et divisez par le nombre de mois.",
+        "watchOut": "Un bon mois n'est pas votre revenu normal. Si vous le dépensez en entier, il ne reste rien pour couvrir les mois faibles.",
+        "aliases": ["revenu irrégulier", "revenu qui change chaque mois", "pas de salaire fixe", "revenu moyen", "bons mois et mauvais mois", "travail saisonnier", "gains journaliers", "travail informel", "budget sans salaire"]
+      },
+      "evidence": [
+        { "claim": "Irregular income: not earning the same sum each month", "source": "ilo-ci-2023", "where": "ILO-CI.md B.1 definitions, p.50" },
+        { "claim": "Build a budget on an average income, then save in months when you earn more to compensate months when you earn less", "source": "ilo-ci-2023", "where": "ILO-CI.md B.2, p.50" },
+        { "claim": "Take the seasonality of the activity into account; an annual budget, or for some a six-month budget, is more practical", "source": "ilo-ci-2023", "where": "ILO-CI.md B.6 Annual-budget advice, p.32 (method only; the booklet speaks of farming)" },
+        { "claim": "Saving is particularly important if income fluctuates", "source": "cfpb-ymyg", "where": "T1.md (2), CFPB p.40" },
+        { "claim": "Irregular income is listed among the reasons saving is hard (Burkinabè booklet, December 2023)", "source": "st-pif-2023", "where": "R3-4 BF-0, key teaching point 8" },
+        { "claim": "Example figures (200,000; 50,000; 35,000) are invented for illustration and recomputed", "source": "ilo-ci-2023", "where": "method only: ILO-CI.md B.2, p.50" }
+      ]
+    },
+    {
+      "id": "responsible-money-habits",
+      "sources": ["oecd-infe-2023", "cfpb-building-blocks", "fcac-strategy", "fcac-budget"],
+      "en": {
+        "title": "Build the habits of good money management",
+        "summary": "Public bodies that study how people handle money describe the same few behaviours. None needs a high income. Each is a habit you can build one at a time.",
+        "points": [
+          "Keep a close watch on your money: know what comes in, what goes out and what you owe.",
+          "Pay what you owe on time, and avoid borrowing just to get to the end of the month.",
+          "Before you buy something, consider carefully whether you can afford it. Think twice, and spend on needs before wants.",
+          "Set yourself long-term goals and work towards them: save actively, even small sums, for what you want later."
+        ],
+        "example": "Aminata wants a phone that costs 40,000 F CFA. Before buying, she checks her budget: 60,000 F of income minus 52,000 F of planned expenses leaves 8,000 F. She cannot afford it this month. She makes it a goal instead: 40,000 ÷ 8,000 = 5. By saving 8,000 F a month, she can buy it in 5 months without borrowing.",
+        "action": "Choose one fixed day this week to look over your money, and set a reminder to repeat it.",
+        "watchOut": "Good habits help, but money trouble is not always your fault. It often comes from circumstances a person does not control.",
+        "aliases": ["good money habits", "manage money well", "responsible with money", "pay on time", "think before buying", "long-term goals", "can i afford it", "money discipline", "be serious with money"]
+      },
+      "fr": {
+        "title": "Prendre les habitudes d'une bonne gestion",
+        "summary": "Les organismes publics qui étudient la façon dont les gens gèrent leur argent décrivent les mêmes comportements. Aucun ne demande un gros revenu. Chacun est une habitude à prendre, une à la fois.",
+        "points": [
+          "Surveillez de près votre argent : sachez ce qui rentre, ce qui sort et ce que vous devez.",
+          "Payez ce que vous devez à temps, et évitez d'emprunter seulement pour finir le mois.",
+          "Avant d'acheter quelque chose, demandez-vous sérieusement si vous en avez les moyens. Réfléchissez à deux fois, et payez les besoins avant les envies.",
+          "Fixez-vous des objectifs à long terme et travaillez à les atteindre : épargnez activement, même de petites sommes, pour ce que vous voulez plus tard."
+        ],
+        "example": "Aminata veut un téléphone qui coûte 40 000 F CFA. Avant d'acheter, elle regarde son budget : 60 000 F de revenus moins 52 000 F de dépenses prévues, il reste 8 000 F. Elle n'en a pas les moyens ce mois-ci. Elle en fait un objectif : 40 000 ÷ 8 000 = 5. En épargnant 8 000 F par mois, elle peut l'acheter dans 5 mois sans emprunter.",
+        "action": "Choisissez un jour fixe cette semaine pour faire le point sur votre argent, et mettez un rappel pour recommencer.",
+        "watchOut": "Les bonnes habitudes aident, mais les difficultés d'argent ne sont pas toujours votre faute. Elles viennent souvent de circonstances qu'une personne ne maîtrise pas.",
+        "aliases": ["bonnes habitudes d'argent", "bien gérer son argent", "être responsable avec l'argent", "payer à temps", "réfléchir avant d'acheter", "objectifs à long terme", "est-ce que j'ai les moyens", "discipline", "être sérieux avec l'argent"]
+      },
+      "evidence": [
+        { "claim": "Behaviours measured: keeping a close watch on personal financial affairs; paying bills on time and avoiding arrears", "source": "oecd-infe-2023", "where": "R3-6 section 3.1, OECD/INFE 2023 PDF p.22 and pp.68–70" },
+        { "claim": "Behaviour measured: did not borrow to make ends meet", "source": "oecd-infe-2023", "where": "R3-6 section 3.1, scoring and statement table" },
+        { "claim": "Behaviour measured: before buying, carefully considers whether they can afford it", "source": "oecd-infe-2023", "where": "R3-6 section 3.1, statement item Makes considered purchases" },
+        { "claim": "Thinks twice before buying; spends to meet needs before wants; saves money now for an item wanted later", "source": "cfpb-building-blocks", "where": "R3-6 section 3.2, adult behaviours" },
+        { "claim": "Behaviour measured: sets long-term financial goals and strives to achieve them; actively saving", "source": "oecd-infe-2023", "where": "R3-6 section 3.1, PDF p.22 and statement items" },
+        { "claim": "Habits framing: financial habits are routine practices used in day-to-day financial life; reviewing the budget regularly with a reminder makes it a habit", "source": "cfpb-building-blocks", "where": "R3-6 section 3.2 definitions; R3-6 section 3.4 FCAC Making a budget (reminder)" },
+        { "claim": "Financial difficulty is more often due to circumstances beyond a person's control", "source": "fcac-strategy", "where": "R3-6 section 3.3, Balance" },
+        { "claim": "Example figures (40,000; 60,000; 52,000; 8,000; 5 months) are invented for illustration and recomputed", "source": "cfpb-building-blocks", "where": "method only: R3-6 section 3.2 (saves now for an item wanted later)" }
+      ]
+    },
+    {
+      "id": "spending-pressure",
+      "sources": ["fdic-money-smart-adults", "ilo-ci-2023", "lefaso"],
+      "en": {
+        "title": "Resist the pressure to spend",
+        "summary": "Advertising, friends, ceremonies and requests from people close to you all push you to spend. A few habits of waiting and planning help you decide for yourself.",
+        "points": [
+          "Advertisements, media, celebrities and friends influence how you spend. Sellers may create a false sense of urgency so that you buy more than you planned.",
+          "Build in a pause. Do not buy at once: you can come back later. Ask yourself whether it is a need or a want, and whether it is in your plan.",
+          "Plan for ceremonies, gifts and help to others. Give generosity its own line in your budget, with a defined amount, like any other line.",
+          "When someone asks you for money, talk with them to understand the need and see how you can help without losing sight of your own goals."
+        ],
+        "example": "Rasmané earns 2,500 F CFA a day. He sees shoes at 15,000 F and wants them at once. He works out what they cost in days of work: 15,000 ÷ 2,500 = 6 days. Six full days of work for one pair of shoes. He decides to wait and to save for them instead.",
+        "action": "Note, for one week, when and where you feel like buying something you had not planned.",
+        "watchOut": "Helping others should not be a reason to go into debt or to stop saving. Saying no does not mean you do not love the person.",
+        "aliases": ["impulse buying", "pressure to spend", "friends make me spend", "ceremonies", "gifts", "family asks for money", "saying no", "weddings and funerals", "temptation", "showing off"]
+      },
+      "fr": {
+        "title": "Résister à la pression de dépenser",
+        "summary": "La publicité, les amis, les cérémonies et les demandes des proches vous poussent à dépenser. Quelques habitudes d'attente et de planification vous aident à décider par vous-même.",
+        "points": [
+          "Les publicités, les médias, les célébrités et les amis influencent vos dépenses. Les vendeurs peuvent créer une fausse urgence pour que vous achetiez plus que prévu.",
+          "Imposez-vous une pause. N'achetez pas tout de suite : dites-vous que vous pourrez revenir plus tard. Demandez-vous si c'est un besoin ou une envie, et si c'est dans votre plan.",
+          "Prévoyez les cérémonies, les cadeaux et l'aide aux autres. Donnez à la générosité sa propre ligne dans votre budget, avec un montant défini, comme toute autre ligne.",
+          "Quand quelqu'un vous demande de l'argent, discutez avec lui pour comprendre son besoin et voir comment l'aider sans perdre de vue vos propres objectifs."
+        ],
+        "example": "Rasmané gagne 2 500 F CFA par jour. Il voit des chaussures à 15 000 F et les veut tout de suite. Il calcule ce qu'elles coûtent en jours de travail : 15 000 ÷ 2 500 = 6 jours. Six journées entières de travail pour une paire de chaussures. Il décide d'attendre et d'épargner pour les acheter.",
+        "action": "Notez pendant une semaine quand et où vous avez envie d'acheter quelque chose que vous n'aviez pas prévu.",
+        "watchOut": "L'entraide ne doit pas être une raison de vous endetter ou de ne plus épargner. Dire non ne veut pas dire que vous n'aimez pas la personne.",
+        "aliases": ["achat impulsif", "pression pour dépenser", "les amis me font dépenser", "cérémonies", "cadeaux", "la famille demande de l'argent", "dire non", "mariages et funérailles", "tentation", "sollicitations"]
+      },
+      "evidence": [
+        { "claim": "External influences: advertisements, media, celebrities, peers and friends; tactics such as a false sense of urgency to make you spend more than planned", "source": "fdic-money-smart-adults", "where": "R3-6 section 5.1, FDIC Money Smart for Adults Module 1, Section 3, PDF pp.13–18" },
+        { "claim": "Build in a pause: you can come back later; questions to ask: is this a want or a need, is it in my spending and saving plan", "source": "fdic-money-smart-adults", "where": "R3-6 section 5.1, Build in a Pause; Talk Yourself Out of It" },
+        { "claim": "A budget lets you plan the amount for generosity; generosity is kept within defined proportions like any other budget line; without planning, feasts become surprises", "source": "lefaso", "where": "R3-4 BF-13 (b) points 2, 3, 5, https://lefaso.net/spip.php?article88574 (16 March 2019)" },
+        { "claim": "Try to spend less on ceremonies; buy fewer gifts and discuss it with the family", "source": "ilo-ci-2023", "where": "ILO-CI.md B.6 Conseils pour l'épargne, p.30" },
+        { "claim": "When a friend asks for money for a ceremony: discuss to understand the need and how to help without losing sight of your goals", "source": "ilo-ci-2023", "where": "ILO-CI.md A.5 quiz A3 and key, p.13; R3-6 section 5.1" },
+        { "claim": "Work out how many hours or days of work an item is worth by dividing its cost by your wage; it may help you postpone and save", "source": "fdic-money-smart-adults", "where": "R3-6 section 5.1, Calculate How Many Hours or Days of Work an Item is Worth" },
+        { "claim": "Note when and where you feel tempted to make an impulse purchase, for a week", "source": "fdic-money-smart-adults", "where": "R3-6 section 5.1, Notice When and Where You're Tempted" },
+        { "claim": "Mutual help should not be a reason to go into debt or not to save; saying no does not mean you do not love the person", "source": "lefaso", "where": "R3-4 BF-13 (b) points 4 and 6" },
+        { "claim": "Example figures (2,500; 15,000; 6 days) are invented for illustration and recomputed", "source": "fdic-money-smart-adults", "where": "method only: R3-6 section 5.1" }
+      ]
+    },
+    {
+      "id": "business-money-apart",
+      "sources": ["ilo-ci-2023", "ilo-iyb"],
+      "en": {
+        "title": "Keep business money apart from yours",
+        "summary": "If you run a small activity, its money and your household money are two different things. Keeping them apart shows whether the activity really earns.",
+        "points": [
+          "Keep separate budgets: one for your activity, one for yourself and one for your family if you share expenses.",
+          "Pay yourself a fixed sum each month from the activity. It is an expense in the activity's budget and an income in your personal budget.",
+          "A fixed sum helps you see whether the activity makes a profit or not. If you mix the two, you cannot control the cash and costs of the activity.",
+          "If an emergency forces you to take money from the activity for a personal expense, write it down as a credit and bring it back quickly."
+        ],
+        "example": "Fatou sells cloth. This month her sales are 150,000 F CFA. The activity pays: goods 90,000 F, stall 10,000 F, transport 10,000 F, and her own fixed pay 30,000 F. Total: 90,000 + 10,000 + 10,000 + 30,000 = 140,000 F. 150,000 − 140,000 = 10,000 F of profit. Her 30,000 F goes into her personal budget.",
+        "action": "Decide the fixed amount you will pay yourself this month and write it as an expense of your activity.",
+        "watchOut": "Money taken from the activity for personal needs and not brought back can leave the activity without cash.",
+        "aliases": ["business money", "separate business and personal", "pay myself", "my shop money", "small business", "mixing money", "taking from the till", "is my business earning", "own salary"]
+      },
+      "fr": {
+        "title": "Séparer l'argent de l'activité du vôtre",
+        "summary": "Si vous menez une petite activité, son argent et l'argent de votre foyer sont deux choses différentes. Les séparer montre si l'activité gagne vraiment de l'argent.",
+        "points": [
+          "Tenez des budgets séparés : un pour votre activité, un pour vous-même et un pour votre famille si vous partagez des dépenses.",
+          "Versez-vous chaque mois une somme fixe prise sur l'activité. C'est une dépense dans le budget de l'activité et un revenu dans votre budget personnel.",
+          "Une somme fixe vous aide à voir si l'activité fait un bénéfice ou non. Si vous mélangez les deux, vous ne pouvez plus contrôler la caisse et les coûts de l'activité.",
+          "Si une urgence vous oblige à prendre de l'argent de l'activité pour une dépense personnelle, notez-le comme un crédit et remboursez-le vite."
+        ],
+        "example": "Fatou vend des pagnes. Ce mois-ci, ses ventes font 150 000 F CFA. L'activité paie : marchandises 90 000 F, étal 10 000 F, transport 10 000 F, et sa propre rémunération fixe 30 000 F. Total : 90 000 + 10 000 + 10 000 + 30 000 = 140 000 F. 150 000 − 140 000 = 10 000 F de bénéfice. Ses 30 000 F entrent dans son budget personnel.",
+        "action": "Décidez la somme fixe que vous vous verserez ce mois-ci et inscrivez-la comme une dépense de votre activité.",
+        "watchOut": "L'argent pris dans l'activité pour des besoins personnels et non remboursé peut laisser l'activité sans liquidités.",
+        "aliases": ["argent du commerce", "séparer commerce et personnel", "me payer", "argent de ma boutique", "petite activité", "mélanger l'argent", "prendre dans la caisse", "est-ce que mon commerce gagne", "mon propre salaire"]
+      },
+      "evidence": [
+        { "claim": "Three separate budgets: professional, personal, family, linked by a fixed self-paid salary", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3 Three separate budgets, p.32" },
+        { "claim": "Own remuneration appears as an expense in the professional budget and as income in the personal budget", "source": "ilo-ci-2023", "where": "ILO-CI.md B.4 budget tables, pp.34–37 (structure only, not the Ivorian figures)" },
+        { "claim": "Paying yourself a fixed monthly sum helps you understand whether the business makes a profit or not", "source": "ilo-ci-2023", "where": "ILO-CI.md B.3, p.32" },
+        { "claim": "Always separate personal money from business money; otherwise you cannot control the cash and the costs of the business", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-RK EN p.30 and GERME FR" },
+        { "claim": "In an emergency, money taken for a personal expense is recorded like a credit and brought back quickly, or the business risks running out of cash", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-RK EN p.30 and GERME FR" },
+        { "claim": "Example figures (150,000; 140,000; 30,000; 10,000) are invented for illustration and recomputed", "source": "ilo-ci-2023", "where": "method only: ILO-CI.md B.3 and B.4 professional budget layout" }
+      ]
+    },
+    {
+      "id": "business-records",
+      "sources": ["ilo-iyb"],
+      "en": {
+        "title": "Keep simple records for your activity",
+        "summary": "Keeping records means writing down all the information that matters for your activity. Records show whether it earns, and why profit and cash in hand are not the same thing.",
+        "points": [
+          "Write down the money the activity receives, the money it pays out, what you sold on credit, what you owe others, and the money you put in.",
+          "Sales are not profit. Profit is what is left when you subtract all your costs from your sales. If costs are higher than sales, it is a loss.",
+          "Profit is not cash. Cash goes out before it comes in: you buy goods before selling, customers on credit pay later, and equipment is paid for at once.",
+          "At the end of each day, compare the cash balance in your record with the money in your cash box. If they differ, look for the reason."
+        ],
+        "example": "This month Salif sells for 120,000 F CFA and pays 95,000 F of costs in cash. Profit: 120,000 − 95,000 = 25,000 F. But 20,000 F of sales on credit are not yet paid. Cash received: 120,000 − 20,000 = 100,000 F. Cash left: 100,000 − 95,000 = 5,000 F. Profit of 25,000 F, but only 5,000 F more in the cash box.",
+        "action": "Write every sale and every payment of your activity in one notebook each day this week.",
+        "watchOut": "No one remembers every transaction. Without records you cannot tell whether money has disappeared, or show a lender how the activity is doing.",
+        "aliases": ["business records", "record keeping", "notebook for my business", "profit", "profit and cash", "sales are not profit", "cash box", "selling on credit", "is my business making money", "accounts for my shop"]
+      },
+      "fr": {
+        "title": "Tenir des comptes simples pour votre activité",
+        "summary": "Tenir des registres, c'est mettre par écrit toutes les informations importantes pour votre activité. Ils montrent si elle gagne de l'argent, et pourquoi bénéfice et argent en caisse ne sont pas la même chose.",
+        "points": [
+          "Notez l'argent que l'activité reçoit, l'argent qu'elle paie, ce que vous avez vendu à crédit, ce que vous devez à d'autres, et l'argent que vous y mettez.",
+          "Les ventes ne sont pas le bénéfice. Le bénéfice est ce qui reste quand vous retirez tous vos coûts de vos ventes. Si les coûts dépassent les ventes, c'est une perte.",
+          "Le bénéfice n'est pas l'argent en caisse. L'argent sort avant de rentrer : vous achetez avant de vendre, les clients à crédit paient plus tard, l'équipement se paie tout de suite.",
+          "À la fin de chaque journée, comparez le solde de caisse de votre registre avec l'argent dans votre caisse. S'ils sont différents, cherchez la raison."
+        ],
+        "example": "Ce mois-ci, Salif vend pour 120 000 F CFA et paie 95 000 F de coûts en espèces. Bénéfice : 120 000 − 95 000 = 25 000 F. Mais 20 000 F de ventes à crédit ne sont pas encore payés. Argent reçu : 120 000 − 20 000 = 100 000 F. Argent restant : 100 000 − 95 000 = 5 000 F. Bénéfice de 25 000 F, mais seulement 5 000 F de plus en caisse.",
+        "action": "Notez chaque vente et chaque paiement de votre activité dans un seul cahier, chaque jour de cette semaine.",
+        "watchOut": "Personne ne se souvient de toutes les opérations. Sans registre, vous ne pouvez pas savoir si de l'argent a disparu, ni montrer à un prêteur comment va l'activité.",
+        "aliases": ["registres", "tenir un cahier", "cahier de mon commerce", "bénéfice", "bénéfice et caisse", "les ventes ne sont pas le bénéfice", "caisse", "vendre à crédit", "est-ce que mon commerce gagne", "comptes de ma boutique"]
+      },
+      "evidence": [
+        { "claim": "Record keeping means writing down all information important to the business: money received, money paid out, sold on credit, owed to others, money invested", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-RK definitions EN p.05 and GERME FR" },
+        { "claim": "Sales are not the same as profits; subtract all costs from sales income; definitions of profit and loss", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-RK EN p.51 and glossary" },
+        { "claim": "A profitable business can run out of cash: goods bought before selling, credit customers pay later, equipment paid in cash before it earns", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-PLAN Part V section 6, pp.68–71" },
+        { "claim": "Daily cash check: compare the cash balance in the record with the money in the cash box; if different, find the reason", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-RK METHOD EN p.49" },
+        { "claim": "Basic record book: records all money that came in and all money that went out", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-RK EN glossary" },
+        { "claim": "Entrepreneurs cannot remember all transactions; records make sure money does not disappear; a bank wanted to see records of sales and profits before lending", "source": "ilo-iyb", "where": "R3-3 Topic F, ILO-IYB-RK EN pp.02–07" },
+        { "claim": "Example figures (120,000; 95,000; 25,000; 20,000; 100,000; 5,000) are invented for illustration and recomputed", "source": "ilo-iyb", "where": "method only: R3-3 Topic F, ILO-IYB-PLAN profit versus cash" }
+      ]
+    }
+  ],
+  "leftOut": [
+    "A definition of fixed and variable expenses: the notes only give the instruction to separate them (Banque de France, from a fetch summary) and an income template with fixed and variable lines (ILO-CI); the lesson uses the plain meaning (same every month / changes) and gives no list of which expenses are fixed.",
+    "Which financial documents to keep other than receipts and bills, and for how long: not in the notes.",
+    "Any Burkinabè legal rule on keeping business records or on taxes for a small activity: the notes have none (the ILO manual only says records are a legal requirement for many businesses, without a country), so nothing is stated.",
+    "Pricing and costing for a small activity: marked as not covered in the notes.",
+    "Ivorian specifics from the ILO booklet (characters, cocoa figures, minimum wage) and its worked budgets: not used; all examples are new and recomputed.",
+    "The envelope method and the Banque de France video on compulsive buying: not used (envelope section not needed; video tips not recorded in the notes).",
+    "African kin-pressure research figures (Senegal, Kenya, Cameroon): left out; no Burkina study in the notes and the figures come from experiments, not teaching material.",
+    "Apps for budgeting and electronic payments as a way to keep a trace: mentioned in the ILO booklet but left out to avoid anything that reads as a product suggestion."
+  ]
+}

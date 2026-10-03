@@ -301,7 +301,7 @@ only the typed question, the locale, recent turns and grounding unit ids
 by the gateway schema (CONTRACT INV-EGR-04).
 
 **FR-LRN-09** `[MVP]` Answers are grounded in a bilingual, versioned literacy
-corpus shipped with the app (`docs/literacy/corpus-v0.md`), whose units name their
+course shipped with the app (`docs/literacy/course-v1.md`), whose lessons name their
 source, licence status, and "as of" date for any figure. Units are readable offline.
 
 **FR-LRN-10** `[MVP]` The tutor carries its own per-feature consent (FR-CONSENT-02)

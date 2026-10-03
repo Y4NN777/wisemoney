@@ -1412,7 +1412,7 @@
   "learn": {
     "title": "Learn",
     "disclosure": "Education, not advice.",
-    "draft": "Lessons written by WiseMoney from international financial-education frameworks. Not yet reviewed by a local expert.",
+    "draft": "Each lesson is written from the sources listed inside it. Not yet reviewed by a local expert.",
     "tutor": {
       "title": "Where do you want to start?",
       "placeholder": "Ask a money question",
@@ -1435,27 +1435,31 @@
         "offline": "No lesson covers this offline. Try again with a connection.",
         "unavailable": "The tutor is unavailable and no lesson covers this."
       },
-      "webCaution": "Figures found on the web can be wrong or out of date. Check the source before acting."
+      "webCaution": "Figures found on the web can be wrong or out of date. Check the source before acting.",
+      "startersNote": "Questions asked by readers in Burkina Faso (LeFaso.net)."
     },
     "lessons": {
-      "title": "Lessons",
+      "title": "Lessons, step by step",
       "count_one": "{{count}} lesson",
       "count_other": "{{count}} lessons"
     },
     "areas": {
-      "earn": "Earn",
-      "spend": "Spend",
-      "digital": "Digital money",
-      "grow": "Save and grow",
-      "borrow": "Borrow",
-      "protect": "Protect and build"
+      "start": "Know where you are going",
+      "manage": "Manage your money",
+      "save": "Save without effort",
+      "bank": "Banks, microfinance, mobile money",
+      "borrow": "Borrow wisely",
+      "protect": "Protect yourself",
+      "invest": "Start investing",
+      "grow": "Portfolio and the long term"
     },
     "lesson": {
       "example": "Example",
       "watchOut": "Watch out",
-      "basis": "Based on:",
+      "basis": "Sources",
       "ask": "Ask the tutor about this",
-      "open": "Open the lesson: {{title}}"
+      "open": "Open the lesson: {{title}}",
+      "action": "Do this week"
     }
   },
   "learnCard": {

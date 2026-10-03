@@ -1,0 +1,992 @@
+{
+  "area": "borrow",
+  "sourceRegistry": {
+    "ilo-ci-2023": {
+      "name": "ILO — Éducation financière pour les cultivateurs et les travailleurs ruraux en Côte d'Ivoire, Livret de l'apprenant (2023)",
+      "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_emp/%40emp_ent/documents/instructionalmaterial/wcms_900276.pdf"
+    },
+    "umoa-usury-2025": {
+      "name": "UMOA Council of Ministers — Décision n°19 du 29/12/2025/CM/UMOA fixant le taux de l'usure (2025)",
+      "url": "https://www.bceao.int/sites/default/files/2026-01/Decision-No19-du-29-12-2025_CMUMOA_fixant_le_taux_de_l-usure.pdf"
+    },
+    "creditinfo": {
+      "name": "Creditinfo West Africa — Consommateurs: personne physique; contestations (read 2026)",
+      "url": "https://creditinfo-uemoa.com/consommateurs/personne-physique/"
+    },
+    "fdic-money-smart": {
+      "name": "FDIC — Money Smart for Young Adults, Module 7 Borrowing Basics (2022)",
+      "url": "https://catalog.fdic.gov/catalog/sfc/servlet.shepherd/document/download/069t000000ghq5WAAQ"
+    },
+    "cfpb-ymyg": {
+      "name": "CFPB — Your Money, Your Goals: A financial empowerment toolkit (2020)",
+      "url": "https://files.consumerfinance.gov/f/documents/cfpb_your-money-your-goals_financial-empowerment_toolkit.pdf"
+    },
+    "banque-de-france": {
+      "name": "Banque de France — Mes questions d'argent: Comment réduire ses dettes ? (read 2026)",
+      "url": "https://www.mesquestionsdargent.fr/budget/comment-reduire-ses-dettes"
+    },
+    "iefp": {
+      "name": "IEFP — La finance pour tous, pages crédit (read 2026)",
+      "url": "https://www.lafinancepourtous.com"
+    },
+    "st-pif-2023": {
+      "name": "ST-PIF (Burkina Faso) — Cahier du participant, Séminaire de formation en éducation financière (2023)",
+      "url": "https://fr.scribd.com/document/744857863/inclusion-financiere"
+    },
+    "dgjep-2018": {
+      "name": "DGJEP, Ministère de la Jeunesse (Burkina Faso) — Formation des jeunes promoteurs en éducation financière, Cahier de participant (2018)",
+      "url": "https://fr.scribd.com/document/898056788/Cahier-Participant"
+    },
+    "findex-2025": {
+      "name": "World Bank — Little Data Book on Financial Inclusion 2025 (Global Findex 2025, survey year 2024)",
+      "url": "https://thedocs.worldbank.org/en/doc/be6615202d1f08a25855c8ac2d615122-0050012025/related/Little-Data-Book-2025-Web.pdf"
+    },
+    "cerise-sptf": {
+      "name": "Cerise+SPTF — Annexe: Normes de Protection des Clients (2022)",
+      "url": "https://spi-online.org/ressources?page_e31=46&file=files/ressources/CP%20Manuals/972%20CP%20Standards%20Manual_French.pdf"
+    },
+    "umoa-microfinance-law": {
+      "name": "BCEAO / Commission Bancaire de l'UMOA — Loi uniforme portant réglementation de la microfinance dans l'UMOA (model text, PDF 2026)",
+      "url": "https://www.cb-umoa.org/sites/default/files/2026-08/Loi%20microfinance%20UMOA.pdf"
+    },
+    "bceao": {
+      "name": "BCEAO — Situation de la microfinance dans l'UMOA au 31 décembre 2025 (2026)",
+      "url": "https://www.bceao.int/sites/default/files/2026-05/Situation_de_la_microfinance_%C3%A0_fin_d%C3%A9cembre_2025.pdf"
+    },
+    "yikri": {
+      "name": "YIKRI — Méthodologie et conditions (2026)",
+      "url": "https://www.yikri.org/conditions"
+    },
+    "rcpb": {
+      "name": "RCPB / FCPB — Plaquette RCPB 2025 and site pages (2025)",
+      "url": "https://rcpb.bf/"
+    },
+    "baobab-bf": {
+      "name": "Baobab Burkina Faso — Crédit entrepreneur, Crédit Taka (site, 2024)",
+      "url": "https://baobab.com/bf/credit-entrepreneur/"
+    },
+    "banque-postale-bf": {
+      "name": "Banque Postale du Burkina Faso — Prêt ordinaire, product sheet (site, 2024)",
+      "url": "https://www.banquepostale.bf/"
+    }
+  },
+  "lessons": [
+    {
+      "id": "ways-to-fund-a-project",
+      "sources": [
+        "ilo-ci-2023",
+        "st-pif-2023",
+        "findex-2025"
+      ],
+      "en": {
+        "title": "Four ways to pay for a project",
+        "summary": "In Burkina Faso, 68.5% of adults borrowed money in 2024, but only 8.5% from a formal institution. Savings, people around you, a group or an institution: each way to pay for a project has its price.",
+        "points": [
+          "Your own savings cost you no interest. The risk is that, once they are spent, you have nothing left for an emergency.",
+          "An informal lender, such as a relative or a trader, is quick, with no formal procedure. It can be very expensive, and you have no legal protection if the lender abuses.",
+          "A group such as a tontine or a savings and credit association is organised by its members, but the State does not supervise it.",
+          "A bank or a microfinance institution is legally registered. Its interest rates are sometimes high, and you must repay according to the agreed schedule."
+        ],
+        "example": "Awa wants a sewing machine that costs 90,000 F. She has saved 60,000 F. She can wait and save 10,000 F a month for 3 months (3 × 10,000 = 30,000 F), or borrow 30,000 F now and pay interest. Either way: 60,000 + 30,000 = 90,000 F.",
+        "action": "Write down one project, its price, and how much of that price each of the four ways could cover.",
+        "watchOut": "No way is the best for everyone. Look at your needs and your means, then choose. You can also combine savings and a loan.",
+        "aliases": [
+          "pay for a project",
+          "need money",
+          "borrow from family",
+          "tontine",
+          "savings group",
+          "use my savings",
+          "where to find money",
+          "loan or savings",
+          "finance a project"
+        ]
+      },
+      "fr": {
+        "title": "Quatre façons de financer un projet",
+        "summary": "Au Burkina Faso, 68,5 % des adultes ont emprunté en 2024, mais seulement 8,5 % auprès d'une institution formelle. Épargne, entourage, groupe ou institution : chaque façon de financer un projet a son prix.",
+        "points": [
+          "Votre propre épargne ne vous coûte aucun intérêt. Le risque : une fois dépensée, il ne vous reste plus rien en cas d'urgence.",
+          "Un prêteur informel, comme un parent ou un commerçant, est rapide et ne demande aucune procédure formelle. Il peut coûter très cher, et vous n'avez aucune protection juridique en cas d'abus.",
+          "Un groupe, comme une tontine ou une association d'épargne et de crédit, est organisé par ses membres, mais l'État ne le supervise pas.",
+          "Une banque ou une institution de microfinance est une structure enregistrée légalement. Ses taux d'intérêt sont parfois élevés, et vous devez rembourser selon le calendrier convenu."
+        ],
+        "example": "Awa veut une machine à coudre qui coûte 90 000 F. Elle a épargné 60 000 F. Elle peut attendre et épargner 10 000 F par mois pendant 3 mois (3 × 10 000 = 30 000 F), ou emprunter 30 000 F maintenant et payer des intérêts. Dans les deux cas : 60 000 + 30 000 = 90 000 F.",
+        "action": "Notez un projet, son prix, et la part de ce prix que chacune des quatre façons pourrait couvrir.",
+        "watchOut": "Aucune façon n'est la meilleure pour tout le monde. Regardez vos besoins et vos moyens, puis choisissez. Vous pouvez aussi combiner épargne et emprunt.",
+        "aliases": [
+          "financer un projet",
+          "besoin d'argent",
+          "emprunter à la famille",
+          "tontine",
+          "groupe d'épargne",
+          "utiliser mon épargne",
+          "où trouver de l'argent",
+          "prêt ou épargne",
+          "payer un projet"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "68.5% of adults in Burkina Faso borrowed in 2024; 8.5% borrowed formally",
+          "source": "findex-2025",
+          "where": "B.md SURVEY — Global Findex 2025, Burkina Faso (p. 37)"
+        },
+        {
+          "claim": "Ways to fund a project: own savings, informal or semi-formal sources, formal institution (the booklet's fourth way, selling an asset, is not developed here)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Four ways to fund a project (p. 73)"
+        },
+        {
+          "claim": "Savings: no interest to pay; risk of lacking resources in an emergency",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Support D.1.3 (p. 95)"
+        },
+        {
+          "claim": "Informal lender (family, trader): quick, no formal procedure; very expensive, no legal protection in case of abuse",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Support D.1.3 (p. 95)"
+        },
+        {
+          "claim": "Groups (savings and credit associations, tontines) are organised and not supervised by the State",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 point 11 (semi-official)"
+        },
+        {
+          "claim": "Formal institution: legally registered; interest rates sometimes high; borrower must repay according to the schedule",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Support D.1.3 (p. 95); D.2 Messages clés (p. 78)"
+        },
+        {
+          "claim": "No single best way: analyse needs and resources; options can be combined",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.5 quiz D1 answer d (p. 71); D.2 Messages clés (p. 75)"
+        },
+        {
+          "claim": "Example arithmetic: 3 × 10,000 = 30,000; 60,000 + 30,000 = 90,000 (writer's own illustration of combining savings and a loan)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.2 Messages clés (p. 75), method only"
+        }
+      ]
+    },
+    {
+      "id": "words-of-credit",
+      "sources": [
+        "ilo-ci-2023",
+        "fdic-money-smart",
+        "st-pif-2023",
+        "cfpb-ymyg"
+      ],
+      "en": {
+        "title": "Understand the words of a loan",
+        "summary": "Credit is the ability to borrow money; a debt is money you owe. A loan uses a few more words, and knowing them lets you read an offer and ask questions.",
+        "points": [
+          "The capital, also called the principal, is the sum you borrow, without the interest. Interest is the price you pay to use the lender's money for a period.",
+          "Fees are other costs charged with the loan, such as file fees, insurance and penalties when you pay late.",
+          "The duration is the time you have to repay. The instalment is the amount you pay at each due date, for example every month.",
+          "A guarantee is something of value that the lender can take if you do not repay. A guarantor is a person who repays in your place if you cannot."
+        ],
+        "example": "Salif borrows 100,000 F: that is the capital. Duration: 10 months. Instalment: 10,900 F a month. Total repaid: 10 × 10,900 = 109,000 F. Interest and fees: 109,000 − 100,000 = 9,000 F. His guarantee is his motorbike.",
+        "action": "Explain these six words to a friend or a relative in your own words, without looking at the lesson.",
+        "watchOut": "Never sign a loan agreement you do not fully understand. Ask the lender to explain again until it is clear.",
+        "aliases": [
+          "loan words",
+          "what is interest",
+          "what is capital",
+          "principal",
+          "instalment",
+          "monthly payment",
+          "guarantee",
+          "guarantor",
+          "loan fees",
+          "credit and debt"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre les mots du crédit",
+        "summary": "Le crédit, c'est la possibilité d'emprunter de l'argent ; une dette, c'est l'argent que vous devez. Un prêt utilise encore quelques mots : les connaître permet de lire une offre et de poser des questions.",
+        "points": [
+          "Le capital, appelé aussi le principal, est la somme que vous empruntez, sans les intérêts. L'intérêt est le prix que vous payez pour utiliser l'argent du prêteur pendant un temps.",
+          "Les frais sont d'autres coûts facturés avec le prêt, comme les frais de dossier, l'assurance et les pénalités quand vous payez en retard.",
+          "La durée est le temps que vous avez pour rembourser. L'échéance, ou mensualité, est le montant que vous payez à chaque date prévue, par exemple chaque mois.",
+          "Une garantie est un bien de valeur que le prêteur peut prendre si vous ne remboursez pas. Un garant est une personne qui rembourse à votre place si vous ne pouvez pas."
+        ],
+        "example": "Salif emprunte 100 000 F : c'est le capital. Durée : 10 mois. Mensualité : 10 900 F par mois. Total remboursé : 10 × 10 900 = 109 000 F. Intérêts et frais : 109 000 − 100 000 = 9 000 F. Sa garantie est sa moto.",
+        "action": "Expliquez ces six mots à un ami ou à un parent avec vos propres mots, sans regarder la leçon.",
+        "watchOut": "Ne signez jamais un contrat de prêt que vous ne comprenez pas entièrement. Demandez au prêteur de réexpliquer jusqu'à ce que ce soit clair.",
+        "aliases": [
+          "mots du crédit",
+          "c'est quoi l'intérêt",
+          "c'est quoi le capital",
+          "principal",
+          "mensualité",
+          "échéance",
+          "garantie",
+          "garant",
+          "frais de dossier",
+          "crédit et dette"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Credit is the ability to borrow money; debt is money you owe",
+          "source": "fdic-money-smart",
+          "where": "T1.md (5) FDIC M7 p.2"
+        },
+        {
+          "claim": "Principal: loan amount granted by the lender, without interest",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.1 Matching answers (p. 96)"
+        },
+        {
+          "claim": "Interest: the price of using the lender's money during a period",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.1 Définitions (p. 76)"
+        },
+        {
+          "claim": "Fees as a cost term; direct costs include file fees, insurance, late penalties",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 point 16; T1.md (5) FDIC M7 p.3 cost terms"
+        },
+        {
+          "claim": "Duration of the loan and amount to repay each month (mensualité) as rows of the cost-of-credit grid",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Coût réel du crédit, Support D.3.1 (pp. 81, 87)"
+        },
+        {
+          "claim": "Guarantee: asset of value the borrower must give the lender if unable to repay (goods, vehicle, savings); guarantor: person who repays if you cannot",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.1 Matching answers (p. 96) and glossary GARANTIE (p. 193)"
+        },
+        {
+          "claim": "Secured loans rest on collateral",
+          "source": "fdic-money-smart",
+          "where": "T1.md (5) FDIC M7 p.3"
+        },
+        {
+          "claim": "Never sign a loan agreement you do not fully understand",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 point 19"
+        },
+        {
+          "claim": "Ask to have it explained again until it makes sense",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (8) CFPB p.230"
+        },
+        {
+          "claim": "Example arithmetic: 10 × 10,900 = 109,000; 109,000 − 100,000 = 9,000 (writer's own figures; total = duration × instalment, cost = total − capital)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Coût réel du crédit (pp. 81, 87), method only"
+        }
+      ]
+    },
+    {
+      "id": "what-a-loan-really-costs",
+      "sources": [
+        "ilo-ci-2023",
+        "st-pif-2023",
+        "iefp",
+        "cerise-sptf",
+        "umoa-microfinance-law",
+        "fdic-money-smart"
+      ],
+      "en": {
+        "title": "Find what a loan really costs",
+        "summary": "The real cost of a loan is the total you repay minus the sum you borrowed. Compare offers on that total and on the yearly rate, not on the instalment.",
+        "points": [
+          "Total to repay = instalment × number of instalments. Real cost of the loan = total to repay − capital borrowed.",
+          "The interest rate alone is not enough to compare. Ask for the yearly rate that includes fees and compulsory insurance, often written TEG or TAEG.",
+          "A small instalment over a long time can cost you more in total than a bigger instalment over a short time.",
+          "Count the indirect costs too: transport to go and pay, sales lost while you are away, compulsory savings, the fee to join a group."
+        ],
+        "example": "Rasmané needs 100,000 F. Offer A: 12 instalments of 9,200 F = 110,400 F, so a cost of 10,400 F. Offer B: 24 instalments of 5,100 F = 122,400 F, so a cost of 22,400 F. B is lighter each month but costs 22,400 − 10,400 = 12,000 F more.",
+        "action": "Ask a lender to write down the instalment, the number of instalments, every fee and the yearly rate. Then compute the total.",
+        "watchOut": "The cheapest loan is not automatically the right one for you. The instalment must also fit what you can repay each month.",
+        "aliases": [
+          "cost of a loan",
+          "how much will i repay",
+          "total to repay",
+          "interest rate",
+          "teg",
+          "taeg",
+          "compare loans",
+          "cheap loan",
+          "small monthly payment",
+          "hidden fees"
+        ]
+      },
+      "fr": {
+        "title": "Trouver ce qu'un prêt coûte vraiment",
+        "summary": "Le coût réel d'un prêt, c'est le total que vous remboursez moins la somme empruntée. Comparez les offres sur ce total et sur le taux annuel, pas sur la mensualité.",
+        "points": [
+          "Total à rembourser = mensualité × nombre de mensualités. Coût réel du prêt = total à rembourser − capital emprunté.",
+          "Le taux d'intérêt seul ne suffit pas pour comparer. Demandez le taux annuel qui inclut les frais et les assurances obligatoires, souvent écrit TEG ou TAEG.",
+          "Une petite mensualité sur une longue durée peut vous coûter plus cher au total qu'une mensualité plus grosse sur une courte durée.",
+          "Comptez aussi les coûts indirects : le transport pour aller payer, les ventes perdues pendant votre absence, l'épargne obligatoire, les frais d'adhésion à un groupe."
+        ],
+        "example": "Rasmané a besoin de 100 000 F. Offre A : 12 mensualités de 9 200 F = 110 400 F, soit un coût de 10 400 F. Offre B : 24 mensualités de 5 100 F = 122 400 F, soit un coût de 22 400 F. B est plus légère chaque mois mais coûte 22 400 − 10 400 = 12 000 F de plus.",
+        "action": "Demandez à un prêteur d'écrire la mensualité, le nombre de mensualités, tous les frais et le taux annuel. Puis calculez le total.",
+        "watchOut": "Le prêt le moins cher n'est pas automatiquement le bon pour vous. La mensualité doit aussi correspondre à ce que vous pouvez rembourser chaque mois.",
+        "aliases": [
+          "coût d'un prêt",
+          "combien je vais rembourser",
+          "total à rembourser",
+          "taux d'intérêt",
+          "teg",
+          "taeg",
+          "comparer des prêts",
+          "prêt moins cher",
+          "petite mensualité",
+          "frais cachés"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Total to repay = duration × instalment; real cost = total to repay − capital requested",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Coût réel du crédit, Support D.3.1 (pp. 81, 87)"
+        },
+        {
+          "claim": "To compare credit products, ask how much the loan will cost overall, beyond the amount borrowed",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Attention (p. 87)"
+        },
+        {
+          "claim": "The nominal interest rate alone is not enough to compare; look at fees and the all-in yearly rate",
+          "source": "iefp",
+          "where": "T2.md CREDIT AND OVER-INDEBTEDNESS [S, IEFP] (fetch summary, paraphrased)"
+        },
+        {
+          "claim": "TAEG = real cost of credit, including administrative fees and compulsory insurance",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.1 TAEG (p. 78)"
+        },
+        {
+          "claim": "Good practice: the institution communicates the TIA/TEG in the key-facts summary or the loan contract",
+          "source": "cerise-sptf",
+          "where": "R3-7-banking-microfinance.md 1d, indicator 3.1.4.2"
+        },
+        {
+          "claim": "Compare loans on the annual percentage rate and the total of payments",
+          "source": "fdic-money-smart",
+          "where": "T1.md (5) Method: compare loans"
+        },
+        {
+          "claim": "Low rates over a long period can end up costing a lot; the longest loan had the highest real cost and the lowest instalment",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.4 warning (p. 87) and conclusion (p. 98)"
+        },
+        {
+          "claim": "Indirect costs: compulsory savings, travel costs, lost sales when absent, group membership fees",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 point 16"
+        },
+        {
+          "claim": "Ask in writing: clients receive a completed, signed copy of the contract; institutions must give clear information on pricing",
+          "source": "cerise-sptf",
+          "where": "R3-7-banking-microfinance.md 1d, indicator 3.2.2; and umoa-microfinance-law art. 91 (a) in the same section"
+        },
+        {
+          "claim": "The cheapest loan is not automatically the best suited",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.2 (p. 82)"
+        },
+        {
+          "claim": "Example arithmetic: 12 × 9,200 = 110,400; 24 × 5,100 = 122,400; costs 10,400 and 22,400; difference 12,000 (writer's own figures, recomputed)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Coût réel du crédit (pp. 81, 87), method only"
+        }
+      ]
+    },
+    {
+      "id": "the-legal-ceiling",
+      "sources": [
+        "umoa-usury-2025",
+        "umoa-microfinance-law",
+        "baobab-bf"
+      ],
+      "en": {
+        "title": "Know the legal maximum interest rate",
+        "summary": "In the UMOA, the monetary union Burkina Faso belongs to, a loan may not cost more than a maximum yearly rate, called the usury rate: 14% for banks and 24% for other lenders.",
+        "points": [
+          "The rule is Décision n°19 du 29/12/2025/CM/UMOA, taken by the UMOA Council of Ministers. It has applied since 1 June 2026 and replaces earlier provisions on the same subject.",
+          "The ceiling is 14% a year for banks. It is 24% a year for credit financial establishments, microfinance institutions and other economic agents.",
+          "What you can do with it: ask the lender to write the yearly rate of your loan, and compare it with the ceiling for that kind of lender before you sign.",
+          "The UMOA uniform law on microfinance gives a path if you feel wronged: complain to the institution first, then to its supervisory authority or to a mediation body."
+        ],
+        "example": "Fatou receives two written offers. A bank states 12% a year: under the bank ceiling of 14%. A microfinance institution states 22% a year: under its ceiling of 24%, by 24 − 22 = 2 points. Both respect the ceiling. She still compares the total cost of each.",
+        "action": "Ask one lender for the yearly rate of its loans, in writing, and note it next to the ceiling for its category.",
+        "watchOut": "A cost given for two weeks or one month is not a yearly rate. Ask for the rate per year, in writing.",
+        "aliases": [
+          "maximum interest rate",
+          "usury rate",
+          "legal limit on interest",
+          "is this rate legal",
+          "rate too high",
+          "14 percent",
+          "24 percent",
+          "loan shark",
+          "usury"
+        ]
+      },
+      "fr": {
+        "title": "Connaître le taux d'intérêt maximum légal",
+        "summary": "Dans l'UMOA, l'union monétaire dont fait partie le Burkina Faso, un prêt ne peut pas coûter plus qu'un taux annuel maximum, appelé taux de l'usure : 14 % pour les banques et 24 % pour les autres prêteurs.",
+        "points": [
+          "La règle est la Décision n°19 du 29/12/2025/CM/UMOA, prise par le Conseil des Ministres de l'UMOA. Elle s'applique depuis le 1er juin 2026 et remplace les dispositions antérieures sur le même sujet.",
+          "Le plafond est de 14 % l'an pour les banques. Il est de 24 % l'an pour les établissements financiers de crédit, les institutions de microfinance et les autres agents économiques.",
+          "Ce que vous pouvez en faire : demandez au prêteur d'écrire le taux annuel de votre prêt, et comparez-le au plafond de sa catégorie avant de signer.",
+          "La loi uniforme de l'UMOA sur la microfinance prévoit un recours si vous vous estimez lésé : réclamer à l'institution, puis à son autorité de supervision ou à une structure de médiation."
+        ],
+        "example": "Fatou reçoit deux offres écrites. Une banque indique 12 % l'an : sous le plafond des banques, 14 %. Une institution de microfinance indique 22 % l'an : sous son plafond de 24 %, de 24 − 22 = 2 points. Les deux respectent le plafond. Elle compare quand même le coût total de chacune.",
+        "action": "Demandez à un prêteur le taux annuel de ses prêts, par écrit, et notez-le à côté du plafond de sa catégorie.",
+        "watchOut": "Un coût donné pour deux semaines ou un mois n'est pas un taux annuel. Demandez le taux par an, par écrit.",
+        "aliases": [
+          "taux d'intérêt maximum",
+          "taux de l'usure",
+          "limite légale des intérêts",
+          "ce taux est-il légal",
+          "taux trop élevé",
+          "14 pour cent",
+          "24 pour cent",
+          "usurier",
+          "usure"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Usury rate for banks: 14% a year",
+          "source": "umoa-usury-2025",
+          "where": "D.md VERIFIED FACTS, Usury (Décision n°19, art. 2)"
+        },
+        {
+          "claim": "Usury rate for credit financial establishments, microfinance institutions and other economic agents: 24% a year",
+          "source": "umoa-usury-2025",
+          "where": "D.md VERIFIED FACTS, Usury (Décision n°19, art. 2)"
+        },
+        {
+          "claim": "In force from 1 June 2026; repeals earlier provisions on the same subject; decision of the UMOA Council of Ministers dated 29/12/2025",
+          "source": "umoa-usury-2025",
+          "where": "D.md SOURCES and VERIFIED FACTS, Usury (art. 4)"
+        },
+        {
+          "claim": "A Burkina bank tariff of September 2026 also prints 'Taux d'usure : 14% à partir du 1er juin 2026' (cross-check, not cited in the lesson)",
+          "source": "umoa-usury-2025",
+          "where": "R3-7-banking-microfinance.md 3c Coris Bank International; section 4 item 6"
+        },
+        {
+          "claim": "Ask for the yearly rate in writing: institutions must give clear information on pricing; the official TEG definition and pre-contract disclosure duty were NOT found, so the lesson does not say which rate the ceiling is measured on",
+          "source": "umoa-microfinance-law",
+          "where": "R3-7-banking-microfinance.md 1d art. 91 (a); D.md NOT FOUND"
+        },
+        {
+          "claim": "Complaint path: institution first, then the supervisory authority or mediation with the competent national structure (the law names the Observatoire de la Qualité des Services Financiers)",
+          "source": "umoa-microfinance-law",
+          "where": "R3-7-banking-microfinance.md 1d art. 96 (uniform model text; Burkina transposition not read)"
+        },
+        {
+          "claim": "A cost quoted over two weeks to one month is not an annual rate",
+          "source": "baobab-bf",
+          "where": "R3-7-banking-microfinance.md section 4 item 8 (caution on a 6 % nano-credit fee, no TEG shown)"
+        },
+        {
+          "claim": "Example: 12% under 14%; 22% under 24%; 24 − 22 = 2 (writer's own illustrative rates, not real offers)",
+          "source": "umoa-usury-2025",
+          "where": "D.md VERIFIED FACTS, Usury (ceilings only)"
+        }
+      ]
+    },
+    {
+      "id": "how-much-can-you-repay",
+      "sources": [
+        "ilo-ci-2023",
+        "banque-postale-bf"
+      ],
+      "en": {
+        "title": "Work out how much you can repay",
+        "summary": "Borrow only what you are able to repay. Before any loan, find from your budget the amount you can pay each month and still cover your needs.",
+        "points": [
+          "An ILO booklet says that in many countries the law limits repayments to 30% to 40% of monthly income, and it advises 30% rather than the maximum. It names no UEMOA rule.",
+          "The 30% covers all your loans together. It is counted on your regular income only; income that varies is left out.",
+          "Staying under 30% does not prove the loan is affordable. Look at your budget: what remains after your expenses is what you can really repay.",
+          "Keep some emergency savings, so that an unexpected expense does not stop your repayments."
+        ],
+        "example": "Issa has a regular income of 60,000 F a month. 30% of 60,000 = 18,000 F. But his expenses are 50,000 F a month: 60,000 − 50,000 = 10,000 F left. He can really repay 10,000 F a month, not 18,000 F.",
+        "action": "Compute 30% of your regular monthly income, then what your budget leaves after expenses. Keep the smaller of the two numbers.",
+        "watchOut": "The 30% comes from a teaching booklet, not from a Burkina law. A lender may apply its own debt limit: ask which one.",
+        "aliases": [
+          "how much can i borrow",
+          "repayment capacity",
+          "can i afford a loan",
+          "30 percent rule",
+          "monthly repayment",
+          "debt and income",
+          "too big a loan",
+          "budget and loan"
+        ]
+      },
+      "fr": {
+        "title": "Calculer combien vous pouvez rembourser",
+        "summary": "N'empruntez que ce que vous êtes en mesure de rembourser. Avant tout prêt, cherchez dans votre budget le montant que vous pouvez payer chaque mois tout en couvrant vos besoins.",
+        "points": [
+          "Selon un livret de l'OIT, de nombreux pays limitent par la loi les remboursements à 30-40 % du revenu mensuel ; il conseille 30 %. Il ne cite aucune règle de l'UEMOA.",
+          "Les 30 % couvrent tous vos prêts ensemble. Ils se calculent sur votre revenu régulier seulement ; les revenus qui varient ne sont pas comptés.",
+          "Rester sous 30 % ne prouve pas que le prêt est supportable. Regardez votre budget : ce qui reste après vos dépenses est ce que vous pouvez vraiment rembourser.",
+          "Gardez une épargne d'urgence, pour qu'une dépense imprévue n'arrête pas vos remboursements."
+        ],
+        "example": "Issa a un revenu régulier de 60 000 F par mois. 30 % de 60 000 = 18 000 F. Mais ses dépenses sont de 50 000 F par mois : 60 000 − 50 000 = 10 000 F restants. Il peut vraiment rembourser 10 000 F par mois, pas 18 000 F.",
+        "action": "Calculez 30 % de votre revenu mensuel régulier, puis ce que votre budget laisse après les dépenses. Gardez le plus petit des deux nombres.",
+        "watchOut": "Les 30 % viennent d'un livret de formation, pas d'une loi du Burkina. Un prêteur peut appliquer sa propre limite d'endettement : demandez laquelle.",
+        "aliases": [
+          "combien je peux emprunter",
+          "capacité de remboursement",
+          "est-ce que je peux prendre un prêt",
+          "règle des 30 pour cent",
+          "remboursement mensuel",
+          "dette et revenu",
+          "prêt trop gros",
+          "budget et prêt"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Borrow only the amount you are able to repay",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Conseils pour éviter le surendettement (p. 92)"
+        },
+        {
+          "claim": "In many countries the law caps repayment at 30% to 40% of monthly income; 30% is the advised share, not the maximum; no Ivorian or UEMOA rule is cited",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Capacité de remboursement (pp. 79–80); D.2 (p. 79); D.7 last bullet"
+        },
+        {
+          "claim": "The limit applies to all loans taken together; only fixed income counts, variable income is not taken into account",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Capacité de remboursement (pp. 79–80); D.4 Moussa (pp. 79–80)"
+        },
+        {
+          "claim": "Under 30% does not mean the credit is affordable; look at the budget",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Capacité de remboursement, caveat (pp. 79–80)"
+        },
+        {
+          "claim": "Always keep emergency savings so that emergencies do not affect loan repayment",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Conseils (p. 92)"
+        },
+        {
+          "claim": "A Burkina bank's loan sheet requires 'Respect du taux d'endettement en vigueur' without publishing the figure",
+          "source": "banque-postale-bf",
+          "where": "R3-7-banking-microfinance.md 1c Tableau d'amortissement (BPBF prêt ordinaire, S14)"
+        },
+        {
+          "claim": "Example arithmetic: 60,000 × 0.30 = 18,000; 60,000 − 50,000 = 10,000 (writer's own figures)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.4 Capacité de remboursement de Moussa (pp. 79–80), method only"
+        }
+      ]
+    },
+    {
+      "id": "choose-a-lender",
+      "sources": [
+        "ilo-ci-2023",
+        "st-pif-2023",
+        "bceao",
+        "yikri",
+        "cerise-sptf",
+        "rcpb",
+        "baobab-bf",
+        "dgjep-2018"
+      ],
+      "en": {
+        "title": "Compare lenders before you sign",
+        "summary": "Lenders differ in cost, in conditions and in the way they lend. No single criterion decides: study them all and choose what fits your need and your situation.",
+        "points": [
+          "Compare lenders on the total cost and yearly rate, the conditions to get the loan, the amount, how often you repay, the grace period, the distance from your home.",
+          "In an individual loan, you alone answer for it. In a group loan, members are jointly liable at some institutions; others lend to groups with no joint guarantee. Ask which rule applies.",
+          "Before signing, check in the contract: compulsory savings, the guarantee and how it can be seized, what happens if you pay late, and whether repaying early changes the cost.",
+          "In Burkina Faso, several microfinance institutions did not publish their loan interest rates on the web pages read on 3 October 2026. Ask for the rate and the fees in writing."
+        ],
+        "example": "Aminata needs 50,000 F. Lender A, near her stall: 6 instalments of 8,800 F = 52,800 F. Lender B, far from her home: 6 × 8,700 = 52,200 F, plus 6 trips at 300 F = 1,800 F, so 54,000 F. With transport, A costs 54,000 − 52,800 = 1,200 F less.",
+        "action": "Put the same questions to two lenders: yearly rate, fees, instalment, guarantee, late penalties. Write the answers side by side.",
+        "watchOut": "Be wary of easy loans and of special offers limited in time. With a legitimate lender, the terms offered today are still valid tomorrow.",
+        "aliases": [
+          "which lender",
+          "bank or microfinance",
+          "group loan",
+          "solidarity loan",
+          "individual loan",
+          "before signing a loan",
+          "loan rates burkina",
+          "compare lenders",
+          "caisse populaire loan"
+        ]
+      },
+      "fr": {
+        "title": "Comparer les prêteurs avant de signer",
+        "summary": "Les prêteurs diffèrent par le coût, les conditions et la façon de prêter. Aucun critère ne décide seul : étudiez-les tous et choisissez ce qui correspond à votre besoin et à votre situation.",
+        "points": [
+          "Comparez les prêteurs sur le coût total et le taux annuel, les conditions pour obtenir le prêt, le montant, la fréquence des remboursements, le délai de grâce, la distance de votre domicile.",
+          "Un prêt individuel n'engage que vous. Dans un prêt de groupe, les membres sont parfois solidairement responsables ; d'autres institutions prêtent à des groupes sans caution solidaire. Demandez la règle appliquée.",
+          "Avant de signer, vérifiez dans le contrat : l'épargne obligatoire, la garantie et sa saisie, les conséquences d'un retard, et si rembourser plus tôt change le coût.",
+          "Au Burkina Faso, plusieurs institutions de microfinance ne publiaient pas les taux de leurs prêts sur les pages web lues le 3 octobre 2026. Demandez le taux et les frais par écrit."
+        ],
+        "example": "Aminata a besoin de 50 000 F. Prêteur A, près de son étal : 6 mensualités de 8 800 F = 52 800 F. Prêteur B, loin de chez elle : 6 × 8 700 = 52 200 F, plus 6 trajets à 300 F = 1 800 F, soit 54 000 F. Avec le transport, A coûte 54 000 − 52 800 = 1 200 F de moins.",
+        "action": "Posez les mêmes questions à deux prêteurs : taux annuel, frais, mensualité, garantie, pénalités de retard. Écrivez les réponses côte à côte.",
+        "watchOut": "Méfiez-vous des prêts faciles et des offres spéciales limitées dans le temps. Chez un prêteur légitime, les conditions proposées aujourd'hui restent valables demain.",
+        "aliases": [
+          "quel prêteur",
+          "banque ou microfinance",
+          "prêt de groupe",
+          "caution solidaire",
+          "prêt individuel",
+          "avant de signer un prêt",
+          "taux des prêts au burkina",
+          "comparer les prêteurs",
+          "prêt caisse populaire"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "No criterion is more important than the others; study them all and choose the credit and lender that match your needs and situation",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.5 quiz D2 answer c (p. 71); D.2 'tous les crédits ne sont pas identiques' (p. 89)"
+        },
+        {
+          "claim": "Comparison criteria: TAEG / cost of credit, ease and conditions of access, amount, repayment frequency",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Lender comparison grid D.3.3 (pp. 86, 98)"
+        },
+        {
+          "claim": "Comparison criteria: interest rate, capital, distance from home, repayment frequency, grace period",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 point 17"
+        },
+        {
+          "claim": "A groupement is a group of about ten members or clients who are jointly liable",
+          "source": "bceao",
+          "where": "R3-7-banking-microfinance.md 1c Group lending (BCEAO S2, footnote 2)"
+        },
+        {
+          "claim": "One Burkina institution lends through groups with individual financial responsibility and no joint guarantee",
+          "source": "yikri",
+          "where": "R3-7-banking-microfinance.md 1c Group lending (YIKRI S22, S21); section 4 item 13 'Practice differs by institution'"
+        },
+        {
+          "claim": "Loan contracts state: grace period, compulsory savings, guarantee conditions and seizure procedures, consequences of late payment and default, early repayment conditions and their effect on cost",
+          "source": "cerise-sptf",
+          "where": "R3-7-banking-microfinance.md 1c What a loan contract must tell you (S23, 3.1.2)"
+        },
+        {
+          "claim": "Interest rates on microfinance loans at RCPB, Baobab (entrepreneur loans), YIKRI and Coris Méso Finance are not published on the pages read (access date 2026-10-03)",
+          "source": "rcpb",
+          "where": "R3-7-banking-microfinance.md section 5 NOT FOUND 'Interest rates on microfinance loans'; 3c 'NOT published' lines; header access date"
+        },
+        {
+          "claim": "Indirect costs such as transport to repay count in the comparison (stories of Sonia and Carmen)",
+          "source": "dgjep-2018",
+          "where": "R3-4-african-teaching-and-questions.md BF-0b point 10 and worked cases; ILO-CI.md D.6 indirect costs (p. 89)"
+        },
+        {
+          "claim": "Questions to put to a lender: interest rate, fees, TAEG, guarantees, late penalties",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Questions à poser à un prêteur éventuel (p. 94)"
+        },
+        {
+          "claim": "Beware of easy loan offers and time-limited special offers; a legitimate lender's terms today are valid tomorrow",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 point 19"
+        },
+        {
+          "claim": "Example arithmetic: 6 × 8,800 = 52,800; 6 × 8,700 = 52,200; 6 × 300 = 1,800; 52,200 + 1,800 = 54,000; 54,000 − 52,800 = 1,200 (writer's own figures)",
+          "source": "dgjep-2018",
+          "where": "R3-4-african-teaching-and-questions.md BF-0b point 10, method only"
+        }
+      ]
+    },
+    {
+      "id": "when-debt-becomes-too-much",
+      "sources": [
+        "ilo-ci-2023",
+        "dgjep-2018",
+        "banque-de-france"
+      ],
+      "en": {
+        "title": "Spot too much debt and act",
+        "summary": "Over-indebtedness is when you can no longer repay your debts and still give yourself and your family a decent life. There are warning signs, and the advice is to act quickly.",
+        "points": [
+          "Test yourself: do your repayments take more than 30% of your monthly income? Do you ask more and more often for extra time to pay rent or bills?",
+          "Another sign: you use loans more and more to cover your daily expenses.",
+          "List all your debts: the lender, the amount and the repayment dates. Add them up and look for what caused them.",
+          "Talk to your lender early and honestly. You can ask to reschedule, which means paying less each month over a longer time, and ask about its mediation service."
+        ],
+        "example": "Fatou earns 50,000 F a month. Each month she repays 12,000 F to a microfinance institution and 8,000 F to a trader: 12,000 + 8,000 = 20,000 F. 20,000 ÷ 50,000 = 40% of her income, above 30%. She takes no new loan and goes to see her lenders.",
+        "action": "List your debts on one page: lender, amount, instalment, date. Divide your total monthly repayments by your monthly income.",
+        "watchOut": "When repayments reach 30% of your income, take no extra loan. Do not isolate yourself out of shame, and do not wait to ask for help.",
+        "aliases": [
+          "too many debts",
+          "i cannot repay",
+          "over-indebted",
+          "drowning in debt",
+          "late on my loan",
+          "talk to the lender",
+          "reschedule a loan",
+          "get out of debt",
+          "debt problems"
+        ]
+      },
+      "fr": {
+        "title": "Repérer le surendettement et agir",
+        "summary": "Le surendettement, c'est quand vous ne pouvez plus rembourser vos dettes tout en gardant une vie décente pour vous et votre famille. Il y a des signes d'alerte, et le conseil est d'agir vite.",
+        "points": [
+          "Testez-vous : vos remboursements prennent-ils plus de 30 % de votre revenu mensuel ? Demandez-vous de plus en plus souvent un délai pour payer le loyer ou les factures ?",
+          "Autre signe : vous utilisez de plus en plus vos prêts pour couvrir vos dépenses quotidiennes.",
+          "Faites la liste de toutes vos dettes : le prêteur, le montant et les dates de remboursement. Faites le total et cherchez ce qui les a causées.",
+          "Parlez tôt et honnêtement à votre prêteur. Vous pouvez demander un rééchelonnement, c'est-à-dire payer moins chaque mois sur une durée plus longue, et vous renseigner sur son service de médiation."
+        ],
+        "example": "Fatou gagne 50 000 F par mois. Chaque mois, elle rembourse 12 000 F à une institution de microfinance et 8 000 F à un commerçant : 12 000 + 8 000 = 20 000 F. 20 000 ÷ 50 000 = 40 % de son revenu, au-dessus de 30 %. Elle ne prend aucun nouveau prêt et va voir ses prêteurs.",
+        "action": "Listez vos dettes sur une page : prêteur, montant, mensualité, date. Divisez le total de vos remboursements mensuels par votre revenu mensuel.",
+        "watchOut": "Quand vos remboursements atteignent 30 % de votre revenu, ne prenez pas de crédit supplémentaire. Ne vous isolez pas par honte, et n'attendez pas pour demander de l'aide.",
+        "aliases": [
+          "trop de dettes",
+          "je n'arrive plus à rembourser",
+          "surendettement",
+          "noyé dans les dettes",
+          "retard de remboursement",
+          "parler au prêteur",
+          "rééchelonner un prêt",
+          "sortir des dettes",
+          "problème de dettes"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Definition of over-indebtedness: impossible to face one's debts while keeping decent living conditions for oneself and one's family",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.1 surendettement (p. 91)"
+        },
+        {
+          "claim": "Self-test questions: repayments above 30% of monthly income; more frequent requests for delay on current expenses (rent, bills); loans used more and more for daily expenses",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Self-test 'Êtes-vous surendetté ?' (p. 93)"
+        },
+        {
+          "claim": "Act quickly; total the debts and find their causes; negotiate with creditors first",
+          "source": "banque-de-france",
+          "where": "T2.md CREDIT AND OVER-INDEBTEDNESS [S, BdF] (fetch summary, paraphrased)"
+        },
+        {
+          "claim": "Make a list of all loans, the amount and the repayment dates",
+          "source": "dgjep-2018",
+          "where": "R3-4-african-teaching-and-questions.md BF-0b point 11"
+        },
+        {
+          "claim": "Be honest with your lender if you cannot repay on time; rescheduling = lower monthly amount and longer duration; ask about the institution's mediation services",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Conseils (p. 92); D.1 Rééchelonner (p. 93); D.3 Solutions if over-indebted (p. 93)"
+        },
+        {
+          "claim": "Debt-to-income ratio = repayments ÷ income; at 30% of monthly income, take no additional credit",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Ratio dettes/revenus (p. 92)"
+        },
+        {
+          "claim": "Do not isolate yourself out of shame; do not wait until it is too late to ask for help",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 (p. 91) and Conseils 'Passez à l'action' (p. 92)"
+        },
+        {
+          "claim": "Example arithmetic: 12,000 + 8,000 = 20,000; 20,000 ÷ 50,000 = 0.40 = 40% (writer's own figures)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.3 Ratio dettes/revenus (p. 92), method only"
+        }
+      ]
+    },
+    {
+      "id": "your-credit-record",
+      "sources": [
+        "creditinfo",
+        "ilo-ci-2023"
+      ],
+      "en": {
+        "title": "Ask for your own credit report",
+        "summary": "A lender may check whether you already have loans elsewhere. In the UEMOA a credit bureau exists, and you can ask for your own report and contest an error.",
+        "points": [
+          "Creditinfo West Africa presents itself as the operator of a credit bureau in the UEMOA. In French it is called a bureau d'information sur le crédit, or BIC.",
+          "According to Creditinfo, you can request your own report through its WhatsApp chatbot HelloCreditinfo, in person, or through a person you mandate. You need an identity document and a request form.",
+          "Creditinfo gives a price of 1,250 F CFA excluding tax for the report. Ask for the final price, tax included, before you pay.",
+          "If you believe something in your report is wrong, Creditinfo says you can contest it through the chatbot, by a visit or by post."
+        ],
+        "example": "Salif plans to ask for a loan. First he requests his own report from Creditinfo: 1,250 F excluding tax. The price including tax is not published, so he asks for the final price. He reads the report, finds a line he believes is wrong, and contests it through the chatbot.",
+        "action": "Look up how to request your own report on the Creditinfo consumer page or the HelloCreditinfo chatbot, and note the steps.",
+        "watchOut": "These steps and this price come from the operator's website, read on 3 October 2026. They can change: confirm them before you pay.",
+        "aliases": [
+          "credit report",
+          "credit bureau",
+          "bic",
+          "creditinfo",
+          "my credit record",
+          "credit history",
+          "error in my credit file",
+          "who knows about my loans",
+          "check my credit"
+        ]
+      },
+      "fr": {
+        "title": "Demander votre propre rapport de crédit",
+        "summary": "Un prêteur peut vérifier si vous avez déjà des crédits ailleurs. Dans l'UEMOA, il existe un bureau d'information sur le crédit, et vous pouvez demander votre propre rapport et contester une erreur.",
+        "points": [
+          "Creditinfo West Africa se présente comme l'opérateur d'un bureau d'information sur le crédit, ou BIC, dans l'UEMOA.",
+          "Selon Creditinfo, vous pouvez demander votre propre rapport par son chatbot WhatsApp HelloCreditinfo, en personne, ou par procuration. Il faut une pièce d'identité et un formulaire de demande.",
+          "Creditinfo indique un prix de 1 250 F CFA hors taxe pour le rapport. Demandez le prix final, taxe comprise, avant de payer.",
+          "Si vous pensez qu'une information de votre rapport est fausse, Creditinfo indique que vous pouvez la contester par le chatbot, par une visite ou par courrier."
+        ],
+        "example": "Salif prévoit de demander un prêt. Il demande d'abord son propre rapport à Creditinfo : 1 250 F hors taxe. Le prix toutes taxes comprises n'est pas publié, donc il demande le prix final. Il lit le rapport, trouve une ligne qu'il pense fausse, et la conteste par le chatbot.",
+        "action": "Cherchez comment demander votre propre rapport sur la page consommateurs de Creditinfo ou le chatbot HelloCreditinfo, et notez les étapes.",
+        "watchOut": "Ces étapes et ce prix viennent du site de l'opérateur, lu le 3 octobre 2026. Ils peuvent changer : confirmez-les avant de payer.",
+        "aliases": [
+          "rapport de crédit",
+          "bureau d'information sur le crédit",
+          "bic",
+          "creditinfo",
+          "mon dossier de crédit",
+          "historique de crédit",
+          "erreur dans mon dossier de crédit",
+          "qui connaît mes prêts",
+          "vérifier mon crédit"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "A borrower can ask a lender whether it checks for other loans at other institutions",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Questions à poser à un prêteur éventuel (p. 94)"
+        },
+        {
+          "claim": "Creditinfo West Africa operates a credit bureau (BIC) in the UEMOA; it presents itself as operator (a 2019 Sidwaya article names the BCEAO: conflict noted)",
+          "source": "creditinfo",
+          "where": "D.md VERIFIED FACTS, BIC; CONFLICTS"
+        },
+        {
+          "claim": "Own report via the HelloCreditinfo WhatsApp chatbot, in person, or by proxy; identity document and request form required",
+          "source": "creditinfo",
+          "where": "D.md VERIFIED FACTS, BIC"
+        },
+        {
+          "claim": "Cost of the report: 1,250 FCFA excluding tax",
+          "source": "creditinfo",
+          "where": "D.md VERIFIED FACTS, BIC"
+        },
+        {
+          "claim": "Contestation by chatbot, visit or post",
+          "source": "creditinfo",
+          "where": "D.md VERIFIED FACTS, BIC"
+        },
+        {
+          "claim": "Operator pages read on 2026-10-03, source rated medium",
+          "source": "creditinfo",
+          "where": "D.md title line (Caleb, 2026-10-03) and SOURCES"
+        }
+      ]
+    },
+    {
+      "id": "borrow-for-what",
+      "sources": [
+        "st-pif-2023",
+        "ilo-ci-2023",
+        "cfpb-ymyg"
+      ],
+      "en": {
+        "title": "Decide what is worth borrowing for",
+        "summary": "A loan that helps you earn new income can pay for itself. A loan for something you use up must be repaid from other income. Real life is not always that simple.",
+        "points": [
+          "A Burkinabè training booklet says: loans for a productive investment bring the borrower new income. Loans for consumption or emergencies bring none and must be repaid from other income.",
+          "Borrowing for a business can be worth it when the extra income it brings is higher than the cost of the loan, and the business itself produces the money for the instalments.",
+          "The CFPB says of good debt and bad debt: \"it's not always that simple.\" Borrowing for education can be a good use of debt, but the benefit is not guaranteed.",
+          "Do not inflate your sales forecast or the amount you ask for."
+        ],
+        "example": "Awa borrows 50,000 F to buy stock and repays 6 × 8,800 = 52,800 F: the loan costs 2,800 F. If the stock brings 10,000 F of extra profit, she gains 10,000 − 2,800 = 7,200 F. If it brings only 2,000 F, she loses 2,800 − 2,000 = 800 F.",
+        "action": "For your next loan idea, write what the money will buy, what income it should bring, and what the loan will cost.",
+        "watchOut": "A loan that ends up costing you money or sinking you deeper is a bad loan, whatever its purpose was.",
+        "aliases": [
+          "good debt bad debt",
+          "should i borrow",
+          "loan for a business",
+          "loan for a party",
+          "borrow to buy a phone",
+          "loan for school",
+          "is it worth borrowing",
+          "productive loan",
+          "why borrow"
+        ]
+      },
+      "fr": {
+        "title": "Décider pour quoi emprunter",
+        "summary": "Un prêt qui vous aide à gagner un nouveau revenu peut se payer lui-même. Un prêt pour une chose que l'on consomme doit être remboursé avec d'autres revenus. La vie réelle n'est pas toujours aussi simple.",
+        "points": [
+          "Selon un cahier de formation burkinabè, les prêts pour un investissement productif apportent de nouveaux revenus. Ceux pour la consommation ou les urgences n'en apportent pas et se remboursent avec d'autres revenus.",
+          "Emprunter pour une activité peut valoir la peine quand le revenu supplémentaire dépasse le coût du prêt, et quand l'activité elle-même produit l'argent des mensualités.",
+          "Le CFPB dit des bonnes et des mauvaises dettes que ce n'est pas toujours si simple. Emprunter pour des études peut être un bon usage, mais le bénéfice n'est pas garanti.",
+          "Ne gonflez pas vos prévisions de ventes ni le montant que vous demandez."
+        ],
+        "example": "Awa emprunte 50 000 F pour acheter du stock et rembourse 6 × 8 800 = 52 800 F : le prêt coûte 2 800 F. Si le stock rapporte 10 000 F de bénéfice en plus, elle gagne 10 000 − 2 800 = 7 200 F. S'il ne rapporte que 2 000 F, elle perd 2 800 − 2 000 = 800 F.",
+        "action": "Pour votre prochaine idée de prêt, écrivez ce que l'argent achètera, le revenu qu'il devrait apporter, et ce que le prêt coûtera.",
+        "watchOut": "Un prêt qui finit par vous coûter de l'argent ou par vous enfoncer davantage est un mauvais prêt, quel que soit son but.",
+        "aliases": [
+          "bonne dette mauvaise dette",
+          "est-ce que je dois emprunter",
+          "prêt pour une activité",
+          "prêt pour une fête",
+          "emprunter pour un téléphone",
+          "prêt pour l'école",
+          "est-ce que ça vaut la peine d'emprunter",
+          "prêt productif",
+          "pourquoi emprunter"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Loans for productive investment earn the borrower new income; loans for consumption and emergencies bring no new income and must be repaid from other sources",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 point 14"
+        },
+        {
+          "claim": "Borrowing can be worthwhile if it generates extra income greater than the cost of the loan; the cash for repayments must be generated by the business itself",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Business credit (p. 88)"
+        },
+        {
+          "claim": "\"it's not always that simple\"; education can be a good use of debt but beneficial outcomes are not guaranteed; consumption debts do not help build assets",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (5) CFPB p.111 'Good debt, bad debt?'"
+        },
+        {
+          "claim": "Do not inflate sales forecasts or the amount of credit requested",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Business credit (p. 88)"
+        },
+        {
+          "claim": "A loan that ends up costing you money or sinking you further is a bad loan",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 point 15"
+        },
+        {
+          "claim": "Example arithmetic: 6 × 8,800 = 52,800; 52,800 − 50,000 = 2,800; 10,000 − 2,800 = 7,200; 2,800 − 2,000 = 800 (writer's own figures)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md D.6 Business credit (p. 88) and D.3 Coût réel du crédit, method only"
+        }
+      ]
+    }
+  ],
+  "leftOut": [
+    "What the usury ceiling is measured on (official TEG definition) and any pre-contract disclosure duty: marked UNVERIFIED / NOT FOUND in D.md, so the legal-ceiling lesson only gives the two ceilings and tells the learner to ask for the yearly rate in writing.",
+    "What a credit report contains, who may consult it and the consent rules: D.md found no legal text on BIC consent and access rights; the lesson only gives the operator's own steps and price.",
+    "The tax-inclusive price of a credit report: Creditinfo's figure is 1,250 FCFA excluding tax; the tax is not in the notes.",
+    "Any actual microfinance loan interest rate in Burkina Faso: not published on the pages read (R3-7 section 5), so none is quoted.",
+    "A Burkina or UEMOA legal debt-to-income limit: the 30 % to 40 % range is the ILO booklet's statement about 'many countries'; no local rule is in the notes.",
+    "Debt-collection rules and rules for digital or nano loans in the UMOA: NOT FOUND in D.md, left out.",
+    "The free OQSF-BF mediation service as a way out of over-indebtedness: only a truncated press report was read (R3-7 1d), so it is not presented as a fact; the over-indebtedness lesson points to the lender's own mediation service instead.",
+    "Selling an asset (the ILO booklet's fourth funding way) is not developed, because the outline fixed the four ways as savings, family, group and institution.",
+    "FinScope 2016 (youth wanting to know how to get a loan) was read but not used: no lesson needed the figure."
+  ]
+}

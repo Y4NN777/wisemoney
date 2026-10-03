@@ -1,0 +1,1315 @@
+{
+  "area": "invest",
+  "sourceRegistry": {
+    "sec-roadmap": {
+      "name": "US SEC, Office of Investor Education and Advocacy — Saving and Investing: A Roadmap To Your Financial Security Through Saving and Investing (SEC Pub. 009, 2011)",
+      "url": "https://www.sec.gov/investor/pubs/sec-guide-to-savings-and-investing.pdf"
+    },
+    "sec-investor-gov": {
+      "name": "US SEC, Investor.gov — Beginners' Guide to Asset Allocation, Diversification, and Rebalancing; What is Risk?; Understanding Fees (undated pages, read 2026-10-03)",
+      "url": "https://www.investor.gov/introduction-investing/getting-started/understanding-fees"
+    },
+    "amf-fr": {
+      "name": "Autorité des marchés financiers (France) — Bien diversifier son épargne pour atteindre ses objectifs (2023) and Espace épargnants articles (2016–2018)",
+      "url": "https://www.amf-france.org/fr/espace-epargnants/savoir-bien-investir/cadrer-son-projet/rendement-et-risque-deux-inseparables"
+    },
+    "iefp": {
+      "name": "IEFP, La finance pour tous — pages on shares, bonds and funds (read 2026-10-03)",
+      "url": "https://www.lafinancepourtous.com"
+    },
+    "amf-umoa": {
+      "name": "AMF-UMOA — Guide de l'investisseur, Glossaire, Vérificateur d'agrément, list of licensed actors, communiqué of 5 December 2025, study on stock-market culture (April 2025)",
+      "url": "https://www.amf-umoa.org/accueil/epargnant"
+    },
+    "brvm": {
+      "name": "BRVM — Comment investir à la BRVM, Quels sont les frais applicables, Courtiers (SGI) Burkina Faso, Règles de négociation, Bulletin Officiel de la Cote n°187 (2 October 2026)",
+      "url": "https://www.brvm.org/fr/comment-investir-la-brvm"
+    },
+    "dcbr": {
+      "name": "DC/BR (Dépositaire Central/Banque de Règlement) — missions and news on the J+2 settlement cycle (in force since 4 December 2025)",
+      "url": "https://dcbruemoa.org/"
+    },
+    "umoa-titres": {
+      "name": "UMOA-Titres — Particuliers, FAQ, Glossaire, and the Burkina Treasury issue of 7 October 2026",
+      "url": "https://www.umoatitres.org/fr/particuliers/"
+    },
+    "coris-bourse": {
+      "name": "SGI Coris Bourse (Burkina Faso) — product pages (site © 2026, read 2026-10-03) and mobile-payment manual for My Coris Bourse (PDF, June 2026)",
+      "url": "https://coris-bourse.com/nos-services-produits/particuliers"
+    },
+    "sbif": {
+      "name": "SGI SBIF (Burkina Faso) — Ouverture de compte, particuliers (undated page, read 2026-10-03)",
+      "url": "https://www.sbifbourse.bf/phisiquement"
+    },
+    "africam": {
+      "name": "Africa Asset Management, AFRICAM (Burkina Faso) — key information documents (DICI) of FCP Securitas, Expansio and Valoris (30 December 2022)",
+      "url": "https://www.sbifbourse.bf/nos-fons"
+    },
+    "coris-asset": {
+      "name": "Coris Asset Management (Burkina Faso) — Note d'information FCP Coris Actions (PDF, 2023) (document obtained 2026-10-03; the publisher's website carried injected links that day, so no link is given)"
+    },
+    "nsia-capital": {
+      "name": "NSIA Capital (Côte d'Ivoire) — Grille tarifaire 2026, valid from 1 July 2026",
+      "url": "https://nsiacapital.com/wp-content/uploads/2026/07/Grille-Tarifaire-NSIA-Capital-2026-Version-clientele-01072026-V2.pdf"
+    },
+    "cgi-bf": {
+      "name": "Direction générale des impôts (Burkina Faso) — Code général des impôts, official 2023 edition, up to date with the 2023 finance law",
+      "url": "https://dgi.bf/wp-content/uploads/2023/10/CODE-GENERAL-DES-IMPOTS-2023-A-JOUR-AVEC-LA-LOI-DE-FINANCE-2023.pdf"
+    },
+    "lefaso": {
+      "name": "LeFaso.net — Cédric Zongo, Comprendre la bourse (9 July 2025); Investir en bourse : Une source parallèle de revenus (9 April 2018) and reader comments",
+      "url": "https://lefaso.net/spip.php?article139391"
+    },
+    "daba": {
+      "name": "Daba Finance (app) — home page, FAQ and blog, company statements (read 2026-10-03)",
+      "url": "https://dabafinance.com/fr"
+    },
+    "cgi-bf-2024": {
+      "name": "Direction générale des impôts (Burkina Faso) — Code général des impôts, Version 2024 (online text, read 3 October 2026)",
+      "url": "https://dgi.bf/verification/CGI"
+    },
+    "bf-finance-laws": {
+      "name": "Assemblée législative de transition (Burkina Faso) — Loi n°042-2023/ALT (loi de finances 2024), Loi n°042-2024/ALT (loi de finances 2025); Government — Exposé des motifs du projet de loi de finances 2026 (hosted by DGI)",
+      "url": "https://www.assembleenationale.bf/storage/Loi/FU4cnAqfHyREj0BsvgaPYtIa7qTRtT8piMrO4EIN.pdf"
+    }
+  },
+  "lessons": [
+    {
+      "id": "saving-or-investing",
+      "sources": [
+        "sec-roadmap",
+        "amf-fr",
+        "brvm",
+        "sec-investor-gov"
+      ],
+      "en": {
+        "title": "Know when you are ready to invest",
+        "summary": "Saving keeps your money safe and within reach. Investing tries to make it grow and can lose it. Investing comes after emergency savings and after costly debts are paid.",
+        "points": [
+          "Saving means keeping money in a safe place where you can take it back at any time. The price of that safety is a small gain.",
+          "Investing means buying something, such as a share or a bond, hoping it will grow. You have a greater chance of losing money than when you save.",
+          "First pay off costly debts, then build emergency savings that are available and without risk. The US market regulator's guide speaks of up to six months of income.",
+          "The BRVM, the regional stock exchange, gives this rule: invest only money you do not need day to day. Money needed within five years should avoid risky investments."
+        ],
+        "example": "Awa earns 60,000 F a month and has 200,000 F put aside. She repays a costly debt of 30,000 F: 200,000 − 30,000 = 170,000 F. She chooses to keep two months of income for emergencies: 2 × 60,000 = 120,000 F. What she could invest: 170,000 − 120,000 = 50,000 F.",
+        "action": "Write down your costly debts and count how many months of income your emergency savings cover.",
+        "watchOut": "Never invest money you will need soon: when the time comes to sell, you may have to accept a loss.",
+        "aliases": [
+          "saving or investing",
+          "difference between saving and investing",
+          "when to invest",
+          "before investing",
+          "emergency savings",
+          "am i ready to invest",
+          "make my money grow",
+          "pay debts first"
+        ]
+      },
+      "fr": {
+        "title": "Savoir quand vous êtes prêt à investir",
+        "summary": "Épargner, c'est garder son argent en sécurité et disponible. Investir, c'est chercher à le faire grandir, au risque d'en perdre. On investit après l'épargne de précaution et le remboursement des dettes coûteuses.",
+        "points": [
+          "Épargner, c'est garder de l'argent dans un endroit sûr où vous pouvez le reprendre à tout moment. Le prix de cette sécurité est un petit gain.",
+          "Investir, c'est acheter quelque chose, par exemple une action ou une obligation, en espérant que sa valeur monte. Vous risquez davantage de perdre de l'argent qu'en épargnant.",
+          "Remboursez d'abord les dettes coûteuses, puis constituez une épargne de précaution disponible et sans risque. Le guide du régulateur américain des marchés parle de jusqu'à six mois de revenus.",
+          "La BRVM, la bourse régionale, donne cette règle : n'investissez que l'argent dont vous n'avez pas besoin au quotidien. L'argent utile avant cinq ans doit éviter les placements risqués."
+        ],
+        "example": "Awa gagne 60 000 F par mois et a 200 000 F de côté. Elle rembourse une dette coûteuse de 30 000 F : 200 000 − 30 000 = 170 000 F. Elle choisit de garder deux mois de revenus pour les urgences : 2 × 60 000 = 120 000 F. Ce qu'elle pourrait investir : 170 000 − 120 000 = 50 000 F.",
+        "action": "Notez vos dettes coûteuses et comptez combien de mois de revenus couvre votre épargne de précaution.",
+        "watchOut": "N'investissez jamais l'argent dont vous aurez besoin bientôt : au moment de vendre, vous pourriez devoir accepter une perte.",
+        "aliases": [
+          "épargner ou investir",
+          "différence entre épargne et investissement",
+          "quand investir",
+          "avant d'investir",
+          "épargne de précaution",
+          "suis-je prêt à investir",
+          "faire fructifier mon argent",
+          "rembourser mes dettes d'abord"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Saving = safe places with access at any time, in exchange for a small return",
+          "source": "sec-roadmap",
+          "where": "T4.md (a) [SEC] 'the safest places… access to your money at any time… a tradeoff for security and ready availability'"
+        },
+        {
+          "claim": "Investing carries a greater chance of losing money than saving",
+          "source": "sec-roadmap",
+          "where": "T4.md (a) [SEC] 'you have a greater chance of losing your money than when you save'"
+        },
+        {
+          "claim": "Pay off high-interest debts before investing",
+          "source": "sec-roadmap",
+          "where": "T4.md (a) [SEC] 'Keys to financial success… 2. Pay off any high interest debts'"
+        },
+        {
+          "claim": "Priority is precautionary savings, available and without risk",
+          "source": "amf-fr",
+          "where": "T4.md (a) [AMF] 'La priorité est de mettre en place une épargne de précaution disponible et placée sans risque'"
+        },
+        {
+          "claim": "Emergency cushion of up to six months of income",
+          "source": "sec-roadmap",
+          "where": "T4.md (a) [SEC] 'up to six months of their income in savings'"
+        },
+        {
+          "claim": "BRVM rule: invest only money not needed day to day",
+          "source": "brvm",
+          "where": "T4.md (a) [BRVM]; R3-1 §2.2 How to invest (B1)"
+        },
+        {
+          "claim": "Goals of five years or less: avoid risky investments; you may have to sell at a loss",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-RISK] 'five years or less… when it's time to sell, you may have to take a loss'; T4.md (e)"
+        },
+        {
+          "claim": "Example figures (60,000; 200,000; 30,000; two months) are fictional; arithmetic recomputed",
+          "source": "sec-roadmap",
+          "where": "illustration of the order debts → emergency savings → investing, T4.md (a)"
+        }
+      ]
+    },
+    {
+      "id": "risk-and-return",
+      "sources": [
+        "sec-roadmap",
+        "amf-fr",
+        "sec-investor-gov",
+        "amf-umoa"
+      ],
+      "en": {
+        "title": "Link every promised gain to its risk",
+        "summary": "The more an investment can earn, the more it can lose. A high and guaranteed return does not exist. Money left idle also loses value when prices rise.",
+        "points": [
+          "Every investment carries risk: you could lose some or all of your money. Risk means you cannot be sure of what you will get back.",
+          "Return and risk go together. An investment without risk earns little; to hope for more, you must accept that you may not recover all you put in.",
+          "France's market regulator says it plainly: a high guaranteed return does not exist. The bigger the gap with what a safe investment pays, the higher the risk.",
+          "Money that sleeps is not fully safe either. When prices rise, the same notes buy less: this is the inflation risk."
+        ],
+        "example": "Suppose prices rise by 3% in a year (a figure chosen for this example). A basket of goods that costs 10,000 F today will cost 10,000 × 1.03 = 10,300 F. Issa kept 10,000 F in a box: he still has 10,000 F, so he is short 300 F for the same basket.",
+        "action": "Note one offer of quick gains you saw this week and write what could make you lose the money.",
+        "watchOut": "On 5 December 2025 the regional regulator, the AMF-UMOA, warned against platforms promising fast, multiplied gains through trading robots or artificial intelligence: they are not authorised.",
+        "aliases": [
+          "risk",
+          "return",
+          "guaranteed profit",
+          "can i lose my money",
+          "high interest",
+          "inflation",
+          "prices going up",
+          "safe investment",
+          "quick money"
+        ]
+      },
+      "fr": {
+        "title": "Relier chaque gain promis à son risque",
+        "summary": "Plus un placement peut rapporter, plus il peut faire perdre. Le rendement élevé et garanti n'existe pas. L'argent qui dort perd aussi de sa valeur quand les prix montent.",
+        "points": [
+          "Tout placement comporte un risque : vous pouvez perdre une partie ou la totalité de votre argent. Le risque, c'est ne pas être sûr de ce que vous récupérerez.",
+          "Rendement et risque vont ensemble. Un placement sans risque rapporte peu ; pour espérer plus, il faut accepter de ne pas récupérer toute sa mise.",
+          "Le régulateur français des marchés le dit clairement : il n'existe pas de rendement élevé garanti. Plus l'écart avec un placement sûr est grand, plus le risque l'est aussi.",
+          "L'argent qui dort n'est pas totalement à l'abri non plus. Quand les prix montent, les mêmes billets achètent moins : c'est le risque d'inflation."
+        ],
+        "example": "Supposons que les prix montent de 3 % en un an (chiffre choisi pour cet exemple). Un panier de produits qui coûte 10 000 F aujourd'hui coûtera 10 000 × 1,03 = 10 300 F. Issa a gardé 10 000 F dans une boîte : il a toujours 10 000 F, il lui manque donc 300 F pour le même panier.",
+        "action": "Notez une offre de gain rapide vue cette semaine et écrivez ce qui pourrait vous faire perdre l'argent.",
+        "watchOut": "Le 5 décembre 2025, l'AMF-UMOA, régulateur régional, a alerté sur des plateformes non autorisées promettant des gains rapides et multipliés par robot de trading ou intelligence artificielle.",
+        "aliases": [
+          "risque",
+          "rendement",
+          "gain garanti",
+          "est-ce que je peux perdre mon argent",
+          "intérêt élevé",
+          "inflation",
+          "les prix qui montent",
+          "placement sûr",
+          "argent rapide"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "All investments involve risk; you could lose some or all of your money",
+          "source": "sec-roadmap",
+          "where": "T4.md (b) [SEC]"
+        },
+        {
+          "claim": "Risk = degree of uncertainty and/or potential financial loss",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-RISK] 'risk refers to the degree of uncertainty and/or potential financial loss'"
+        },
+        {
+          "claim": "A risk-free investment earns little; more return means accepting not to recover all of the stake",
+          "source": "amf-fr",
+          "where": "R3-3 Topic A [AMF-FR-RR] 'un placement sans risque rapporte peu…'"
+        },
+        {
+          "claim": "No high guaranteed return exists; the larger the gap with the reference rate, the higher the risk",
+          "source": "amf-fr",
+          "where": "R3-3 Topic A [AMF-FR-RR] 'il n'existe pas de rendement élevé garanti'; 'Plus l'écart avec le taux de référence est élevé, plus le risque l'est également'"
+        },
+        {
+          "claim": "Liquid, guaranteed savings can lose real value through inflation; inflation reduces purchasing power",
+          "source": "amf-fr",
+          "where": "T4.md (b) [AMF]; R3-3 Topic B [SEC-RISK] on inflation"
+        },
+        {
+          "claim": "3% price rise in the example is an assumption labelled as such, not a sourced inflation figure; 10,000 × 1.03 = 10,300 recomputed",
+          "source": "amf-fr",
+          "where": "illustration of T4.md (b) [AMF]"
+        },
+        {
+          "claim": "AMF-UMOA call for vigilance of 5 December 2025 on platforms promising rapid, multiplied gains via AI or trading robots, not recognised or authorised",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Public warnings (A11)"
+        }
+      ]
+    },
+    {
+      "id": "shares",
+      "sources": [
+        "amf-umoa",
+        "iefp",
+        "sec-roadmap",
+        "sec-investor-gov",
+        "amf-fr",
+        "brvm"
+      ],
+      "en": {
+        "title": "Understand what a share really is",
+        "summary": "A share is a small part of a company. It can bring you a dividend, and its price moves with buyers and sellers. It can also lose all its value.",
+        "points": [
+          "A share is a part of a company. Each shareholder owns a piece of the business, in proportion to the number of shares held, and has a right to vote.",
+          "A dividend is the part of its profit that a company distributes to its shareholders. Its amount is proposed by the board to the shareholders at the general meeting.",
+          "The price of a share results from the meeting of buy orders and sell orders. It can go up or down even when the company is not in danger of failing.",
+          "If the company goes bankrupt, the share can fall to zero, and those who lent it money are paid before shareholders. Nothing guarantees you recover your capital."
+        ],
+        "example": "Invented figures: Salif buys 1 share at 5,000 F. The company pays a dividend of 200 F per share: 200 ÷ 5,000 = 4%. Later the price falls to 4,000 F: on paper he has lost 5,000 − 4,000 = 1,000 F. Dividend minus loss: 200 − 1,000 = −800 F.",
+        "action": "Look up the price of one listed share on brvm.org on two different days and note the difference.",
+        "watchOut": "A dividend received does not protect you from a falling price. France's regulator recommends holding shares for at least ten years.",
+        "aliases": [
+          "share",
+          "shares",
+          "stock",
+          "dividend",
+          "shareholder",
+          "own part of a company",
+          "share price",
+          "what is a share",
+          "buy shares"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre ce qu'est vraiment une action",
+        "summary": "Une action est une petite part d'une entreprise. Elle peut vous rapporter un dividende, et son prix bouge selon les acheteurs et les vendeurs. Elle peut aussi perdre toute sa valeur.",
+        "points": [
+          "Une action est une part d'une entreprise. Chaque actionnaire est propriétaire d'un morceau de la société, à hauteur du nombre d'actions qu'il possède, et dispose d'un droit de vote.",
+          "Le dividende est la part du bénéfice qu'une société distribue à ses actionnaires. Son montant est proposé par le conseil d'administration aux actionnaires lors de l'assemblée générale.",
+          "Le prix d'une action, appelé cours, résulte de la rencontre des ordres d'achat et des ordres de vente. Il peut monter ou baisser même si l'entreprise n'est pas menacée de faillite.",
+          "Si la société fait faillite, l'action peut tomber à zéro, et ceux qui lui ont prêté de l'argent sont payés avant les actionnaires. Rien ne garantit de récupérer son capital."
+        ],
+        "example": "Chiffres inventés : Salif achète 1 action à 5 000 F. La société verse un dividende de 200 F par action : 200 ÷ 5 000 = 4 %. Plus tard, le cours descend à 4 000 F : sur le papier, il a perdu 5 000 − 4 000 = 1 000 F. Dividende moins perte : 200 − 1 000 = −800 F.",
+        "action": "Relevez le cours d'une action cotée sur brvm.org à deux jours différents et notez l'écart.",
+        "watchOut": "Un dividende reçu ne protège pas d'une baisse du cours. Le régulateur français recommande de garder des actions au moins dix ans.",
+        "aliases": [
+          "action",
+          "actions",
+          "dividende",
+          "actionnaire",
+          "part d'une entreprise",
+          "cours de l'action",
+          "c'est quoi une action",
+          "acheter des actions",
+          "titre"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "A share is a part of the company giving ownership in proportion to shares held, a right to a dividend and a vote",
+          "source": "amf-umoa",
+          "where": "R3-1 Appendix 2 glossary 'ACTION'; T2.md INVESTING BASICS [IEFP]; T4.md DEFINITIONS Stock [SEC]"
+        },
+        {
+          "claim": "Dividend = part of profits distributed to shareholders; amount proposed by the board to shareholders at the general meeting",
+          "source": "amf-umoa",
+          "where": "R3-1 Appendix 2 glossary 'DIVIDENDE'"
+        },
+        {
+          "claim": "Share price results from the confrontation of buy and sell orders",
+          "source": "amf-umoa",
+          "where": "R3-1 Appendix 2 glossary 'COURS DE BOURSE'"
+        },
+        {
+          "claim": "Price may fluctuate even when the company is not in danger of failing",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-RISK] Volatility Risk"
+        },
+        {
+          "claim": "A share's value can fall to zero if the company goes bankrupt",
+          "source": "iefp",
+          "where": "T2.md INVESTING BASICS [S, IEFP] 'peut descendre à zéro si la société fait faillite'"
+        },
+        {
+          "claim": "In a bankruptcy, bondholders are paid before stockholders",
+          "source": "sec-roadmap",
+          "where": "T4.md (c) [SEC]"
+        },
+        {
+          "claim": "A share investor has no certainty of recovering the capital",
+          "source": "amf-fr",
+          "where": "R3-3 Topic A [AMF-FR-RR] 'aucune certitude de récupérer le capital investi'"
+        },
+        {
+          "claim": "Dividend compared with price gives the yield (4 on 100 = 4%); example uses invented 200 F on 5,000 F = 4%, recomputed",
+          "source": "amf-umoa",
+          "where": "R3-1 Appendix 2 glossary 'RENDEMENT'"
+        },
+        {
+          "claim": "Recommended holding period for shares: at least 10 years",
+          "source": "amf-fr",
+          "where": "R3-3 Topic A [AMF-FR-HOR] 'Pour un placement en actions, cette durée recommandée est d'au moins 10 ans'"
+        },
+        {
+          "claim": "Following the market on the BRVM website",
+          "source": "brvm",
+          "where": "R3-1 §2.2 Training pages, Following the market (B4)"
+        }
+      ]
+    },
+    {
+      "id": "bonds-and-treasury-securities",
+      "sources": [
+        "amf-umoa",
+        "iefp",
+        "sec-investor-gov",
+        "umoa-titres",
+        "lefaso"
+      ],
+      "en": {
+        "title": "Understand bonds and Treasury securities",
+        "summary": "A bond is a loan you make to a company or a State, which pays you interest and repays you at the end. In the UEMOA, States issue Treasury bills and bonds.",
+        "points": [
+          "A bond is a loan to a company or a public body. In exchange you receive a regular payment called the coupon, then your money back on the maturity date.",
+          "Bonds generally move less than shares and earn less. They still carry risk: the borrower may fail to repay, or you may sell before maturity at a lower price.",
+          "UEMOA States issue, by auction, Treasury bills (BAT, under 2 years, interest paid in advance) and Treasury bonds (OAT, over 3 years). UMOA-Titres publishes the calendar.",
+          "An individual cannot bid directly. You need a securities account with a licensed bank or broker (SGI), which bids for you. Results are published within 24 hours."
+        ],
+        "example": "Burkina's issue of 7 October 2026: 5-year Treasury bonds, nominal value 10,000 F each, 6.20% a year; the 12-month bill, 1,000,000 F each. For 5 bonds at nominal value: 5 × 10,000 = 50,000 F. Yearly interest: 50,000 × 6.2% = 3,100 F. Over 5 years: 5 × 3,100 = 15,500 F, then 50,000 F repaid.",
+        "action": "Ask your bank or an SGI in writing for the minimum amount and the fees to subscribe to a Burkina Treasury bond.",
+        "watchOut": "UMOA-Titres publishes no minimum for individuals and no intermediary fee. Its own FAQ says the buyer of a security always takes some risk.",
+        "aliases": [
+          "bond",
+          "bonds",
+          "treasury bill",
+          "treasury bond",
+          "lend to the state",
+          "bat oat",
+          "umoa-titres",
+          "government bond burkina",
+          "coupon"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre les obligations et les titres du Trésor",
+        "summary": "Une obligation est un prêt que vous faites à une entreprise ou à un État, qui vous verse des intérêts et vous rembourse à la fin. Dans l'UEMOA, les États émettent des bons et des obligations du Trésor.",
+        "points": [
+          "Une obligation est un prêt à une entreprise ou à une institution publique. En échange, vous touchez une somme versée régulièrement, le coupon, puis votre argent à la date d'échéance.",
+          "Les obligations bougent en général moins que les actions et rapportent moins. Le risque existe : l'emprunteur peut ne pas rembourser, ou vous pouvez revendre avant l'échéance moins cher.",
+          "Les États de l'UEMOA émettent par adjudication des bons du Trésor (BAT, moins de 2 ans, intérêts payés d'avance) et des obligations (OAT, plus de 3 ans). UMOA-Titres publie le calendrier.",
+          "Un particulier ne peut pas soumissionner directement. Il faut un compte-titres dans une banque ou chez un courtier agréé (SGI), qui participe pour vous. Les résultats sont publiés sous 24 heures."
+        ],
+        "example": "Émission du Burkina du 7 octobre 2026 : obligations du Trésor à 5 ans, valeur nominale 10 000 F l'unité, 6,20 % par an ; le bon à 12 mois, 1 000 000 F l'unité. Pour 5 obligations à la valeur nominale : 5 × 10 000 = 50 000 F. Intérêts par an : 50 000 × 6,2 % = 3 100 F. Sur 5 ans : 5 × 3 100 = 15 500 F, puis 50 000 F remboursés.",
+        "action": "Demandez par écrit à votre banque ou à une SGI le montant minimum et les frais pour souscrire une obligation du Trésor du Burkina.",
+        "watchOut": "UMOA-Titres ne publie ni minimum pour les particuliers ni frais d'intermédiaire. Sa propre FAQ dit que l'acheteur d'un titre prend toujours un certain risque.",
+        "aliases": [
+          "obligation",
+          "obligations",
+          "bon du trésor",
+          "obligation du trésor",
+          "prêter à l'état",
+          "bat oat",
+          "umoa-titres",
+          "emprunt d'état burkina",
+          "coupon"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Bond = medium or long-term loan to a company or public institution; holder receives a regular coupon",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Glossary 'OBLIGATION'; T4.md DEFINITIONS [UT]"
+        },
+        {
+          "claim": "Maturity (échéance) is the date the bond is repaid",
+          "source": "iefp",
+          "where": "T2.md INVESTING BASICS [V, IEFP]"
+        },
+        {
+          "claim": "Bonds are generally less volatile than stocks with more modest returns; lower risk and more limited gains",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-AA] three asset categories; R3-4 BF-4 point 4 (LeFaso)"
+        },
+        {
+          "claim": "Risks named by UMOA-Titres FAQ: solvency risk, not knowing the resale price, liquidity; a buyer always takes some risk",
+          "source": "umoa-titres",
+          "where": "R3-1 §2.4 Risk wording (U2)"
+        },
+        {
+          "claim": "BAT: short-term, maturity under 2 years, interest paid in advance; OAT: maturity over 3 years; issued by auction",
+          "source": "umoa-titres",
+          "where": "R3-1 §2.4 Products (U1/U4)"
+        },
+        {
+          "claim": "Issue calendar published yearly and updated quarterly",
+          "source": "umoa-titres",
+          "where": "R3-1 §2.4 Subscription steps, step 2 (U1)"
+        },
+        {
+          "claim": "Individuals subscribe through credit institutions and SGIs; securities account needed; account manager bids on the auction day; results within 24 hours",
+          "source": "umoa-titres",
+          "where": "R3-1 §2.4 Subscription steps 1, 3, 4 (U1) and 'Individuals go through intermediaries' (U4)"
+        },
+        {
+          "claim": "Burkina issue of 07/10/2026: BAT 12 months nominal 1,000,000 F CFA; OAT 60 months 6.2000%, nominal 10,000 F CFA; repayment in fine",
+          "source": "umoa-titres",
+          "where": "R3-1 §2.4 Nominal value, from a live Burkina issue (U5)"
+        },
+        {
+          "claim": "Example arithmetic recomputed: 5 × 10,000 = 50,000; 50,000 × 6.2% = 3,100; 5 × 3,100 = 15,500. Purchase at nominal value is an assumption (auction price not in the notes)",
+          "source": "umoa-titres",
+          "where": "R3-1 §2.4 (U5)"
+        },
+        {
+          "claim": "No minimum for individuals and no intermediary fees published by UMOA-Titres",
+          "source": "umoa-titres",
+          "where": "R3-1 §4 NOT FOUND, last two UMOA-Titres items"
+        }
+      ]
+    },
+    {
+      "id": "funds",
+      "sources": [
+        "amf-umoa",
+        "africam",
+        "coris-asset"
+      ],
+      "en": {
+        "title": "Read a fund's official document",
+        "summary": "A fund pools the money of many savers, and a licensed company invests it for them. Its official documents show the risk level and every fee. The examples here are dated, not recommendations.",
+        "points": [
+          "A fund (an FCP, one form of OPCVM) is a portfolio of securities owned jointly and run by a management company. You buy units; you do not choose the securities.",
+          "The regional regulator lists strengths (simpler, risk is spread, small amounts possible) and weaknesses (no control over the content, high pricing). The documents read say capital is not guaranteed.",
+          "AFRICAM's documents dated 30 December 2022 show: Securitas (bonds) risk 3 out of 7, entry 1%, exit 1.50%; Expansio (mixed) risk 4, 1%, 1.75%; Valoris (shares) risk 6, 0%, 2%.",
+          "They also show yearly running costs of 1.8% to 1.89% (year 2021). The Coris Actions notice (2023) shows risk 6 and maximums of 1.17% entry, 1.17% exit and 2.34% yearly management."
+        ],
+        "example": "Fatou puts 100,000 F in a fund with a 1% entry fee and a 1.50% exit fee. Entry: 100,000 × 1% = 1,000 F, so 99,000 F is invested. If the value has not moved when she leaves: 99,000 × 1.5% = 1,485 F. She gets back 99,000 − 1,485 = 97,515 F, before yearly costs.",
+        "action": "Ask a fund's management company for its key information document and find three lines: risk level, entry fee, exit fee.",
+        "watchOut": "Fees change, and websites can be unreliable: on 3 October 2026 one manager's site displayed unrelated casino links. Ask for the current document at the office.",
+        "aliases": [
+          "fund",
+          "funds",
+          "fcp",
+          "opcvm",
+          "mutual fund",
+          "invest small amounts",
+          "fund fees",
+          "risk level",
+          "entry fee",
+          "units of a fund"
+        ]
+      },
+      "fr": {
+        "title": "Lire le document officiel d'un fonds",
+        "summary": "Un fonds réunit l'argent de nombreux épargnants, et une société agréée le place pour eux. Ses documents officiels indiquent le niveau de risque et tous les frais. Les exemples ici sont datés, ce ne sont pas des recommandations.",
+        "points": [
+          "Un fonds (un FCP, une forme d'OPCVM) est un portefeuille de titres en copropriété, géré par une société de gestion. Vous achetez des parts ; vous ne choisissez pas les titres.",
+          "Le régulateur régional cite des avantages (plus simple, risque réparti, petit montant possible) et des inconvénients (aucun contrôle du contenu, tarification élevée). Les documents lus précisent : capital non garanti.",
+          "Documents d'AFRICAM du 30 décembre 2022 : Securitas (obligations) risque 3 sur 7, entrée 1 %, sortie 1,50 % ; Expansio (diversifié) risque 4, 1 %, 1,75 % ; Valoris (actions) risque 6, 0 %, 2 %.",
+          "Leurs frais courants : 1,8 % à 1,89 % par an (exercice 2021). Note Coris Actions (2023) : risque 6, maximums de 1,17 % à l'entrée, 1,17 % à la sortie, 2,34 % de gestion par an."
+        ],
+        "example": "Fatou place 100 000 F dans un fonds avec 1 % de frais d'entrée et 1,50 % de frais de sortie. Entrée : 100 000 × 1 % = 1 000 F, donc 99 000 F sont investis. Si la valeur n'a pas bougé quand elle sort : 99 000 × 1,5 % = 1 485 F. Elle récupère 99 000 − 1 485 = 97 515 F, avant les frais annuels.",
+        "action": "Demandez à la société de gestion d'un fonds son document d'informations clés et repérez trois lignes : niveau de risque, frais d'entrée, frais de sortie.",
+        "watchOut": "Les frais changent et un site peut tromper : le 3 octobre 2026, celui d'un gestionnaire affichait des liens de casino. Demandez le document à jour au guichet.",
+        "aliases": [
+          "fonds",
+          "fcp",
+          "opcvm",
+          "fonds commun de placement",
+          "investir un petit montant",
+          "frais d'un fonds",
+          "niveau de risque",
+          "frais d'entrée",
+          "parts de fonds",
+          "sicav"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "FCP = a form of OPC, a portfolio of securities in co-ownership managed by a management company for unit holders; unit holder has no vote",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Glossary 'FCP' and Definitions of OPCVM, FCP, SICAV (A4)"
+        },
+        {
+          "claim": "Collective management: advantages (clarity for non-specialists, risk spreading, modest investment possible) and drawbacks (loss of control over the portfolio, high pricing)",
+          "source": "amf-umoa",
+          "where": "R3-1 Appendix 1, C - La gestion collective"
+        },
+        {
+          "claim": "AFRICAM funds: 'Le Fonds n'est pas garanti en capital'",
+          "source": "africam",
+          "where": "R3-2 §2.7 AFRICAM table, row Capital guarantee"
+        },
+        {
+          "claim": "Securitas: bond fund, category 3 (scale 1–7), entry 1%, exit 1.50%, ongoing 1.83% (2021); DICI 30/12/2022",
+          "source": "africam",
+          "where": "R3-2 §2.7 AFRICAM table (S19, S20) and §3c"
+        },
+        {
+          "claim": "Expansio: diversified, category 4, entry 1%, exit 1.75%, ongoing 1.89% (2021); DICI 30 December 2022",
+          "source": "africam",
+          "where": "R3-2 §2.7 AFRICAM table (S21) and §3c"
+        },
+        {
+          "claim": "Valoris: equity, category 6, entry 0%, exit 2%, ongoing 1.8% (2021); DICI 30/12/2022",
+          "source": "africam",
+          "where": "R3-2 §2.7 AFRICAM table (S22) and §3c"
+        },
+        {
+          "claim": "DICI percentages are maximums that can be taken from the capital",
+          "source": "africam",
+          "where": "R3-2 §2.7 'Le pourcentage indiqué est le maximum pouvant être prélevé sur votre capital'"
+        },
+        {
+          "claim": "FCP Coris Actions: level 6; subscription commission 1.17% TTC max; redemption 1.17% TTC max; management fee 2.34% TTC a year max; PDF created 2023-03-28",
+          "source": "coris-asset",
+          "where": "R3-2 §2.7 Coris Asset Management table (S27, S28) and §3c"
+        },
+        {
+          "claim": "Example: 100,000 × 1% = 1,000; 99,000 × 1.5% = 1,485; 99,000 − 1,485 = 97,515 (recomputed; uses the Securitas entry/exit percentages)",
+          "source": "africam",
+          "where": "R3-2 §3c"
+        },
+        {
+          "claim": "Ask for and read OPCVM prospectuses before subscribing",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Investor guide, Precautions before investing"
+        },
+        {
+          "claim": "coris-asset.com public pages carried unrelated online-casino links on 2026-10-03 (suggests injected content)",
+          "source": "coris-asset",
+          "where": "R3-2 §2.7 'Caution on this source' and §4 item 12"
+        }
+      ]
+    },
+    {
+      "id": "spread-your-risk",
+      "sources": [
+        "amf-fr",
+        "sec-roadmap",
+        "sec-investor-gov",
+        "brvm"
+      ],
+      "en": {
+        "title": "Spread your money to reduce risk",
+        "summary": "Diversifying means not putting all your savings in one investment, so that one bad choice does not take everything. The BRVM adds: diversify without scattering yourself.",
+        "points": [
+          "Do not put all your eggs in one basket: spread your savings over several investments to reduce the risk of holding a losing one.",
+          "Combine investments that do not behave the same way at the same moment, like a street seller who offers both umbrellas and sunglasses: different sectors, different kinds of investment.",
+          "Four or five shares are not enough. Regulators speak of about ten to twelve shares from different sectors. A fund, which holds many securities, is another way.",
+          "Diversifying does not guarantee you against a loss, and each extra investment adds fees. The BRVM's own principle: diversify your portfolio without scattering yourself."
+        ],
+        "example": "Rasmané has 60,000 F. If he puts it all in one share that loses half its value: 60,000 ÷ 2 = 30,000 F left. If he splits it into three parts of 20,000 F and one loses half while two do not move: 10,000 + 20,000 + 20,000 = 50,000 F left. Loss: 10,000 F instead of 30,000 F.",
+        "action": "List every place where your money sits today and circle any place that holds more than half of it.",
+        "watchOut": "Three shares from the same sector are not real diversification: investments that behave alike can fall together.",
+        "aliases": [
+          "diversify",
+          "diversification",
+          "spread the risk",
+          "eggs in one basket",
+          "several investments",
+          "portfolio",
+          "reduce risk",
+          "not lose everything"
+        ]
+      },
+      "fr": {
+        "title": "Répartir son argent pour réduire le risque",
+        "summary": "Diversifier, c'est ne pas placer toute son épargne sur un seul placement, pour qu'un mauvais choix n'emporte pas tout. La BRVM ajoute : diversifiez sans vous disperser.",
+        "points": [
+          "Ne mettez pas tous vos œufs dans le même panier : répartissez votre épargne sur plusieurs placements pour réduire le risque de tomber sur un placement perdant.",
+          "Associez des placements qui ne se comportent pas de la même façon au même moment, comme le vendeur de rue qui propose parapluies et lunettes de soleil : secteurs différents, placements différents.",
+          "Quatre ou cinq actions ne suffisent pas. Les régulateurs parlent d'environ dix à douze actions de secteurs différents. Un fonds, qui détient beaucoup de titres, est une autre voie.",
+          "Diversifier ne garantit pas contre une perte, et chaque placement en plus ajoute des frais. Le principe de la BRVM : diversifiez votre portefeuille sans vous disperser."
+        ],
+        "example": "Rasmané a 60 000 F. S'il met tout sur une seule action qui perd la moitié de sa valeur : 60 000 ÷ 2 = 30 000 F restants. S'il répartit en trois parts de 20 000 F et qu'une part perd la moitié pendant que deux ne bougent pas : 10 000 + 20 000 + 20 000 = 50 000 F restants. Perte : 10 000 F au lieu de 30 000 F.",
+        "action": "Listez tous les endroits où se trouve votre argent aujourd'hui et entourez celui qui en contient plus de la moitié.",
+        "watchOut": "Trois actions du même secteur ne font pas une vraie diversification : des placements qui se ressemblent peuvent baisser ensemble.",
+        "aliases": [
+          "diversifier",
+          "diversification",
+          "répartir le risque",
+          "œufs dans le même panier",
+          "plusieurs placements",
+          "portefeuille",
+          "réduire le risque",
+          "ne pas tout perdre"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Diversification = not placing all savings in the same investment to reduce the risk of a losing investment; eggs in one basket",
+          "source": "amf-fr",
+          "where": "T4.md (d) [AMF] and DEFINITIONS Diversification [AMF]; T4.md (d) [SEC]"
+        },
+        {
+          "claim": "Combine investments that do not behave the same way at the same time; different zones and sectors",
+          "source": "amf-fr",
+          "where": "T4.md (d) [AMF]"
+        },
+        {
+          "claim": "Street vendor selling umbrellas and sunglasses",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-AA] Everyday analogy"
+        },
+        {
+          "claim": "Four or five stocks are not diversified; at least a dozen needed",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-AA] 'You'll need at least a dozen carefully selected individual stocks'"
+        },
+        {
+          "claim": "At least about ten shares from different economic sectors; funds generally hold at least thirty securities",
+          "source": "amf-fr",
+          "where": "R3-3 Topic A [AMF-FR-DIV]"
+        },
+        {
+          "claim": "Diversification cannot guarantee against loss",
+          "source": "sec-roadmap",
+          "where": "T4.md (d) [SEC] 'can't guarantee that your investments won't suffer'"
+        },
+        {
+          "claim": "More investments mean additional fees and expenses",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-AA] 'as you add more investments… you'll likely pay additional fees'"
+        },
+        {
+          "claim": "BRVM principle: 'Diversifiez votre portefeuille sans vous disperser'",
+          "source": "brvm",
+          "where": "T4.md (d) [BRVM]; R3-1 §2.2 How to invest (B1)"
+        },
+        {
+          "claim": "A fund focused on one sector does not provide diversification; similar products should be avoided",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-AA] 'especially if the fund focuses on only one particular industry sector'; T2.md [V, IEFP diversification] 'ne pas prendre des produits trop semblables'"
+        },
+        {
+          "claim": "Example arithmetic recomputed (invented figures): 60,000 ÷ 2 = 30,000; 10,000 + 20,000 + 20,000 = 50,000",
+          "source": "amf-fr",
+          "where": "illustration of T4.md (d)"
+        }
+      ]
+    },
+    {
+      "id": "the-brvm",
+      "sources": [
+        "brvm",
+        "amf-umoa",
+        "dcbr",
+        "lefaso"
+      ],
+      "en": {
+        "title": "Understand how the BRVM works",
+        "summary": "The BRVM is the stock exchange shared by the eight UEMOA countries, based in Abidjan. Shares and bonds are bought and sold there, only through licensed brokers called SGI.",
+        "points": [
+          "The BRVM (Bourse Régionale des Valeurs Mobilières) started on 16 September 1998. Its official bulletin of 2 October 2026 counts 48 listed shares and 212 listed bonds.",
+          "It is a cash market: the buyer must already have the money and the seller the securities. Its trading rules forbid buying on credit and selling what you do not hold.",
+          "Trading is done security by security and the standard lot is one unit, so a single share can be bought. An order is 'at best' (no price) or 'limit price'.",
+          "Since 4 December 2025, securities and money are exchanged two business days after the trade, through the central depository (DC/BR). The AMF-UMOA supervises the whole market."
+        ],
+        "example": "Issa wants 3 shares quoted at 2,000 F. He gives a limit order at 2,000 F: 3 × 2,000 = 6,000 F. The market commissions published by the BRVM are 0.3%: 6,000 × 0.3% = 18 F. His broker's own fee comes on top. The money must be on his account before the order.",
+        "action": "Open brvm.org, find the official bulletin of the day and read how many shares are listed.",
+        "watchOut": "The BRVM is not the trading, cryptocurrency or sports-betting offers that spread on social networks: those sit outside this regulated market.",
+        "aliases": [
+          "brvm",
+          "stock exchange",
+          "bourse",
+          "abidjan stock exchange",
+          "how the stock market works",
+          "listed companies",
+          "buy one share",
+          "stock market order",
+          "sgi"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre comment fonctionne la BRVM",
+        "summary": "La BRVM est la bourse commune aux huit pays de l'UEMOA, basée à Abidjan. On y achète et on y vend des actions et des obligations, uniquement par des courtiers agréés appelés SGI.",
+        "points": [
+          "La BRVM (Bourse Régionale des Valeurs Mobilières) a démarré le 16 septembre 1998. Son bulletin officiel du 2 octobre 2026 compte 48 actions cotées et 212 obligations cotées.",
+          "C'est un marché au comptant : l'acheteur doit déjà avoir l'argent et le vendeur les titres. Ses règles de négociation interdisent d'acheter à crédit et de vendre ce qu'on ne détient pas.",
+          "Les négociations se font titre par titre et le lot normal est d'une unité : on peut acheter une seule action. Un ordre est « au mieux » (sans prix) ou « à cours limité ».",
+          "Depuis le 4 décembre 2025, titres et argent sont échangés deux jours ouvrés après la transaction, par le dépositaire central (DC/BR). L'AMF-UMOA contrôle l'ensemble du marché."
+        ],
+        "example": "Issa veut 3 actions cotées 2 000 F. Il passe un ordre à cours limité à 2 000 F : 3 × 2 000 = 6 000 F. Les commissions de marché publiées par la BRVM sont de 0,3 % : 6 000 × 0,3 % = 18 F. Les frais de son courtier s'ajoutent. L'argent doit être sur son compte avant l'ordre.",
+        "action": "Ouvrez brvm.org, trouvez le bulletin officiel du jour et lisez combien d'actions sont cotées.",
+        "watchOut": "La BRVM, ce ne sont pas les offres de trading, de cryptomonnaies ou de paris sportifs des réseaux sociaux : celles-ci sont hors de ce marché réglementé.",
+        "aliases": [
+          "brvm",
+          "bourse",
+          "bourse d'abidjan",
+          "bourse régionale",
+          "comment marche la bourse",
+          "sociétés cotées",
+          "acheter une seule action",
+          "ordre de bourse",
+          "sgi"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "BRVM = Bourse Régionale des Valeurs Mobilières, headquartered in Abidjan, serving the UMOA zone",
+          "source": "brvm",
+          "where": "E.md FACTS first bullet"
+        },
+        {
+          "claim": "UMOA groups eight countries; BRVM and DC/BR started activities on 16 September 1998",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Missions and powers, History and Eight member countries (A2)"
+        },
+        {
+          "claim": "Equities listed 48; Bonds listed 212 (Bulletin Officiel de la Cote n°187, 2 October 2026)",
+          "source": "brvm",
+          "where": "R3-1 §2.2 Listed securities (B10)"
+        },
+        {
+          "claim": "Cash market: buyer must have the cash, seller the securities",
+          "source": "brvm",
+          "where": "R3-1 §2.2 How to invest, Cash market (B1); R3-2 §2.0"
+        },
+        {
+          "claim": "Margin accounts and short selling are forbidden (Art. 1123)",
+          "source": "brvm",
+          "where": "E2.md FACTS Trading rules (read directly)"
+        },
+        {
+          "claim": "Trades are made security by security (Art. 1124); regular lot fixed at one unit when no other quantity is set (Art. 1125)",
+          "source": "brvm",
+          "where": "E2.md FACTS Trading rules"
+        },
+        {
+          "claim": "Order types: 'au mieux' with no price indication (Art. 1222), 'à cours limité' (Art. 1223)",
+          "source": "brvm",
+          "where": "E2.md FACTS Trading rules"
+        },
+        {
+          "claim": "Only SGIs may trade securities listed on the BRVM",
+          "source": "brvm",
+          "where": "R3-1 §2.2 How to invest (B1); R3-2 §2.0"
+        },
+        {
+          "claim": "Settlement cycle reduced from J+3 to J+2 since 4 December 2025; exchange of securities and cash two business days after the trade",
+          "source": "dcbr",
+          "where": "R3-1 §2.3 Settlement cycle now J+2 (D5); conflict noted in R3-1 §3 item 1"
+        },
+        {
+          "claim": "DC/BR keeps and circulates securities and settles trades; AMF-UMOA controls all market participants",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Missions and powers, Control (A1); §2.3 DC/BR role and Supervision (D2)"
+        },
+        {
+          "claim": "Market commissions: 0.2% BRVM + 0.1% DC/BR of the transaction amount, paid by buyer and by seller; example 6,000 × 0.3% = 18 recomputed (share price invented)",
+          "source": "brvm",
+          "where": "R3-1 §2.2 Fees (B5); R3-2 §2.0"
+        },
+        {
+          "claim": "Buy order accepted only if the cash account at the SGI is sufficiently funded",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Investor guide, Conditions for orders"
+        },
+        {
+          "claim": "The stock exchange is to be distinguished from trading, cryptocurrency and sports-betting adverts on social networks outside any regulated framework",
+          "source": "lefaso",
+          "where": "R3-4 BF-4 point 8 (Cédric Zongo, 9 July 2025)"
+        }
+      ]
+    },
+    {
+      "id": "start-from-burkina",
+      "sources": [
+        "brvm",
+        "amf-umoa",
+        "coris-bourse",
+        "sbif",
+        "lefaso",
+        "daba"
+      ],
+      "en": {
+        "title": "Start investing from Burkina Faso, step by step",
+        "summary": "A LeFaso.net reader asked in 2018 how, when and how much to invest from Burkina, and through whom. Four steps: licensed broker, securities account, deposit, order. Burkina had 13,154 such accounts in March 2024.",
+        "points": [
+          "Choose a licensed broker (SGI). The BRVM and the AMF-UMOA list four in Burkina Faso: SBIF, Coris Bourse, SA2IF and Image Finances Internationales. Check any name on the AMF-UMOA licence checker.",
+          "Open a securities account by signing an agreement and a form. Coris Bourse publishes (read 3 October 2026): two photos, valid identity document, proof of residence, an online form, from 50,000 F.",
+          "Fund the account, then give your order. Coris Bourse states mobile money or bank transfer and an app, My Coris Bourse. You manage yourself or give a mandate to the broker.",
+          "Not published: no Burkina broker shows its fee grid online, and SA2IF shows no public information. A broker must give you its tariffs when you open the account: ask in writing."
+        ],
+        "example": "Aminata has 60,000 F she will not need. She opens an account where the minimum is 50,000 F and deposits 50,000 F. She orders 5 shares at 8,000 F: 5 × 8,000 = 40,000 F. Market commissions: 40,000 × 0.3% = 120 F. The broker's own fee stays unknown until she receives the grid.",
+        "action": "Type one broker's name into the AMF-UMOA licence checker and note its licence number and date.",
+        "watchOut": "An app is not a licence. One investing app read on 3 October 2026 gave different minimums on different pages and named no licensed broker.",
+        "aliases": [
+          "how to invest in burkina",
+          "open a securities account",
+          "coris bourse",
+          "sbif",
+          "broker",
+          "sgi burkina",
+          "how much to start",
+          "invest from ouagadougou",
+          "documents to open an account",
+          "invest with mobile money"
+        ]
+      },
+      "fr": {
+        "title": "Commencer à investir depuis le Burkina, par étapes",
+        "summary": "Un lecteur de LeFaso.net demandait en 2018 comment, quand et combien investir depuis le Burkina, et par qui passer. Quatre étapes : courtier agréé, compte-titres, dépôt, ordre. Le Burkina comptait 13 154 comptes-titres en mars 2024.",
+        "points": [
+          "Choisissez un courtier agréé (SGI). La BRVM et l'AMF-UMOA en listent quatre au Burkina Faso : SBIF, Coris Bourse, SA2IF et Image Finances Internationales. Vérifiez tout nom sur le vérificateur d'agrément de l'AMF-UMOA.",
+          "Ouvrez un compte-titres en signant une convention et un formulaire. Coris Bourse publie (lu le 3 octobre 2026) : deux photos, pièce d'identité valide, justificatif de résidence, formulaire en ligne, dès 50 000 F.",
+          "Approvisionnez le compte, puis passez votre ordre. Coris Bourse annonce le mobile money ou le virement bancaire et une application, My Coris Bourse. Vous gérez vous-même ou vous donnez mandat au courtier.",
+          "Non publié : aucun courtier du Burkina n'affiche sa grille de frais en ligne, et SA2IF n'affiche aucune information publique. Le courtier doit vous remettre ses tarifs à l'ouverture : demandez-les par écrit."
+        ],
+        "example": "Aminata a 60 000 F dont elle n'aura pas besoin. Elle ouvre un compte dont le minimum est 50 000 F et dépose 50 000 F. Elle commande 5 actions à 8 000 F : 5 × 8 000 = 40 000 F. Commissions de marché : 40 000 × 0,3 % = 120 F. Les frais du courtier restent inconnus tant qu'elle n'a pas reçu la grille.",
+        "action": "Saisissez le nom d'un courtier dans le vérificateur d'agrément de l'AMF-UMOA et notez son numéro et sa date d'agrément.",
+        "watchOut": "Une application n'est pas un agrément. Une application d'investissement lue le 3 octobre 2026 donnait des minimums différents selon les pages et ne nommait aucun courtier agréé.",
+        "aliases": [
+          "comment investir au burkina",
+          "ouvrir un compte-titres",
+          "coris bourse",
+          "sbif",
+          "courtier",
+          "sgi burkina",
+          "combien pour commencer",
+          "investir depuis ouagadougou",
+          "documents pour ouvrir un compte",
+          "investir avec mobile money"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Real reader question (Hebie, 10 April 2018): how, when and how much to invest, and which organisations to go to, for someone in Burkina",
+          "source": "lefaso",
+          "where": "R3-4 §3.1 question 1 (https://lefaso.net/spip.php?article82884)"
+        },
+        {
+          "claim": "Burkina Faso: 13,154 securities accounts at 31 March 2024 (regional total 194,222)",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Securities accounts, Table 9 (A20, p. 41)"
+        },
+        {
+          "claim": "BRVM steps: contact an authorised intermediary, open a securities account, choose a management mode",
+          "source": "brvm",
+          "where": "E2.md FACTS five steps; R3-1 §2.2 How to invest (B1)"
+        },
+        {
+          "claim": "Four SGIs in Burkina Faso on the BRVM page and four active SGIs in the AMF-UMOA list: SBIF, Coris Bourse, SA2IF, Image Finances Internationales",
+          "source": "brvm",
+          "where": "R3-1 §2.2 SGIs in Burkina Faso (B7) and §2.1 Actors recorded for Burkina Faso (A7); R3-2 §2.0"
+        },
+        {
+          "claim": "AMF-UMOA licence checker: search by name or licence number; returns name, licence, date (e.g. CORIS BOURSE, SGI / 2010-02, 3 Sept. 2010)",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Licence checker (A5)"
+        },
+        {
+          "claim": "Verify that the intermediary is licensed by the AMF-UMOA before investing",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Investor guide, Precautions before investing"
+        },
+        {
+          "claim": "Account opening = signed agreement and account-opening form",
+          "source": "brvm",
+          "where": "R3-1 §2.2 Account opening (B1); R3-2 §2.0"
+        },
+        {
+          "claim": "Coris Bourse: 2 identity photos, valid ID, proof of residence; minimum 50,000 FCFA; online KYC form; read 2026-10-03",
+          "source": "coris-bourse",
+          "where": "R3-2 §2.1 rows Documents (adult), Minimum to fund the account, Online account opening (S7, S8, S10)"
+        },
+        {
+          "claim": "Coris Bourse funding: mobile money (Orange Money, Moov Money, Wave) or bank transfer; app My Coris Bourse; gestion libre or sous mandat",
+          "source": "coris-bourse",
+          "where": "R3-2 §2.1 rows Funding methods, App, Management modes (S7, S9)"
+        },
+        {
+          "claim": "SBIF: account opened at the agency with documents or by e-mail",
+          "source": "sbif",
+          "where": "R3-2 §2.2 row How to open (S15)"
+        },
+        {
+          "claim": "No Burkina broker publishes its fee grid; SA2IF has no public website content",
+          "source": "coris-bourse",
+          "where": "R3-2 §5 NOT FOUND, Burkina Faso brokers table; §2.4 SA2IF"
+        },
+        {
+          "claim": "SGI must make its tariffs available to every investor at account opening",
+          "source": "brvm",
+          "where": "R3-2 §2.0 'Broker fees are free but approved, and must be handed to the client' (BRVM node/312)"
+        },
+        {
+          "claim": "Example: 5 × 8,000 = 40,000; 40,000 × 0.3% = 120 (share price invented; 0.3% = BRVM 0.2% + DC/BR 0.1%)",
+          "source": "brvm",
+          "where": "R3-2 §2.0 Market commissions"
+        },
+        {
+          "claim": "App with inconsistent minimums (6,500 FCFA in FAQ, 10,000 FCFA on home page and blog) and no named licensed SGI: Daba, read 2026-10-03",
+          "source": "daba",
+          "where": "R3-2 §2.8 Daba Finance table; §4 item 3"
+        }
+      ]
+    },
+    {
+      "id": "what-investing-costs",
+      "sources": [
+        "brvm",
+        "amf-fr",
+        "nsia-capital",
+        "sec-investor-gov",
+        "sec-roadmap",
+        "africam"
+      ],
+      "en": {
+        "title": "Count what investing costs you",
+        "summary": "You pay when you buy, when you sell and for as long as you hold. Each fee looks small; added up over the years, fees take a real part of your gain.",
+        "points": [
+          "On each purchase or sale you pay brokerage to your SGI, plus the market commissions published by the BRVM: 0.2% for the exchange and 0.1% for the central depository.",
+          "Brokers also charge every year for keeping your securities and your account. Each SGI sets its prices freely, with the regulator's approval. No Burkina broker publishes its grid.",
+          "An order of magnitude from Côte d'Ivoire, not Burkina: NSIA Capital's grid valid from 1 July 2026, before tax, shows brokerage 1%, custody 0.0625% a quarter, account keeping 2,500 F a quarter.",
+          "Funds charge entry, exit and yearly fees. When a fee is quoted as a percentage, turn it into francs for your amount, and ask for the total cost."
+        ],
+        "example": "Assumptions for this example: 100,000 F grows 5% a year for 10 years. Without costs: 100,000 × 1.05, ten times in a row = 162,889 F. With costs of 2% a year, growth is about 3%: 100,000 × 1.03, ten times = 134,392 F. Difference: 162,889 − 134,392 = 28,497 F.",
+        "action": "Ask an SGI for its fee grid in writing and convert each line into francs for 50,000 F.",
+        "watchOut": "A fixed fee weighs heavily on a small sum: 2,500 F a quarter makes 10,000 F a year, that is 20% of 50,000 F.",
+        "aliases": [
+          "fees",
+          "brokerage",
+          "commission",
+          "custody fees",
+          "account fees",
+          "how much does it cost to invest",
+          "broker fees",
+          "hidden costs",
+          "fund fees"
+        ]
+      },
+      "fr": {
+        "title": "Compter ce que coûte un investissement",
+        "summary": "Vous payez à l'achat, à la vente et tant que vous détenez vos titres. Chaque frais paraît petit ; additionnés sur des années, les frais prennent une vraie part de votre gain.",
+        "points": [
+          "À chaque achat ou vente, vous payez le courtage à votre SGI, plus les commissions de marché publiées par la BRVM : 0,2 % pour la bourse et 0,1 % pour le dépositaire central.",
+          "Les courtiers facturent aussi chaque année la garde des titres et la tenue du compte. Chaque SGI fixe ses tarifs, homologués par le régulateur. Aucun courtier du Burkina ne publie sa grille.",
+          "Ordre de grandeur ivoirien, pas burkinabè : grille NSIA Capital valable dès le 1er juillet 2026, hors taxes : courtage 1 %, conservation 0,0625 % par trimestre, tenue de compte 2 500 F par trimestre.",
+          "Les fonds prélèvent des frais d'entrée, de sortie et annuels. Quand un frais est donné en pourcentage, convertissez-le en francs pour votre montant, et demandez le coût total."
+        ],
+        "example": "Hypothèses de cet exemple : 100 000 F progressent de 5 % par an pendant 10 ans. Sans frais : 100 000 × 1,05, dix fois de suite = 162 889 F. Avec 2 % de frais par an, la progression est d'environ 3 % : 100 000 × 1,03, dix fois = 134 392 F. Écart : 162 889 − 134 392 = 28 497 F.",
+        "action": "Demandez par écrit à une SGI sa grille de frais et convertissez chaque ligne en francs pour 50 000 F.",
+        "watchOut": "Un frais fixe pèse lourd sur une petite somme : 2 500 F par trimestre font 10 000 F par an, soit 20 % de 50 000 F.",
+        "aliases": [
+          "frais",
+          "courtage",
+          "commission",
+          "droits de garde",
+          "frais de tenue de compte",
+          "combien coûte investir",
+          "frais du courtier",
+          "frais cachés",
+          "frais des fonds"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Brokerage fees are one-off fees at each purchase or sale; the intermediary also charges recurring yearly fees on what is held",
+          "source": "amf-fr",
+          "where": "R3-3 Topic C [AMF-FR-FRAIS] DEFINITIONS one-off vs recurring"
+        },
+        {
+          "claim": "Market commissions 0.2% (BRVM) and 0.1% (DC/BR) of the transaction amount, payable by buyer and by seller (undated BRVM page; a 2018 decision sets a lower BRVM share on bonds)",
+          "source": "brvm",
+          "where": "R3-2 §2.0; R3-1 §2.2 Fees (B5) and §3 conflict 6"
+        },
+        {
+          "claim": "Each SGI is free to set its tariffs, which are approved by the regulator",
+          "source": "brvm",
+          "where": "R3-2 §2.0 (BRVM node/312); E2.md FACTS five steps, Fees"
+        },
+        {
+          "claim": "No Burkina broker publishes its fee grid",
+          "source": "brvm",
+          "where": "R3-2 §5 NOT FOUND, Burkina Faso brokers table"
+        },
+        {
+          "claim": "NSIA Capital (Côte d'Ivoire) grid valid from 1 July 2026, excluding tax: brokerage 1%; custody 0.0625% per quarter; account keeping 2,500 FCFA per quarter (individual)",
+          "source": "nsia-capital",
+          "where": "R3-2 §2.5 NSIA Capital table (S30) and §3b"
+        },
+        {
+          "claim": "Funds: entry or exit fees when buying or selling units, and annual fees while holding",
+          "source": "amf-fr",
+          "where": "R3-3 Topic C [AMF-FR-FRAIS] Funds; R3-2 §3c"
+        },
+        {
+          "claim": "If a fee is quoted as a percentage, understand what it means in money; ask the total cost",
+          "source": "sec-roadmap",
+          "where": "T4.md (g) [SEC]"
+        },
+        {
+          "claim": "Fees may seem small but over time have a major impact",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic C [SEC-FEES] first bullet and worked example"
+        },
+        {
+          "claim": "Worked example computed by the writer with assumed rates: 100,000 × 1.05^10 = 162,889; 100,000 × 1.03^10 = 134,392; difference 28,497 (method modelled on the SEC and AMF France fee examples)",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic C [SEC-FEES] WORKED EXAMPLE; [AMF-FR-FRAIS] WORKED EXAMPLE"
+        },
+        {
+          "claim": "2,500 × 4 = 10,000; 10,000 ÷ 50,000 = 20% (computed from the NSIA account-keeping line, used as an order of magnitude)",
+          "source": "nsia-capital",
+          "where": "R3-2 §2.5 NSIA Capital table, Frais de tenue de compte"
+        }
+      ]
+    },
+    {
+      "id": "tax-on-investment-income",
+      "sources": [
+        "cgi-bf",
+        "cgi-bf-2024",
+        "bf-finance-laws",
+        "brvm"
+      ],
+      "en": {
+        "title": "Know the tax on investment income",
+        "summary": "Burkina's General Tax Code taxes dividends, bond interest, State securities and gains on sales differently. Its 2024 version shows the same rates, and a keyword search of the 2024 and 2025 finance laws found no change.",
+        "points": [
+          "Article 140 (2023 edition): income from securities is taxed at 6% for interest on bonds issued in Burkina Faso and at 12.5% for all other income, such as dividends.",
+          "Article 132 applies this tax to dividends of companies whose head office is in Burkina Faso. For companies based in other BRVM countries, no rule could be confirmed.",
+          "Article 134 exempts the interest and other income of bonds and public securities issued by the State and by local authorities.",
+          "Articles 175 to 181: a gain on selling shares of companies registered in Burkina Faso bears a 10% tax, payable by the seller. No change was found for 2024 and 2025."
+        ],
+        "example": "Under the 2023 edition. Dividend of 10,000 F from a Burkina company: 10,000 × 12.5% = 1,250 F of tax, 8,750 F left. Interest of 10,000 F on a company bond issued in Burkina: 10,000 × 6% = 600 F of tax, 9,400 F left. Interest of 10,000 F on a State bond: exempt, 10,000 F left.",
+        "action": "Ask your broker in writing which taxes it deducts today on dividends, bond interest and sales, and at what rate.",
+        "watchOut": "For 2026, only the explanatory note of the finance law was read: it announces no change to these rates. Confirm before counting on a net amount.",
+        "aliases": [
+          "tax on dividends",
+          "tax on investments",
+          "tax on interest",
+          "capital gains tax",
+          "tax on shares",
+          "are treasury bonds taxed",
+          "tax code burkina",
+          "net income"
+        ]
+      },
+      "fr": {
+        "title": "Connaître l'impôt sur les revenus de placement",
+        "summary": "Le Code général des impôts du Burkina impose différemment dividendes, intérêts d'obligations, titres de l'État et gains à la vente. Sa version 2024 donne les mêmes taux ; les lois de finances 2024 et 2025, parcourues par mots-clés, n'y changent rien.",
+        "points": [
+          "Article 140 (édition 2023) : les revenus de valeurs mobilières sont imposés à 6 % pour les intérêts d'obligations émises au Burkina Faso et à 12,5 % pour les autres produits, comme les dividendes.",
+          "L'article 132 applique cet impôt aux dividendes des sociétés ayant leur siège social au Burkina Faso. Pour les sociétés établies dans d'autres pays de la BRVM, aucune règle n'a pu être confirmée.",
+          "L'article 134 exonère les intérêts et autres produits des obligations et effets publics émis par l'État et les collectivités territoriales.",
+          "Articles 175 à 181 : la plus-value à la vente de titres de sociétés immatriculées au Burkina Faso est taxée à 10 %, payée par le vendeur. Aucun changement trouvé pour 2024 et 2025."
+        ],
+        "example": "Selon l'édition 2023. Dividende de 10 000 F d'une société du Burkina : 10 000 × 12,5 % = 1 250 F d'impôt, il reste 8 750 F. Intérêts de 10 000 F sur une obligation d'entreprise émise au Burkina : 10 000 × 6 % = 600 F d'impôt, il reste 9 400 F. Intérêts de 10 000 F sur une obligation de l'État : exonérés, il reste 10 000 F.",
+        "action": "Demandez par écrit à votre courtier quels impôts il retient aujourd'hui sur les dividendes, les intérêts d'obligations et les ventes, et à quel taux.",
+        "watchOut": "Pour 2026, seul l'exposé des motifs de la loi de finances a été lu : aucun changement de ces taux annoncé. Confirmez avant de compter sur un montant net.",
+        "aliases": [
+          "impôt sur les dividendes",
+          "impôt sur les placements",
+          "impôt sur les intérêts",
+          "taxe sur les plus-values",
+          "impôt sur les actions",
+          "les bons du trésor sont-ils imposés",
+          "code des impôts burkina",
+          "revenu net"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Art. 140: 6% for interest and other income of bonds issued in Burkina Faso; 12.5% for all other income",
+          "source": "cgi-bf",
+          "where": "E2.md FACTS TAX, CGI 2023 edition (read directly)"
+        },
+        {
+          "claim": "Art. 132-1°: applies to dividends of companies with their head office in Burkina Faso",
+          "source": "cgi-bf",
+          "where": "E2.md FACTS TAX"
+        },
+        {
+          "claim": "Art. 134-5°: interest and other income of bonds and public securities issued by the State and local authorities are exempt",
+          "source": "cgi-bf",
+          "where": "E2.md FACTS TAX"
+        },
+        {
+          "claim": "Art. 175–181: capital gains on sales of shares of companies registered in Burkina Faso taxed at 10%, payable by the seller",
+          "source": "cgi-bf",
+          "where": "E2.md FACTS TAX"
+        },
+        {
+          "claim": "CGI 'Version 2024' (DGI): art. 140 2) 6% and 12.5%; art. 134 5) State and local-authority securities exempt; art. 175 and 179 capital gains on company shares 10%, payable by the seller",
+          "source": "cgi-bf-2024",
+          "where": "R3-5-burkina-facts.md Item 6 table, rows 'Securities income (IRCM) rates', 'Government securities exempt', 'Capital gains on company shares: 10 %'"
+        },
+        {
+          "claim": "Finance laws for 2024 (loi n°042-2023/ALT) and 2025 (loi n°042-2024/ALT) searched by keyword and by pattern over amended articles: rates in art. 140 not touched, no hit for securities capital gains (art. 175–179); an amendment phrased differently could be missed",
+          "source": "bf-finance-laws",
+          "where": "R3-5-burkina-facts.md Item 6 'Did the finance laws for 2024, 2025 or 2026 change…' rows 1-2 and 'Limits of this check'"
+        },
+        {
+          "claim": "Finance law for 2026 (loi n°021-2025/ALT): the JO is an image scan and was not read; only the explanatory note was searched; none of its measures concerns IRCM rates or capital gains on securities",
+          "source": "bf-finance-laws",
+          "where": "R3-5-burkina-facts.md Item 6 same table, row 3; section 4 NOT FOUND, item 6"
+        },
+        {
+          "claim": "Treatment of dividends from BRVM issuers based outside Burkina not found",
+          "source": "cgi-bf",
+          "where": "E2.md STILL NOT FOUND; R3-2 §5 Cross-cutting"
+        },
+        {
+          "claim": "Trade confirmation shows taxes; broker provides on request a year-end statement of dividends and realised gains for tax purposes",
+          "source": "brvm",
+          "where": "R3-1 §2.2 Avis d'opéré and Statements (B1)"
+        },
+        {
+          "claim": "Example arithmetic recomputed: 10,000 × 12.5% = 1,250 → 8,750; 10,000 × 6% = 600 → 9,400 (amounts invented)",
+          "source": "cgi-bf",
+          "where": "E2.md FACTS TAX, Art. 140 and 134-5°"
+        }
+      ]
+    },
+    {
+      "id": "questions-before-investing",
+      "sources": [
+        "sec-roadmap",
+        "sec-investor-gov",
+        "amf-umoa",
+        "amf-fr",
+        "brvm",
+        "umoa-titres",
+        "lefaso"
+      ],
+      "en": {
+        "title": "Ask the right questions before investing",
+        "summary": "Before putting money anywhere, question the investment and the person selling it. A LeFaso.net reader once asked where anyone sees gains of 300%: that is the right reflex. This is education, not advice.",
+        "points": [
+          "About the investment: how will it make money? How does it fit my goal? What must happen for its value to rise? What are the risks? Where can I learn more?",
+          "About the cost: how much will it cost me in total? How are you paid: by commission, by a percentage of my money, or in another way?",
+          "About the seller: are you licensed by the AMF-UMOA? Check it yourself. Read every document and contract before signing, and ask for time to think.",
+          "Warning signs: promises of quick profit, pressure to decide now, so-called inside information. In the UMOA, selling securities door to door against immediate payment is prohibited."
+        ],
+        "example": "Salif is offered '30% a month, guaranteed' on 50,000 F: 50,000 × 30% = 15,000 F a month, and 15,000 × 12 = 180,000 F a year, that is 360%. A Burkina Treasury bond offered in October 2026 paid 6.20% a year: 50,000 × 6.2% = 3,100 F. Such a gap is a warning sign.",
+        "action": "Copy the five questions about an investment into your phone and ask them at the next offer you receive.",
+        "watchOut": "A licence does not make an investment good. An adviser guides your choices without deciding for you: the final decision stays yours.",
+        "aliases": [
+          "questions to ask",
+          "before investing",
+          "is it a scam",
+          "how to check a broker",
+          "guaranteed gains",
+          "who can i trust",
+          "check the licence",
+          "investment advice",
+          "fraud signs"
+        ]
+      },
+      "fr": {
+        "title": "Poser les bonnes questions avant d'investir",
+        "summary": "Avant de placer de l'argent, interrogez le placement et la personne qui le vend. Un lecteur de LeFaso.net demandait : « où voyez-vous qu'on peut faire du 300% de gain ? ». C'est le bon réflexe. Ceci est de l'éducation, pas un conseil.",
+        "points": [
+          "Sur le placement : comment va-t-il rapporter de l'argent ? Correspond-il à mon objectif ? Que doit-il se passer pour que sa valeur monte ? Quels sont les risques ? Où trouver plus d'informations ?",
+          "Sur le coût : combien cela va-t-il me coûter au total ? Comment êtes-vous payé : à la commission, en pourcentage de mon argent, ou autrement ?",
+          "Sur le vendeur : êtes-vous agréé par l'AMF-UMOA ? Vérifiez vous-même. Lisez chaque document et chaque contrat avant de signer, et demandez un temps de réflexion.",
+          "Signaux d'alerte : promesses de profit rapide, pression pour décider tout de suite, prétendues informations confidentielles. Dans l'UMOA, le colportage de titres contre paiement immédiat est interdit."
+        ],
+        "example": "On propose à Salif « 30 % par mois, garanti » sur 50 000 F : 50 000 × 30 % = 15 000 F par mois, et 15 000 × 12 = 180 000 F par an, soit 360 %. Une obligation du Trésor du Burkina proposée en octobre 2026 payait 6,20 % par an : 50 000 × 6,2 % = 3 100 F. Un tel écart est un signal d'alerte.",
+        "action": "Recopiez dans votre téléphone les cinq questions sur le placement et posez-les à la prochaine offre reçue.",
+        "watchOut": "Un agrément ne rend pas un placement bon. Un conseiller oriente vos choix sans décider à votre place : la décision finale reste la vôtre.",
+        "aliases": [
+          "questions à poser",
+          "avant d'investir",
+          "est-ce une arnaque",
+          "comment vérifier un courtier",
+          "gains garantis",
+          "à qui faire confiance",
+          "vérifier l'agrément",
+          "conseil en placement",
+          "signes de fraude"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Real reader question (enfant de bousse, 24 November 2019): 'où voyez-vous qu'on peut faire du 300% de gain ?'",
+          "source": "lefaso",
+          "where": "R3-4 §3.1 question 29 (https://lefaso.net/spip.php?article93324)"
+        },
+        {
+          "claim": "Questions about any investment: how will it make money; consistent with my goals; what must happen for it to increase in value; what are the risks; where to get more information",
+          "source": "sec-roadmap",
+          "where": "T4.md CHECKLISTS (verbatim, SEC)"
+        },
+        {
+          "claim": "Questions on cost and pay: how much will it cost in total; how do you get paid (commission, percentage of assets, another method)",
+          "source": "sec-roadmap",
+          "where": "T4.md CHECKLISTS; R3-3 Topic C [SEC-FEES] QUESTION LIST"
+        },
+        {
+          "claim": "Check the intermediary is licensed by the AMF-UMOA; read documents and contracts before signing; ask for time to think",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Investor guide, Precautions before investing; Appendix 1"
+        },
+        {
+          "claim": "Warning signs of fraud: promises of quick profits, inside information, pressure to invest before investigating",
+          "source": "sec-roadmap",
+          "where": "T4.md (i) [SEC]"
+        },
+        {
+          "claim": "Door-to-door selling (colportage) of securities with immediate delivery and payment is prohibited",
+          "source": "amf-umoa",
+          "where": "R3-1 §2.1 Definitions of the intermediaries (A4), Door-to-door selling"
+        },
+        {
+          "claim": "The larger the gap with the rate of a safe investment, the higher the risk",
+          "source": "amf-fr",
+          "where": "R3-3 Topic A [AMF-FR-RR]"
+        },
+        {
+          "claim": "Burkina OAT 60 months at 6.2000% (issue of 07/10/2026); 50,000 × 6.2% = 3,100; 50,000 × 30% = 15,000; 15,000 × 12 = 180,000; 180,000 ÷ 50,000 = 360% (offer invented, recomputed)",
+          "source": "umoa-titres",
+          "where": "R3-1 §2.4 Nominal value, from a live Burkina issue (U5)"
+        },
+        {
+          "claim": "Registration or licence does not guarantee a good investment",
+          "source": "sec-roadmap",
+          "where": "T4.md (i) [SEC] 'doesn't guarantee that the company will be a good investment'"
+        },
+        {
+          "claim": "Advisers guide clients' choices without replacing them in final decisions",
+          "source": "brvm",
+          "where": "E2.md FACTS Advice"
+        },
+        {
+          "claim": "Education, not advice: regulators' material is general information and recommends no product",
+          "source": "sec-investor-gov",
+          "where": "R3-3 Topic A [SEC-AA] EDUCATION vs ADVICE"
+        }
+      ]
+    }
+  ],
+  "leftOut": [
+    "Broker fee grid of any of the four Burkina SGIs (brokerage, custody, account keeping): not published; lessons say to ask in writing and give a dated Ivorian grid as an order of magnitude only.",
+    "Minimum amount for an individual to subscribe to Treasury bills or bonds, and intermediaries' fees for it: not published by UMOA-Titres; only the nominal unit values of the 7 October 2026 Burkina issue are given.",
+    "Minimum subscription of the Burkina funds in official documents: not found (only a website claim of 10,000 F for AFRICAM and a whole-unit rule for Coris Actions), so no minimum is stated.",
+    "Tax on dividends from BRVM companies based outside Burkina Faso, who withholds the tax, and any change after the 2023 edition of the tax code: not in the notes (R3-5-burkina-facts.md did not exist at writing time).",
+    "Opening minimum, document list and fees of SA2IF and Image Finances Internationales, and SBIF's account minimum: not published; only named as licensed brokers.",
+    "BRVM index values, market capitalisation and trading hours: available in the notes but left out to keep the lesson short; 'all or nothing' orders and order validity periods likewise.",
+    "Rebalancing and 'what a portfolio is': notes mark them weak or undefined for this audience; not written.",
+    "AMF-UMOA complaint procedure (Instruction 50/2016, three steps and delays): supported by the notes but not in the lesson list; not written.",
+    "Mobile-money deposit limits of the Coris Bourse app (25,000 to 1,000,000 F): left out because the site states two different minimums (50,000 and 25,000 F) without explaining the difference."
+  ]
+}

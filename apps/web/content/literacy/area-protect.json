@@ -1,0 +1,1069 @@
+{
+  "area": "protect",
+  "sourceRegistry": {
+    "ilo-ci-2023": {
+      "name": "ILO — Éducation financière pour les cultivateurs et les travailleurs ruraux en Côte d'Ivoire, Livret de l'apprenant (2023)",
+      "url": "https://www.ilo.org/resource/training-material/list-financial-education-training-materials"
+    },
+    "fdic-money-smart": {
+      "name": "FDIC — Money Smart for Young Adults, Module 9 Protecting Your Money and Your Identity (2022)",
+      "url": "https://catalog.fdic.gov/catalog/sfc/servlet.shepherd/document/download/069t000000ghq8VAAQ"
+    },
+    "cfpb-ymyg": {
+      "name": "CFPB — Your Money, Your Goals: A financial empowerment toolkit (2020)",
+      "url": "https://files.consumerfinance.gov/f/documents/cfpb_your-money-your-goals_financial-empowerment_toolkit.pdf"
+    },
+    "sec-roadmap": {
+      "name": "US SEC — Saving and Investing: A Roadmap To Your Financial Security (2011)",
+      "url": "https://www.sec.gov/investor/pubs/sec-guide-to-savings-and-investing.pdf"
+    },
+    "cima-code": {
+      "name": "CIMA — Règlement n°0003/CIMA/PCMA/PCE/2012, Code des assurances, Livre VII Microassurance (2012)",
+      "url": "https://fanaf.org/article_ressources/file/reglement_microassurance_CIMA_2012.pdf"
+    },
+    "amf-umoa": {
+      "name": "AMF-UMOA — licence checker, list of licensed actors, investor guide, communiqués 2023 and 2025, Instruction n°50/2016 on complaints (consulted 2026)",
+      "url": "https://www.amf-umoa.org/pratique/verification/agrement"
+    },
+    "bceao": {
+      "name": "BCEAO — Etablissements de monnaie électronique, lists by country (as of 28 February 2026)",
+      "url": "https://www.bceao.int/fr/content/etablissements-de-monnaie-electronique"
+    },
+    "bclcc": {
+      "name": "BCLCC (Burkina cybercrime brigade) — alert on mobile-money scams, relayed by Wakat Séra (22 May 2026)",
+      "url": "https://www.wakatsera.com/burkina-cybercriminalite-alerte-sur-les-arnaques-via-mobile-money/"
+    },
+    "lefaso": {
+      "name": "LeFaso.net — BCLCC alert relayed 19 March 2026; K. Nikiema, Trading ou Ponzi ? (21 October 2020); reader comments (2021)",
+      "url": "https://lefaso.net/spip.php?article145149"
+    },
+    "koaci-police-2020": {
+      "name": "Koaci — Burkina Faso : la police alerte sur des arnaques à travers les transferts d'argent (22 July 2020, press)",
+      "url": "https://www.koaci.com/article/2020/07/22/burkina-faso/societe/burkina-faso-la-police-alerte-sur-des-arnaques-a-travers-les-transferts-dargent_143393.html"
+    },
+    "apanews-mef": {
+      "name": "APA News — Burkina : mise en garde contre les placements financiers frauduleux (Ministry of Economy communiqué, press relay, date not captured)",
+      "url": "https://fr.apanews.net/security/burkina-mise-en-garde-contre-les-placements-financiers-frauduleux/"
+    },
+    "wakatsera-esf-2024": {
+      "name": "Wakat Séra — Education sociale et financière : de jeunes leaders et des journalistes outillés (29 March 2024, press)",
+      "url": "https://www.wakatsera.com/education-sociale-et-financiere-de-jeunes-leaders-et-des-journalistes-outilles-sur-le-budget-et-lepargne/"
+    },
+    "bf-social-security-law-2021": {
+      "name": "Assemblée nationale (Burkina Faso) — Loi n°004-2021/AN du 06 avril 2021 portant régime de sécurité sociale applicable aux travailleurs salariés et assimilés (2021)",
+      "url": "https://www.assembleenationale.bf/storage/Loi/kh5PSt0jXMbbmdzEE89bH08kf5dw27KYt24h7EAa.pdf"
+    },
+    "bf-public-agents-law-2021": {
+      "name": "Assemblée nationale (Burkina Faso) — Loi n°003-2021/AN du 1er avril 2021 portant régime de sécurité sociale applicable aux agents publics de l'État (2021)",
+      "url": "https://www.assembleenationale.bf/storage/Loi/nVdn1BkjelHB5LKlIQkIRVmMprgjneWeYmeqBcEc.pdf"
+    },
+    "bf-cnss-rates-decree-2023": {
+      "name": "Ministère de la Fonction publique, du Travail et de la Protection sociale (Burkina Faso) — Décret n°2023-0129/PRES-TRANS/PM/MFPTPS/MEFP fixant le taux d'appel des cotisations de sécurité sociale (24 February 2023, effect 30 August 2022)",
+      "url": "https://www.fonction-publique.gov.bf/fileadmin/user_upload/storage/01_MARS_2023-_DECRET___N_2023___0129.pdf"
+    },
+    "bf-ramu-ministry-2024": {
+      "name": "Ministère de la Fonction publique, du Travail et de la Protection sociale (Burkina Faso) — Bon à savoir: cotisations au régime d'assurance maladie universelle, summary of Décret n°2024-0345 (undated page, read 3 October 2026)",
+      "url": "https://www.fonction-publique.gov.bf/accueil/actualites/details?tx_news_pi1%5Baction%5D=detail&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Bnews%5D=2110&cHash=2e0d0ab8178b4741f7f2f3c0b9ee36e4"
+    },
+    "sidwaya-ramu-2024": {
+      "name": "Sidwaya — Assurance maladie universelle: début des opérations d'affiliation et d'immatriculation, ministerial communiqué (29 October 2024)",
+      "url": "https://www.sidwaya.info/assurance-maladie-universelle-debut-des-operations-daffiliation-et-dimmatriculation-sur-lensemble-du-territoire-communique/"
+    },
+    "commission-bancaire": {
+      "name": "Commission Bancaire de l'UMOA — Circulaire n°002-2020/CB/C relative au traitement des réclamations des clients (18 September 2020)",
+      "url": "https://www.cb-umoa.org/sites/default/files/2025-03/Circulaire%20N%C2%B0%20002-2020-CB-C%20relative%20au%20traitement%20des%20r%C3%A9clamations%20des%20clients_compressed.pdf"
+    },
+    "oqsf-bf": {
+      "name": "Sidwaya (press) — articles on OQSF-BF workshops: 2 June 2023 workshop; 28–30 October 2025 workshop (distributed by allAfrica)",
+      "url": "https://www.sidwaya.info/inclusion-et-mediation-financiere-le-dispositif-presente-aux-financiers-du-nord-sahel-et-centre-nord/"
+    }
+  },
+  "lessons": [
+    {
+      "id": "risks-around-you",
+      "sources": [
+        "ilo-ci-2023",
+        "fdic-money-smart"
+      ],
+      "en": {
+        "title": "Name the risks around you",
+        "summary": "A risk is the possibility of a loss or harm. Listing your risks, and seeing which would cost you most, is the first step to protecting yourself.",
+        "points": [
+          "A risk is an event, more or less predictable, that could hurt you or your family. Its chances are higher or lower, and its effects go from small to very serious.",
+          "Anything of value that you own is an asset: your phone, your motorbike, your stock. The risk is that you lose it or that it loses value.",
+          "Common risks are illness, accident, a death in the family, theft, a fire at home and losing your work. If you run a small business, add the risk of losing money.",
+          "Sort each risk twice: how often it can happen (often, sometimes, rarely) and how much it would cost (little, quite a lot, a great deal). A rare risk can be the costliest."
+        ],
+        "example": "Awa sells cloth. She lists three risks. Phone stolen: 35,000 F to replace. One week ill: 5 days without sales at 3,000 F is 15,000 F, plus 10,000 F of care, so 25,000 F. Fire in her stall: rare, but her whole stock of 200,000 F. The rarest risk is the one that would cost most.",
+        "action": "Write down five risks to your income, your health and your belongings, and mark the two that would cost you most.",
+        "watchOut": "Risks are part of life. Not thinking about them does not remove them; it only leaves you unprepared the day one happens.",
+        "aliases": [
+          "risk",
+          "what is a risk",
+          "danger",
+          "bad luck",
+          "something bad happens",
+          "theft",
+          "illness",
+          "accident",
+          "fire",
+          "losing my job"
+        ]
+      },
+      "fr": {
+        "title": "Nommer les risques autour de vous",
+        "summary": "Un risque, c'est la possibilité d'une perte ou d'un dommage. Lister vos risques et voir lesquels coûteraient le plus cher, c'est le premier pas pour vous protéger.",
+        "points": [
+          "Un risque est un événement, plus ou moins prévisible, qui peut vous toucher, vous ou votre famille. Il est plus ou moins probable, et ses effets vont de légers à très graves.",
+          "Tout ce que vous possédez et qui a de la valeur est un actif : téléphone, moto, marchandises. Le risque, c'est de le perdre ou qu'il perde de sa valeur.",
+          "Les risques courants : maladie, accident, décès dans la famille, vol, incendie du logement, perte du travail. Si vous tenez un petit commerce, ajoutez le risque de perdre de l'argent.",
+          "Classez chaque risque deux fois : sa fréquence (fréquent, moyen, rare) et son coût (peu important, assez important, très important). Un risque rare peut être le plus coûteux."
+        ],
+        "example": "Awa vend des pagnes. Elle note trois risques. Téléphone volé : 35 000 F à racheter. Une semaine de maladie : 5 jours sans vente à 3 000 F, soit 15 000 F, plus 10 000 F de soins, donc 25 000 F. Incendie de son étal : rare, mais tout son stock de 200 000 F. Le risque le plus rare est celui qui coûterait le plus.",
+        "action": "Notez cinq risques pour vos revenus, votre santé et vos biens, puis cochez les deux qui vous coûteraient le plus cher.",
+        "watchOut": "Les risques font partie de la vie. Ne pas y penser ne les supprime pas : vous serez seulement pris au dépourvu le jour où l'un d'eux arrive.",
+        "aliases": [
+          "risque",
+          "c'est quoi un risque",
+          "danger",
+          "malheur",
+          "imprévu",
+          "vol",
+          "maladie",
+          "accident",
+          "incendie",
+          "perdre mon travail"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Definition of a risk: more or less predictable event, variable probability, consequences from minor to very serious; possibility of a loss or harm",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 p.146 and glossary p.194"
+        },
+        {
+          "claim": "Asset = something you have that has value; risk = possibility of losing it or of it losing value",
+          "source": "fdic-money-smart",
+          "where": "T1.md (6) FDIC M9 p.2"
+        },
+        {
+          "claim": "List of general risks (death, illness, accident, theft, house fire, job loss) and economic-loss risk for business owners",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 risk lists p.155"
+        },
+        {
+          "claim": "Risk matrix: frequency (frequent, moderately frequent, rare) by cost (not very, quite, very important); death shown as rare and very costly",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 risk matrix p.148"
+        },
+        {
+          "claim": "Worksheet idea: list assets, their risks and how to reduce them",
+          "source": "fdic-money-smart",
+          "where": "T1.md (6) FDIC M9 p.2 worksheet 'Risks to My Assets'"
+        },
+        {
+          "claim": "Risks are part of life",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.2 messages clés p.149"
+        },
+        {
+          "claim": "Example figures (35,000; 5 x 3,000 = 15,000; 15,000 + 10,000 = 25,000; 200,000) are fictional, created to illustrate the matrix; arithmetic checked",
+          "source": "ilo-ci-2023",
+          "where": "writer's illustration of ILO-CI.md G.3 p.148; no figure taken from the booklet"
+        }
+      ]
+    },
+    {
+      "id": "ways-to-face-a-risk",
+      "sources": [
+        "ilo-ci-2023",
+        "fdic-money-smart"
+      ],
+      "en": {
+        "title": "Choose how to face each risk",
+        "summary": "You can avoid a risk, reduce it, prepare for it with savings, or pass it to a mutual or an insurer. Savings handle small emergencies; the gravest ones need insurance.",
+        "points": [
+          "Avoid or reduce: a habit can remove a risk or make it less likely. The examples given are brushing your teeth and sleeping under a mosquito net.",
+          "Prepare: an emergency fund is money kept for fairly small emergencies. With it, you need not touch your other savings or borrow at a high interest rate.",
+          "Build it with small amounts, every day or every week. The amount can change with what you earn. Keep it in a safe place, outside your home if you can.",
+          "Share: in a mutual or an insurance, everyone pays into a common pot and those hit by the event are paid from it. This suits emergencies too big for your savings."
+        ],
+        "example": "Issa repairs phones. He puts aside 200 F a day, 6 days a week: 6 x 200 F = 1,200 F a week. After 10 weeks he has 10 x 1,200 F = 12,000 F. His motorbike breaks down: 9,000 F. He pays without borrowing and keeps 12,000 - 9,000 = 3,000 F to start again.",
+        "action": "Choose a safe place for your emergency money and put a first small amount in it this week.",
+        "watchOut": "Do not count only on your family. Save for your own emergencies, so that you can cope if your family is not able to help.",
+        "aliases": [
+          "emergency fund",
+          "money for emergencies",
+          "protect myself",
+          "avoid a risk",
+          "save for hard times",
+          "mutual",
+          "rainy day money",
+          "what to do about risk"
+        ]
+      },
+      "fr": {
+        "title": "Choisir comment faire face à un risque",
+        "summary": "Vous pouvez éviter un risque, le réduire, vous y préparer en épargnant, ou le confier à une mutuelle ou à un assureur. L'épargne règle les petites urgences ; les plus graves demandent une assurance.",
+        "points": [
+          "Éviter ou réduire : une habitude peut supprimer un risque ou le rendre moins probable. Les exemples donnés : se brosser les dents, dormir sous une moustiquaire.",
+          "Se préparer : le fonds d'urgence est de l'argent gardé pour les petites urgences. Grâce à lui, vous ne touchez pas à votre autre épargne et vous n'empruntez pas à un taux élevé.",
+          "Constituez-le par petites sommes, chaque jour ou chaque semaine. Le montant peut varier selon vos gains. Gardez-le en lieu sûr, hors de la maison si possible.",
+          "Partager : dans une mutuelle ou une assurance, chacun verse dans un pot commun, et ceux que l'événement frappe sont payés avec ce pot. C'est adapté aux urgences trop lourdes pour votre épargne."
+        ],
+        "example": "Issa répare des téléphones. Il met de côté 200 F par jour, 6 jours par semaine : 6 x 200 F = 1 200 F par semaine. Après 10 semaines, il a 10 x 1 200 F = 12 000 F. Sa moto tombe en panne : 9 000 F. Il paie sans emprunter et il lui reste 12 000 - 9 000 = 3 000 F pour recommencer.",
+        "action": "Choisissez un endroit sûr pour votre argent d'urgence et mettez-y une première petite somme cette semaine.",
+        "watchOut": "Ne comptez pas seulement sur la famille. Épargnez pour vos propres urgences, afin de tenir si votre famille ne peut pas vous aider.",
+        "aliases": [
+          "fonds d'urgence",
+          "argent pour les urgences",
+          "me protéger",
+          "éviter un risque",
+          "épargne de précaution",
+          "mutuelle",
+          "argent pour les coups durs",
+          "que faire face au risque"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Three kinds of measures: eliminate or avoid the risk (brushing teeth), transfer it to a third party (mutual, insurance company), plan for it and prepare (saving)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.2 p.148"
+        },
+        {
+          "claim": "Using a mosquito net is a protective measure against risk",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.5 quiz G2 p.145"
+        },
+        {
+          "claim": "Reducing risks to your assets as a method",
+          "source": "fdic-money-smart",
+          "where": "T1.md (6) FDIC M9 p.2 worksheet 'how I can reduce them'"
+        },
+        {
+          "claim": "Emergency fund covers relatively small emergencies; avoids drawing on other savings or borrowing at a high rate",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 and G.2 p.151"
+        },
+        {
+          "claim": "How to build it: small amounts daily or weekly, variable amounts, safe place outside the home if possible",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 fonds d'urgence p.150"
+        },
+        {
+          "claim": "Pooling: all contribute to a common pot, not all need it at the same time; a mutual is owned by its members",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 mutualisation p.154 and mutuelle p.151"
+        },
+        {
+          "claim": "For some emergencies personal savings will not be enough: insurance is needed",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.2 messages clés p.149 and p.151"
+        },
+        {
+          "claim": "Save for your own emergencies so you can take care of yourself if your family cannot",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 obstacles table p.160"
+        },
+        {
+          "claim": "Example figures (6 x 200 = 1,200; 10 x 1,200 = 12,000; 12,000 - 9,000 = 3,000) are fictional; the booklet gives no target size for the fund, so none is stated",
+          "source": "ilo-ci-2023",
+          "where": "writer's illustration of ILO-CI.md G.3 p.150; G.4 check note (no rule printed)"
+        }
+      ]
+    },
+    {
+      "id": "how-insurance-works",
+      "sources": [
+        "ilo-ci-2023"
+      ],
+      "en": {
+        "title": "Understand how insurance works",
+        "summary": "Insurance is a protection: you pay a regular price, and you receive money if an event covered by the contract happens. It is not a savings account.",
+        "points": [
+          "The premium is the price of the insurance, often paid every month or every three months. The policy is the contract between you and the insurer.",
+          "The cover is the list of risks the policy protects you against. An exclusion is a condition or situation that the contract says is not covered.",
+          "A claim is your request for payment after a loss that the policy covers. The money the insurer then pays you is called the benefit.",
+          "Insurance pools risks: everyone pays in, and those hit by the event are paid. If nothing happens to you, the premium is not returned. You paid to be protected."
+        ],
+        "example": "A simplified picture. 100 members each pay 1,000 F a month: the pot receives 100 x 1,000 F = 100,000 F. That month, 3 members go to hospital and each receives 30,000 F: 3 x 30,000 F = 90,000 F. Fatou paid 12 x 1,000 F = 12,000 F over the year and made no claim. She gets no refund.",
+        "action": "Ask one person you know who has insurance what it covers, what it excludes and how much the premium is.",
+        "watchOut": "A policy is in one person's name. It covers only the insured person written on it, not a friend or a relative.",
+        "aliases": [
+          "insurance",
+          "how insurance works",
+          "premium",
+          "policy",
+          "exclusion",
+          "claim",
+          "what does insurance cover",
+          "is insurance savings",
+          "get my money back"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre comment marche une assurance",
+        "summary": "L'assurance est une protection : vous payez un prix régulier et vous recevez de l'argent si un événement couvert par le contrat arrive. Ce n'est pas un compte d'épargne.",
+        "points": [
+          "La prime est le prix de l'assurance, souvent payé chaque mois ou chaque trimestre. La police est le contrat entre vous et l'assureur.",
+          "La couverture, ce sont les risques contre lesquels la police vous protège. Une exclusion est une condition ou une situation que le contrat déclare non couverte.",
+          "La déclaration de sinistre est votre demande de paiement après un dommage couvert par la police. L'argent que l'assureur vous verse alors s'appelle l'indemnité.",
+          "L'assurance met les risques en commun : tous cotisent, et ceux que l'événement frappe sont payés. S'il ne vous arrive rien, la prime n'est pas remboursée. Vous avez payé pour être protégé."
+        ],
+        "example": "Une image simplifiée. 100 membres paient chacun 1 000 F par mois : le pot reçoit 100 x 1 000 F = 100 000 F. Ce mois-là, 3 membres sont hospitalisés et reçoivent chacun 30 000 F : 3 x 30 000 F = 90 000 F. Fatou a payé 12 x 1 000 F = 12 000 F dans l'année, sans sinistre. Elle n'est pas remboursée.",
+        "action": "Demandez à une personne assurée que vous connaissez ce que son assurance couvre, ce qu'elle exclut et le montant de la prime.",
+        "watchOut": "Une police est nominative. Elle couvre seulement la personne assurée qui y est inscrite, pas un ami ni un parent.",
+        "aliases": [
+          "assurance",
+          "comment marche l'assurance",
+          "prime",
+          "police d'assurance",
+          "exclusion",
+          "sinistre",
+          "indemnité",
+          "que couvre l'assurance",
+          "l'assurance est-elle une épargne"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Insurance defined as a protection: the holder of a contract (policy) receives a financial payment if a covered event happens",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 p.151"
+        },
+        {
+          "claim": "Premium = price of a policy, often paid monthly or quarterly; policy = contract containing duration, risks covered and exclusions",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 'Les termes de base de l'assurance' p.156"
+        },
+        {
+          "claim": "Exclusion = condition, circumstance or situation stated in the contract as not covered",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 glossary p.194 and quiz G4"
+        },
+        {
+          "claim": "Claim (déclaration de sinistre) = request for payment after a covered loss; benefit or indemnity = amount paid by the insurer",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 p.156"
+        },
+        {
+          "claim": "Insurance pools risks through a common pot; it only works if everyone contributes",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 mutualisation p.154 and G.2 messages clés p.154"
+        },
+        {
+          "claim": "No refund of premiums after a year without a claim: you pay to be protected",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.4 health-insurance cases pp.158-159 (method only, Ivorian character not used)"
+        },
+        {
+          "claim": "A policy is nominative and covers only the insured person named in it",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.4 cases pp.158-159"
+        },
+        {
+          "claim": "Example figures (100 x 1,000 = 100,000; 3 x 30,000 = 90,000; 12 x 1,000 = 12,000) are fictional and labelled as a simplified picture of pooling; no real premium is implied",
+          "source": "ilo-ci-2023",
+          "where": "writer's illustration of ILO-CI.md G.1 p.154"
+        }
+      ]
+    },
+    {
+      "id": "read-and-use-a-policy",
+      "sources": [
+        "ilo-ci-2023",
+        "cima-code"
+      ],
+      "en": {
+        "title": "Read a policy and make a claim",
+        "summary": "Before signing, know what is covered, what is excluded, what you pay and how to claim. For micro-insurance, the regional insurance code (CIMA Code) sets rules that protect you.",
+        "points": [
+          "Before you sign, find in the policy how long it lasts, the risks covered, the exclusions, the premium and how to declare a loss. Ask the agent about anything unclear.",
+          "To claim: fill in the claim form as soon as possible, send the documents asked for, then check that the amount paid matches what the policy promised.",
+          "Micro-insurance has low premiums or low insured amounts and is meant for people with low incomes. Its contract must be in simple, clear and easily understood language (CIMA Code, article 701).",
+          "For micro-insurance, article 710 gives the insurer 7 days to decide on a claim and 10 days to pay after accepting it. A refusal must be written and give reasons."
+        ],
+        "example": "Rasmané's micro-insurance promises 50,000 F for a hospital stay. He files his claim on 3 March. If the 7 days run from that day, the decision is due by 10 March. The claim is accepted on 8 March: payment is due by 18 March (8 + 10). He receives 40,000 F. 50,000 - 40,000 = 10,000 F are missing, so he complains in writing.",
+        "action": "Find the exclusions and the deadline for declaring a loss in a policy held by you or your family.",
+        "watchOut": "Do not wait to claim. Each policy sets its own deadline for declaring a loss. Ask from which day the 7 days are counted.",
+        "aliases": [
+          "read insurance contract",
+          "before signing insurance",
+          "make a claim",
+          "insurance not paying",
+          "micro-insurance",
+          "my rights insurance",
+          "insurance refused",
+          "how long to get paid",
+          "cima"
+        ]
+      },
+      "fr": {
+        "title": "Lire une police et déclarer un sinistre",
+        "summary": "Avant de signer, sachez ce qui est couvert, ce qui est exclu, ce que vous payez et comment déclarer un sinistre. Pour la microassurance, le Code des assurances régional (Code CIMA) fixe des règles qui vous protègent.",
+        "points": [
+          "Avant de signer, repérez dans la police sa durée, les risques couverts, les exclusions, la prime et la façon de déclarer un sinistre. Demandez à l'agent d'expliquer ce qui n'est pas clair.",
+          "Pour déclarer : remplissez le formulaire le plus vite possible, envoyez les documents demandés, puis vérifiez que la somme versée correspond à ce que la police prévoyait.",
+          "La microassurance, à primes ou montants assurés faibles, vise les personnes à faible revenu. Son contrat doit être « dans un langage simple, clair et facilement compréhensible » (Code CIMA, article 701).",
+          "En microassurance, l'article 710 donne à l'assureur 7 jours pour décider et 10 jours pour payer après avoir accepté. Un refus doit être écrit et motivé."
+        ],
+        "example": "La microassurance de Rasmané prévoit 50 000 F pour une hospitalisation. Il déclare le 3 mars. Si les 7 jours partent de ce jour, la décision est due au plus tard le 10 mars. Le dossier est accepté le 8 mars : paiement dû au plus tard le 18 mars (8 + 10). Il reçoit 40 000 F. Il manque 50 000 - 40 000 = 10 000 F : il réclame par écrit.",
+        "action": "Repérez les exclusions et le délai de déclaration de sinistre dans une police que vous ou votre famille détenez.",
+        "watchOut": "N'attendez pas pour déclarer. Chaque police fixe son propre délai de déclaration. Demandez à partir de quel jour les 7 jours sont comptés.",
+        "aliases": [
+          "lire un contrat d'assurance",
+          "avant de signer une assurance",
+          "déclarer un sinistre",
+          "l'assurance ne paie pas",
+          "microassurance",
+          "mes droits assurance",
+          "assurance refusée",
+          "délai de paiement assurance",
+          "cima"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "A policy contains all the conditions: duration, risks covered, exclusions; premium is its price; understand a policy before subscribing; ask the insurance agent when in doubt",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 p.156; G.2 messages clés p.159; G.6 p.159"
+        },
+        {
+          "claim": "Steps of a claim: fill in the form as soon as possible, send required documents, check the amount paid against the policy, contact the insurer again if not paid in time, complain if paid less",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 'Étapes d'une déclaration de sinistre' p.157"
+        },
+        {
+          "claim": "Micro-insurance defined by low premiums and/or low insured capital, aimed at low-income people",
+          "source": "cima-code",
+          "where": "D.md VERIFIED FACTS, CIMA Code Livre VII art. 700"
+        },
+        {
+          "claim": "Contract written 'dans un langage simple, clair et facilement compréhensible' (short quotation, legal wording)",
+          "source": "cima-code",
+          "where": "D.md VERIFIED FACTS, art. 701"
+        },
+        {
+          "claim": "Claim decision within 7 days, payment within 10 days of acceptance, written reasoned refusal",
+          "source": "cima-code",
+          "where": "D.md VERIFIED FACTS, art. 710"
+        },
+        {
+          "claim": "The notes do not say from which day the 7 days run nor whether days are calendar or working days; the example is conditional ('if the 7 days run from that day') and the learner is told to ask",
+          "source": "cima-code",
+          "where": "D.md VERIFIED FACTS, art. 710 (starting point not recorded)"
+        },
+        {
+          "claim": "Declaration deadline depends on the conditions in the policy (the booklet's 'generally 12 months' is not reused as a Burkina fact)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 p.157"
+        },
+        {
+          "claim": "Example: 3 + 7 = 10 March; 8 + 10 = 18 March; 50,000 - 40,000 = 10,000 F; amounts are fictional",
+          "source": "cima-code",
+          "where": "writer's illustration of D.md art. 710 and ILO-CI.md G.3 p.157"
+        }
+      ]
+    },
+    {
+      "id": "health-and-social-cover-in-burkina",
+      "sources": [
+        "bf-social-security-law-2021",
+        "bf-cnss-rates-decree-2023",
+        "bf-public-agents-law-2021",
+        "bf-ramu-ministry-2024",
+        "sidwaya-ramu-2024",
+        "ilo-ci-2023"
+      ],
+      "en": {
+        "title": "Know what social cover exists in Burkina",
+        "summary": "The national social security fund (CNSS) covers employees for family benefits, work accidents and pensions. Civil servants have their own fund, CARFO. A universal health insurance scheme (RAMU) opened enrolment on 29 October 2024.",
+        "points": [
+          "For employees, Law 004-2021/AN of 6 April 2021 sets the scheme. Decree 2023-0129 of 24 February 2023 fixes contributions: 16% paid by the employer, 5.5% by the employee for pensions.",
+          "The decree splits the employer's 16% into 8.5% pensions, 1.5% work risks and 6% family benefits. Some online guides show an older split (5.5%, 3.5%, 7%). Check with the CNSS.",
+          "If no compulsory scheme covers your work, the law allows voluntary insurance. The decree sets it at 14% for pensions, paid entirely by you. Amounts in F CFA were not found.",
+          "Health insurance (RAMU): the Ministry's summary of Decree 2024-0345 gives 5% of gross pay, half by the employer; 15,000 F a month for formal self-employed workers; 4,000 F in the informal economy."
+        ],
+        "example": "Salif is an employee paid 80,000 F gross a month. If his pay is under the contribution ceiling, his pension contribution is 80,000 × 5.5 ÷ 100 = 4,400 F and his employer pays 80,000 × 16 ÷ 100 = 12,800 F. His sister Awa sells at the market: by the Ministry's summary, RAMU would cost her 4,000 × 12 = 48,000 F a year.",
+        "action": "Ask your employer, your union representative or the body concerned which cover you have, and write down the answer.",
+        "watchOut": "Not found: the pay ceiling used for CNSS contributions, and whether RAMU already collects contributions and reimburses care. Ask each body in writing.",
+        "aliases": [
+          "cnss",
+          "carfo",
+          "ramu",
+          "health insurance burkina",
+          "social security",
+          "pension",
+          "retirement",
+          "who pays if i am sick",
+          "voluntary insurance",
+          "universal health insurance"
+        ]
+      },
+      "fr": {
+        "title": "Connaître la protection sociale au Burkina",
+        "summary": "La Caisse nationale de sécurité sociale (CNSS) couvre les salariés : prestations familiales, accidents du travail, pensions. Les fonctionnaires ont leur caisse, la CARFO. L'assurance maladie universelle (RAMU) a ouvert les inscriptions le 29 octobre 2024.",
+        "points": [
+          "Salariés : la loi 004-2021/AN du 6 avril 2021 fixe le régime. Le décret 2023-0129 du 24 février 2023 fixe les cotisations : 16 % pour l'employeur, 5,5 % pour le salarié au titre des pensions.",
+          "Le décret répartit les 16 % de l'employeur : 8,5 % pensions, 1,5 % risques professionnels, 6 % prestations familiales. Des guides en ligne donnent une ancienne répartition (5,5 %, 3,5 %, 7 %). Vérifiez auprès de la CNSS.",
+          "Sans régime obligatoire pour votre activité, la loi permet une assurance volontaire. Le décret la fixe à 14 % pour les pensions, entièrement à votre charge. Montants en F CFA non trouvés.",
+          "Assurance maladie (RAMU) : selon le ministère, le décret 2024-0345 fixe 5 % du salaire brut, dont moitié par l'employeur ; 15 000 F par mois pour l'indépendant du secteur formel ; 4 000 F dans l'économie informelle."
+        ],
+        "example": "Salif est salarié, payé 80 000 F brut par mois. Si son salaire est sous le plafond de cotisation, sa cotisation pour la pension est 80 000 × 5,5 ÷ 100 = 4 400 F et son employeur verse 80 000 × 16 ÷ 100 = 12 800 F. Sa sœur Awa vend au marché : selon le résumé du ministère, le RAMU lui coûterait 4 000 × 12 = 48 000 F par an.",
+        "action": "Demandez à votre employeur, à votre délégué syndical ou à l'organisme concerné quelle couverture vous avez, et notez la réponse.",
+        "watchOut": "Non trouvés : le plafond de salaire des cotisations CNSS, et si le RAMU prélève déjà les cotisations et rembourse les soins. Demandez par écrit à chaque organisme.",
+        "aliases": [
+          "cnss",
+          "carfo",
+          "ramu",
+          "assurance maladie burkina",
+          "sécurité sociale",
+          "pension",
+          "retraite",
+          "qui paie si je suis malade",
+          "assurance volontaire",
+          "assurance maladie universelle"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "CNSS scheme for employees: Loi n°004-2021/AN du 06 avril 2021; three branches (family and maternity benefits; work accidents and occupational illness; old-age, invalidity and survivors' pensions); covers all workers under the labour code",
+          "source": "bf-social-security-law-2021",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, rows 'Three branches' (art. 2) and 'Who is covered' (art. 4)"
+        },
+        {
+          "claim": "Civil servants: separate scheme under Loi n°003-2021/AN du 1er avril 2021, managed by CARFO; CARFO rates and retirement ages not found, so none is given",
+          "source": "bf-public-agents-law-2021",
+          "where": "R3-5-burkina-facts.md Item 7 'CARFO (civil servants), outline' and NOT FOUND line below it"
+        },
+        {
+          "claim": "Employer rate 16% for all branches; employee 5.5% for the pension branch; Décret n°2023-0129/PRES-TRANS/PM/MFPTPS/MEFP signed 24 February 2023, effect 30 August 2022",
+          "source": "bf-cnss-rates-decree-2023",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, rows 'Employer rate: 16 %' (art. 2) and 'Employee rate: 5.5 %' (art. 3)"
+        },
+        {
+          "claim": "Conflict: decree gives 16% = 8.5% pensions + 1.5% work risks + 6% family benefits; third-party guides (search summaries, pages not opened) give 5.5% + 3.5% + 7%, matching the repealed 2003 decree; the decree is the authority",
+          "source": "bf-cnss-rates-decree-2023",
+          "where": "R3-5-burkina-facts.md section 3 Conflicts, item 1; Item 7 row 'It replaces the 2003 decree' (art. 5)"
+        },
+        {
+          "claim": "Voluntary insurance: open to people whose work does not place them under a compulsory scheme (law art. 5-6); rate 14% for the pension branch, entirely paid by the insured (decree art. 3)",
+          "source": "bf-social-security-law-2021",
+          "where": "R3-5-burkina-facts.md Item 7 CNSS table, rows 'Voluntary insurance: legal basis' and 'Voluntary insured rate: 14 %'"
+        },
+        {
+          "claim": "Voluntary-insurance amounts in FCFA, income classes and pension age: not found",
+          "source": "bf-cnss-rates-decree-2023",
+          "where": "R3-5-burkina-facts.md Item 7 'NOT FOUND for CNSS'; section 4, item 7"
+        },
+        {
+          "claim": "RAMU contributions as summarised by the Ministry (decree text not read): 5% of gross monthly pay, 2.5% employer and 2.5% employee; 15,000 FCFA a month for formal self-employed; 4,000 FCFA a month for informal-economy self-employed",
+          "source": "bf-ramu-ministry-2024",
+          "where": "R3-5-burkina-facts.md Item 7 RAMU table, rows 'Contribution, employees', 'Formal self-employed', 'Informal-economy self-employed'"
+        },
+        {
+          "claim": "RAMU enrolment and registration opened on Tuesday 29 October 2024 across the country (minister's communiqué published by Sidwaya)",
+          "source": "sidwaya-ramu-2024",
+          "where": "R3-5-burkina-facts.md Item 7 RAMU table, row 'Enrolment started 29 October 2024; documents'"
+        },
+        {
+          "claim": "Not found: CNSS contribution ceiling (contributions are assessed within a ceiling set by regulation, law art. 10); whether RAMU contributions are actually deducted and care reimbursed as of October 2026",
+          "source": "bf-social-security-law-2021",
+          "where": "R3-5-burkina-facts.md Item 7 row 'Contributions are capped', 'NOT FOUND for CNSS' and 'NOT FOUND for RAMU'"
+        },
+        {
+          "claim": "Action: employees are often covered through their employer without knowing what is covered; ask your employer or your union representative",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.6 p.154 and p.159 (method only)"
+        },
+        {
+          "claim": "Example (fictional pay): 80,000 × 5.5% = 4,400; 80,000 × 16% = 12,800; 4,000 × 12 = 48,000; rates from the decree and the Ministry's summary; conditional on the unfound ceiling",
+          "source": "bf-cnss-rates-decree-2023",
+          "where": "writer's illustration of R3-5-burkina-facts.md Item 7 (decree art. 2-3; RAMU informal-economy row)"
+        }
+      ]
+    },
+    {
+      "id": "spot-a-scam",
+      "sources": [
+        "cfpb-ymyg",
+        "sec-roadmap",
+        "amf-umoa",
+        "apanews-mef",
+        "wakatsera-esf-2024",
+        "lefaso"
+      ],
+      "en": {
+        "title": "Spot a scam before you pay",
+        "summary": "Scams share the same signs: gains that are too good, pressure to decide fast, guaranteed high returns, money asked first. Authorities in the region have warned about them several times.",
+        "points": [
+          "Too good to be true: be wary of promises of fast, guaranteed or very high gains with little or no risk. Every investment carries a risk of losing money.",
+          "Pressure: being pushed to pay before you have had time to check is a warning sign. Ask for time to think before you commit.",
+          "Pay first, or recruit: beware of jobs, parcels, scholarships or visas that ask for money up front. Readers in Burkina also describe schemes where you pay, then must bring in others.",
+          "In December 2025 the regional market authority (AMF-UMOA) warned about platforms promising to triple your money with AI or trading robots: not authorised, with a high risk of losing everything."
+        ],
+        "example": "An article on LeFaso.net (October 2020) describes an online offer made to Burkinabè: place 10,000 F and receive 100% profit in 10 days. 100% of 10,000 F is 10,000 F, so 10,000 + 10,000 = 20,000 F promised in 10 days. The article adds that the site is now closed.",
+        "action": "Write the four warning signs in your phone and reread them before answering any offer to make money.",
+        "watchOut": "An offer brought by a friend or a relative can still be a scam. Ask where the information comes from and whether they earn money on it.",
+        "aliases": [
+          "scam",
+          "fraud",
+          "ponzi",
+          "pyramid scheme",
+          "easy money",
+          "double my money",
+          "fake investment",
+          "trading robot",
+          "is it a scam",
+          "too good to be true"
+        ]
+      },
+      "fr": {
+        "title": "Repérer une arnaque avant de payer",
+        "summary": "Les arnaques ont les mêmes signes : gains trop beaux, pression pour décider vite, rendement élevé garanti, argent demandé d'abord. Les autorités de la région ont alerté plusieurs fois.",
+        "points": [
+          "Trop beau pour être vrai : méfiez-vous des promesses de gains rapides, garantis ou très élevés, avec peu ou pas de risque. Tout placement comporte un risque de perdre de l'argent.",
+          "Pression : être poussé à payer avant d'avoir eu le temps de vérifier est un signal d'alerte. Demandez un temps de réflexion avant de vous engager.",
+          "Payer d'abord, ou recruter : méfiez-vous des emplois, colis, bourses ou visas qui exigent une avance. Des lecteurs au Burkina décrivent aussi des systèmes où l'on cotise, puis doit faire venir d'autres personnes.",
+          "En décembre 2025, l'autorité régionale des marchés (AMF-UMOA) a alerté sur des plateformes promettant de tripler la mise par l'IA ou des robots de trading : non autorisées, risque élevé de tout perdre."
+        ],
+        "example": "Un article de LeFaso.net (octobre 2020) décrit une offre en ligne faite aux Burkinabè : placer 10 000 F et recevoir 100 % de bénéfices en 10 jours. 100 % de 10 000 F, c'est 10 000 F, soit 10 000 + 10 000 = 20 000 F promis en 10 jours. L'article ajoute que le site est aujourd'hui fermé.",
+        "action": "Notez les quatre signes d'alerte dans votre téléphone et relisez-les avant de répondre à une offre pour gagner de l'argent.",
+        "watchOut": "Une offre apportée par un ami ou un parent peut aussi être une arnaque. Demandez d'où vient l'information et s'il gagne de l'argent dessus.",
+        "aliases": [
+          "arnaque",
+          "escroquerie",
+          "ponzi",
+          "système pyramidal",
+          "argent facile",
+          "doubler mon argent",
+          "faux placement",
+          "robot de trading",
+          "est-ce une arnaque",
+          "trop beau pour être vrai"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Too good to be true; beware of fast profits and high returns with little or no risk",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (6) CFPB pp.230-232"
+        },
+        {
+          "claim": "All investments involve risk of losing some or all of your money; promises of quick profits and pressure to invest before investigating are warning signs of fraud",
+          "source": "sec-roadmap",
+          "where": "T4.md (b) and (i)"
+        },
+        {
+          "claim": "Feeling pressured to decide suggests a scam",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (6) CFPB pp.230-232"
+        },
+        {
+          "claim": "Ask for time to think before committing",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Investor guide, precautions before investing"
+        },
+        {
+          "claim": "Job offers requiring money up front",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (6) CFPB pp.230-232"
+        },
+        {
+          "claim": "Parcel messages asking for a payment before delivery; scholarship and visa promises asking for large payments (Burkinabè trainers quoted by the press)",
+          "source": "wakatsera-esf-2024",
+          "where": "R3-4-african-teaching-and-questions.md BF-3 items 6-7"
+        },
+        {
+          "claim": "Pay once then bring in others: described by a LeFaso.net reader (peer comment of 24 March 2021, not an official source); presented as 'readers describe'",
+          "source": "lefaso",
+          "where": "R3-4-african-teaching-and-questions.md 3.1 item 32"
+        },
+        {
+          "claim": "AMF-UMOA communiqué of 5 December 2025: fraudulent platforms promising fast gains, often tripled, with AI or trading robots; neither recognised nor authorised; high risk of total loss",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Public warnings (A11, read from the PDF)"
+        },
+        {
+          "claim": "Burkina Ministry of Economy warning (via APA News; date not captured) and CREPMF 2018 / AMF-UMOA 2022 warnings (via press) support 'warned several times'; not detailed in the lesson because press-only",
+          "source": "apanews-mef",
+          "where": "R3-4-african-teaching-and-questions.md BF-7; F.md FACTS"
+        },
+        {
+          "claim": "Example: 'En plaçant 10 000 F, on recevait 100% de bénéfices en 10 jours. Aujourd'hui, le site est fermé' (footnote of the article); 100% of 10,000 = 10,000; 10,000 + 10,000 = 20,000",
+          "source": "lefaso",
+          "where": "R3-4-african-teaching-and-questions.md BF-6 (footnote read verbatim; body of the article not inspected)"
+        },
+        {
+          "claim": "Questions for friends or family: where did you get the information, are you making any money on this",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (8) CFPB p.230"
+        }
+      ]
+    },
+    {
+      "id": "phone-and-mobile-money-fraud",
+      "sources": [
+        "bclcc",
+        "lefaso",
+        "koaci-police-2020",
+        "fdic-money-smart",
+        "cfpb-ymyg"
+      ],
+      "en": {
+        "title": "Protect your mobile money account",
+        "summary": "Fraudsters call or write pretending to be your operator, or pretending to send you money. One rule covers most cases: never give your codes to anyone.",
+        "points": [
+          "Fake operator: in May 2026 the press relayed an alert from the cybercrime brigade (BCLCC). Fraudsters pose as operators, send links by SMS and ask for your verification code.",
+          "The brigade's rule: never give your verification codes or secret codes to another person. Fraud by phone call is called vishing; by text message, smishing.",
+          "Fake amount: in March 2026 the BCLCC described a caller who announces 150,000 F but starts a withdrawal of 1,500 F, displayed as 1,500.00. Read every notification before you validate.",
+          "Fake transfer, fake win: in 2020 the press relayed a police alert about a false transfer followed by a request to refund it, and about false lottery wins."
+        ],
+        "example": "A caller tells Aminata he is sending her 150,000 F and asks her to validate. Her screen shows 1,500.00. That is 1,500 F, not 150,000 F: 150,000 / 1,500 = 100 times less. And it is a withdrawal from her account, not a deposit. She refuses and enters no code.",
+        "action": "Tell two members of your family this week never to give a verification code or secret code to anyone who calls or writes.",
+        "watchOut": "If you are targeted, give nothing and report it to the BCLCC. It has a reporting platform named Alerte BCLCC; its address could not be confirmed here.",
+        "aliases": [
+          "mobile money scam",
+          "orange money scam",
+          "secret code",
+          "pin",
+          "fake sms",
+          "someone asks for my code",
+          "money sent by mistake",
+          "fake lottery",
+          "phone fraud",
+          "stolen account"
+        ]
+      },
+      "fr": {
+        "title": "Protéger votre compte mobile money",
+        "summary": "Des escrocs appellent ou écrivent en se faisant passer pour votre opérateur, ou en prétendant vous envoyer de l'argent. Une règle couvre presque tous les cas : ne donnez vos codes à personne.",
+        "points": [
+          "Faux opérateur : selon la BCLCC (brigade contre la cybercriminalité), relayée par la presse en mai 2026, des escrocs imitent l'opérateur, envoient des liens par SMS et demandent votre code de vérification.",
+          "La règle de la brigade : ne communiquez jamais vos codes de vérification ni vos codes secrets à une autre personne. L'arnaque par appel s'appelle le vishing ; par SMS, le smishing.",
+          "Faux montant : en mars 2026, la BCLCC a décrit un appelant qui annonce 150 000 F mais lance un retrait de 1 500 F, affiché 1,500.00. Lisez chaque notification avant de valider.",
+          "Faux transfert, faux gain : en 2020, la presse a relayé une alerte de la police sur un faux transfert suivi d'une demande de remboursement, et sur de faux gains à la loterie."
+        ],
+        "example": "Un appelant dit à Aminata qu'il lui envoie 150 000 F et lui demande de valider. Son écran affiche 1,500.00. C'est 1 500 F, pas 150 000 F : 150 000 / 1 500 = 100 fois moins. Et c'est un retrait sur son compte, pas un dépôt. Elle refuse et ne saisit aucun code.",
+        "action": "Dites à deux proches, cette semaine, de ne jamais donner un code de vérification ou un code secret par appel ou par message.",
+        "watchOut": "Si vous êtes visé, ne donnez rien et signalez-le à la BCLCC. Sa plateforme de signalement s'appelle Alerte BCLCC ; son adresse n'a pas pu être confirmée ici.",
+        "aliases": [
+          "arnaque mobile money",
+          "arnaque orange money",
+          "code secret",
+          "code pin",
+          "faux sms",
+          "on me demande mon code",
+          "argent envoyé par erreur",
+          "fausse loterie",
+          "arnaque au téléphone",
+          "compte piraté"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "BCLCC alert relayed by Wakat Séra on 22 May 2026: fraudsters pose as operators, send SMS links, ask for verification codes to reset the mobile-money password",
+          "source": "bclcc",
+          "where": "F.md FACTS (BCLCC 2026-05-22, via press)"
+        },
+        {
+          "claim": "'Ne communiquez jamais vos codes de vérification ou vos codes secrets à une tierce personne' (paraphrased in EN, close wording in FR)",
+          "source": "bclcc",
+          "where": "F.md FACTS (BCLCC 2026-05-22)"
+        },
+        {
+          "claim": "Vishing = phishing by phone; smishing = by text messages",
+          "source": "fdic-money-smart",
+          "where": "T1.md (6) FDIC M9 pp.5-6"
+        },
+        {
+          "claim": "BCLCC via LeFaso.net, 19 March 2026: fraudster announces 150,000 F CFA but initiates a withdrawal of 1,500 F CFA; notification shows '1,500.00'",
+          "source": "lefaso",
+          "where": "R3-4-african-teaching-and-questions.md BF-18"
+        },
+        {
+          "claim": "Police alert relayed by Koaci on 22 July 2020: fake transfer then refund request; fake lottery win (the complaint count and loss total are press-only and old, left out)",
+          "source": "koaci-police-2020",
+          "where": "F.md FACTS (Police 2020, via press)"
+        },
+        {
+          "claim": "Financial institutions will never email you asking you to verify personal information",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (6) CFPB pp.230-232"
+        },
+        {
+          "claim": "Reporting platform 'Alerte BCLCC' exists, URL not found; BCLCC phone and email are UNVERIFIED and therefore not given",
+          "source": "bclcc",
+          "where": "F.md FACTS and UNVERIFIED"
+        },
+        {
+          "claim": "Example: 150,000 / 1,500 = 100; amounts are those of the BCLCC alert",
+          "source": "lefaso",
+          "where": "R3-4-african-teaching-and-questions.md BF-18"
+        }
+      ]
+    },
+    {
+      "id": "check-before-you-trust",
+      "sources": [
+        "amf-umoa",
+        "bceao",
+        "cima-code",
+        "apanews-mef",
+        "sec-roadmap",
+        "lefaso"
+      ],
+      "en": {
+        "title": "Check a licence before you trust",
+        "summary": "Banks, microfinance institutions, e-money issuers, brokers and insurers need a licence, an official permission to operate. Before handing over money, look for the name on the regulator's list.",
+        "points": [
+          "Brokers and fund managers: open the AMF-UMOA licence checker, type the name or the licence number and press Vérifier. It returns the name, the licence number and the licence date.",
+          "The checker does not say whether the licence is still valid. The AMF-UMOA list of licensed actors does: its last column shows Agr. valide or Agr. retiré (withdrawn).",
+          "Banks, microfinance institutions and e-money issuers: the central bank (BCEAO) publishes lists by country on its page on e-money institutions, dated 28 February 2026 when consulted.",
+          "Insurers: under the CIMA Code, article 715, nobody may run micro-insurance without a licence. No online list was found, so ask for the licence number in writing."
+        ],
+        "example": "Issa is asked to send 25,000 F to a broker he met online. He types the name in the AMF-UMOA checker and finds no line with that name. To see what a result looks like, he types Coris Bourse and reads: CORIS BOURSE, SGI / 2010-02, 3 sept. 2010. He does not send the money.",
+        "action": "Open the AMF-UMOA licence checker and type the name of one company you have seen advertising investments.",
+        "watchOut": "A licence means the firm is authorised, not that its product is a good investment. A fake licence decision has also circulated on social networks.",
+        "aliases": [
+          "licence",
+          "approved",
+          "is this company real",
+          "check a bank",
+          "check a broker",
+          "authorised microfinance",
+          "amf-umoa",
+          "bceao list",
+          "verify a company",
+          "trusted institution"
+        ]
+      },
+      "fr": {
+        "title": "Vérifier l'agrément avant de faire confiance",
+        "summary": "Banques, institutions de microfinance, émetteurs de monnaie électronique, sociétés de bourse et assureurs doivent avoir un agrément, l'autorisation officielle d'exercer. Avant de remettre de l'argent, cherchez le nom sur la liste de l'autorité.",
+        "points": [
+          "Sociétés de bourse et gestionnaires de fonds : ouvrez le vérificateur d'agrément de l'AMF-UMOA, tapez la dénomination ou le numéro d'agrément, cliquez sur Vérifier. Il affiche la dénomination, l'agrément et sa date.",
+          "Le vérificateur ne dit pas si l'agrément est encore valide. La liste des intervenants agréés de l'AMF-UMOA le dit : sa dernière colonne affiche Agr. valide ou Agr. retiré.",
+          "Banques, institutions de microfinance et émetteurs de monnaie électronique : la banque centrale (BCEAO) publie des listes par pays sur sa page des établissements de monnaie électronique, à jour au 28 février 2026.",
+          "Assureurs : selon le Code CIMA, article 715, nul ne peut faire de la microassurance sans agrément. Aucune liste en ligne n'a été trouvée : demandez le numéro d'agrément par écrit."
+        ],
+        "example": "On demande à Issa d'envoyer 25 000 F à un courtier rencontré en ligne. Il tape le nom dans le vérificateur de l'AMF-UMOA et ne trouve aucune ligne à ce nom. Pour voir à quoi ressemble un résultat, il tape Coris Bourse et lit : CORIS BOURSE, SGI / 2010-02, 3 sept. 2010. Il n'envoie pas l'argent.",
+        "action": "Ouvrez le vérificateur d'agrément de l'AMF-UMOA et tapez le nom d'une société dont vous avez vu la publicité pour des placements.",
+        "watchOut": "Un agrément dit que la société est autorisée, pas que son produit est un bon placement. Une fausse décision d'agrément a aussi circulé sur les réseaux sociaux.",
+        "aliases": [
+          "agrément",
+          "agréé",
+          "cette société existe-t-elle",
+          "vérifier une banque",
+          "vérifier une sgi",
+          "microfinance autorisée",
+          "amf-umoa",
+          "liste bceao",
+          "vérifier une société",
+          "institution de confiance"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Licence checker: two free-text fields 'Dénomination' and 'N° Agrement', button 'Vérifier', either field alone works; returns 'Dénomination | Agrément | Date d'Agrément'",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Licence checker (A5), tested 2026-10-03; URL in sources table A5"
+        },
+        {
+          "claim": "Checker result does not show status; the list 'Intervenants agréés' has a column 'Etat' with 'Agr. valide' / 'Agr. retiré'",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Licence checker (A5) and list (A4)"
+        },
+        {
+          "claim": "Verify that the intermediary is licensed by the AMF-UMOA before investing",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Investor guide, precautions; communiqué of 5 December 2025 (A11)"
+        },
+        {
+          "claim": "BCEAO page 'Etablissements de monnaie électronique': per-country lists of banks, SFD (microfinance), e-money issuers and partnerships, as of 2026-02-28",
+          "source": "bceao",
+          "where": "F.md SOURCES and VERIFICATION"
+        },
+        {
+          "claim": "Verify before any deposit that the structure is approved by the Ministry of Economy services or the BCEAO (ministry communiqué via APA News, press)",
+          "source": "apanews-mef",
+          "where": "R3-4-african-teaching-and-questions.md BF-7"
+        },
+        {
+          "claim": "CIMA Code art. 715: no micro-insurance operation without a licence (agrément); no CIMA licence-check tool or insurer list found",
+          "source": "cima-code",
+          "where": "D.md VERIFIED FACTS (art. 715) and NOT FOUND; F.md VERIFICATION"
+        },
+        {
+          "claim": "Test result: 'Coris Bourse' returns 'CORIS BOURSE | SGI / 2010-02 | 3 sept. 2010' (shown as what the tool displays, not a recommendation)",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Licence checker, Test 1"
+        },
+        {
+          "claim": "What the checker shows for an unknown name was not tested in the notes; the example only says Issa finds no line with that name",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Licence checker (no negative test recorded)"
+        },
+        {
+          "claim": "Registration or licence does not guarantee that an investment is good",
+          "source": "sec-roadmap",
+          "where": "T4.md (i)"
+        },
+        {
+          "claim": "AMF-UMOA communiqué of 23 August 2023: an irregular licence decision circulated on social networks for a category of actor that does not exist; the list of licensed actors is on the AMF-UMOA site",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Public warnings (A13)"
+        },
+        {
+          "claim": "Example: 25,000 F is a fictional amount; Issa does not send the money; no arithmetic",
+          "source": "amf-umoa",
+          "where": "writer's illustration of R3-1-market-institutions.md 2.1 Licence checker"
+        }
+      ]
+    },
+    {
+      "id": "complain-and-get-help",
+      "sources": [
+        "commission-bancaire",
+        "oqsf-bf",
+        "amf-umoa",
+        "ilo-ci-2023",
+        "cima-code",
+        "cfpb-ymyg",
+        "bclcc",
+        "wakatsera-esf-2024"
+      ],
+      "en": {
+        "title": "Complain and get help",
+        "summary": "You are the customer and you have rights. Complain to the provider first, in a way that proves the date. If that fails, other routes exist, depending on the problem.",
+        "points": [
+          "Banks, e-money issuers and some microfinance institutions: Circular 002-2020/CB/C of 18 September 2020 requires a receipt and a free reply within one month. Otherwise, write to the banking supervisor, the Commission Bancaire.",
+          "Mediation: the press reports that a decree of 9 December 2022 created an observatory of financial services (OQSF-BF) offering free mediation. Its address and procedure were not found: ask your institution.",
+          "Financial market (Instruction 50/2016, free): the provider has 10 working days for a dated complaint, then the professional association 20 working days, then the market authority (AMF-UMOA), as mediator, three months.",
+          "Insurance: complain if you are paid late or too little; a micro-insurance refusal must be explained in writing. Scams on social networks or mobile money: report them to the cybercrime brigade (BCLCC)."
+        ],
+        "example": "Aminata's broker charges 2,500 F for an order after announcing 1,500 F: 2,500 - 1,500 = 1,000 F too much. She sends a dated written complaint. After 10 working days without an answer, she has 10 more working days to write to the brokers' association, which has 20 working days to reply.",
+        "action": "Ask one of your financial providers how to file a complaint with them and how long they take to answer.",
+        "watchOut": "Deadlines also run against you: on the financial market you have only 10 working days to take a complaint to the next step. Note every date.",
+        "aliases": [
+          "complain",
+          "complaint",
+          "my bank cheated me",
+          "who to complain to",
+          "mediator",
+          "report a scam",
+          "get my money back",
+          "customer rights",
+          "report fraud",
+          "bclcc"
+        ]
+      },
+      "fr": {
+        "title": "Réclamer et se faire aider",
+        "summary": "Vous êtes le client et vous avez des droits. Réclamez d'abord auprès du prestataire, par un moyen qui prouve la date. Si cela échoue, d'autres voies existent selon le problème.",
+        "points": [
+          "Banques, monnaie électronique, certaines institutions de microfinance : la Circulaire 002-2020/CB/C du 18 septembre 2020 impose un récépissé et une réponse gratuite sous un mois. Sinon, écrivez au superviseur, la Commission Bancaire.",
+          "Médiation : selon la presse, un décret du 9 décembre 2022 a créé un observatoire des services financiers (OQSF-BF), qui offre une médiation gratuite. Adresse et procédure non trouvées : demandez à votre institution.",
+          "Marché financier (Instruction 50/2016, gratuit) : le prestataire a 10 jours ouvrables pour une réclamation datée, puis l'association professionnelle 20 jours ouvrables, puis l'autorité du marché (AMF-UMOA), comme médiateur, trois mois.",
+          "Assurance : réclamez si le paiement tarde ou est insuffisant ; un refus de microassurance doit être motivé par écrit. Arnaques sur les réseaux sociaux ou mobile money : signalez-les à la brigade anti-cybercriminalité (BCLCC)."
+        ],
+        "example": "La société de bourse d'Aminata prélève 2 500 F pour un ordre après avoir annoncé 1 500 F : 2 500 - 1 500 = 1 000 F de trop. Elle envoie une réclamation écrite et datée. Après 10 jours ouvrables sans réponse, elle a 10 jours ouvrables de plus pour écrire à l'association des sociétés de bourse, qui a 20 jours ouvrables pour répondre.",
+        "action": "Demandez à l'un de vos prestataires financiers comment déposer une réclamation chez lui et en combien de temps il répond.",
+        "watchOut": "Les délais courent aussi contre vous : sur le marché financier, vous n'avez que 10 jours ouvrables pour porter une réclamation à l'étape suivante. Notez chaque date.",
+        "aliases": [
+          "réclamation",
+          "plainte",
+          "ma banque m'a trompé",
+          "à qui me plaindre",
+          "médiateur",
+          "signaler une arnaque",
+          "récupérer mon argent",
+          "droits du client",
+          "signaler une fraude",
+          "bclcc"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "You are the customer; do not be intimidated; as a client of a financial institution you have rights; complaint-resolution mechanisms are one of the client-protection principles",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (8) CFPB p.230; ILO-CI.md F.2 p.128 and F.3 pp.136, 142-144"
+        },
+        {
+          "claim": "Circulaire n°002-2020/CB/C, in force 18 September 2020: applies to credit institutions, SFD under Commission Bancaire supervision and e-money institutions (art. 2); receipt on deposit (art. 6); answer within one month (art. 7); handling free (art. 8)",
+          "source": "commission-bancaire",
+          "where": "R3-5-burkina-facts.md Item 2, consumer-protection table, rows 'Complaints circular: scope', 'Receipt for a complaint', 'Answer within one month', 'Complaint handling is free'"
+        },
+        {
+          "claim": "A client not satisfied or not answered within the delay may refer the matter to the Commission Bancaire, by post or e-mail or at the national directorate (art. 11)",
+          "source": "commission-bancaire",
+          "where": "R3-5-burkina-facts.md Item 2, row 'Escalation to the Commission Bancaire'; Item 10 NOT FOUND line (alternative route)"
+        },
+        {
+          "claim": "OQSF-BF: created by décret n°2022-1066 of 9 December 2022 according to the press (decree text not read); mediation is free; institutions must tell clients about it; address, phone, e-mail and filing procedure not found",
+          "source": "oqsf-bf",
+          "where": "R3-5-burkina-facts.md Item 10 table (rows 1-3) and 'NOT FOUND for item 10'"
+        },
+        {
+          "claim": "Three steps: the professional, the professional associations, the Conseil Régional (now AMF-UMOA) as mediator or conciliator",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Complaints and requests, Instruction n°50/2016 art. 3"
+        },
+        {
+          "claim": "Step 1: complaint received by any means proving its date, treated within 10 working days, facts within one year; access is free",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Complaints, Instruction n°50/2016 art. 4"
+        },
+        {
+          "claim": "Step 2: associations (APSGI for brokers) have 20 working days; client has 10 working days to escalate at each stage",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Complaints, art. 4 and 5"
+        },
+        {
+          "claim": "Step 3: the regulator has three months and rules as mediator on a client's complaint against a market actor",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Complaints, art. 6"
+        },
+        {
+          "claim": "The professional must tell the client, free of charge and in clear language, how to complain and the processing delays it commits to",
+          "source": "amf-umoa",
+          "where": "R3-1-market-institutions.md 2.1 Complaints, art. 2"
+        },
+        {
+          "claim": "Insurance: contact the insurer again if not paid in the stated time; complain if paid less than expected",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 'Étapes d'une déclaration de sinistre' p.157"
+        },
+        {
+          "claim": "Micro-insurance: written reasoned refusal",
+          "source": "cima-code",
+          "where": "D.md VERIFIED FACTS, CIMA Code art. 710"
+        },
+        {
+          "claim": "For Facebook scams, turn to the BCLCC (Burkinabè trainers quoted by the press); BCLCC alert on mobile-money scams; BCLCC contacts not given because unverified",
+          "source": "wakatsera-esf-2024",
+          "where": "R3-4-african-teaching-and-questions.md BF-3 item 8; F.md FACTS (BCLCC) and UNVERIFIED"
+        },
+        {
+          "claim": "Example: 2,500 - 1,500 = 1,000 F; fee amounts are fictional; delays are those of Instruction 50/2016",
+          "source": "amf-umoa",
+          "where": "writer's illustration of R3-1-market-institutions.md 2.1 Complaints, art. 4-5"
+        }
+      ]
+    }
+  ],
+  "leftOut": [
+    "Mediation in Burkina (OQSF-BF): not in any notes file listed for this area and R3-5-burkina-facts.md did not exist; only press-level information exists elsewhere (R3-7), so the mediation route is not in complain-and-get-help.",
+    "Sharing a risk through family or an informal group (tontine) as a method: the notes only support pooling through a mutual or insurer and the advice not to rely on family alone.",
+    "A target size for the emergency fund (for example a number of months of income): the booklet prints no rule and the US figures do not transfer.",
+    "Recruit-others (pyramid) as an official warning sign: only a reader comment supports it; it is presented as what readers describe.",
+    "Names of entities cited in the AMF-UMOA 2022 and CREPMF 2018 warnings, and their 100 to 500 percent figures: press-only, so not used.",
+    "Police 2020 figures (60 complaints, about 70 million F CFA) and the 2024 scam statistics: press-only or unverified, left out.",
+    "BCLCC phone number, email and reporting URL, and operator hotlines: unverified in the notes, not given.",
+    "CNSS contribution amounts, pension age and conditions, RAMU co-payment, enrolment numbers and legal texts: unverified snippets, stated as not confirmed.",
+    "A direct link to the BCEAO list of banks and a licence list for insurers (CIMA): not retrieved in the notes; the learner is told to ask for the licence number in writing.",
+    "What to do after a mobile-money fraud beyond reporting to the BCLCC (operator procedure, blocking the account): not in the notes.",
+    "Legal status of cryptoassets: BCEAO communiqué states none and the governor's remark is press-only; not taught."
+  ]
+}

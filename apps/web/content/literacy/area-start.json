@@ -1,0 +1,666 @@
+{
+  "area": "start",
+  "sourceRegistry": {
+    "oecd-2020": {
+      "name": "OECD — Recommendation of the Council on Financial Literacy, OECD/LEGAL/0461 (2020)",
+      "url": "https://legalinstruments.oecd.org/en/instruments/OECD-LEGAL-0461"
+    },
+    "oecd-infe-2023": {
+      "name": "OECD — OECD/INFE 2023 International Survey of Adult Financial Literacy (2023)",
+      "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2023/12/oecd-infe-2023-international-survey-of-adult-financial-literacy_8ce94e2c/56003a32-en.pdf"
+    },
+    "cfpb-wellbeing-2015": {
+      "name": "US CFPB — Financial well-being: The goal of financial education (2015)",
+      "url": "https://files.consumerfinance.gov/f/201501_cfpb_report_financial-well-being.pdf"
+    },
+    "afi-nfes-2021": {
+      "name": "Alliance for Financial Inclusion — National Financial Education Strategies Toolkit (2021)",
+      "url": "https://www.afi-global.org/wp-content/uploads/2024/10/NFES_toolkit_22082022.pdf"
+    },
+    "st-pif-2023": {
+      "name": "ST-PIF (Burkina Faso) — Cahier du participant, Séminaire de formation en éducation financière (2023); read as a third-party Scribd upload",
+      "url": "https://fr.scribd.com/document/744857863/inclusion-financiere"
+    },
+    "dgjep-2018": {
+      "name": "Ministère de la Jeunesse, DGJEP (Burkina Faso) — Formation des jeunes promoteurs en éducation financière, Cahier de Participant (2018); read as a third-party Scribd upload",
+      "url": "https://fr.scribd.com/document/898056788/Cahier-Participant"
+    },
+    "finscope-bf-2016": {
+      "name": "FinMark Trust — Burkina Faso Youth Dashboard, FinScope 2016 (2017)",
+      "url": "https://www.finmark.org.za/system/documents/files/000/000/235/original/Burkina-Faso_Dashboard_Youth_English.pdf"
+    },
+    "ilo-ci-2023": {
+      "name": "ILO — Éducation financière pour les cultivateurs et les travailleurs ruraux en Côte d'Ivoire, Livret de l'apprenant (2023)",
+      "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_emp/%40emp_ent/documents/instructionalmaterial/wcms_900276.pdf"
+    },
+    "cfpb-ymyg": {
+      "name": "US CFPB — Your Money, Your Goals: A financial empowerment toolkit (2020)",
+      "url": "https://files.consumerfinance.gov/f/documents/cfpb_your-money-your-goals_financial-empowerment_toolkit.pdf"
+    },
+    "aflatoun": {
+      "name": "Aflatoun — AflaYouth manuel, French sample (2026)",
+      "url": "https://aflatoun.org/wp-content/uploads/2026/01/AflaYouth_FR_AllBooks_Sample.pdf"
+    },
+    "lefaso": {
+      "name": "LeFaso.net — Cédric Zongo, Gestion de vos finances personnelles : Comment composer avec les sollicitations financières ? (2019)",
+      "url": "https://lefaso.net/spip.php?article88574"
+    },
+    "boltz-senegal-2019": {
+      "name": "Boltz, Marazyan & Villar — Income hiding and informal redistribution: A lab-in-the-field experiment in Senegal, Journal of Development Economics 137 (2019)",
+      "url": "https://shs.hal.science/halshs-02377013"
+    }
+  },
+  "lessons": [
+    {
+      "id": "what-financial-literacy-is",
+      "sources": [
+        "oecd-2020",
+        "oecd-infe-2023",
+        "cfpb-wellbeing-2015",
+        "afi-nfes-2021",
+        "st-pif-2023",
+        "dgjep-2018",
+        "finscope-bf-2016",
+        "cfpb-ymyg"
+      ],
+      "en": {
+        "title": "Understand what financial literacy is",
+        "summary": "Financial literacy means knowing, doing and believing you can. Its aim is well-being: controlling your daily money, coping with a shock, moving toward your goals and staying free to choose.",
+        "points": [
+          "The OECD (2020) defines it as \"a combination of financial awareness, knowledge, skills, attitudes and behaviours\" needed to make sound decisions and reach financial well-being.",
+          "A Burkinabè training booklet (ST-PIF, 2023) says financial education teaches the knowledge, skills and attitudes needed to better manage income, spending, savings and loans. It is for everyone.",
+          "Knowing is not enough. Your habits and your attitude decide what you really do, and you need confidence to decide, to ask questions and to plan ahead.",
+          "In Burkina Faso, a 2016 survey of people aged 35 and under found that three in five wanted more information on managing money. You are not the only one learning."
+        ],
+        "example": "Awa earns 30,000 F CFA a month. Knowing: she reads that Burkina's youth booklet advises trying to save a tenth of income. Doing: each payday she puts aside 30,000 ÷ 10 = 3,000 F; after 6 months she has 3,000 × 6 = 18,000 F. Believing: she dares to ask what an account costs before opening one.",
+        "action": "Read these three sentences and note which are true for you: I watch my money closely; I set goals; I check before buying.",
+        "watchOut": "Knowing the words changes nothing by itself. A lesson is useful only when it changes one thing you do with your money.",
+        "aliases": [
+          "financial literacy",
+          "financial education",
+          "what is financial literacy",
+          "manage my money",
+          "learn about money",
+          "money basics",
+          "why learn finance",
+          "good money habits"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre ce qu'est l'éducation financière",
+        "summary": "L'éducation financière, c'est savoir, faire et croire que vous en êtes capable. Son but est le bien-être : maîtriser votre argent de tous les jours, supporter un choc, avancer vers vos objectifs et rester libre de vos choix.",
+        "points": [
+          "Pour l'OCDE (2020), elle réunit la conscience des questions d'argent, les connaissances, les compétences, les attitudes et les comportements nécessaires pour bien décider et atteindre le bien-être financier.",
+          "Un cahier de formation burkinabè (ST-PIF, 2023) dit qu'elle enseigne les connaissances, compétences et attitudes pour mieux gérer revenus, dépenses, épargne et emprunts. Elle s'adresse à tout le monde.",
+          "Savoir ne suffit pas. Vos habitudes et votre attitude décident de ce que vous faites vraiment, et il faut de la confiance pour décider, poser des questions et prévoir.",
+          "Au Burkina Faso, une enquête de 2016 auprès des 35 ans et moins montre que trois jeunes sur cinq voulaient plus d'informations sur la gestion de l'argent. Vous n'êtes pas seul."
+        ],
+        "example": "Awa gagne 30 000 F CFA par mois. Savoir : elle lit que le cahier burkinabè pour les jeunes conseille d'essayer d'épargner un dixième du revenu. Faire : à chaque paie, elle met de côté 30 000 ÷ 10 = 3 000 F ; après 6 mois, elle a 3 000 × 6 = 18 000 F. Croire : elle ose demander ce que coûte un compte avant de l'ouvrir.",
+        "action": "Lisez ces trois phrases et notez les vraies pour vous : je surveille mon argent de près ; je me fixe des objectifs ; je vérifie avant d'acheter.",
+        "watchOut": "Connaître les mots ne change rien tout seul. Une leçon est utile seulement si elle change une chose que vous faites avec votre argent.",
+        "aliases": [
+          "éducation financière",
+          "culture financière",
+          "c'est quoi l'éducation financière",
+          "gérer mon argent",
+          "apprendre l'argent",
+          "bases de l'argent",
+          "pourquoi apprendre la finance",
+          "bonnes habitudes d'argent"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "OECD definition of financial literacy (quotation and its end: sound decisions, financial well-being)",
+          "source": "oecd-2020",
+          "where": "R3-6-behaviour-habits-saving.md section 2.1 (Recommendation OECD/LEGAL/0461, section I)"
+        },
+        {
+          "claim": "Well-being described as control over day-to-day money, capacity to absorb a shock, being on track for goals, freedom to choose (summary)",
+          "source": "cfpb-wellbeing-2015",
+          "where": "R3-6-behaviour-habits-saving.md section 2.3 (report PDF p. 5)"
+        },
+        {
+          "claim": "Burkinabè booklet definition: knowledge, skills and attitudes to better manage income, spending, savings and loans; for everyone",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 key teaching point 1"
+        },
+        {
+          "claim": "Knowledge alone does not become behaviour; attitudes influence decisions and behaviours",
+          "source": "oecd-infe-2023",
+          "where": "R3-6-behaviour-habits-saving.md section 2.1 (2023 survey report PDF p. 25) and section 2.3 (CFPB report PDF p. 45)"
+        },
+        {
+          "claim": "Confidence is part of financial capability",
+          "source": "afi-nfes-2021",
+          "where": "R3-6-behaviour-habits-saving.md section 2.4 (AFI definition of financial capability: 'confidence and competencies')"
+        },
+        {
+          "claim": "Three in five youth (35 and under) said they needed more information on managing money, FinScope Burkina Faso 2016",
+          "source": "finscope-bf-2016",
+          "where": "B.md SURVEY — FinScope Burkina Faso 2016"
+        },
+        {
+          "claim": "Example: advice to try to save 10 % of income (30,000 ÷ 10 = 3,000; 3,000 × 6 = 18,000, own arithmetic)",
+          "source": "dgjep-2018",
+          "where": "R3-4-african-teaching-and-questions.md BF-0b key teaching points 5 and 6"
+        },
+        {
+          "claim": "Example: asking for an explanation and finding out the fees before choosing a provider",
+          "source": "cfpb-ymyg",
+          "where": "T1.md section (8), CFPB pp. 184 and 230"
+        },
+        {
+          "claim": "Action: the three self-check statements (watch finances closely, set goals, consider affordability before buying)",
+          "source": "oecd-infe-2023",
+          "where": "R3-6-behaviour-habits-saving.md section 3.1 (statement items, PDF pp. 68-70)"
+        },
+        {
+          "claim": "Warning: a financial literacy effort succeeds only if it leads to behaviour and outcomes",
+          "source": "cfpb-wellbeing-2015",
+          "where": "R3-6-behaviour-habits-saving.md section 2.3 (PDF p. 45) and section 3.3 (Canada FCAC wording)"
+        }
+      ]
+    },
+    {
+      "id": "set-goals",
+      "sources": [
+        "ilo-ci-2023",
+        "st-pif-2023",
+        "dgjep-2018",
+        "cfpb-ymyg",
+        "aflatoun"
+      ],
+      "en": {
+        "title": "Turn a wish into a goal",
+        "summary": "A goal is an aim you want to reach. A wish becomes a goal when you say exactly what you want, how much it costs and by what date.",
+        "points": [
+          "A goal is an aim you want to reach. Setting one helps you see what you want in your life and what you must do to get there.",
+          "Sort your goals by time: short term is less than 12 months, medium term is 1 to 3 years, long term is more than 3 years.",
+          "A strong goal is specific, measurable, achievable, relevant to your life and tied to a date. In English, the first letters of these five words spell SMART.",
+          "\"Save 500 F a week\" can be measured. \"Save more\" cannot. Separate dreams from realistic goals: realistic goals are easier to carry out."
+        ],
+        "example": "Issa's wish: \"I want a phone.\" His goal: buy a second-hand phone at 45,000 F CFA in 9 months. It is specific (a second-hand phone), measurable (45,000 F) and dated (9 months). To check that it is achievable, he computes 45,000 ÷ 9 = 5,000 F to save each month.",
+        "action": "Choose one wish and write it as a goal: what, why, how much and by what date.",
+        "watchOut": "A wish with no amount and no date stays a dream. Keep your goals in mind all the time: it is the surest way to reach them.",
+        "aliases": [
+          "set goals",
+          "money goals",
+          "smart goal",
+          "short term goal",
+          "long term goal",
+          "my projects",
+          "what i want to buy",
+          "plan my future",
+          "dream or goal"
+        ]
+      },
+      "fr": {
+        "title": "Transformer une envie en objectif",
+        "summary": "Un objectif est un but que vous voulez atteindre. Une envie devient un objectif quand vous dites précisément ce que vous voulez, combien cela coûte et pour quelle date.",
+        "points": [
+          "Un objectif est un but que vous voulez atteindre. En fixer un vous aide à voir ce que vous voulez dans votre vie et ce que vous devez faire pour y arriver.",
+          "Classez vos objectifs selon le temps : court terme, moins de 12 mois ; moyen terme, de 1 à 3 ans ; long terme, plus de 3 ans.",
+          "Un bon objectif est précis, mesurable, atteignable, utile pour votre vie et lié à une date. En anglais, les initiales de ces cinq mots forment le mot SMART.",
+          "« Épargner 500 F par semaine » se mesure. « Épargner plus » ne se mesure pas. Séparez les rêves des objectifs réalistes : ces derniers se réalisent plus facilement."
+        ],
+        "example": "L'envie d'Issa : « Je veux un téléphone. » Son objectif : acheter un téléphone d'occasion à 45 000 F CFA dans 9 mois. Il est précis (un téléphone d'occasion), mesurable (45 000 F) et daté (9 mois). Pour vérifier qu'il est atteignable, Issa calcule 45 000 ÷ 9 = 5 000 F à épargner chaque mois.",
+        "action": "Choisissez une envie et écrivez-la comme un objectif : quoi, pourquoi, combien et pour quelle date.",
+        "watchOut": "Une envie sans montant et sans date reste un rêve. Gardez toujours vos objectifs à l'esprit : c'est le moyen le plus sûr de les atteindre.",
+        "aliases": [
+          "fixer des objectifs",
+          "objectif d'argent",
+          "objectif smart",
+          "objectif à court terme",
+          "objectif à long terme",
+          "mes projets",
+          "ce que je veux acheter",
+          "préparer mon avenir",
+          "rêve ou objectif"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Definition of a goal and why setting one helps",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.1 Définitions (p. 14)"
+        },
+        {
+          "claim": "Financial goals are expenses decided for a given period (supports amount and date in the summary)",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 key teaching point 3"
+        },
+        {
+          "claim": "Horizons: short term under 12 months, medium term 1 to 3 years, long term over 3 years",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.1 Définitions (p. 18); same medium and long bands in R3-4-african-teaching-and-questions.md BF-0b key teaching point 3"
+        },
+        {
+          "claim": "SMART: specific, measurable, achievable, relevant, time bound",
+          "source": "cfpb-ymyg",
+          "where": "T1.md section (3), CFPB p. 25"
+        },
+        {
+          "claim": "A weekly amount is measurable, 'save more' is not (source example in dollars, restated as 500 F for illustration)",
+          "source": "cfpb-ymyg",
+          "where": "T1.md section (3), CFPB p. 26"
+        },
+        {
+          "claim": "Distinguishing dreams from realistic goals makes projects easier to carry out",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 Messages clés (pp. 23-24)"
+        },
+        {
+          "claim": "Example: looking at second-hand prices; cost divided by months (45,000 ÷ 9 = 5,000, own arithmetic)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 (p. 16) and A.3 Mon plan d'épargne (pp. 18-19)"
+        },
+        {
+          "claim": "Action: what / why questions (golden circle) and turning one item into a SMART goal",
+          "source": "aflatoun",
+          "where": "T3.md GOALS (AflaYouth, règle du cercle d'or); T1.md section (3), CFPB p. 29"
+        },
+        {
+          "claim": "Warning: keeping goals constantly in mind is the surest way to reach them",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 Messages clés (pp. 23-24)"
+        }
+      ]
+    },
+    {
+      "id": "cost-your-goals",
+      "sources": [
+        "ilo-ci-2023",
+        "dgjep-2018",
+        "st-pif-2023"
+      ],
+      "en": {
+        "title": "Cost and rank your goals",
+        "summary": "Before you save, find out what each goal really costs, decide which goal comes first, and plan a little extra because prices rise.",
+        "points": [
+          "Find out what each goal will cost you. This step is essential. Ask the real price, and look at second-hand prices too.",
+          "Rank your goals. Give number 1 to the most important, then 2, then 3. All your goals matter, but some can be reached sooner than others.",
+          "Allow a margin: plan to save a little more than the price, in case the cost of your goal goes up in the coming years.",
+          "Four questions guide you: how much will it cost, when do you need the money, how much must you save each week or month, which goal matters most."
+        ],
+        "example": "Fatou wants a sewing machine. New, the seller asks 75,000 F CFA; second-hand, 50,000 F. She chooses second-hand and adds a margin of 5,000 F: 50,000 + 5,000 = 55,000 F to gather. This goal is her number 1; a new phone is her number 2.",
+        "action": "Ask the price of your most important goal, new and second-hand, and write it next to the goal.",
+        "watchOut": "Prices rise with time. For a goal that is years away, plan a little more than the price you see today.",
+        "aliases": [
+          "cost of a goal",
+          "how much does it cost",
+          "price of my project",
+          "rank my goals",
+          "priorities",
+          "what comes first",
+          "prices go up",
+          "second-hand price",
+          "margin"
+        ]
+      },
+      "fr": {
+        "title": "Chiffrer et classer vos objectifs",
+        "summary": "Avant d'épargner, cherchez ce que chaque objectif coûte vraiment, décidez lequel passe en premier et prévoyez un peu plus, car les prix augmentent.",
+        "points": [
+          "Cherchez ce que chaque objectif va vous coûter. Cette étape est essentielle. Demandez le vrai prix et regardez aussi le prix des objets d'occasion.",
+          "Classez vos objectifs. Donnez le numéro 1 au plus important, puis 2, puis 3. Tous vos objectifs comptent, mais certains se réalisent plus vite que d'autres.",
+          "Prévoyez une marge : épargnez un peu plus que le prix, au cas où le coût de votre objectif augmenterait dans les années à venir.",
+          "Quatre questions vous guident : combien cela coûtera-t-il, quand faut-il l'argent, combien épargner chaque semaine ou chaque mois, quel objectif est le plus important."
+        ],
+        "example": "Fatou veut une machine à coudre. Neuve, le vendeur en demande 75 000 F CFA ; d'occasion, 50 000 F. Elle choisit l'occasion et ajoute une marge de 5 000 F : 50 000 + 5 000 = 55 000 F à réunir. Cet objectif est son numéro 1 ; un nouveau téléphone est son numéro 2.",
+        "action": "Demandez le prix de votre objectif le plus important, neuf et d'occasion, et écrivez-le à côté de l'objectif.",
+        "watchOut": "Les prix augmentent avec le temps. Pour un objectif qui est à plusieurs années, prévoyez un peu plus que le prix que vous voyez aujourd'hui.",
+        "aliases": [
+          "coût d'un objectif",
+          "combien ça coûte",
+          "prix de mon projet",
+          "classer mes objectifs",
+          "priorités",
+          "par quoi commencer",
+          "les prix augmentent",
+          "prix d'occasion",
+          "marge"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "It is essential to assess what goals will cost; look at second-hand prices",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 À retenir (p. 16)"
+        },
+        {
+          "claim": "Rank goals by priority, numbering from 1 for the most important",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.3 Costing and prioritising (p. 16); also R3-4-african-teaching-and-questions.md BF-0b table of contents 2.2 and BF-0 savings plan table (rank column)"
+        },
+        {
+          "claim": "All goals are important; some can be reached sooner than others",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 À retenir (p. 15)"
+        },
+        {
+          "claim": "Margin: save a little more in case the cost rises in coming years",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.1 Définitions, Marge (p. 16)"
+        },
+        {
+          "claim": "Four plan questions: cost, when the money is needed, how much to save each week or month, which goal is most important",
+          "source": "dgjep-2018",
+          "where": "R3-4-african-teaching-and-questions.md BF-0b editorial questions (plan questions)"
+        },
+        {
+          "claim": "Example figures are fictional illustration; 50,000 + 5,000 = 55,000 (own arithmetic); margin size is the learner's choice, no rate given in the notes",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.1 Marge and A.3 (p. 16)"
+        },
+        {
+          "claim": "Warning: prices rise with time",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 À retenir (p. 16)"
+        }
+      ]
+    },
+    {
+      "id": "savings-plan",
+      "sources": [
+        "ilo-ci-2023",
+        "st-pif-2023",
+        "dgjep-2018"
+      ],
+      "en": {
+        "title": "Build your savings plan",
+        "summary": "A savings plan is a simple table: your goals, their cost, their date and the amount to put aside each month. If the total is too high, you adjust it.",
+        "points": [
+          "A savings plan sums up your goals, what they cost, the date you want to reach them and the amount you must save for that.",
+          "For each goal, count the months left until the date. Take the cost, subtract any other money you expect for it, and divide by the number of months.",
+          "Add up the monthly amounts of all your goals. The total is what you must put aside each month.",
+          "If you cannot save that much, lower a cost, drop a goal or move a date further away. Keep your first priorities and revise the last ones."
+        ],
+        "example": "Salif has two goals. Training fee: 48,000 F CFA in 12 months, so 48,000 ÷ 12 = 4,000 F a month. Bicycle: 30,000 F in 6 months, so 30,000 ÷ 6 = 5,000 F. Total: 9,000 F. He can save only 7,000 F. He moves the bicycle to 10 months: 30,000 ÷ 10 = 3,000 F. New total: 4,000 + 3,000 = 7,000 F.",
+        "action": "Draw a table with five columns (goal, cost, date, months, amount per month) and fill in one line.",
+        "watchOut": "A plan can frustrate you when you cannot save as much as you wish. Do not put pressure on yourself: you can adjust it at any time.",
+        "aliases": [
+          "savings plan",
+          "how much to save each month",
+          "save for a goal",
+          "saving table",
+          "plan my savings",
+          "cannot save enough",
+          "amount per month",
+          "saving for a project"
+        ]
+      },
+      "fr": {
+        "title": "Construire votre plan d'épargne",
+        "summary": "Un plan d'épargne est un tableau simple : vos objectifs, leur coût, leur date et la somme à mettre de côté chaque mois. Si le total est trop élevé, vous l'ajustez.",
+        "points": [
+          "Un plan d'épargne récapitule vos objectifs, ce qu'ils coûtent, la date à laquelle vous voulez les atteindre et la somme à épargner pour cela.",
+          "Pour chaque objectif, comptez les mois qui restent jusqu'à la date. Prenez le coût, retirez l'argent attendu d'une autre source, puis divisez par le nombre de mois.",
+          "Additionnez les sommes mensuelles de tous vos objectifs. Le total est ce que vous devez mettre de côté chaque mois.",
+          "Si vous ne pouvez pas épargner autant, réduisez un coût, annulez un objectif ou repoussez une date. Gardez vos premières priorités et revoyez les dernières."
+        ],
+        "example": "Salif a deux objectifs. Frais de formation : 48 000 F CFA dans 12 mois, soit 48 000 ÷ 12 = 4 000 F par mois. Vélo : 30 000 F dans 6 mois, soit 30 000 ÷ 6 = 5 000 F. Total : 9 000 F. Il ne peut épargner que 7 000 F. Il repousse le vélo à 10 mois : 30 000 ÷ 10 = 3 000 F. Nouveau total : 4 000 + 3 000 = 7 000 F.",
+        "action": "Tracez un tableau à cinq colonnes (objectif, coût, date, mois, somme par mois) et remplissez une ligne.",
+        "watchOut": "Un plan peut frustrer quand vous ne pouvez pas épargner autant que vous le souhaitez. Ne vous mettez pas la pression : vous pouvez l'ajuster à tout moment.",
+        "aliases": [
+          "plan d'épargne",
+          "combien épargner par mois",
+          "épargner pour un objectif",
+          "tableau d'épargne",
+          "organiser mon épargne",
+          "je n'arrive pas à épargner assez",
+          "somme par mois",
+          "épargner pour un projet"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Definition of a savings plan: goals, cost, date, amount to save",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.1 Définitions (quiz A4 key, p. 13)"
+        },
+        {
+          "claim": "Method: months to the date, cost minus other sources of funding, amount to save each month",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.3 Mon plan d'épargne (pp. 18-19) and A.4 Aya's plan with the [check] line"
+        },
+        {
+          "claim": "Total to save per month is the sum of the monthly amounts",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.3 Mon plan d'épargne, bottom line (pp. 18-19)"
+        },
+        {
+          "claim": "The same tool exists in the Burkinabè booklets (goal, cost, months, amount per month, rank, total)",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 worked examples, savings plan table; BF-0b table of contents II"
+        },
+        {
+          "claim": "If the amount is impossible: reduce costs, cancel goals or push dates; rely on the priority order",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 À retenir (p. 20) and A.3 adjustment rule (p. 20)"
+        },
+        {
+          "claim": "Example figures are fictional; 48,000 ÷ 12 = 4,000; 30,000 ÷ 6 = 5,000; 4,000 + 5,000 = 9,000; 30,000 ÷ 10 = 3,000; 4,000 + 3,000 = 7,000 (own arithmetic)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.3 and A.4 (method only)"
+        },
+        {
+          "claim": "Warning: a savings plan can be frustrating; no pressure; it can be adjusted at any time",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 À retenir (p. 20)"
+        }
+      ]
+    },
+    {
+      "id": "talk-about-money-at-home",
+      "sources": [
+        "ilo-ci-2023",
+        "cfpb-ymyg",
+        "aflatoun"
+      ],
+      "en": {
+        "title": "Talk about money with your family",
+        "summary": "Some goals are yours, others belong to the whole family. Talking about them calmly, at the right moment, helps you find solutions that are good for everyone.",
+        "points": [
+          "Prepare. Think about what you want and why before you speak, and choose a moment when your relatives are available. Everyone, at any age, has the right to have plans.",
+          "During the talk, say clearly what you want, listen, respect other points of view and stay calm. Do not shout, interrupt or get angry.",
+          "If you disagree, look at the problem together and seek a compromise, a solution that is good for every member of the family. An ally in the family helps.",
+          "Values shape money choices. Ask yourself what money means to you and who handles money in your family. Spending on relatives is not, in itself, a bad habit."
+        ],
+        "example": "Aminata wants a training that costs 60,000 F CFA in 10 months: 60,000 ÷ 10 = 6,000 F a month. Her mother asks for help with her brother's school costs. Their compromise: the training moves to 12 months, 60,000 ÷ 12 = 5,000 F a month, and 1,000 F a month goes to school costs. 5,000 + 1,000 = 6,000 F.",
+        "action": "Choose a calm moment this week and tell one family member about one goal and why it matters to you.",
+        "watchOut": "Talking about money can stir up many emotions. If it weighs on you, find a person you trust and talk it over with them.",
+        "aliases": [
+          "talk about money",
+          "family and money",
+          "money at home",
+          "discuss with my parents",
+          "money argument",
+          "compromise",
+          "my family does not agree",
+          "values and money",
+          "husband wife money"
+        ]
+      },
+      "fr": {
+        "title": "Parler d'argent en famille",
+        "summary": "Certains objectifs sont les vôtres, d'autres sont ceux de toute la famille. En parler calmement, au bon moment, aide à trouver des solutions bonnes pour tous.",
+        "points": [
+          "Préparez-vous. Réfléchissez à ce que vous voulez et pourquoi avant de parler, et choisissez un moment où vos proches sont disponibles. Chacun, à tout âge, a le droit d'avoir des projets.",
+          "Pendant la discussion, dites clairement ce que vous voulez, écoutez, respectez l'avis des autres et restez calme. Ne criez pas, ne coupez pas la parole, ne vous fâchez pas.",
+          "En cas de désaccord, examinez le problème ensemble et cherchez un compromis, une solution bonne pour chaque membre de la famille. Un allié dans la famille aide.",
+          "Les valeurs orientent les choix d'argent. Demandez-vous ce que l'argent signifie pour vous et qui gère l'argent dans votre famille. Dépenser pour ses proches n'est pas, en soi, une mauvaise habitude."
+        ],
+        "example": "Aminata veut une formation qui coûte 60 000 F CFA dans 10 mois : 60 000 ÷ 10 = 6 000 F par mois. Sa mère demande de l'aide pour les frais d'école de son frère. Leur compromis : la formation passe à 12 mois, 60 000 ÷ 12 = 5 000 F par mois, et 1 000 F par mois vont aux frais d'école. 5 000 + 1 000 = 6 000 F.",
+        "action": "Choisissez un moment calme cette semaine et parlez à un membre de votre famille d'un objectif et de la raison pour laquelle il compte.",
+        "watchOut": "Parler d'argent peut réveiller beaucoup d'émotions. Si cela vous pèse, cherchez une personne de confiance et parlez-en avec elle.",
+        "aliases": [
+          "parler d'argent",
+          "famille et argent",
+          "argent à la maison",
+          "discuter avec mes parents",
+          "dispute d'argent",
+          "compromis",
+          "ma famille n'est pas d'accord",
+          "valeurs et argent",
+          "argent dans le couple"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Personal goals and family goals are both listed in the goals tool (summary)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.3 Mes objectifs (Support A.1.1, p. 15)"
+        },
+        {
+          "claim": "Prepare: think about what you want and why; choose the right moment when relatives are available; everyone, man or woman, at any age, has the right to have projects",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.6 Conseils pour discuter de vos objectifs avec votre famille (p. 21)"
+        },
+        {
+          "claim": "Communication rules: say clearly what you want, listen, respect others' views, stay calm; do not shout, interrupt or get angry",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.3 Communication rules (p. 21)"
+        },
+        {
+          "claim": "On disagreement, examine the problem and seek compromises; compromise defined as solutions good for all family members; find allies",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.1 Définitions, Compromis, and A.6 (p. 21)"
+        },
+        {
+          "claim": "Values and culture questions (what money means to you, who handles finances in your family); spending on extended family does not mean bad financial habits",
+          "source": "cfpb-ymyg",
+          "where": "T1.md section (8), CFPB pp. 9-10"
+        },
+        {
+          "claim": "Family is among the influences on money decisions",
+          "source": "aflatoun",
+          "where": "T3.md GOALS (AflaYouth question on who or what influences your decisions)"
+        },
+        {
+          "claim": "Example applies the adjustment by moving a date; 60,000 ÷ 10 = 6,000; 60,000 ÷ 12 = 5,000; 5,000 + 1,000 = 6,000 (fictional figures, own arithmetic)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.2 À retenir (p. 20) and A.1 Compromis (p. 21)"
+        },
+        {
+          "claim": "Warning: money discussions can trigger many emotions; look for a trusted person to talk to",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.6 (p. 21)"
+        }
+      ]
+    },
+    {
+      "id": "answer-requests-for-money",
+      "sources": [
+        "ilo-ci-2023",
+        "lefaso",
+        "st-pif-2023",
+        "boltz-senegal-2019"
+      ],
+      "en": {
+        "title": "Answer requests for money",
+        "summary": "Relatives and friends will ask you for money. You can help without giving up your goals: understand the need, then give from an amount you planned.",
+        "points": [
+          "Pressure to share is real and measured. In a study in Senegal published in 2019, people able to receive gains in private cut by 26 percent the share they passed to relatives.",
+          "Do not send money at once, and do not refuse flatly. Talk with the person to understand what they need and how you can help.",
+          "Plan generosity in your budget, the plan of your income and spending: an amount fixed in advance, like any other line. You then know which request gets a yes.",
+          "A no is not a lack of love. It only says that you cannot help in the way the person asked."
+        ],
+        "example": "Rasmané plans 4,000 F CFA a month for helping others and 5,000 F for his own goal. A cousin asks for 10,000 F for a ceremony. They talk. Rasmané gives the 4,000 F he planned and explains that he cannot cover the rest: 10,000 − 4,000 = 6,000 F. His 5,000 F of savings stays untouched.",
+        "action": "Decide how much you can give to others this month and write that amount in your budget before any request comes.",
+        "watchOut": "Helping should not push you into debt, stop your saving or make you neglect your home. If you send money, keep a part for your own needs.",
+        "aliases": [
+          "family asks for money",
+          "friend asks for money",
+          "lend money to a friend",
+          "how to say no",
+          "help my parents",
+          "money for a ceremony",
+          "family pressure",
+          "send money to the village",
+          "too many requests"
+        ]
+      },
+      "fr": {
+        "title": "Répondre aux demandes d'argent",
+        "summary": "Des parents et des amis vous demanderont de l'argent. Vous pouvez aider sans abandonner vos objectifs : comprenez le besoin, puis donnez sur une somme prévue à l'avance.",
+        "points": [
+          "Cette pression est réelle et mesurée. Dans une étude au Sénégal publiée en 2019, les personnes pouvant recevoir leurs gains en privé ont réduit de 26 % la part transmise aux proches.",
+          "N'envoyez pas l'argent tout de suite et ne refusez pas sèchement. Discutez avec la personne pour comprendre son besoin et voir comment vous pouvez l'aider.",
+          "Prévoyez la générosité dans votre budget, le plan de vos revenus et de vos dépenses : une somme fixée à l'avance, comme toute autre ligne. Vous savez alors à quelle demande dire oui.",
+          "Dire non n'est pas un manque d'amour. Cela veut seulement dire que vous ne pouvez pas aider de la façon demandée."
+        ],
+        "example": "Rasmané prévoit 4 000 F CFA par mois pour aider les autres et 5 000 F pour son propre objectif. Un cousin lui demande 10 000 F pour une cérémonie. Ils discutent. Rasmané donne les 4 000 F prévus et explique qu'il ne peut pas couvrir le reste : 10 000 − 4 000 = 6 000 F. Ses 5 000 F d'épargne restent intacts.",
+        "action": "Décidez combien vous pouvez donner aux autres ce mois-ci et écrivez cette somme dans votre budget avant toute demande.",
+        "watchOut": "Aider ne doit pas vous pousser à vous endetter, à ne plus épargner ou à négliger votre foyer. Si vous envoyez de l'argent, gardez-en une partie pour vous.",
+        "aliases": [
+          "la famille demande de l'argent",
+          "un ami demande de l'argent",
+          "prêter de l'argent à un ami",
+          "comment dire non",
+          "aider mes parents",
+          "argent pour une cérémonie",
+          "pression de la famille",
+          "envoyer de l'argent au village",
+          "trop de sollicitations"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Requests for financial help between family members and friends are a named topic for the Burkinabè audience (summary)",
+          "source": "lefaso",
+          "where": "R3-4-african-teaching-and-questions.md BF-13 (b) point 1 (LeFaso.net, 16 March 2019)"
+        },
+        {
+          "claim": "Senegal lab-in-the-field study, 2019: with the opportunity to get hidden income, people decrease by 26 percent the share of gains transferred to kin",
+          "source": "boltz-senegal-2019",
+          "where": "R3-6-behaviour-habits-saving.md section 5.2 (HAL abstract) and section 5.3; section 5.3 also records that no Burkina Faso study was found"
+        },
+        {
+          "claim": "Neither send immediately nor refuse firmly: talk to understand the need and how to help, without losing sight of projects and savings goals",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.5 Quiz A3 and key (p. 13)"
+        },
+        {
+          "claim": "Budget explained in the sentence as the plan of income and spending",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 key teaching point 5"
+        },
+        {
+          "claim": "Generosity kept within defined proportions like any other budget line; knowing which request gets yes or no",
+          "source": "lefaso",
+          "where": "R3-4-african-teaching-and-questions.md BF-13 (b) points 2 and 3; BF-13 (a) point 6"
+        },
+        {
+          "claim": "Saying no does not mean you do not love the person; it means you cannot help in the way they would like",
+          "source": "lefaso",
+          "where": "R3-4-african-teaching-and-questions.md BF-13 (b) point 6"
+        },
+        {
+          "claim": "Example: helping within the planned amount while the savings goal stays in view; 10,000 − 4,000 = 6,000 (fictional figures, own arithmetic)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md A.5 Quiz A3; R3-4-african-teaching-and-questions.md BF-13 (b) points 2-3"
+        },
+        {
+          "claim": "Warning: mutual aid should not be a reason to go into debt, stop saving or neglect your household",
+          "source": "lefaso",
+          "where": "R3-4-african-teaching-and-questions.md BF-13 (b) point 4"
+        },
+        {
+          "claim": "Warning: when sending money to relatives, do not send everything; keep a part for your own needs",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md B.6 Conseils pour l'épargne (p. 30)"
+        }
+      ]
+    }
+  ],
+  "leftOut": [
+    "what-financial-literacy-is: no financial-literacy test score for Burkina Faso or UEMOA exists in the notes (B.md lists it as NOT FOUND); only the FinScope 2016 youth figure is used, and it is old.",
+    "what-financial-literacy-is: no official French wording of the OECD definition is in the notes, so the French point restates it without quotation marks.",
+    "what-financial-literacy-is: the Global Findex 2024 figures for Burkina Faso (B.md) were not used; they describe accounts, saving and borrowing, not literacy.",
+    "cost-your-goals: the notes give no rate or rule for the size of the margin, and no Burkinabè inflation figure; the lesson only says to plan a little more.",
+    "answer-requests-for-money: no study measuring family pressure on money in Burkina Faso is in the notes; the cited measurement is from Senegal. Kenya and Cameroon studies were left out to keep the point short.",
+    "answer-requests-for-money: the notes also record the other side (sharing works as mutual protection; Boltz blog, J-PAL Malawi); it is only touched on in talk-about-money-at-home point 4.",
+    "savings-plan: the ILO advice to use a spreadsheet and the weekly-saving variant were left out for length."
+  ]
+}

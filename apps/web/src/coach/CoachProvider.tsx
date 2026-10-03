@@ -179,6 +179,9 @@ export function CoachProvider({ children }: { children: ReactNode }) {
     // A tip is never chosen while a dialog or sheet is open: deciding then would record it as
     // shown and pop it the instant the form closes. The effect re-runs when the dialog closes.
     if (!ready || snapshot == null || nudge != null || modalOpen) return;
+    // The Learn page has its own tutor and composer: a product tip there would cover it and spend
+    // the session's single tip in the wrong place. The effect re-runs when the route changes.
+    if (pathname === "/learn") return;
     const now = Date.now();
     const planningUsed = snapshot.budgets.length + snapshot.goals.length + snapshot.plannedExpenses.length +
       snapshot.recurringItems.length + snapshot.debtCredits.length > 0;

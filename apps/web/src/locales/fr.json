@@ -1412,7 +1412,7 @@
   "learn": {
     "title": "Apprendre",
     "disclosure": "De l’éducation, pas du conseil.",
-    "draft": "Leçons rédigées par WiseMoney à partir de référentiels internationaux d’éducation financière. Pas encore relues par un expert local.",
+    "draft": "Chaque leçon est rédigée à partir des sources indiquées à l’intérieur. Pas encore relue par un expert local.",
     "tutor": {
       "title": "Par où voulez-vous commencer ?",
       "placeholder": "Posez une question d’argent",
@@ -1435,27 +1435,31 @@
         "offline": "Aucune leçon ne couvre cette question hors ligne. Réessayez avec une connexion.",
         "unavailable": "Le tuteur est indisponible et aucune leçon ne couvre cette question."
       },
-      "webCaution": "Les chiffres trouvés sur le web peuvent être faux ou dépassés. Vérifiez la source avant d’agir."
+      "webCaution": "Les chiffres trouvés sur le web peuvent être faux ou dépassés. Vérifiez la source avant d’agir.",
+      "startersNote": "Questions posées par des lecteurs au Burkina Faso (LeFaso.net)."
     },
     "lessons": {
-      "title": "Leçons",
+      "title": "Leçons, étape par étape",
       "count_one": "{{count}} leçon",
       "count_other": "{{count}} leçons"
     },
     "areas": {
-      "earn": "Gagner",
-      "spend": "Dépenser",
-      "digital": "Argent numérique",
-      "grow": "Épargner et faire grandir",
-      "borrow": "Emprunter",
-      "protect": "Protéger et construire"
+      "start": "Savoir où vous allez",
+      "manage": "Gérer votre argent",
+      "save": "Épargner sans effort",
+      "bank": "Banques, microfinance, mobile money",
+      "borrow": "Emprunter avec prudence",
+      "protect": "Vous protéger",
+      "invest": "Commencer à investir",
+      "grow": "Portefeuille et long terme"
     },
     "lesson": {
       "example": "Exemple",
       "watchOut": "Attention",
-      "basis": "Référentiels :",
+      "basis": "Sources",
       "ask": "Demander au tuteur sur ce sujet",
-      "open": "Ouvrir la leçon : {{title}}"
+      "open": "Ouvrir la leçon : {{title}}",
+      "action": "À faire cette semaine"
     }
   },
   "learnCard": {

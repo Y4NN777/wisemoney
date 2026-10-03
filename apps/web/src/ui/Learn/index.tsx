@@ -141,6 +141,7 @@ export default function Learn() {
                 </span>
                 <h2 className="text-sm font-semibold">{t("learn.tutor.title")}</h2>
               </div>
+              <p className="text-[11px] text-muted-foreground">{t("learn.tutor.startersNote")}</p>
               <ul className="flex flex-wrap gap-2" aria-label={t("learn.tutor.suggestions")}>
                 {LITERACY_STARTERS.map((starter) => (
                   <li key={starter.id}>
@@ -238,7 +239,7 @@ export default function Learn() {
           return (
             <details key={area} className="group rounded-lg border border-border bg-card" open={index === 0}>
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                <span>{t(`learn.areas.${area}`)}</span>
+                <span><span className="mr-2 tabular-nums text-ocean-primary">{index + 1}</span>{t(`learn.areas.${area}`)}</span>
                 <span className="flex items-center gap-2 text-xs font-normal text-muted-foreground">
                   {t("learn.lessons.count", { count: areaUnits.length })}
                   <ChevronRight className="h-4 w-4 transition-transform group-open:rotate-90" />
@@ -278,9 +279,22 @@ export default function Learn() {
               <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("learn.lesson.watchOut")}</p>
               {openUnit.watchOut}
             </div>
-            <p className="text-[11px] leading-relaxed text-muted-foreground">
-              {t("learn.lesson.basis")} {openUnit.sources.map((source) => LITERACY_SOURCES[source]).join(" · ")}
-            </p>
+            <div className="rounded-lg border border-ocean-primary/40 p-3 text-sm leading-relaxed">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-ocean-primary">{t("learn.lesson.action")}</p>
+              {openUnit.action}
+            </div>
+            <div className="text-[11px] leading-relaxed text-muted-foreground">
+              <p className="font-semibold">{t("learn.lesson.basis")}</p>
+              <ul className="mt-1 space-y-1">
+                {openUnit.sources.flatMap((id) => LITERACY_SOURCES[id] == null ? [] : [{ id, ...LITERACY_SOURCES[id] }]).map((source) => (
+                  <li key={source.id}>
+                    {source.url == null
+                      ? source.name
+                      : <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{source.name}</a>}
+                  </li>
+                ))}
+              </ul>
+            </div>
             <Button type="button" onClick={() => { const unit = openUnit; setOpenUnit(null); ask(unit.title, [unit.id]); }} disabled={busy}>
               {t("learn.lesson.ask")}
             </Button>

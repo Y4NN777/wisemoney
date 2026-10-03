@@ -1,0 +1,1294 @@
+{
+ "area": "bank",
+ "sourceRegistry": {
+  "ilo-ci-2023": {
+   "name": "ILO — Éducation financière pour les cultivateurs et les travailleurs ruraux en Côte d'Ivoire, Livret de l'apprenant (2023)",
+   "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_emp/%40emp_ent/documents/instructionalmaterial/wcms_900276.pdf"
+  },
+  "st-pif-2023": {
+   "name": "ST-PIF (Burkina Faso) — Cahier du participant, Séminaire de formation en éducation financière (December 2023; read from an unofficial Scribd upload)",
+   "url": "https://fr.scribd.com/document/744857863/inclusion-financiere"
+  },
+  "umoa-banking-law": {
+   "name": "BCEAO / Commission Bancaire de l'UMOA — Loi uniforme portant réglementation bancaire dans l'UMOA (model text, June 2023)",
+   "url": "https://www.cb-umoa.org/sites/default/files/2026-08/Loi%20Bancaire%20UMOA.pdf"
+  },
+  "umoa-microfinance-law": {
+   "name": "BCEAO / Commission Bancaire de l'UMOA — Loi uniforme portant réglementation de la microfinance dans l'UMOA (model text, PDF 2026)",
+   "url": "https://www.cb-umoa.org/sites/default/files/2026-08/Loi%20microfinance%20UMOA.pdf"
+  },
+  "commission-bancaire": {
+   "name": "Commission Bancaire de l'UMOA — Rapport annuel 2025 (data at end December 2025)",
+   "url": "https://www.cb-umoa.org/sites/default/files/RAPPORT%20ANNUEL%202025%20DE%20LA%20COMMISSION%20BANCAIRE.pdf"
+  },
+  "commission-bancaire-complaints-2020": {
+   "name": "Commission Bancaire de l'UMOA — Circulaire n°002-2020/CB/C relative au traitement des réclamations des clients (in force 18 September 2020); online complaint form",
+   "url": "https://www.cb-umoa.org/sites/default/files/2025-03/Circulaire%20N%C2%B0%20002-2020-CB-C%20relative%20au%20traitement%20des%20r%C3%A9clamations%20des%20clients_compressed.pdf"
+  },
+  "bceao-banking-landscape": {
+   "name": "BCEAO — Paysage bancaire de l'UMOA, lists by country (at end December 2024)",
+   "url": "https://www.bceao.int/fr/content/paysage-bancaire"
+  },
+  "bceao-inclusion-2024": {
+   "name": "BCEAO — Rapport sur la situation de l'inclusion financière dans l'UEMOA au cours de l'année 2024 (March 2026)",
+   "url": "https://www.bceao.int/sites/default/files/2026-06/Rapport_Annuel_Inclusion_Financiere_2024.pdf"
+  },
+  "bceao-sfd-indicators-2025": {
+   "name": "BCEAO — Principaux indicateurs des SFD de l'UMOA au 30/09/2025 (22 January 2026)",
+   "url": "https://www.bceao.int/sites/default/files/2026-02/Indicateurs%20au%2030%20septembre%202025.pdf"
+  },
+  "bceao-free-services-2014": {
+   "name": "BCEAO — Instruction n°004-06-2014 relative aux services bancaires offerts à titre gratuit par les établissements de crédit de l'UMOA à leur clientèle (25 June 2014, in force 1 October 2014)",
+   "url": "https://www.cb-umoa.org/sites/default/files/2022-01/INSTRUCTION%20N%C2%B0004-06-2014%20RELATIVE%20AUX%20SERVICES%20BANCAIRES%20OFFERTS%20%C3%80%20TITRE%20GRATUIT%20PAR%20LES%20%C3%89TABLISSEMENTS%20DE%20CR%C3%89DIT%20DE%20L%27UMOA%20%C3%80%20LEUR%20CLIENT%C3%88LE.pdf"
+  },
+  "bceao-emoney-2015": {
+   "name": "BCEAO — Instruction n°008-05-2015 régissant les conditions et modalités d'exercice des activités des émetteurs de monnaie électronique dans l'UMOA (21 May 2015)",
+   "url": "https://www.bceao.int/sites/default/files/2017-11/instruction_no008_05_2015_intranet.pdf"
+  },
+  "bceao-payment-services-2024": {
+   "name": "BCEAO — Instruction n°001-01-2024 relative aux services de paiement dans l'UMOA (23 January 2024)",
+   "url": "https://www.bceao.int/sites/default/files/2024-02/Instruction%20N%C2%B0001-01-2024%20relative%20aux%20services%20de%20paiement%20dans%20l%27UMOA%20%20ok.pdf"
+  },
+  "umoa-usury-2025": {
+   "name": "BCEAO — Avis n°007-12-2025 relatif à la fixation du taux de l'usure (31 December 2025, effect 1 June 2026)",
+   "url": "https://www.cb-umoa.org/sites/default/files/2026-03/Avis-No007122025%20du%2031%20d%C3%A9cembre%202025.pdf"
+  },
+  "fgdr-umoa-ceilings-2017": {
+   "name": "UMOA Council of Ministers — Décision n°009 du 30/06/2017/CM/UMOA fixant les taux de contribution et les plafonds d'indemnisation du Fonds de Garantie des Dépôts dans l'UMOA (30 June 2017)",
+   "url": "https://www.fgd-umoa.org/wp-content/uploads/2024/10/Decision-du-CM-relative-aux-taux-de-contribution-et-aux-plafonds-d-indemnistation-2-1.pdf"
+  },
+  "fgdr-umoa-circular-2022": {
+   "name": "FGDR-UMOA — Circulaire n°005/2022/FGDR-UMOA relative aux modalités d'information des déposants, with annex form (14 January 2022)",
+   "url": "https://www.fgd-umoa.org/wp-content/uploads/2024/09/circulaire-n_005-relative-aux-modalites-dinformation.pdf"
+  },
+  "fgdr-umoa-statutes-2018": {
+   "name": "FGDR-UMOA — Statuts du Fonds (2018) and BCEAO Décision n°088-03-2014 portant création du FGD-UMOA (21 March 2014)",
+   "url": "https://www.fgd-umoa.org/wp-content/uploads/2024/09/Statuts-FGDR-UMOA-2018-1-min-compresse.pdf"
+  },
+  "rcpb": {
+   "name": "RCPB / FCPB — Plaquette RCPB 2025 (Réseau des Caisses Populaires du Burkina)",
+   "url": "https://rcpb.bf/wp-content/uploads/2026/01/Plaquette_RCPB_VF_2025.pdf"
+  },
+  "coris-bank": {
+   "name": "Coris Bank International (Burkina) — Conditions de banque CBI SA (PDF dated September 2026)",
+   "url": "https://burkina.coris.bank/wp-content/uploads/2026/09/Conditions-de-Banque-CBI-SA-A4-Septembre-2026.pdf"
+  },
+  "bpbf": {
+   "name": "Banque Postale du Burkina Faso — product sheets for individuals (site, copyright 2024, read 2026-10-03)",
+   "url": "https://www.banquepostale.bf/"
+  },
+  "la-poste-bf": {
+   "name": "La Poste Burkina Faso — Compte courant, Épargne ordinaire (undated pages) and Conditions générales de vente des comptes Bangré et Baara (PDF, July 2023)",
+   "url": "https://laposte.bf/wp-content/uploads/2023/07/conditions_de_vente_bangre_baara.pdf"
+  },
+  "orange-bf": {
+   "name": "Orange Burkina Faso — Grille tarifaire des transactions Orange Money (undated page, read 2026-10-03) and older page « Grille tarifaire Orange Money » still online",
+   "url": "https://www.orange.bf/fr/tarifs-orange-money.html"
+  },
+  "moov-bf": {
+   "name": "Moov Africa Burkina — Moov Money page (read 2026-10-03; no fee grid shown)",
+   "url": "https://moov-africa.bf/moov-money2/"
+  },
+  "findex-2025": {
+   "name": "World Bank — The Little Data Book on Financial Inclusion 2025 (Global Findex 2025, survey year 2024)",
+   "url": "https://thedocs.worldbank.org/en/doc/be6615202d1f08a25855c8ac2d615122-0050012025/related/Little-Data-Book-2025-Web.pdf"
+  },
+  "findex-data360": {
+   "name": "World Bank — Global Findex Database, Data360 API, Burkina Faso, period 2024 (queried 2026-10-03)",
+   "url": "https://data360api.worldbank.org/data360/data?DATABASE_ID=WB_FINDEX&REF_AREA=BFA&INDICATOR=WB_FINDEX_ACCOUNT_T_D"
+  },
+  "cgap-faq": {
+   "name": "CGAP — Frequently Asked Questions about Financial Inclusion (page read 2026)",
+   "url": "https://www.cgap.org/about-cgap/faq"
+  },
+  "fdic-msya": {
+   "name": "FDIC — Money Smart for Young Adults, Module 1: Bank On It, Participant Guide (2022)",
+   "url": "https://catalog.fdic.gov/catalog/sfc/servlet.shepherd/document/download/069t000000ghq1PAAQ"
+  },
+  "cfpb-ymyg": {
+   "name": "CFPB — Your Money, Your Goals: A financial empowerment toolkit (June 2020)",
+   "url": "https://files.consumerfinance.gov/f/documents/cfpb_your-money-your-goals_financial-empowerment_toolkit.pdf"
+  },
+  "sidwaya-microfinance-law-2025": {
+   "name": "Sidwaya (state daily, press) — reports on the adoption of the microfinance law on 13 February 2025 (loi n°001-2025/ALT as cited by the newspaper)",
+   "url": "https://www.sidwaya.info/gestion-des-institutions-de-microfinance-une-loi-pour-reglementer-le-secteur/"
+  },
+  "oqsf-bf": {
+   "name": "Sidwaya (press; one article distributed by allAfrica) — articles on the OQSF-BF and financial mediation (2 June 2023; workshop of 28–30 October 2025)",
+   "url": "https://fr.allafrica.com/stories/202511060327.html"
+  },
+  "bclcc": {
+   "name": "BCLCC (Burkina cybercrime brigade) — alert on mobile-money scams, relayed by Wakat Séra (22 May 2026)",
+   "url": "https://www.wakatsera.com/burkina-cybercriminalite-alerte-sur-les-arnaques-via-mobile-money/"
+  }
+ },
+ "lessons": [
+  {
+   "id": "what-a-bank-does",
+   "sources": [
+    "ilo-ci-2023",
+    "umoa-banking-law",
+    "commission-bancaire",
+    "bceao-banking-landscape",
+    "bceao-inclusion-2024",
+    "coris-bank"
+   ],
+   "en": {
+    "title": "Understand what a bank does",
+    "summary": "A bank is an institution licensed to receive money from the public, lend money and provide means of payment. At the end of 2025, Burkina Faso had 16 banks.",
+    "points": [
+     "A bank is licensed by the State to carry out banking operations: receiving money from the public, giving credit (lending money) and providing means of payment such as cards or transfers.",
+     "The money you deposit is still owed to you. The banking law lets the bank use it, but the bank must give it back under the conditions agreed with you.",
+     "At the end of 2025, Burkina Faso's 16 banks and 4 financial establishments had 416 branches and points of sale, 638 cash machines and 3,421,286 bank accounts (Banking Commission of the UMOA).",
+     "Few adults have such an account: in 2024, 23.4% of people aged 15 and over held one at a bank, the post office, a national savings bank or the Treasury (BCEAO)."
+    ],
+    "example": "A bank charges for some services. The price list published by Coris Bank (September 2026) shows an account-keeping fee of 995 F CFA a month, before tax, for an employee's cheque account. Over one year: 995 × 12 = 11,940 F. For a savings passbook, the same list shows no account-keeping fee.",
+    "action": "Go into a bank branch near you and ask for its price list, called 'conditions de banque'.",
+    "watchOut": "Going into a bank does not commit you to opening an account. You can start by asking questions: answering them is the staff's job.",
+    "aliases": [
+     "bank",
+     "what is a bank",
+     "what does a bank do",
+     "bank account",
+     "banks in burkina",
+     "cash machine",
+     "put money in the bank",
+     "bank fees"
+    ]
+   },
+   "fr": {
+    "title": "Comprendre ce que fait une banque",
+    "summary": "Une banque est une institution agréée pour recevoir l'argent du public, prêter de l'argent et fournir des moyens de paiement. Fin 2025, le Burkina Faso comptait 16 banques.",
+    "points": [
+     "Une banque est agréée par l'État pour recevoir l'argent du public, accorder du crédit (prêter de l'argent) et fournir des moyens de paiement comme la carte ou le virement.",
+     "L'argent que vous déposez vous reste dû. La loi bancaire permet à la banque de l'utiliser, mais elle doit vous le rendre selon les conditions convenues avec vous.",
+     "Fin 2025, les 16 banques et 4 établissements financiers du Burkina Faso comptaient 416 agences et points de vente, 638 guichets automatiques et 3 421 286 comptes bancaires (Commission Bancaire de l'UMOA).",
+     "Peu d'adultes ont un tel compte : en 2024, 23,4 % des 15 ans et plus en détenaient un dans une banque, à la poste, dans une caisse nationale d'épargne ou au Trésor (BCEAO)."
+    ],
+    "example": "Une banque fait payer certains services. Les conditions de banque publiées par Coris Bank (septembre 2026) indiquent des frais de tenue de compte de 995 F CFA par mois, hors taxes, pour le compte chèque d'un salarié. Sur un an : 995 × 12 = 11 940 F. Pour un livret d'épargne, la même liste n'indique aucuns frais de tenue de compte.",
+    "action": "Entrez dans une agence bancaire près de chez vous et demandez la liste des tarifs, appelée « conditions de banque ».",
+    "watchOut": "Entrer dans une banque ne vous oblige pas à ouvrir un compte. Vous pouvez commencer par poser des questions : y répondre est le travail du personnel.",
+    "aliases": [
+     "banque",
+     "c'est quoi une banque",
+     "à quoi sert une banque",
+     "compte bancaire",
+     "banques au burkina",
+     "guichet automatique",
+     "mettre son argent à la banque",
+     "frais bancaires"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "Definition of a bank: licensed by the State; receives funds from the public, savings and credit operations, payment services",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.1 p.122"
+    },
+    {
+     "claim": "Banking operations in law: receiving funds from the public, credit operations, means of payment (art. 17)",
+     "source": "umoa-banking-law",
+     "where": "R3-7-banking-microfinance.md 1a (S7, art. 17)"
+    },
+    {
+     "claim": "Funds received from the public may be used by the institution but must be returned under the agreed conditions (art. 18)",
+     "source": "umoa-banking-law",
+     "where": "R3-7-banking-microfinance.md 1a (S7, art. 18)"
+    },
+    {
+     "claim": "16 banks and 4 financial establishments (20 credit institutions) licensed in Burkina at 31 December 2025",
+     "source": "commission-bancaire",
+     "where": "R3-7-banking-microfinance.md 3a (S5, Tableau n° 5)"
+    },
+    {
+     "claim": "Same count, 16 banks and 4 financial establishments, at end December 2024",
+     "source": "bceao-banking-landscape",
+     "where": "R3-7-banking-microfinance.md 3a (S4)"
+    },
+    {
+     "claim": "416 branches/offices/points of sale, 638 cash machines, 3,421,286 bank accounts for credit institutions in Burkina at end 2025",
+     "source": "commission-bancaire",
+     "where": "R3-7-banking-microfinance.md 3a (S5, Tableau n° 6)"
+    },
+    {
+     "claim": "Strict banking rate (TBS) for Burkina 23.4% in 2024; definition: adults 15+ with an account in banks, postal services, national savings banks and the Treasury",
+     "source": "bceao-inclusion-2024",
+     "where": "R3-7-banking-microfinance.md 3a (S1, Tableau n° 3 and section III)"
+    },
+    {
+     "claim": "Account-keeping fee 995 a month for employees; free on a savings passbook; tariffs stated before tax",
+     "source": "coris-bank",
+     "where": "R3-7-banking-microfinance.md 3c Coris Bank International (S17) and 1b (general rule 'hors taxes')"
+    },
+    {
+     "claim": "Arithmetic: 995 × 12 = 11,940",
+     "source": "coris-bank",
+     "where": "own calculation from the figure above"
+    },
+    {
+     "claim": "Entering a bank does not commit you to open an account; answering questions is the staff's job",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.2 Messages clés p.130"
+    }
+   ]
+  },
+  {
+   "id": "what-microfinance-is",
+   "sources": [
+    "ilo-ci-2023",
+    "umoa-microfinance-law",
+    "umoa-banking-law",
+    "rcpb",
+    "bceao-sfd-indicators-2025",
+    "commission-bancaire",
+    "umoa-usury-2025",
+    "sidwaya-microfinance-law-2025"
+   ],
+   "en": {
+    "title": "Understand microfinance and caisses populaires",
+    "summary": "A microfinance institution offers savings and loans to people whom banks often do not serve. On 30 September 2025, the BCEAO counted 73 in Burkina Faso; the 36 it tracks had 2,067,873 members or clients.",
+    "points": [
+     "A microfinance institution is licensed by the Minister of Finance. It serves people who generally have no access to banks, for example because their income or their balances are small.",
+     "A caisse populaire is a savings and credit cooperative, owned and run by its members. The RCPB network says you become a member-owner with a say in how the caisse is managed.",
+     "Like a bank, it can collect deposits and lend. Unlike a bank, it is not allowed to give you a chequebook: only banks may do that.",
+     "The Minister of Finance oversees the sector. Institutions that reach 2 billion F CFA of deposits or loans two years running are controlled by the BCEAO and the Banking Commission."
+    ],
+    "example": "The legal maximum for the full yearly cost of a loan has been, since 1 June 2026, 24% for microfinance institutions and 14% for banks. On 100,000 F CFA borrowed for one year: 100,000 × 24% = 24,000 F at most; 100,000 × 14% = 14,000 F at most. These are ceilings, not the usual price.",
+    "action": "Ask a caisse or microfinance institution near you to show that it is licensed and to say who supervises it.",
+    "watchOut": "You may hear 'SFD' or 'IMF'. The press reported that the law adopted on 13 February 2025 replaced the first name with the second. Same kind of institution.",
+    "aliases": [
+     "microfinance",
+     "caisse populaire",
+     "savings and credit cooperative",
+     "small loans",
+     "bank or caisse",
+     "difference bank microfinance",
+     "sfd",
+     "imf",
+     "rcpb"
+    ]
+   },
+   "fr": {
+    "title": "Comprendre la microfinance et les caisses populaires",
+    "summary": "Une institution de microfinance propose épargne et crédit à des personnes que les banques servent rarement. Au 30 septembre 2025, la BCEAO en comptait 73 au Burkina Faso ; les 36 qu'elle suit avaient 2 067 873 membres ou clients.",
+    "points": [
+     "Une institution de microfinance est agréée par le Ministre chargé des Finances. Elle sert des personnes qui n'ont généralement pas accès aux banques, souvent parce que leurs revenus ou soldes sont faibles.",
+     "Une caisse populaire est une coopérative d'épargne et de crédit : elle appartient à ses membres, qui la dirigent. Au RCPB, vous devenez membre propriétaire, avec un droit de regard sur la gestion.",
+     "Comme une banque, elle peut recevoir des dépôts et prêter. Mais elle n'a pas le droit de vous remettre un chéquier : seules les banques le peuvent.",
+     "Le Ministre chargé des Finances assure la tutelle. Au-delà de 2 milliards de F CFA de dépôts ou de crédits deux années de suite, la BCEAO et la Commission Bancaire contrôlent l'institution."
+    ],
+    "example": "Le maximum légal pour le coût total annuel d'un prêt est, depuis le 1er juin 2026, de 24 % pour les institutions de microfinance et de 14 % pour les banques. Sur 100 000 F CFA empruntés pour un an : 100 000 × 24 % = 24 000 F au plus ; 100 000 × 14 % = 14 000 F au plus. Ce sont des plafonds, pas le prix habituel.",
+    "action": "Demandez à une caisse ou à une institution de microfinance proche de montrer son agrément et de dire qui la contrôle.",
+    "watchOut": "Vous entendrez « SFD » ou « IMF ». La presse a rapporté que la loi adoptée le 13 février 2025 remplace le premier nom par le second. Même type d'institution.",
+    "aliases": [
+     "microfinance",
+     "caisse populaire",
+     "coopérative d'épargne et de crédit",
+     "petit crédit",
+     "banque ou caisse",
+     "différence banque microfinance",
+     "sfd",
+     "imf",
+     "rcpb"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "Microfinance serves people who generally have no access to banks; institution licensed by the Minister of Finance (art. 3, defs 1 and 34)",
+     "source": "umoa-microfinance-law",
+     "where": "R3-7-banking-microfinance.md 1a (S6, art. 3)"
+    },
+    {
+     "claim": "Microfinance institutions serve low-income groups or people with small balances whom traditional banks generally do not serve",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.1 p.122"
+    },
+    {
+     "claim": "A savings and credit cooperative is owned, directed and managed by its members",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.1 glossary p.192"
+    },
+    {
+     "claim": "RCPB is a savings and credit cooperative; the client becomes 'membre propriétaire' with a right to speak and oversee management",
+     "source": "rcpb",
+     "where": "R3-7-banking-microfinance.md 1a (S11, RCPB 2025)"
+    },
+    {
+     "claim": "Authorised operations: collecting deposits, lending (art. 4)",
+     "source": "umoa-microfinance-law",
+     "where": "R3-7-banking-microfinance.md 1a (S6, art. 4)"
+    },
+    {
+     "claim": "Microfinance institutions may not provide or manage cheques (art. 8)",
+     "source": "umoa-microfinance-law",
+     "where": "R3-7-banking-microfinance.md 1a (S6, art. 8)"
+    },
+    {
+     "claim": "Only banks are authorised to provide cheques (banking law art. 21)",
+     "source": "umoa-banking-law",
+     "where": "R3-7-banking-microfinance.md 1a (S7, art. 21)"
+    },
+    {
+     "claim": "Minister of Finance has 'tutelle' over microfinance institutions (art. 2)",
+     "source": "umoa-microfinance-law",
+     "where": "R3-7-banking-microfinance.md 3b (S6, art. 2); R3-5-burkina-facts.md Item 4"
+    },
+    {
+     "claim": "Institutions reaching 2.0 billion of deposits or loans over two consecutive years are controlled by the BCEAO and the Banking Commission; the others by the Ministries of Finance",
+     "source": "commission-bancaire",
+     "where": "R3-7-banking-microfinance.md 3b 'Who supervises' (S5, section 4.3.1)"
+    },
+    {
+     "claim": "Burkina at 30 Sept 2025: 73 SFD (not counting caisses affiliated to networks); sample of 36 with 2,067,873 members/clients",
+     "source": "bceao-sfd-indicators-2025",
+     "where": "R3-7-banking-microfinance.md 3b (S3)"
+    },
+    {
+     "claim": "Usury ceiling: 14.0% a year for banks, 24.0% for microfinance institutions, effect 1 June 2026",
+     "source": "umoa-usury-2025",
+     "where": "R3-5-burkina-facts.md Item 2 (last row) and Item 4"
+    },
+    {
+     "claim": "Arithmetic: 100,000 × 24% = 24,000; 100,000 × 14% = 14,000",
+     "source": "umoa-usury-2025",
+     "where": "own calculation from the ceilings above"
+    },
+    {
+     "claim": "Press: law adopted 13 February 2025; the name SFD is replaced by IMF (minister's words reported by Sidwaya; law text not read)",
+     "source": "sidwaya-microfinance-law-2025",
+     "where": "R3-5-burkina-facts.md Item 4 (rows 1–2)"
+    }
+   ]
+  },
+  {
+   "id": "formal-and-informal-finance",
+   "sources": [
+    "ilo-ci-2023",
+    "st-pif-2023",
+    "bceao-inclusion-2024",
+    "findex-data360",
+    "fgdr-umoa-statutes-2018",
+    "commission-bancaire-complaints-2020"
+   ],
+   "en": {
+    "title": "Tell formal, semi-formal and informal apart",
+    "summary": "You can keep or borrow money in formal, semi-formal or informal ways. In 2024, 41.6% of adults in Burkina Faso had borrowed from family or friends, and 6.0% from a bank or similar institution.",
+    "points": [
+     "Formal means inside a law and supervised by the State: banks, licensed microfinance institutions and cooperatives, the national savings bank, electronic money issuers, insurance companies.",
+     "Semi-formal means organised but not supervised by the State: tontines, savings groups, village savings and loan associations. They are easy to join and build discipline, but offer few guarantees.",
+     "Informal means on your own: cash at home, gold, animals, land, or money left with a friend or trader. Access is easy; theft, loss and the temptation to spend are the risks.",
+     "Supervision gives you rules the institution must respect, a deposit-guarantee fund and a place to complain. An informal lender is fast, but very expensive and with no legal protection against abuse."
+    ],
+    "example": "Salif lists where his 60,000 F CFA are: 10,000 F in a box at home (informal), 20,000 F in his tontine (semi-formal), 30,000 F in an account at a caisse populaire (formal). 10,000 + 20,000 + 30,000 = 60,000 F. Only the 30,000 F are with a supervised institution.",
+    "action": "List every place where your money is kept today and mark each one formal, semi-formal or informal.",
+    "watchOut": "Words vary: a BCEAO report calls tontines informal. What matters is whether an authority supervises the place that holds your money.",
+    "aliases": [
+     "formal informal",
+     "tontine",
+     "savings group",
+     "money at home",
+     "moneylender",
+     "is a tontine safe",
+     "where to keep money",
+     "borrow from family",
+     "supervised institution"
+    ]
+   },
+   "fr": {
+    "title": "Distinguer le formel, le semi-formel et l'informel",
+    "summary": "On peut garder ou emprunter de l'argent de façon formelle, semi-formelle ou informelle. En 2024, 41,6 % des adultes du Burkina Faso avaient emprunté à la famille ou à des amis, et 6,0 % à une banque ou une institution similaire.",
+    "points": [
+     "Formel veut dire encadré par une loi et contrôlé par l'État : banques, institutions de microfinance et coopératives agréées, caisse nationale d'épargne, émetteurs de monnaie électronique, sociétés d'assurance.",
+     "Semi-formel veut dire organisé mais non contrôlé par l'État : tontines, groupes d'épargne, associations villageoises d'épargne et de crédit. On y entre facilement, on y gagne en discipline, mais les garanties sont faibles.",
+     "Informel veut dire par vous-même : argent à la maison, or, bétail, terrain, argent confié à un ami ou un commerçant. Accès facile, mais risque de vol, de perte et de dépense.",
+     "Le contrôle apporte des règles imposées à l'institution, un fonds de garantie des dépôts et un recours. Un prêteur informel est rapide, mais très cher et sans protection juridique en cas d'abus."
+    ],
+    "example": "Salif note où se trouvent ses 60 000 F CFA : 10 000 F dans une caisse à la maison (informel), 20 000 F dans sa tontine (semi-formel), 30 000 F sur un compte dans une caisse populaire (formel). 10 000 + 20 000 + 30 000 = 60 000 F. Seuls les 30 000 F sont dans une institution contrôlée.",
+    "action": "Notez tous les endroits où se trouve votre argent aujourd'hui et marquez chacun : formel, semi-formel ou informel.",
+    "watchOut": "Les mots varient : un rapport de la BCEAO classe les tontines dans l'informel. L'essentiel est de savoir si une autorité contrôle le lieu qui garde votre argent.",
+    "aliases": [
+     "formel informel",
+     "tontine",
+     "groupe d'épargne",
+     "argent à la maison",
+     "usurier",
+     "la tontine est-elle sûre",
+     "où garder son argent",
+     "emprunter à la famille",
+     "institution contrôlée"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "Official = supervised and controlled by the State: banks, SFD/IMF, Caisse Nationale d'Epargne, e-money issuers, insurance companies",
+     "source": "st-pif-2023",
+     "where": "R3-4-african-teaching-and-questions.md BF-0 point 11"
+    },
+    {
+     "claim": "Formal: 'ce qui est formel s'inscrit dans un cadre, une structure, ou une loi'; formal institutions list",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.1 glossary p.192; C.3 p.68"
+    },
+    {
+     "claim": "Semi-official = organised and not supervised by the State: groups, tontines, village caisses",
+     "source": "st-pif-2023",
+     "where": "R3-4-african-teaching-and-questions.md BF-0 point 11"
+    },
+    {
+     "claim": "Semi-formal pros and cons: easy access, discipline; few guarantees; not supervised by the authorities",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md C.3 p.68 (Semi-formelles)"
+    },
+    {
+     "claim": "Informal: saving at home, in kind (gold, livestock, land), or entrusted to a friend, relative or trader; easy access; no security, temptation to spend",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md C.3 p.68 (Informelles)"
+    },
+    {
+     "claim": "Informal lender: fast, no formal procedure; very expensive, intimidation, no legal protection in case of abuse",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md D.3 p.95 (Support D.1.3)"
+    },
+    {
+     "claim": "Deposit-guarantee fund covers clients of licensed credit institutions and SFD only",
+     "source": "fgdr-umoa-statutes-2018",
+     "where": "R3-5-burkina-facts.md Item 1 (Décision n°088-03-2014 art. 2; Statuts art. 21)"
+    },
+    {
+     "claim": "Complaint procedure applies to credit institutions, SFD under Banking Commission control and e-money institutions",
+     "source": "commission-bancaire-complaints-2020",
+     "where": "R3-5-burkina-facts.md Item 2 (Circulaire n°002-2020/CB/C art. 2)"
+    },
+    {
+     "claim": "Findex 2024 Burkina: borrowed from family or friends 41.560366%; borrowed from a formal bank or similar institution 5.969856%",
+     "source": "findex-data360",
+     "where": "R3-7-banking-microfinance.md 3e (S28, FIN22B and FIN22A)"
+    },
+    {
+     "claim": "BCEAO calls savings groups (tontines) informal financial services; ILO classes savings groups as semi-formal",
+     "source": "bceao-inclusion-2024",
+     "where": "R3-7-banking-microfinance.md 1a (S1, section 3.4) and section 4 conflict 9"
+    },
+    {
+     "claim": "Arithmetic: 10,000 + 20,000 + 30,000 = 60,000 (fictional example)",
+     "source": "ilo-ci-2023",
+     "where": "own example illustrating the three families of ILO-CI.md C.3 p.68"
+    }
+   ]
+  },
+  {
+   "id": "open-an-account",
+   "sources": [
+    "cgap-faq",
+    "fdic-msya",
+    "la-poste-bf",
+    "umoa-microfinance-law",
+    "rcpb",
+    "coris-bank",
+    "bpbf",
+    "ilo-ci-2023"
+   ],
+   "en": {
+    "title": "Know what opening an account takes",
+    "summary": "An account lets you deposit, withdraw, receive payments and keep savings safe. Each institution sets its own documents and minimum amount: here are dated examples, and the questions to ask.",
+    "points": [
+     "A current account is for money you put in and take out often, and it pays no interest. A savings account is for money set aside; it comes with a passbook.",
+     "You must prove who you are: the microfinance law forbids anonymous accounts. Published lists ask for an identity document, such as the CNIB or a passport, and identity photos.",
+     "At a caisse populaire you join as a member. The RCPB brochure (2025) asks an individual for an identity document, three photos and 8,000 F CFA, including a 3,000 F minimum balance.",
+     "Coris Bank's list (September 2026) shows free opening with no first deposit. Banque Postale asks no minimum deposit for its informal-sector cheque account, but requires proof of address and of activity."
+    ],
+    "example": "La Poste Burkina Faso's conditions for its Bangré and Baara savings accounts (2023) ask for a first deposit of at least 11,180 F CFA: 10,000 F minimum balance + 1,180 F file fee = 11,180 F. Aminata checks that she has this amount, a copy of her identity document and two recent identical photos.",
+    "action": "Ask one institution near you which documents, what minimum amount and what monthly fees it requires to open an account.",
+    "watchOut": "These are dated examples, not today's prices. Conditions differ between institutions and change: ask for the current ones in writing before you go.",
+    "aliases": [
+     "open an account",
+     "open a bank account",
+     "documents to open an account",
+     "minimum deposit",
+     "cnib",
+     "savings account",
+     "current account",
+     "passbook",
+     "join a caisse populaire"
+    ]
+   },
+   "fr": {
+    "title": "Savoir ce qu'il faut pour ouvrir un compte",
+    "summary": "Un compte sert à déposer, retirer, recevoir des paiements et garder son épargne en sécurité. Chaque institution fixe ses pièces et son montant minimum : voici des exemples datés, et les questions à poser.",
+    "points": [
+     "Un compte courant sert à l'argent que vous déposez et retirez souvent ; il ne rapporte pas d'intérêts. Un compte d'épargne sert à l'argent mis de côté ; il donne droit à un livret.",
+     "Vous devez prouver qui vous êtes : la loi sur la microfinance interdit les comptes anonymes. Les listes publiées demandent une pièce d'identité, comme la CNIB ou le passeport, et des photos d'identité.",
+     "Dans une caisse populaire, vous entrez comme membre. La plaquette du RCPB (2025) demande à un particulier une pièce d'identité, trois photos et 8 000 F CFA, dont 3 000 F de solde minimum.",
+     "Coris Bank (septembre 2026) indique une ouverture gratuite, sans dépôt initial. La Banque Postale n'exige pas de dépôt minimum pour son compte chèque secteur informel, mais des justificatifs de domicile et d'activité."
+    ],
+    "example": "Les conditions de La Poste Burkina Faso pour ses comptes d'épargne Bangré et Baara (2023) demandent un premier dépôt d'au moins 11 180 F CFA : 10 000 F de solde minimal + 1 180 F de frais de dossier = 11 180 F. Aminata vérifie qu'elle a cette somme, une copie de sa pièce d'identité et deux photos récentes et identiques.",
+    "action": "Demandez à une institution proche quelles pièces, quel montant minimum et quels frais mensuels elle exige pour ouvrir un compte.",
+    "watchOut": "Ce sont des exemples datés, pas les prix d'aujourd'hui. Les conditions diffèrent d'une institution à l'autre et changent : demandez les conditions actuelles par écrit avant d'y aller.",
+    "aliases": [
+     "ouvrir un compte",
+     "ouvrir un compte bancaire",
+     "pièces pour ouvrir un compte",
+     "dépôt minimum",
+     "cnib",
+     "compte d'épargne",
+     "compte courant",
+     "livret",
+     "adhérer à une caisse populaire"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "What accounts do: day-to-day transactions including sending and receiving money; safeguard savings",
+     "source": "cgap-faq",
+     "where": "R3-7-banking-microfinance.md 1a (S25, CGAP FAQ)"
+    },
+    {
+     "claim": "Savings accounts set money aside for the future; checking accounts are for depositing and withdrawing frequently",
+     "source": "fdic-msya",
+     "where": "T1.md (1) [FDIC M1]"
+    },
+    {
+     "claim": "Current account: sight deposit account that produces no interest; an ordinary savings account gives a savings passbook",
+     "source": "la-poste-bf",
+     "where": "R3-7-banking-microfinance.md 1b (La Poste BF, S15)"
+    },
+    {
+     "claim": "Microfinance institutions may not open anonymous accounts (art. 9)",
+     "source": "umoa-microfinance-law",
+     "where": "R3-7-banking-microfinance.md 1a (S6, art. 9)"
+    },
+    {
+     "claim": "RCPB individual: identity document (CNIB, passport, consular card, ECOWAS card), three identity photos, 8000 FCFA of which a minimum balance of 3000 FCFA; one becomes a member",
+     "source": "rcpb",
+     "where": "R3-7-banking-microfinance.md 3c RCPB table (S11) and 1b 'Membership in a cooperative'"
+    },
+    {
+     "claim": "Coris: opening of cheque account and simple savings account free; initial deposits not required",
+     "source": "coris-bank",
+     "where": "R3-7-banking-microfinance.md 3c Coris Bank International (S17)"
+    },
+    {
+     "claim": "BPBF 'Chèque secteur informel': no minimum deposit; ID copy, birth certificate extract, two photos, utility bill or residence certificate, proof of activity",
+     "source": "bpbf",
+     "where": "R3-7-banking-microfinance.md 3c Banque Postale du Burkina Faso (S14)"
+    },
+    {
+     "claim": "La Poste Bangré/Baara: ID photocopy, two recent identical photos, minimum deposit 11,180 F of which 10,000 minimum balance and 1,180 file fee (PDF of 2023-07-07)",
+     "source": "la-poste-bf",
+     "where": "R3-7-banking-microfinance.md 3c La Poste Burkina Faso (S16)"
+    },
+    {
+     "claim": "Arithmetic: 10,000 + 1,180 = 11,180",
+     "source": "la-poste-bf",
+     "where": "own check of the source's figures"
+    },
+    {
+     "claim": "Questions to ask: how to open or close an account and the cost; minimum deposit; management fees",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.6 pp.124–126"
+    },
+    {
+     "claim": "Conditions differ between institutions and even on one site (dated, conflicting requirements)",
+     "source": "rcpb",
+     "where": "R3-7-banking-microfinance.md section 4 conflicts 6, 7 and 12"
+    }
+   ]
+  },
+  {
+   "id": "free-banking-services",
+   "sources": [
+    "bceao-free-services-2014",
+    "coris-bank"
+   ],
+   "en": {
+    "title": "Know the bank services that are free",
+    "summary": "Since 1 October 2014, a BCEAO instruction obliges banks in the UMOA to provide a list of services free of charge. Knowing the list helps you check what you are charged.",
+    "points": [
+     "BCEAO Instruction n°004-06-2014 of 25 June 2014 lists services that banks and other credit institutions of the UMOA must give their clients free, with no condition attached.",
+     "Free for the account: opening and closing it, a savings passbook and its keeping, one statement a month, a yearly summary of fees, salary domiciliation, cash deposits and withdrawals at your bank.",
+     "Free for payments: withdrawals and balance checks at your own bank's cash machines, card payments within the UMOA, transfers between accounts in the same bank, cashing cheques, receiving transfers, electronic transaction notices.",
+     "The list has 19 lines by count, and no later update was found. What is not on it can be charged, for example the monthly keeping of a cheque account."
+    ],
+    "example": "Coris Bank's price list (September 2026) shows a withdrawal at its own cash machines as free, and at another bank's machine in the UEMOA at 500 F CFA. Rasmané withdraws four times a month. At other banks' machines: 4 × 500 = 2,000 F a month. At his own bank's machines: 4 × 0 = 0 F.",
+    "action": "Read your last bank statement and check that none of the free services was charged to you.",
+    "watchOut": "Free means at your own bank. Stamp duty on a cash deposit and withdrawals by counter cheque are excluded, and another bank's machine can charge you.",
+    "aliases": [
+     "free bank services",
+     "free banking",
+     "bank fees",
+     "is opening an account free",
+     "free withdrawal",
+     "bank statement",
+     "bceao instruction",
+     "what banks cannot charge"
+    ]
+   },
+   "fr": {
+    "title": "Connaître les services bancaires gratuits",
+    "summary": "Depuis le 1er octobre 2014, une instruction de la BCEAO oblige les banques de l'UMOA à fournir gratuitement une liste de services. Connaître cette liste vous aide à vérifier ce qu'on vous facture.",
+    "points": [
+     "L'Instruction n°004-06-2014 de la BCEAO, du 25 juin 2014, liste les services que les banques et autres établissements de crédit de l'UMOA doivent offrir gratuitement à leurs clients, sans aucune condition.",
+     "Gratuit pour le compte : ouverture et clôture, livret d'épargne et sa tenue, un relevé par mois, récapitulatif annuel des frais, domiciliation du salaire, dépôts et retraits d'espèces dans votre banque.",
+     "Gratuit pour les paiements : retraits et solde aux guichets automatiques de votre banque, paiements par carte dans l'UMOA, virements dans la même banque, encaissement de chèques, réception de virements, avis électroniques d'opérations.",
+     "On compte 19 lignes dans la liste, et aucune mise à jour n'a été trouvée. Ce qui n'y figure pas peut être facturé, par exemple la tenue mensuelle d'un compte chèque."
+    ],
+    "example": "Les conditions de banque de Coris Bank (septembre 2026) indiquent un retrait gratuit à ses propres guichets automatiques, et 500 F CFA au guichet d'une autre banque de l'UEMOA. Rasmané retire quatre fois par mois. Aux guichets d'autres banques : 4 × 500 = 2 000 F par mois. Aux guichets de sa banque : 4 × 0 = 0 F.",
+    "action": "Relisez votre dernier relevé bancaire et vérifiez qu'aucun des services gratuits ne vous a été facturé.",
+    "watchOut": "Gratuit veut dire dans votre propre banque. Le timbre fiscal sur un dépôt d'espèces et le chèque de guichet sont exclus ; le guichet d'une autre banque peut facturer.",
+    "aliases": [
+     "services bancaires gratuits",
+     "banque gratuite",
+     "frais bancaires",
+     "ouverture de compte gratuite",
+     "retrait gratuit",
+     "relevé de compte",
+     "instruction bceao",
+     "ce que la banque ne peut pas facturer"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "Instruction n°004-06-2014, signed Dakar 25 June 2014, in force 1 October 2014; applies to credit institutions of the UMOA; free with no condition (art. 2)",
+     "source": "bceao-free-services-2014",
+     "where": "R3-5-burkina-facts.md Item 2 (first table)"
+    },
+    {
+     "claim": "Annex part 1: account opening, passbook issue and keeping, monthly statement, annual fee summary, cash deposit and withdrawal at the client's bank, salary domiciliation, closing",
+     "source": "bceao-free-services-2014",
+     "where": "R3-5-burkina-facts.md Item 2 (verbatim annex, part 1)"
+    },
+    {
+     "claim": "Annex parts 2 and 3: ATM withdrawal at the client's bank, card payment within the UMOA, balance check, transfer within the same bank, cashing cheques, receiving transfers, electronic debit and credit notices",
+     "source": "bceao-free-services-2014",
+     "where": "R3-5-burkina-facts.md Item 2 (verbatim annex, parts 2 and 3)"
+    },
+    {
+     "claim": "19 services by count (11 + 6 + 2); the number does not appear in the instruction; no later update found",
+     "source": "bceao-free-services-2014",
+     "where": "R3-5-burkina-facts.md Item 2 (note under the annex) and section 3 conflict 3"
+    },
+    {
+     "claim": "Only passbook account-keeping is on the free list; Coris charges monthly account-keeping on cheque accounts (995 to 2,137)",
+     "source": "coris-bank",
+     "where": "R3-5-burkina-facts.md Item 2 annex; R3-7-banking-microfinance.md 3c Coris (S17)"
+    },
+    {
+     "claim": "Coris: withdrawal at the client's bank's ATM free; at ATMs of other banks in the UEMOA zone 500",
+     "source": "coris-bank",
+     "where": "R3-7-banking-microfinance.md 3c Coris Bank International (S17, cards)"
+    },
+    {
+     "claim": "Arithmetic: 4 × 500 = 2,000; 4 × 0 = 0",
+     "source": "coris-bank",
+     "where": "own calculation from the figures above"
+    },
+    {
+     "claim": "Exclusions: cash deposit free 'hors acquittement de frais de timbre fiscal'; cash withdrawal free except counter-cheque operations; free ATM use is at the client's own bank",
+     "source": "bceao-free-services-2014",
+     "where": "R3-5-burkina-facts.md Item 2 (verbatim annex)"
+    }
+   ]
+  },
+  {
+   "id": "is-my-money-protected",
+   "sources": [
+    "fgdr-umoa-statutes-2018",
+    "fgdr-umoa-ceilings-2017",
+    "fgdr-umoa-circular-2022",
+    "bceao-emoney-2015",
+    "ilo-ci-2023"
+   ],
+   "en": {
+    "title": "Know what protects your deposits",
+    "summary": "A regional fund guarantees deposits in licensed banks and microfinance institutions, up to a ceiling. No official text found says that it covers a mobile money balance.",
+    "points": [
+     "The deposit-guarantee fund of the UMOA, called FGDR-UMOA, compensates depositors when a licensed bank or microfinance institution can no longer give them their money.",
+     "The ceilings come from Decision n°009 of 30 June 2017 of the UMOA Council of Ministers: 1,400,000 F CFA per holder in a bank, 300,000 F CFA in a microfinance institution.",
+     "All your accounts in the same institution are added together before the ceiling applies. Compensation must be made available within three months after the deposits are declared unavailable.",
+     "Mobile money: the BCEAO rule requires the issuer to keep customers' funds in a dedicated account at a bank or microfinance institution, to reimburse holders. Coverage by the fund is not stated."
+    ],
+    "example": "Issa has 200,000 F CFA in a passbook and 250,000 F in another account at the same caisse: 200,000 + 250,000 = 450,000 F. The ceiling for a microfinance institution is 300,000 F. Above the ceiling: 450,000 − 300,000 = 150,000 F. In a bank, 450,000 F would be under the 1,400,000 F ceiling.",
+    "action": "Ask your bank or caisse for the deposit-guarantee information form it must provide to depositors.",
+    "watchOut": "Do not count on the fund for a mobile money balance, for money in a tontine or at home, or for deposits above the ceiling.",
+    "aliases": [
+     "is my money safe",
+     "deposit guarantee",
+     "bank fails",
+     "bank closes",
+     "fgdr",
+     "money protected",
+     "guarantee fund",
+     "is mobile money protected",
+     "caisse goes bankrupt"
+    ]
+   },
+   "fr": {
+    "title": "Savoir ce qui protège vos dépôts",
+    "summary": "Un fonds régional garantit les dépôts dans les banques et les institutions de microfinance agréées, jusqu'à un plafond. Aucun texte officiel trouvé ne dit qu'il couvre un solde de mobile money.",
+    "points": [
+     "Le fonds de garantie des dépôts de l'UMOA, appelé FGDR-UMOA, indemnise les déposants quand une banque ou une institution de microfinance agréée ne peut plus leur rendre leur argent.",
+     "Plafonds fixés par la Décision n°009 du 30 juin 2017 du Conseil des Ministres de l'UMOA : 1 400 000 F CFA par titulaire dans une banque, 300 000 F CFA dans une institution de microfinance.",
+     "Tous vos comptes dans la même institution sont additionnés avant d'appliquer le plafond. L'indemnisation doit être mise à disposition dans les trois mois après la déclaration d'indisponibilité des dépôts.",
+     "Mobile money : la BCEAO oblige l'émetteur à placer vos fonds sur un compte dédié, dans une banque ou une institution de microfinance, pour vous rembourser. Couverture par le fonds : non indiquée."
+    ],
+    "example": "Issa a 200 000 F CFA sur un livret et 250 000 F sur un autre compte dans la même caisse : 200 000 + 250 000 = 450 000 F. Le plafond pour une institution de microfinance est de 300 000 F. Au-dessus du plafond : 450 000 − 300 000 = 150 000 F. Dans une banque, 450 000 F seraient sous le plafond de 1 400 000 F.",
+    "action": "Demandez à votre banque ou à votre caisse le formulaire d'information sur la garantie des dépôts qu'elle doit fournir aux déposants.",
+    "watchOut": "Ne comptez pas sur le fonds pour un solde de mobile money, pour l'argent d'une tontine ou gardé à la maison, ni pour les dépôts au-dessus du plafond.",
+    "aliases": [
+     "mon argent est-il en sécurité",
+     "garantie des dépôts",
+     "faillite d'une banque",
+     "la banque ferme",
+     "fgdr",
+     "argent protégé",
+     "fonds de garantie",
+     "mobile money protégé",
+     "faillite d'une caisse"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "Mission: guarantee the deposits of clients of credit institutions and SFD licensed in the UMOA; compensate depositors when their assets are unavailable, within a ceiling",
+     "source": "fgdr-umoa-statutes-2018",
+     "where": "R3-5-burkina-facts.md Item 1 ('Who is a member', Décision n°088-03-2014 art. 2); C.md VERIFIED FACTS (FGDR-UMOA)"
+    },
+    {
+     "claim": "Ceilings: 1,400,000 FCFA per holder in a credit institution; 300,000 FCFA per holder in an SFD — Décision n°009 du 30/06/2017/CM/UMOA, art. 2",
+     "source": "fgdr-umoa-ceilings-2017",
+     "where": "R3-5-burkina-facts.md Item 1 (rows 1–2)"
+    },
+    {
+     "claim": "Same ceilings in the 2022 standard information form; no later revision found",
+     "source": "fgdr-umoa-circular-2022",
+     "where": "R3-5-burkina-facts.md Item 1 (row 3 and closing paragraph)"
+    },
+    {
+     "claim": "Credit balances of accounts in the same institution are added together; payout within three months of the declaration of unavailability",
+     "source": "fgdr-umoa-circular-2022",
+     "where": "R3-5-burkina-facts.md Item 1 (rows 'Several accounts' and 'Payout delay')"
+    },
+    {
+     "claim": "Eligible deposits include sight and term deposits, passbook accounts, credit balance of current accounts, in CFA francs (Statuts art. 23)",
+     "source": "fgdr-umoa-statutes-2018",
+     "where": "R3-5-burkina-facts.md Item 1 ('Eligible deposits')"
+    },
+    {
+     "claim": "E-money counterpart funds must be placed in a dedicated account at banks or SFD and used only to reimburse holders or for placements (art. 32)",
+     "source": "bceao-emoney-2015",
+     "where": "R3-5-burkina-facts.md Item 1 (e-money paragraph) and Item 5 ('Safeguarding of customer funds')"
+    },
+    {
+     "claim": "Coverage of e-money balances by the fund: NOT STATED in any text read; members are credit institutions and SFD only",
+     "source": "fgdr-umoa-statutes-2018",
+     "where": "R3-5-burkina-facts.md Item 1 (e-money paragraph) and section 4 NOT FOUND item 1"
+    },
+    {
+     "claim": "Institutions must inform depositors: before any deposit contract, and by a statement mention or a standard form at least once a year (Circulaire art. 4)",
+     "source": "fgdr-umoa-circular-2022",
+     "where": "R3-5-burkina-facts.md Item 1 ('Institutions must tell clients')"
+    },
+    {
+     "claim": "Savings groups offer few guarantees; saving at home has no security",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md C.3 p.68"
+    },
+    {
+     "claim": "Arithmetic: 200,000 + 250,000 = 450,000; 450,000 − 300,000 = 150,000; 450,000 < 1,400,000 (fictional example)",
+     "source": "fgdr-umoa-circular-2022",
+     "where": "own calculation applying the addition rule and ceilings above"
+    }
+   ]
+  },
+  {
+   "id": "mobile-money-basics",
+   "sources": [
+    "ilo-ci-2023",
+    "findex-2025",
+    "findex-data360",
+    "bceao-emoney-2015",
+    "orange-bf",
+    "moov-bf",
+    "bclcc"
+   ],
+   "en": {
+    "title": "Use a mobile money wallet knowingly",
+    "summary": "An electronic wallet holds money on your phone number: no bank account is needed. In 2024, 44.2% of adults in Burkina Faso had a mobile money account, and 40.7% of those aged 15 to 24.",
+    "points": [
+     "An electronic wallet lets you receive, send, pay and withdraw through your phone. You only need a mobile number and a SIM card, and it keeps a record of your transactions.",
+     "Under BCEAO Instruction n°008-05-2015, the issuer must identify you with a valid official document. An identified client's balance may not exceed 2,000,000 F CFA; a minor needs a parent's or guardian's authorisation.",
+     "Fees must be accessible to you. For Orange Money Burkina, two different grids were online on 3 October 2026, neither dated; no grid was found on Moov's site. Check the current one.",
+     "Never share your PIN or a verification code, and check the name and the amount before you enter your PIN. The lessons on fraud go further."
+    ],
+    "example": "The grid shown on Orange Burkina's tariff page on 3 October 2026 gives 1% for a withdrawal. On that grid, Awa's withdrawal of 20,000 F CFA would cost 20,000 × 1% = 200 F. An older page still online gives other prices, so she reads the fee shown on her phone before confirming.",
+    "action": "Read the fee displayed on your phone before you confirm your next withdrawal, and keep the receipt message.",
+    "watchOut": "Money in a wallet earns no interest: the BCEAO rule forbids issuers to pay any. No text found says the deposit-guarantee fund covers it.",
+    "aliases": [
+     "mobile money",
+     "orange money",
+     "moov money",
+     "electronic wallet",
+     "money on my phone",
+     "withdrawal fee",
+     "mobile money limit",
+     "pin code",
+     "open a mobile money account"
+    ]
+   },
+   "fr": {
+    "title": "Utiliser le mobile money en connaissance de cause",
+    "summary": "Un portefeuille électronique garde de l'argent sur votre numéro de téléphone : pas besoin de compte bancaire. En 2024, 44,2 % des adultes du Burkina Faso avaient un compte de mobile money, et 40,7 % des 15 à 24 ans.",
+    "points": [
+     "Un portefeuille électronique permet de recevoir, envoyer, payer et retirer avec votre téléphone. Il suffit d'un numéro de mobile et d'une carte SIM, et il garde la trace de vos opérations.",
+     "Selon l'Instruction n°008-05-2015 de la BCEAO, l'émetteur doit vous identifier avec un document officiel valide. Solde maximum d'un client identifié : 2 000 000 F CFA. Mineur : autorisation d'un parent ou tuteur requise.",
+     "Les tarifs doivent vous être accessibles. Orange Money Burkina : deux grilles différentes, non datées, étaient en ligne le 3 octobre 2026 ; aucune grille sur le site de Moov. Vérifiez la grille actuelle.",
+     "Ne donnez jamais votre code PIN ni un code de vérification, et vérifiez le nom et le montant avant de saisir votre code. Les leçons sur les arnaques vont plus loin."
+    ],
+    "example": "La grille affichée sur la page des tarifs d'Orange Burkina le 3 octobre 2026 indique 1 % pour un retrait. Selon cette grille, le retrait de 20 000 F CFA d'Awa coûterait 20 000 × 1 % = 200 F. Une page plus ancienne, encore en ligne, donne d'autres prix : elle lit donc les frais affichés sur son téléphone avant de confirmer.",
+    "action": "Lisez les frais affichés sur votre téléphone avant de confirmer votre prochain retrait, et gardez le message de reçu.",
+    "watchOut": "L'argent d'un portefeuille ne rapporte pas d'intérêts : la BCEAO interdit aux émetteurs d'en verser. Aucun texte trouvé ne dit que le fonds de garantie des dépôts le couvre.",
+    "aliases": [
+     "mobile money",
+     "orange money",
+     "moov money",
+     "portefeuille électronique",
+     "argent sur mon téléphone",
+     "frais de retrait",
+     "plafond mobile money",
+     "code pin",
+     "ouvrir un compte mobile money"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "Digital wallet definition; no bank account needed, only a mobile number and SIM; automatically creates a record of spending",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.1 p.104; E.3 pp.117–118 (Portefeuille numérique)"
+    },
+    {
+     "claim": "Findex 2024 Burkina: mobile money account 44.2% of adults 15+",
+     "source": "findex-2025",
+     "where": "B.md SURVEY (p.37); R3-5-burkina-facts.md Item 9"
+    },
+    {
+     "claim": "Findex 2024 Burkina: mobile money account, age 15–24: 40.7% (40.725026)",
+     "source": "findex-data360",
+     "where": "R3-5-burkina-facts.md Item 9 (row 2); R3-7-banking-microfinance.md 3e"
+    },
+    {
+     "claim": "Identification on presentation of a valid official document before opening; minors with a parent's or guardian's authorisation (art. 27)",
+     "source": "bceao-emoney-2015",
+     "where": "R3-5-burkina-facts.md Item 5 (rows 1–2)"
+    },
+    {
+     "claim": "Balance cap for an identified client: 2 million FCFA (art. 31)",
+     "source": "bceao-emoney-2015",
+     "where": "R3-5-burkina-facts.md Item 5 (row 3)"
+    },
+    {
+     "claim": "Issuer must make tariff conditions accessible; each transaction gives an electronic receipt with reference, amount and fees (art. 30)",
+     "source": "bceao-emoney-2015",
+     "where": "R3-5-burkina-facts.md Item 5 ('Receipt for each transaction; fees accessible')"
+    },
+    {
+     "claim": "Orange Money Burkina: page read on 2026-10-03 shows withdrawal 1%, undated, intro says 'en vigueur le 1er Mars 2018'; a second older page still online shows a bracket grid; confirm the live grid before quoting",
+     "source": "orange-bf",
+     "where": "R3-5-burkina-facts.md Item 5 (Orange Money grid) and section 3 conflict 2"
+    },
+    {
+     "claim": "Moov Money Burkina fee grid: NOT FOUND on the operator's site",
+     "source": "moov-bf",
+     "where": "R3-5-burkina-facts.md Item 5 (Moov Money paragraph)"
+    },
+    {
+     "claim": "Arithmetic: 20,000 × 1% = 200",
+     "source": "orange-bf",
+     "where": "own calculation from the 1% line of the grid read on 2026-10-03"
+    },
+    {
+     "claim": "Never share your PIN; check the name and the amount before entering the PIN",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.6 p.105"
+    },
+    {
+     "claim": "BCLCC alert (via press): never give verification codes or secret codes to a third party",
+     "source": "bclcc",
+     "where": "F.md FACTS (BCLCC 2026-05-22)"
+    },
+    {
+     "claim": "Issuers may not pay interest on e-money funds (art. 5)",
+     "source": "bceao-emoney-2015",
+     "where": "R3-5-burkina-facts.md Item 5 ('No interest on e-money')"
+    },
+    {
+     "claim": "Deposit-guarantee coverage of e-money balances is not stated in any text read",
+     "source": "bceao-emoney-2015",
+     "where": "R3-5-burkina-facts.md Item 1 (e-money paragraph)"
+    }
+   ]
+  },
+  {
+   "id": "send-and-receive-money",
+   "sources": [
+    "ilo-ci-2023",
+    "bceao-emoney-2015",
+    "orange-bf"
+   ],
+   "en": {
+    "title": "Send and receive money safely",
+    "summary": "A transfer moves money from one place to another. Before choosing how to send, compare cost, speed, safety and distance for you and for the person receiving, and keep the proof.",
+    "points": [
+     "There are three formal ways: a money transfer company, where you fill in a form and the receiver shows an identity document; a transfer from your bank account; or your electronic wallet.",
+     "Compare what the sender pays, what the receiver pays to collect, how far each of you must travel, how safe it is and how fast the money arrives.",
+     "Formal operators are regulated and supervised by the State: safer and more reliable, but sometimes far or costly. A driver or a trader is close and simple, with a risk of theft.",
+     "Keep the proof. Every electronic money transaction must produce an electronic receipt showing its reference number, the amount and the fees. Tell the receiver the amount you sent."
+    ],
+    "example": "Salif sends 15,000 F CFA to his mother's wallet. The grid shown on Orange Burkina's site on 3 October 2026 gives 0 F between two Orange Money accounts and 1% for a withdrawal: 15,000 × 1% = 150 F. He tells her: 15,000 F sent, about 150 F to withdraw it all. This grid is undated, so he checks the fee displayed.",
+    "action": "Ask, before your next transfer, what you will pay to send and what the receiver will pay to collect.",
+    "watchOut": "Cash handed to a traveller or a driver leaves no proof, and it can be stolen or never arrive.",
+    "aliases": [
+     "send money",
+     "receive money",
+     "money transfer",
+     "send money to family",
+     "transfer fees",
+     "send money to the village",
+     "proof of transfer",
+     "cheapest way to send money"
+    ]
+   },
+   "fr": {
+    "title": "Envoyer et recevoir de l'argent en sécurité",
+    "summary": "Un transfert fait passer de l'argent d'un endroit à un autre. Avant de choisir comment envoyer, comparez le coût, la rapidité, la sécurité et la distance pour vous et pour la personne qui reçoit, et gardez la preuve.",
+    "points": [
+     "Il y a trois moyens formels : une société de transfert d'argent, où vous remplissez un formulaire et le destinataire présente une pièce d'identité ; un virement depuis votre compte bancaire ; votre portefeuille électronique.",
+     "Comparez ce que paie l'expéditeur, ce que paie le destinataire pour retirer, la distance à parcourir pour chacun, la sécurité et la rapidité d'arrivée de l'argent.",
+     "Les opérateurs formels sont réglementés et supervisés par l'État : plus sûrs et fiables, mais parfois éloignés ou coûteux. Un chauffeur ou un commerçant est proche et simple, avec un risque de vol.",
+     "Gardez la preuve. Toute opération de monnaie électronique doit produire un reçu électronique avec son numéro de référence, le montant et les frais. Dites au destinataire le montant envoyé."
+    ],
+    "example": "Salif envoie 15 000 F CFA sur le portefeuille de sa mère. La grille affichée sur le site d'Orange Burkina le 3 octobre 2026 indique 0 F entre deux comptes Orange Money et 1 % pour un retrait : 15 000 × 1 % = 150 F. Il lui dit : 15 000 F envoyés, environ 150 F pour tout retirer. Cette grille n'est pas datée : il vérifie les frais affichés.",
+    "action": "Demandez, avant votre prochain transfert, ce que vous paierez pour envoyer et ce que le destinataire paiera pour retirer.",
+    "watchOut": "L'argent liquide confié à un voyageur ou à un chauffeur ne laisse aucune preuve, et il peut être volé ou ne jamais arriver.",
+    "aliases": [
+     "envoyer de l'argent",
+     "recevoir de l'argent",
+     "transfert d'argent",
+     "envoyer de l'argent à la famille",
+     "frais de transfert",
+     "envoyer de l'argent au village",
+     "preuve de transfert",
+     "moyen le moins cher d'envoyer de l'argent"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "A transfer moves money from one place to another (quiz E3 key)",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.1 and E.5 (quiz E3)"
+    },
+    {
+     "claim": "Three methods: money transfer operator (form, beneficiary identified, shows ID), bank home-banking transfer, digital wallet",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.3 pp.112–113 (Support E.3.1)"
+    },
+    {
+     "claim": "Criteria: cost of sending (paid by sender), cost of receiving (paid by receiver), geographic proximity for both, safety, speed",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.3 p.108"
+    },
+    {
+     "claim": "Formal operators are regulated and supervised by the State; informal ones (shopkeepers, drivers, friends and family) are not; pros and cons of each",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.1 p.107; E.3 p.120"
+    },
+    {
+     "claim": "Every e-money transaction must give an electronic receipt with reference number, amount and fees (art. 30)",
+     "source": "bceao-emoney-2015",
+     "where": "R3-5-burkina-facts.md Item 5 ('Receipt for each transaction')"
+    },
+    {
+     "claim": "Inform the beneficiary of the amount transferred; explain the amount sent and the agent's commission on withdrawal",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.3 p.112; E.4 p.103"
+    },
+    {
+     "claim": "Orange Money Burkina grid read 2026-10-03: transfer between Orange Money accounts 0; withdrawal 1%; page undated and in conflict with an older grid",
+     "source": "orange-bf",
+     "where": "R3-5-burkina-facts.md Item 5 (Orange Money grid) and section 3 conflict 2"
+    },
+    {
+     "claim": "Arithmetic: 15,000 × 1% = 150",
+     "source": "orange-bf",
+     "where": "own calculation from the 1% line of the grid read on 2026-10-03"
+    },
+    {
+     "claim": "Questions for an operator: cost of a transfer; will the receiver pay extra fees on receipt",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.6 p.116"
+    },
+    {
+     "claim": "Cash entrusted to a traveller never reached the family; cash leaves no proof; informal operators: risk of theft",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md E.4 p.106; E.3 pp.117 and 120"
+    }
+   ]
+  },
+  {
+   "id": "choose-your-institution",
+   "sources": [
+    "fdic-msya",
+    "cfpb-ymyg",
+    "ilo-ci-2023",
+    "bpbf",
+    "coris-bank"
+   ],
+   "en": {
+    "title": "Choose an institution that fits your needs",
+    "summary": "Start from what you need the institution for, then compare a few on the same checklist: distance, reputation, services, fees and how they treat clients. Ask each one for its price list.",
+    "points": [
+     "Start with your needs before you look at products: keeping savings safe, receiving a salary, paying bills, sending money to family. Then find out the services offered and the fees charged.",
+     "Check the institution: how close it is, its reputation and reliability, its remote services and their cost, waiting time, respect for clients, languages spoken, and its conditions for joining.",
+     "Check the product: conditions to open it, access to your money, fees and penalties, interest rate, security. The interest rate is only one aspect among many.",
+     "Ask for the price list and whether fees are displayed on the premises. If a fee or a rate is not published, ask for it in writing."
+    ],
+    "example": "Aminata sells at the market. Two published lists give the monthly keeping fee of a cheque account for a non-salaried person, before tax: 1,500 F CFA (Banque Postale, site read in 2026) and 2,000 F (Coris Bank, September 2026). Over a year: 1,500 × 12 = 18,000 F; 2,000 × 12 = 24,000 F. Difference: 6,000 F. She also compares distance and service.",
+    "action": "Write down your three main needs, then ask two institutions near you for their price list.",
+    "watchOut": "Bank employees are often salespeople. You are the customer: if you do not understand something, ask again until it is clear.",
+    "aliases": [
+     "choose a bank",
+     "which bank",
+     "best bank",
+     "bank or microfinance",
+     "compare banks",
+     "price list",
+     "compare fees",
+     "where to open an account"
+    ]
+   },
+   "fr": {
+    "title": "Choisir une institution adaptée à vos besoins",
+    "summary": "Partez de ce que vous attendez de l'institution, puis comparez-en quelques-unes avec la même liste : distance, réputation, services, frais et accueil des clients. Demandez à chacune sa liste de tarifs.",
+    "points": [
+     "Partez de vos besoins, pas des produits : garder votre épargne en sécurité, recevoir un salaire, payer des factures, envoyer de l'argent à la famille. Puis renseignez-vous sur les services et les frais.",
+     "Vérifiez l'institution : sa proximité, sa réputation et sa fiabilité, ses services à distance et leur coût, le temps d'attente, le respect des clients, les langues parlées, et ses conditions d'adhésion.",
+     "Vérifiez le produit : conditions d'ouverture, accès à votre argent, frais et pénalités, taux d'intérêt, sécurité. Le taux d'intérêt n'est qu'un aspect parmi beaucoup d'autres.",
+     "Demandez la liste des tarifs et si les frais sont affichés dans les locaux. Si un frais ou un taux n'est pas publié, demandez-le par écrit."
+    ],
+    "example": "Aminata vend au marché. Deux listes publiées donnent les frais mensuels de tenue d'un compte chèque pour un non-salarié, hors taxes : 1 500 F CFA (Banque Postale, site lu en 2026) et 2 000 F (Coris Bank, septembre 2026). Sur un an : 1 500 × 12 = 18 000 F ; 2 000 × 12 = 24 000 F. Écart : 6 000 F. Elle compare aussi la distance et le service.",
+    "action": "Écrivez vos trois besoins principaux, puis demandez leur liste de tarifs à deux institutions proches de chez vous.",
+    "watchOut": "Les employés de banque sont souvent des commerciaux. Vous êtes le client : si vous ne comprenez pas quelque chose, redemandez jusqu'à ce que ce soit clair.",
+    "aliases": [
+     "choisir une banque",
+     "quelle banque",
+     "meilleure banque",
+     "banque ou microfinance",
+     "comparer les banques",
+     "liste des tarifs",
+     "comparer les frais",
+     "où ouvrir un compte"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "Consider your needs before you select financial products and services; checklist of financial management needs (save safely, pay bills, send money to family)",
+     "source": "fdic-msya",
+     "where": "T1.md (1) [FDIC M1]"
+    },
+    {
+     "claim": "First think about the reason you need a product; when choosing a bank find out the services it offers and the fees it charges",
+     "source": "cfpb-ymyg",
+     "where": "T1.md (8) [CFPB p.184]"
+    },
+    {
+     "claim": "Institution checklist: proximity, reputation and reliability, remote services and costs, quality of service (waiting time, respect, languages), membership conditions, transparency of prices",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.3 pp.123–126"
+    },
+    {
+     "claim": "Product checklist: opening conditions, access/flexibility of withdrawals, costs (fees, penalties), interest rate, security",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.3 pp.123–126"
+    },
+    {
+     "claim": "The interest rate is only one aspect among many",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.2 Messages clés p.127"
+    },
+    {
+     "claim": "Question: are fees and conditions displayed on the institution's premises?",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.6 pp.124–126"
+    },
+    {
+     "claim": "Some rates are not published (loan interest rates at RCPB, Baobab entrepreneur loans, YIKRI, BPBF loans)",
+     "source": "coris-bank",
+     "where": "R3-7-banking-microfinance.md 3c ('NOT published' lines) and section 5"
+    },
+    {
+     "claim": "BPBF 'Chèque secteur informel': account-keeping fee 1,500 FCFA HT per month",
+     "source": "bpbf",
+     "where": "R3-7-banking-microfinance.md 3c Banque Postale du Burkina Faso (S14)"
+    },
+    {
+     "claim": "Coris: account-keeping fee (monthly) for non-salaried clients 2,000; tariffs before tax",
+     "source": "coris-bank",
+     "where": "R3-7-banking-microfinance.md 3c Coris Bank International (S17); 1b general rule"
+    },
+    {
+     "claim": "Arithmetic: 1,500 × 12 = 18,000; 2,000 × 12 = 24,000; 24,000 − 18,000 = 6,000",
+     "source": "coris-bank",
+     "where": "own calculation from the two figures above"
+    },
+    {
+     "claim": "Bank employees are often salespeople",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md C.3 p.68 (Formelles, inconvénients)"
+    },
+    {
+     "claim": "'Don't be intimidated. You're the customer.' If you don't understand, ask to have it explained again",
+     "source": "cfpb-ymyg",
+     "where": "T1.md (8) [CFPB p.230]"
+    }
+   ]
+  },
+  {
+   "id": "your-rights-as-a-client",
+   "sources": [
+    "umoa-banking-law",
+    "umoa-microfinance-law",
+    "bceao-payment-services-2024",
+    "ilo-ci-2023",
+    "commission-bancaire-complaints-2020",
+    "oqsf-bf",
+    "coris-bank"
+   ],
+   "en": {
+    "title": "Know your rights as a client",
+    "summary": "As a client you have responsibilities, and also rights: clear information, respectful treatment, privacy and an answer to your complaints. Complain to the institution first; other routes exist afterwards.",
+    "points": [
+     "Transparency: the regional banking and microfinance laws require institutions to give clients clear, exact, sufficient and timely information, in particular on prices and conditions.",
+     "Respect and privacy: the microfinance law requires staff to treat clients respectfully and without discrimination, and to keep personal data confidential during and after the relationship.",
+     "Complain to the institution first. Under Circular n°002-2020/CB/C, it must give you a receipt and answer within one month at most, and handling the complaint is free.",
+     "Not satisfied, or no answer: write to the Banking Commission of the UMOA, or choose free mediation by the OQSF-BF, the Burkinabè observatory of financial services. Not both at once."
+    ],
+    "example": "Rasmané's statement shows 1,000 F CFA charged twice for one document: 2 × 1,000 = 2,000 F taken, 2,000 − 1,000 = 1,000 F too much. He files a written complaint on 3 March and gets a receipt dated that day. The institution must answer by 3 April at the latest.",
+    "action": "Find out where and how your institution receives complaints, and write it down.",
+    "watchOut": "Keep the receipt of your complaint: its date starts the one-month delay. The OQSF-BF's contact details were not found: ask your institution for them in writing.",
+    "aliases": [
+     "my rights",
+     "complaint",
+     "complain about my bank",
+     "bank took my money",
+     "wrong fee",
+     "mediation",
+     "oqsf",
+     "banking commission",
+     "client protection"
+    ]
+   },
+   "fr": {
+    "title": "Connaître vos droits de client",
+    "summary": "Comme client, vous avez des responsabilités, mais aussi des droits : une information claire, un traitement respectueux, la confidentialité et une réponse à vos réclamations. Réclamez d'abord auprès de l'institution ; d'autres recours existent ensuite.",
+    "points": [
+     "Transparence : les lois régionales sur la banque et la microfinance obligent les institutions à donner aux clients des informations claires, exactes, suffisantes et à temps, notamment sur les tarifs et les conditions.",
+     "Respect et confidentialité : la loi sur la microfinance oblige le personnel à traiter les clients avec respect et sans discrimination, et à garder leurs données personnelles confidentielles pendant et après la relation.",
+     "Réclamez d'abord auprès de l'institution. Selon la Circulaire n°002-2020/CB/C, elle doit vous remettre un récépissé et répondre dans un délai d'un mois au plus, et le traitement est gratuit.",
+     "Pas satisfait, ou pas de réponse : écrivez à la Commission Bancaire de l'UMOA, ou choisissez la médiation gratuite de l'OQSF-BF, l'observatoire burkinabè des services financiers. Pas les deux en même temps."
+    ],
+    "example": "Le relevé de Rasmané montre 1 000 F CFA facturés deux fois pour un seul document : 2 × 1 000 = 2 000 F prélevés, 2 000 − 1 000 = 1 000 F de trop. Il dépose une réclamation écrite le 3 mars et reçoit un récépissé daté du jour. L'institution doit répondre au plus tard le 3 avril.",
+    "action": "Renseignez-vous sur le lieu et la manière dont votre institution reçoit les réclamations, et notez-les.",
+    "watchOut": "Gardez le récépissé de votre réclamation : sa date fait courir le délai d'un mois. Les coordonnées de l'OQSF-BF n'ont pas été trouvées : demandez-les par écrit à votre institution.",
+    "aliases": [
+     "mes droits",
+     "réclamation",
+     "se plaindre de sa banque",
+     "la banque a coupé mon argent",
+     "frais injustifiés",
+     "médiation",
+     "oqsf",
+     "commission bancaire",
+     "protection du client"
+    ]
+   },
+   "evidence": [
+    {
+     "claim": "As a client of a financial institution you have responsibilities, but also rights",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.2 p.128"
+    },
+    {
+     "claim": "Licensed institutions must give clients clear, exact, sufficient and timely information, notably on pricing and conditions (banking law art. 139, model text)",
+     "source": "umoa-banking-law",
+     "where": "R3-5-burkina-facts.md Item 2 (consumer-protection table, 'Transparency on fees')"
+    },
+    {
+     "claim": "Same duty for microfinance institutions (art. 91 a); respectful treatment without discrimination (art. 91 f)",
+     "source": "umoa-microfinance-law",
+     "where": "R3-7-banking-microfinance.md 1d (S6, art. 91)"
+    },
+    {
+     "claim": "Confidentiality of clients' personal data during and after the commercial relationship (art. 92)",
+     "source": "umoa-microfinance-law",
+     "where": "R3-7-banking-microfinance.md 1d (S6, art. 92)"
+    },
+    {
+     "claim": "Client-protection principles include transparency, fair and respectful treatment, complaint resolution, confidentiality of client data",
+     "source": "ilo-ci-2023",
+     "where": "ILO-CI.md F.3 pp.136, 142–144"
+    },
+    {
+     "claim": "Payment-service fees must be displayed visibly on the premises (art. 53)",
+     "source": "bceao-payment-services-2024",
+     "where": "R3-5-burkina-facts.md Item 2 ('Payment services: fees must be displayed')"
+    },
+    {
+     "claim": "Circulaire n°002-2020/CB/C (in force 18 Sept 2020): receipt on filing (art. 6); answer within one month at most (art. 7); handling free (art. 8); scope: credit institutions, SFD under Banking Commission control, e-money institutions (art. 2)",
+     "source": "commission-bancaire-complaints-2020",
+     "where": "R3-5-burkina-facts.md Item 2 (complaints circular rows)"
+    },
+    {
+     "claim": "Complain to the institution first, then the Banking Commission or mediation by the national body, notably the OQSF (banking law art. 141; microfinance law art. 96: supervisory authority or mediation)",
+     "source": "umoa-banking-law",
+     "where": "R3-5-burkina-facts.md Item 2 ('Complaint route'); R3-7-banking-microfinance.md 1d (S6, art. 96)"
+    },
+    {
+     "claim": "Unsatisfied client or no answer in the delay may refer to the Banking Commission (art. 11); the case must not be under examination by another body, in particular OQSF mechanisms (art. 12)",
+     "source": "commission-bancaire-complaints-2020",
+     "where": "R3-5-burkina-facts.md Item 2 ('Escalation' and 'Not both routes at once')"
+    },
+    {
+     "claim": "Mediation by the OQSF is free (banking law art. 143); OQSF-BF mediation described as free by the press (Sidwaya 2023; allAfrica 2025)",
+     "source": "oqsf-bf",
+     "where": "R3-5-burkina-facts.md Item 2 ('Mediation is free') and Item 10; R3-7-banking-microfinance.md 1d (S29)"
+    },
+    {
+     "claim": "OQSF-BF address, phone, e-mail and procedure: NOT FOUND",
+     "source": "oqsf-bf",
+     "where": "R3-5-burkina-facts.md Item 10 (NOT FOUND line)"
+    },
+    {
+     "claim": "Fictional example; 1,000 as the price of an on-demand paper statement appears in a published tariff",
+     "source": "coris-bank",
+     "where": "R3-7-banking-microfinance.md 3c Coris (S17: 'Relevés de compte — A la demande — Papier 1 000')"
+    },
+    {
+     "claim": "Arithmetic: 2 × 1,000 = 2,000; 2,000 − 1,000 = 1,000; one month from 3 March = 3 April",
+     "source": "commission-bancaire-complaints-2020",
+     "where": "own calculation applying art. 7 (one month from the date of the receipt)"
+    }
+   ]
+  }
+ ],
+ "leftOut": [
+  "Mobile money account ceilings by identification level at the operators (Orange Money, Moov Money): not published on the pages read; only the BCEAO caps for identified and non-identified holders are known.",
+  "Fee grids of Moov Money, Wave, Coris Money, Telecel, Wizall and BMoney: not found or not searched; only the two conflicting Orange Money pages exist in the notes.",
+  "Whether the deposit-guarantee fund covers a mobile money balance: not stated in any text read; the lesson says so and does not conclude.",
+  "The OQSF-BF's address, phone number, e-mail and filing procedure, and the text of its creating decree: not found (press reports only).",
+  "The text and article numbers of Burkina's own microfinance law (reported by the press as loi n°001-2025/ALT) and the national transposition of the banking law: not read; lessons cite the regional model laws.",
+  "Interest rates and loan fees of microfinance institutions in Burkina (RCPB, Baobab entrepreneur loans, YIKRI): not published; left out.",
+  "The split of the RCPB joining amount into share capital and entry fee: the brochure gives one amount only; no split taught.",
+  "The right to an account written in the regional banking law: model text only, Burkina adoption not found; left out of the rights lesson.",
+  "Documents required to open an account at Coris Bank, Bank of Africa, Ecobank: not listed on the pages read.",
+  "A Burkina country table for microfinance at 31 December 2025: not found; the latest table is 30 September 2025.",
+  "The official list of authorised microfinance institutions (120 structures, press only): the list itself and its URL were not read; not presented as a fact."
+ ]
+}

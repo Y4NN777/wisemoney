@@ -32,7 +32,8 @@
 - `docs/THREAT_MODEL.md` — STRIDE security threat model
 - `docs/diagrams/C4/` — C4 diagrams (Context / Container / Component)
 - `docs/adr/` — architecture decision records (ADR-0001…0013)
-- `docs/literacy/corpus-v0.md` — literacy corpus inventory (32 units, editorial draft)
+- `docs/literacy/course-v1.md` — literacy course: 77 lessons and their sources; `evidence-v1.md`
+  traces each claim; research logs in `docs/research/2026-10-03-*.md`
 - `docs/api/learn.openapi.yaml` — literacy tutor gateway contract
 - `docs/runbooks/` — operational runbooks (mixed: active local procedures +
   pre-production outlines)
@@ -60,7 +61,8 @@
   after setup from Settings › Security, sealed refresh-token session store, BYO-key
   settings, import/export, and consent/redaction modules. One-step onboarding
   (landing → passphrase → app).
-- **Literacy:** `/learn` shows 32 bilingual lessons (offline) and a tutor on Gemma through
+- **Literacy:** `/learn` shows 77 bilingual lessons in eight parts (offline), written only from
+  cited sources (`apps/web/content/literacy/`, built by `tools/literacy/assemble.py`), and a tutor on Gemma through
   `api/learn` (closed schema, zero vault egress, own consent, optional web search); the
   lesson answers on the device when offline, unconfigured, or before consent.
 - **AI orchestration:** Managed path attaches Bearer auth, `X-Egress-Level`,
@@ -110,7 +112,8 @@
 - Implement BYO direct-provider orchestration.
 - Server functions run on Node 20 (root `engines`), which is past end of life; move to a
   current LTS as its own change. Add a post-deploy probe of `/api/help` and `/api/learn`.
-- Literacy corpus v0: local expert review before removing the "not yet reviewed" line.
+- Literacy course v1: local expert review before removing the "not yet reviewed" line; get the
+  two Burkinabè booklets from their official publishers; ask brokers for fee grids.
 - Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
 - Activity page date presets (day/week/month), then drop `TransactionActivity` from Home.
 

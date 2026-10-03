@@ -1,6 +1,6 @@
 # Literacy course — sourced outline v1 (for approval)
 
-Quadrant: Reference · Date: 2026-10-03 · Status: **PROPOSED — no lesson is written until Y4NN approves this outline** · Sources: `docs/research/2026-10-03-financial-intelligence-curriculum.md` (spine, local facts), `docs/research/2026-10-03-teaching-content-sources.md` (teaching material; tags below refer to it).
+Quadrant: Reference · Date: 2026-10-03 · Status: **Superseded on 2026-10-03 by `course-v1.md`** after the retry round and Y4NN's go-ahead ("on fera avec ce qu'on a"); kept for the record of the decisions it lists · Sources: `docs/research/2026-10-03-financial-intelligence-curriculum.md` (spine, local facts), `docs/research/2026-10-03-teaching-content-sources.md` (teaching material; tags below refer to it).
 
 Scope (Y4NN, 2026-10-03): financial intelligence as a whole for complete beginners — understanding and managing money, saving, borrowing, protecting, investing, portfolio — not investing alone, nothing invented. Rule for writing: every lesson is written in our own words from the sources listed on its line, cites them, and recomputes every figure; a line marked **blocked** is not written.
 

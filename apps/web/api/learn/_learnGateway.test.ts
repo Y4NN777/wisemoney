@@ -47,14 +47,14 @@ describe("literacy tutor gateway", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const response = await sendLearnMessage(request({
-      question: "Is sports betting a good way to earn money?",
+      question: "How do I build a budget for the month?",
       locale: "en",
       history: [{ role: "assistant", text: "Welcome." }],
     }));
 
     expect(response.status).toBe(200);
     const events = await response.text();
-    expect(events).toContain('event: meta\ndata: {"unitIds":["betting"');
+    expect(events).toMatch(/event: meta\ndata: \{"unitIds":\[[^\]]*"build-a-budget"/);
     expect(events).toContain('"webSearch":false');
     expect(events).toContain('event: delta\ndata: {"text":"Players lose on average."}');
     expect(events.endsWith("event: done\ndata: {}\n\n")).toBe(true);
@@ -65,7 +65,7 @@ describe("literacy tutor gateway", () => {
     expect(JSON.stringify(sent.body)).not.toContain("help-project-token");
     expect(sent.body.tools).toBeUndefined();
     const instruction = sent.body.systemInstruction.parts[0]!.text;
-    expect(instruction).toContain("Betting is not an income");
+    expect(instruction).toContain("Build your first budget");
     expect(instruction).toContain("Teach, do not advise");
     expect(instruction).toContain("Never ask about the learner's own money");
     expect(instruction).toContain("Never state current fees, rates, limits, or regulations");
@@ -75,11 +75,11 @@ describe("literacy tutor gateway", () => {
   it("answers in French from the French corpus and honours requested unit ids", async () => {
     const fetchMock = vi.fn().mockResolvedValue(providerStream(answer));
     vi.stubGlobal("fetch", fetchMock);
-    const response = await sendLearnMessage(request({ question: "Explique-moi ça", locale: "fr", unitIds: ["compound-interest"] }));
-    expect(await response.text()).toContain('"unitIds":["compound-interest"]');
+    const response = await sendLearnMessage(request({ question: "Explique-moi ça", locale: "fr", unitIds: ["interest-and-time"] }));
+    expect(await response.text()).toContain('"unitIds":["interest-and-time"]');
     const instruction = sentBody(fetchMock).body.systemInstruction.parts[0]!.text;
     expect(instruction).toContain("in French");
-    expect(instruction).toContain("Intérêts composés");
+    expect(instruction).toContain("Voir les intérêts grandir avec le temps");
   });
 
   it.each([

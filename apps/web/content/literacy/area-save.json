@@ -1,0 +1,1210 @@
+{
+  "area": "save",
+  "sourceRegistry": {
+    "ilo-ci-2023": {
+      "name": "ILO — Éducation financière pour les cultivateurs et les travailleurs ruraux en Côte d'Ivoire, Livret de l'apprenant (2023)",
+      "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_emp/%40emp_ent/documents/instructionalmaterial/wcms_900276.pdf"
+    },
+    "st-pif-2023": {
+      "name": "ST-PIF (Burkina Faso) — Cahier du participant, Séminaire de formation en éducation financière (December 2023; read from an unofficial Scribd upload)",
+      "url": "https://fr.scribd.com/document/744857863/inclusion-financiere"
+    },
+    "dgjep-2018": {
+      "name": "Ministère de la Jeunesse, DGJEP (Burkina Faso) — Formation des jeunes promoteurs en éducation financière, Cahier de Participant (April 2018; read from an unofficial Scribd upload)",
+      "url": "https://fr.scribd.com/document/898056788/Cahier-Participant"
+    },
+    "banque-de-france": {
+      "name": "Banque de France — ABC de l'économie « Inflation et déflation » (September 2023); L'éco en bref « Taux d'intérêt nominal et réel » (07.2026)",
+      "url": "https://banque-france.fr/system/files/2024-08/eeb-inflation-deflation.pdf"
+    },
+    "banque-de-france-mqda": {
+      "name": "Banque de France — Mes questions d'argent: « Pourquoi épargner ? »; « Économisez 1001€ en 1 an, le défi EDUCFI » (undated pages, read 2026)",
+      "url": "https://www.mesquestionsdargent.fr/epargne-et-placements/pourquoi-epargner"
+    },
+    "findex-2025": {
+      "name": "World Bank — The Little Data Book on Financial Inclusion 2025 (Global Findex 2025, survey year 2024)",
+      "url": "https://thedocs.worldbank.org/en/doc/be6615202d1f08a25855c8ac2d615122-0050012025/related/Little-Data-Book-2025-Web.pdf"
+    },
+    "cfpb-ymyg": {
+      "name": "CFPB — Your Money, Your Goals: A financial empowerment toolkit (June 2020)",
+      "url": "https://files.consumerfinance.gov/f/documents/cfpb_your-money-your-goals_financial-empowerment_toolkit.pdf"
+    },
+    "cfpb-emergency-fund": {
+      "name": "CFPB — An essential guide to building an emergency fund (page last modified 29 October 2025)",
+      "url": "https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/"
+    },
+    "fdic-money-smart": {
+      "name": "FDIC — Money Smart for Adults, Module 5: Your Savings, Participant Guide (September 2018)",
+      "url": "https://www.fdic.gov/consumer-resource-center/money-smart-adults"
+    },
+    "sec-roadmap": {
+      "name": "US SEC — Saving and Investing: A Roadmap To Your Financial Security Through Saving and Investing (SEC Pub. 009, 06/11)",
+      "url": "https://www.sec.gov/investor/pubs/sec-guide-to-savings-and-investing.pdf"
+    },
+    "moneyhelper-uk": {
+      "name": "UK MoneyHelper (MaPS) — Managing your money, beginner's guide (archived copy of 19 August 2026)",
+      "url": "https://web.archive.org/web/20260819164856/https://www.moneyhelper.org.uk/en/everyday-money/budgeting/beginners-guide-to-managing-your-money"
+    },
+    "jpal-ipa": {
+      "name": "J-PAL — Policy Bulletin \"Commitments to Save\" (May 2021) and J-PAL evaluation summary pages (read 2026-10-03)",
+      "url": "https://www.povertyactionlab.org/sites/default/files/publication/Commitment-Savings-Bulletin-5.21.21.pdf"
+    },
+    "care-vsla": {
+      "name": "CARE — Village Savings and Loan Associations Training Manual (revised December 2025)",
+      "url": "https://www.care.org/wp-content/uploads/2026/01/CARE-VSLA-Manual.pdf"
+    },
+    "burkina24-tontine": {
+      "name": "Burkina24 (press) — Tontine en ligne : Risquer le paquet pour du CFA craquant ! (28 April 2024)",
+      "url": "https://burkina24.com/2024/04/28/tontine-en-ligne-risquer-le-paquet-pour-du-cfa-craquant/"
+    },
+    "umoa-savings-2014": {
+      "name": "UMOA Council of Ministers — Décision n° CM/UMOA/016/09/2014 on the remuneration of regulated savings products (signed 24 September 2014, in force 1 January 2015)",
+      "url": "https://www.cb-umoa.org/sites/default/files/2025-01/Decision%20portant%20conditions%20de%20remuneration%20des%20produits%20d%20epargne%20reglementes.pdf"
+    },
+    "fgdr-umoa": {
+      "name": "BCEAO — Présentation du Fonds de Garantie des Dépôts et de Résolution dans l'UMOA (Dakar, 28 October 2019)",
+      "url": "https://www.bceao.int/sites/default/files/inline-files/Pr%C3%A9sentation%20du%20Fonds%20de%20Garantie%20des%20D%C3%A9p%C3%B4ts%20et%20R%C3%A9solution%20dans%20l'UEMOA.pdf"
+    },
+    "rcpb": {
+      "name": "RCPB / FCPB — Plaquette RCPB 2025 (Réseau des Caisses Populaires du Burkina)",
+      "url": "https://rcpb.bf/wp-content/uploads/2026/01/Plaquette_RCPB_VF_2025.pdf"
+    },
+    "bpbf": {
+      "name": "Banque Postale du Burkina Faso — product sheet « Epargne BPBF » (site, copyright 2024)",
+      "url": "https://www.banquepostale.bf/"
+    },
+    "coris-bank": {
+      "name": "Coris Bank International (Burkina) — Conditions de banque CBI SA (PDF dated September 2026)",
+      "url": "https://burkina.coris.bank/wp-content/uploads/2026/09/Conditions-de-Banque-CBI-SA-A4-Septembre-2026.pdf"
+    },
+    "la-poste-bf": {
+      "name": "La Poste Burkina Faso — Épargne ordinaire (undated page, read 2026)",
+      "url": "https://laposte.bf/epargne-ordinaire/"
+    },
+    "iefp": {
+      "name": "IEFP, La finance pour tous — Intérêts simples et intérêts composés, student module (2022)",
+      "url": "https://www.lafinancepourtous.com/wp-content/uploads/2011/09/3_module-math_interets-simples-composes-eleve.pdf"
+    },
+    "amf-fr": {
+      "name": "AMF (France) — Bien diversifier son épargne pour atteindre ses objectifs (19 October 2023)",
+      "url": "https://www.amf-france.org/sites/institutionnel/files/pdf/71321/fr/Bien_diversifier_son_epargne_pour_atteindre_ses_objectifs.pdf"
+    },
+    "ecb": {
+      "name": "European Central Bank — What is inflation? / Qu'est-ce que l'inflation ? (explainer, read 2026)",
+      "url": "https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me-more/html/what_is_inflation.en.html"
+    },
+    "umoa-fgd-ceilings-2017": {
+      "name": "UMOA Council of Ministers — Décision n°009 du 30/06/2017/CM/UMOA fixant les taux de contribution des adhérents au FGD-UMOA et les plafonds d'indemnisation (30 June 2017)",
+      "url": "https://www.fgd-umoa.org/wp-content/uploads/2024/10/Decision-du-CM-relative-aux-taux-de-contribution-et-aux-plafonds-d-indemnistation-2-1.pdf"
+    },
+    "fgdr-umoa-circular-2022": {
+      "name": "FGDR-UMOA — Circulaire n°005/2022/FGDR-UMOA relative aux modalités d'information des déposants, with annex form (14 January 2022)",
+      "url": "https://www.fgd-umoa.org/wp-content/uploads/2024/09/circulaire-n_005-relative-aux-modalites-dinformation.pdf"
+    },
+    "fgdr-umoa-statutes-2018": {
+      "name": "FGDR-UMOA — Statuts du Fonds (2018)",
+      "url": "https://www.fgd-umoa.org/wp-content/uploads/2024/09/Statuts-FGDR-UMOA-2018-1-min-compresse.pdf"
+    }
+  },
+  "lessons": [
+    {
+      "id": "why-save",
+      "sources": [
+        "ilo-ci-2023",
+        "st-pif-2023",
+        "banque-de-france-mqda",
+        "findex-2025"
+      ],
+      "en": {
+        "title": "Know why you are saving",
+        "summary": "Saving is money you put aside now to use later. It protects you in an emergency, pays for your projects and prepares your later life.",
+        "points": [
+          "Saving means not spending everything you receive. You put part of it aside now, in small or larger sums, regularly or from time to time, to use later.",
+          "Savings serve three purposes: a reserve for the unexpected, money for a project such as training or equipment, and money for the years when you no longer work.",
+          "Saving gives security. With a reserve, a small emergency does not force you to borrow at a high interest rate, meaning a high price paid to the lender.",
+          "You are not alone: in a 2024 World Bank survey, 56.0% of adults in Burkina Faso said they had saved. Only 27.7% could cover more than two months without income."
+        ],
+        "example": "Awa wants 60,000 F CFA for a training course in 6 months. 60,000 ÷ 6 = 10,000 F to put aside each month. If she can only manage 6,000 F a month: 60,000 ÷ 6,000 = 10 months. She keeps the goal and moves the date.",
+        "action": "Write down one thing you are saving for, what it costs and the date you need the money.",
+        "watchOut": "A savings plan can be frustrating when you cannot put aside as much as you want. Do not give up: adjust the amount or the date.",
+        "aliases": [
+          "why save",
+          "saving money",
+          "put money aside",
+          "what is saving",
+          "savings goal",
+          "security",
+          "money for later",
+          "savings plan"
+        ]
+      },
+      "fr": {
+        "title": "Savoir pourquoi vous épargnez",
+        "summary": "Épargner, c'est mettre de l'argent de côté maintenant pour l'utiliser plus tard. L'épargne vous protège en cas d'urgence, finance vos projets et prépare vos vieux jours.",
+        "points": [
+          "Épargner, c'est ne pas dépenser tout ce que vous recevez. Vous en gardez une partie, petite ou grande, régulièrement ou de temps en temps, pour plus tard.",
+          "L'épargne a trois usages : une réserve pour les imprévus, de l'argent pour un projet comme une formation ou du matériel, et de l'argent pour les années où vous ne travaillerez plus.",
+          "Épargner procure de la sécurité. Avec une réserve, une petite urgence ne vous oblige pas à emprunter à un taux d'intérêt élevé, c'est-à-dire en payant cher le prêteur.",
+          "Vous n'êtes pas seul : dans une enquête de la Banque mondiale de 2024, 56,0 % des adultes du Burkina Faso disaient avoir épargné. Seuls 27,7 % pouvaient tenir plus de deux mois sans revenu."
+        ],
+        "example": "Awa veut 60 000 F CFA pour une formation dans 6 mois. 60 000 ÷ 6 = 10 000 F à mettre de côté chaque mois. Si elle ne peut mettre que 6 000 F par mois : 60 000 ÷ 6 000 = 10 mois. Elle garde son objectif et déplace la date.",
+        "action": "Notez une chose pour laquelle vous épargnez, son coût et la date à laquelle il vous faut l'argent.",
+        "watchOut": "Un plan d'épargne peut décourager quand on ne met pas de côté autant qu'on voudrait. N'abandonnez pas : ajustez le montant ou la date.",
+        "aliases": [
+          "pourquoi épargner",
+          "épargne",
+          "mettre de l'argent de côté",
+          "économiser",
+          "faire des économies",
+          "objectif d'épargne",
+          "sécurité",
+          "argent pour plus tard",
+          "plan d'épargne"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Definition of saving: not spending everything, money set aside now for later, small or large sums, regular or occasional",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md B.1 p.26"
+        },
+        {
+          "claim": "Saving defined as money put aside now to use later (Burkinabè booklet)",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 key point 7"
+        },
+        {
+          "claim": "Three purposes of saving: precaution, project, retirement",
+          "source": "banque-de-france-mqda",
+          "where": "T2.md SAVING ('Pourquoi épargner ?'; from a fetch summary); R3-3 sources table row MQDA"
+        },
+        {
+          "claim": "Saving gives security; set money aside for emergencies",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md B.2 messages clés p.30"
+        },
+        {
+          "claim": "With an emergency reserve you need not borrow at a high interest rate",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.2 p.151"
+        },
+        {
+          "claim": "Burkina Faso 2024, adults 15+: saved any 56.0%; could cover more than 2 months if income lost 27.7%",
+          "source": "findex-2025",
+          "where": "B.md SURVEY Global Findex 2025 (p.37)"
+        },
+        {
+          "claim": "Savings-plan method: goal cost, deadline, amount per period (table shows 60 000 / 06 mois / 10 000)",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 worked examples, savings plan table"
+        },
+        {
+          "claim": "A savings plan can be frustrating; it can be adjusted at any time",
+          "source": "ilo-ci-2023",
+          "where": "R3-6-behaviour-habits-saving.md 4.1 ILO CI booklet PDF p.20"
+        }
+      ]
+    },
+    {
+      "id": "emergency-fund",
+      "sources": [
+        "ilo-ci-2023",
+        "cfpb-emergency-fund",
+        "cfpb-ymyg",
+        "moneyhelper-uk",
+        "sec-roadmap"
+      ],
+      "en": {
+        "title": "Build your emergency fund step by step",
+        "summary": "An emergency fund is money kept apart for small unexpected expenses. You build it little by little, and it spares you from borrowing or from touching your project savings.",
+        "points": [
+          "An emergency fund covers fairly small emergencies, such as a repair or medicine. With it, you do not touch the savings for your projects or borrow at a high rate.",
+          "Build it by putting money aside every day or every week, even small amounts. If your income is irregular, save more in good weeks and less in weak ones.",
+          "Keep it apart from your spending money, somewhere safe, reachable and not tempting. Cash at home can be stolen, lost or destroyed; a savings account with free withdrawals is recommended.",
+          "How much? No official figure was found for Burkina Faso. A UK public guide suggests three months of essential spending; the US SEC mentions up to six months of income."
+        ],
+        "example": "Issa repairs phones. He puts 500 F CFA aside on good days and 200 F on slow days. A week with 4 good days and 2 slow days: 4 × 500 + 2 × 200 = 2,400 F. After 10 such weeks: 24,000 F. A tyre costs him 6,000 F: 24,000 − 6,000 = 18,000 F left. Then he rebuilds.",
+        "action": "Decide and write down what counts as an emergency for you, then put a first small amount in a separate place.",
+        "watchOut": "This fund is for small emergencies. Few people can save enough for a long illness or a death in the family: that is the role of insurance.",
+        "aliases": [
+          "emergency fund",
+          "emergency money",
+          "unexpected expenses",
+          "rainy day money",
+          "reserve",
+          "money for problems",
+          "how much to save",
+          "safety money"
+        ]
+      },
+      "fr": {
+        "title": "Constituer votre fonds d'urgence pas à pas",
+        "summary": "Un fonds d'urgence est de l'argent gardé à part pour les petits imprévus. Vous le constituez peu à peu, et il vous évite d'emprunter ou de toucher à l'épargne de vos projets.",
+        "points": [
+          "Un fonds d'urgence couvre les petites urgences, comme une réparation ou des médicaments. Avec lui, vous ne touchez pas à l'épargne de vos projets et vous n'empruntez pas à taux élevé.",
+          "Constituez-le en mettant de l'argent de côté chaque jour ou chaque semaine, même de petits montants. Si vos revenus sont irréguliers, mettez plus les bonnes semaines et moins les autres.",
+          "Gardez-le à part, dans un lieu sûr, accessible et sans tentation. L'argent liquide à la maison peut être volé, perdu ou détruit ; un compte d'épargne à retraits libres est recommandé.",
+          "Combien ? Aucun chiffre officiel n'a été trouvé pour le Burkina Faso. Un guide public britannique suggère trois mois de dépenses essentielles ; la SEC américaine évoque jusqu'à six mois de revenus."
+        ],
+        "example": "Issa répare des téléphones. Il met de côté 500 F CFA les bons jours et 200 F les jours calmes. Une semaine avec 4 bons jours et 2 jours calmes : 4 × 500 + 2 × 200 = 2 400 F. Après 10 semaines pareilles : 24 000 F. Un pneu lui coûte 6 000 F : 24 000 − 6 000 = 18 000 F restants. Puis il reconstitue.",
+        "action": "Décidez et notez ce qui compte comme une urgence pour vous, puis mettez un premier petit montant dans un endroit à part.",
+        "watchOut": "Ce fonds sert aux petites urgences. Peu de gens peuvent épargner assez pour une longue maladie ou un décès dans la famille : c'est le rôle de l'assurance.",
+        "aliases": [
+          "fonds d'urgence",
+          "argent pour les urgences",
+          "imprévus",
+          "réserve",
+          "épargne de précaution",
+          "argent en cas de problème",
+          "combien épargner",
+          "coup dur"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Emergency fund covers relatively small emergencies; avoids dipping into other savings or borrowing at a high rate",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.1 and G.2 p.151"
+        },
+        {
+          "claim": "Build it daily or weekly, even small amounts; variable amounts according to earnings",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 'Fonds d'urgence, how to build' p.150; obstacles table p.160"
+        },
+        {
+          "claim": "Fund should be safe, accessible and where you are not tempted; cash can be stolen, lost or destroyed",
+          "source": "cfpb-emergency-fund",
+          "where": "R3-6-behaviour-habits-saving.md 4.1 CFPB 'Where to keep it'"
+        },
+        {
+          "claim": "Keep savings separate from the emergency fund / keep money apart",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (4) SAVING p.40"
+        },
+        {
+          "claim": "Keep it in a safe place, if possible outside the home; a savings account with flexible withdrawals is recommended for an emergency fund",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 p.150 and p.160"
+        },
+        {
+          "claim": "No size rule printed in the ILO booklet (no answer for the target size)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.4 [check] note p.150"
+        },
+        {
+          "claim": "UK suggestion: at least three months' essential outgoings",
+          "source": "moneyhelper-uk",
+          "where": "R3-6-behaviour-habits-saving.md 4.1 UK MoneyHelper (archived copy)"
+        },
+        {
+          "claim": "US SEC: emergency cushion 'up to six months of their income in savings'",
+          "source": "sec-roadmap",
+          "where": "T4.md (a) Saving vs investing"
+        },
+        {
+          "claim": "Set guidelines on what constitutes an emergency; use the fund if needed and build it up again",
+          "source": "cfpb-emergency-fund",
+          "where": "R3-6-behaviour-habits-saving.md 4.1 CFPB last two bullets"
+        },
+        {
+          "claim": "Few people can save enough for serious emergencies (long treatment, death); insurance is needed for those",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.2 pp.149, 151"
+        },
+        {
+          "claim": "Worked example (fictional): 4×500 + 2×200 = 2,400; ×10 = 24,000; −6,000 = 18,000; illustrates variable amounts",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 p.150 (method only; figures are the writer's)"
+        }
+      ]
+    },
+    {
+      "id": "pay-yourself-first",
+      "sources": [
+        "st-pif-2023",
+        "dgjep-2018",
+        "cfpb-emergency-fund",
+        "jpal-ipa"
+      ],
+      "en": {
+        "title": "Save first, when the money arrives",
+        "summary": "Do not wait to see what is left at the end of the month. Put your savings aside the day income arrives, and make it automatic where you can.",
+        "points": [
+          "Two basic rules from a Burkinabè training booklet (ST-PIF, 2023): spend less than you earn, and save something every time you earn money, whether daily, weekly or monthly.",
+          "A 2018 Ministry of Youth booklet says: pay yourself first, 10% of your income before anything else. If 10% is too much now, start with less, but save something.",
+          "Automatic works. In Afghanistan, among 949 employees, those enrolled by default at 5% of salary were 40 percentage points more likely to save; 52% never changed the setting.",
+          "In Malawi, tea workers who had to deposit by hand saved much less than those with automatic deposits. The gap came from workers who said they lacked self-control."
+        ],
+        "example": "Salif earns 45,000 F CFA a month. On payday he first puts aside 10%: 45,000 × 10 ÷ 100 = 4,500 F. He lives on 45,000 − 4,500 = 40,500 F. After 6 months: 6 × 4,500 = 27,000 F saved, without deciding again each month.",
+        "action": "On the day your next income arrives, put your savings aside before any other spending.",
+        "watchOut": "A limit: in another Malawi trial, money paid straight into bank accounts raised bank balances but not total savings. Ask what your institution offers.",
+        "aliases": [
+          "pay yourself first",
+          "save before spending",
+          "automatic saving",
+          "save without effort",
+          "nothing left at month end",
+          "save from salary",
+          "effortless saving",
+          "how to start saving",
+          "save 10 percent"
+        ]
+      },
+      "fr": {
+        "title": "Épargner d'abord, dès que l'argent arrive",
+        "summary": "N'attendez pas de voir ce qui reste à la fin du mois. Mettez votre épargne de côté le jour où le revenu arrive, et rendez ce geste automatique quand c'est possible.",
+        "points": [
+          "Deux règles de base d'un cahier de formation burkinabè (ST-PIF, 2023) : dépenser moins que ce que vous gagnez, et épargner quelque chose chaque fois que vous gagnez de l'argent.",
+          "Un cahier du ministère de la Jeunesse (2018) dit : payez-vous d'abord, 10 % de vos revenus avant toute chose. Si 10 % est trop pour l'instant, commencez avec moins, mais épargnez quelque chose.",
+          "L'automatique fonctionne. En Afghanistan, parmi 949 salariés, ceux inscrits d'office à 5 % du salaire étaient plus nombreux à épargner, de 40 points de pourcentage ; 52 % n'ont jamais modifié le réglage.",
+          "Au Malawi, des ouvriers du thé qui devaient déposer eux-mêmes ont épargné nettement moins que ceux dont le dépôt était automatique. L'écart venait de ceux qui disaient manquer de maîtrise de soi."
+        ],
+        "example": "Salif gagne 45 000 F CFA par mois. Le jour de la paie, il met d'abord 10 % de côté : 45 000 × 10 ÷ 100 = 4 500 F. Il vit avec 45 000 − 4 500 = 40 500 F. Après 6 mois : 6 × 4 500 = 27 000 F épargnés, sans avoir à décider de nouveau chaque mois.",
+        "action": "Le jour où votre prochain revenu arrive, mettez votre épargne de côté avant toute autre dépense.",
+        "watchOut": "Limite : dans un autre essai au Malawi, le versement direct sur le compte a augmenté les soldes bancaires, pas l'épargne totale. Demandez ce que propose votre institution.",
+        "aliases": [
+          "se payer d'abord",
+          "épargner avant de dépenser",
+          "épargne automatique",
+          "épargner sans effort",
+          "il ne reste rien à la fin du mois",
+          "épargner sur son salaire",
+          "économie sans effort",
+          "comment commencer à épargner",
+          "épargner 10 pour cent"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Two basic rules: spend less than you earn; save something each time you earn money (daily, weekly, monthly)",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 key point 9"
+        },
+        {
+          "claim": "'Payez-vous d'abord vous-même', 10% of income before anything else; start with less if needed",
+          "source": "dgjep-2018",
+          "where": "R3-4-african-teaching-and-questions.md BF-0b key points 5-6"
+        },
+        {
+          "claim": "'pay yourself first' by putting a portion automatically into savings; automatic transfers are among the easiest ways to save consistently",
+          "source": "cfpb-emergency-fund",
+          "where": "R3-6-behaviour-habits-saving.md 4.1 CFPB 'Make your saving automatic' / 'Save through work'"
+        },
+        {
+          "claim": "Afghanistan, 949 employees, 2014-2015: 5% default made employees 40 percentage points more likely to contribute; 52% never changed their contribution rate",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.1 table, row 'Why Do Defaults Affect Behavior? ... Afghanistan'"
+        },
+        {
+          "claim": "Malawi tea company, 870 workers, 2016-2019: manual deposits gave substantially lower savings than automatic; driven by workers reporting self-control problems",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.4 table, row 'Pay Me Later'"
+        },
+        {
+          "claim": "Malawi, 600 bank account holders, 2013-2014: direct deposit raised bank balances but did not change total savings or spending",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.1 table, row 'Savings Defaults and Payment Delays ... Malawi' (noted as mostly null)"
+        },
+        {
+          "claim": "No UEMOA operator or regulator page documenting an automatic savings feature was found, hence 'ask what your institution offers'",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md section 6 'Not found for the UEMOA'"
+        },
+        {
+          "claim": "Worked example (fictional): 45,000 × 10% = 4,500; 45,000 − 4,500 = 40,500; 6 × 4,500 = 27,000; applies the 10% suggestion",
+          "source": "dgjep-2018",
+          "where": "R3-4-african-teaching-and-questions.md BF-0b key point 6 (method only; figures are the writer's)"
+        }
+      ]
+    },
+    {
+      "id": "give-savings-a-name",
+      "sources": [
+        "jpal-ipa"
+      ],
+      "en": {
+        "title": "Give your savings a name",
+        "summary": "Money with a name and a purpose is harder to spend on something else. Trials in Kenya and the Philippines measured this, and other trials found no effect.",
+        "points": [
+          "Kenya, 2008–2009, 771 people: a simple metal box kept for health spending, with the key at home, raised spending on preventive health products by 66% in one year.",
+          "Philippines, 2003–2004: a bank offered an account blocked until a chosen date or amount. 28% of the clients offered it opened one; that group's average bank savings rose 82% in a year.",
+          "Limits. In Kenya, the box without a key had no effect, and a locked mobile account did no better than an ordinary one. In Niger, a box did not raise total saving.",
+          "The researchers' summary (J-PAL, 2021): a label or a reminder can work as well as a lock, at lower cost and with less risk. Keep access for emergencies."
+        ],
+        "example": "Aminata marks two tins: \"School fees\" and \"Sewing machine\". Each week she puts 1,000 F CFA in the first and 500 F in the second. After 12 weeks: 12 × 1,000 = 12,000 F and 12 × 500 = 6,000 F. Total: 12,000 + 6,000 = 18,000 F, each sum with its own purpose.",
+        "action": "Write the name of one goal on an envelope, a tin or a separate account, and put a first amount in it.",
+        "watchOut": "These trials took place in Kenya, the Philippines and Niger. No trial of named savings was found in Burkina Faso: test it on yourself.",
+        "aliases": [
+          "name your savings",
+          "savings goal",
+          "money box",
+          "locked savings",
+          "envelopes",
+          "separate pots",
+          "stop spending my savings",
+          "blocked account",
+          "piggy bank"
+        ]
+      },
+      "fr": {
+        "title": "Donner un nom à votre épargne",
+        "summary": "Un argent qui porte un nom et un but est plus difficile à dépenser pour autre chose. Des essais au Kenya et aux Philippines l'ont mesuré ; d'autres n'ont trouvé aucun effet.",
+        "points": [
+          "Kenya, 2008-2009, 771 personnes : une simple boîte en métal réservée à la santé, dont elles gardaient la clé, a augmenté de 66 % en un an les dépenses de produits de santé préventive.",
+          "Philippines, 2003-2004 : une banque propose un compte bloqué jusqu'à une date ou un montant choisi. 28 % des clients sollicités l'ouvrent ; l'épargne moyenne de ce groupe augmente de 82 % en un an.",
+          "Limites. Au Kenya, la boîte sans clé n'a eu aucun effet, et un compte mobile bloqué n'a pas fait mieux qu'un compte ordinaire. Au Niger, une boîte n'a pas augmenté l'épargne totale.",
+          "Le bilan des chercheurs (J-PAL, 2021) : une étiquette ou un rappel peut marcher aussi bien qu'un blocage, à moindre coût et avec moins de risque. Gardez un accès pour les urgences."
+        ],
+        "example": "Aminata marque deux boîtes : « Scolarité » et « Machine à coudre ». Chaque semaine, elle met 1 000 F CFA dans la première et 500 F dans la seconde. Après 12 semaines : 12 × 1 000 = 12 000 F et 12 × 500 = 6 000 F. Total : 12 000 + 6 000 = 18 000 F, chaque somme avec son but.",
+        "action": "Écrivez le nom d'un objectif sur une enveloppe, une boîte ou un compte séparé, et mettez-y un premier montant.",
+        "watchOut": "Ces essais ont eu lieu au Kenya, aux Philippines et au Niger. Aucun essai sur l'épargne nommée n'a été trouvé au Burkina Faso : testez sur vous-même.",
+        "aliases": [
+          "nommer son épargne",
+          "objectif d'épargne",
+          "tirelire",
+          "caisse",
+          "épargne bloquée",
+          "enveloppes",
+          "ne pas toucher à mon épargne",
+          "compte bloqué",
+          "boîte à épargne"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Western Kenya, 113 ROSCAs, 771 individuals, 2008-2009: Safe Box (members kept the key) raised spending on preventive health products by 66% over one year; Lock Box (no key) had no effect",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.1 table, row Dupas & Robinson"
+        },
+        {
+          "claim": "Mental labelling of the box money was enough even when households had the key",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.1 table, row Dupas & Robinson (quoted interpretation)"
+        },
+        {
+          "claim": "Philippines, 1,777 clients of Green Bank of Caraga, 2003-2004: SEED account locked until goal date or amount; 28% of those offered opened; average savings balance +82% after one year for the commitment group",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.1 table, row Ashraf, Karlan & Yin (SEED)"
+        },
+        {
+          "claim": "Kenya 'High Hopes' lock account: results nearly the same as a conventional mobile savings account without the commitment feature",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.1 table, row Habyarimana; C-ii.2 'Mobile labelled account, Kenya'"
+        },
+        {
+          "claim": "Niger, 70 villages, 1,120 individuals, 2013-2015: lockbox did not affect overall saving or spending (it helped cope with a health shock)",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.4 table, row 'Just a Bit of Cushion ... Niger'"
+        },
+        {
+          "claim": "Soft devices like labels and reminders can achieve the same goals at lower cost and with less risk of harm",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.2 'Policy lesson, soft vs hard'"
+        },
+        {
+          "claim": "Clients should always be able to withdraw savings in an emergency",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.2 J-PAL blog, 26 May 2021"
+        },
+        {
+          "claim": "No Burkina Faso evaluation of savings devices found (the only Burkina evaluation is about insurance, without results)",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.4 table, row Kazianga & Wahhaj"
+        },
+        {
+          "claim": "Worked example (fictional): 12 × 1,000 = 12,000; 12 × 500 = 6,000; total 18,000; illustrates labelling per goal",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.2 'Labels and reminders' (method only; figures are the writer's)"
+        }
+      ]
+    },
+    {
+      "id": "reminders-and-small-amounts",
+      "sources": [
+        "jpal-ipa",
+        "ilo-ci-2023",
+        "cfpb-emergency-fund",
+        "fdic-money-smart",
+        "banque-de-france-mqda",
+        "cfpb-ymyg"
+      ],
+      "en": {
+        "title": "Use reminders and small regular amounts",
+        "summary": "A reminder brings saving back to mind, and small sums put aside often add up. The evidence is modest: some trials found an effect, others none.",
+        "points": [
+          "In Bolivia, Peru and the Philippines, bank clients saving for a goal who received reminders saved about 6% more; 3 percentage points more reached their goal (55% without reminders).",
+          "In Chile, weekly text messages about one's own saving led to almost three times as many deposits. In Afghanistan and in Niger, text reminders had no effect on saving.",
+          "Small and regular: put aside a small sum every day or every week. Even a small amount gives some security, and the reserve grows little by little.",
+          "Popular tips such as keeping your coins, or a challenge with a different amount each week, come from public guides. No measured result was found for them."
+        ],
+        "example": "Fatou sets a phone alarm every evening and puts 100 F CFA in a tin. One month: 30 × 100 = 3,000 F. One year: 12 × 3,000 = 36,000 F.",
+        "action": "Set a weekly alarm on your phone with the name of your goal, and put your amount aside when it rings.",
+        "watchOut": "A reminder cannot create money. There are only two ways to find money to save: spend less or earn more.",
+        "aliases": [
+          "reminder to save",
+          "small amounts",
+          "save a little",
+          "save every day",
+          "saving habit",
+          "i forget to save",
+          "save coins",
+          "savings challenge",
+          "little by little"
+        ]
+      },
+      "fr": {
+        "title": "Utiliser des rappels et de petits montants",
+        "summary": "Un rappel remet l'épargne en tête, et de petites sommes mises de côté souvent finissent par compter. Les preuves sont modestes : certains essais montrent un effet, d'autres aucun.",
+        "points": [
+          "Bolivie, Pérou, Philippines : des clients épargnant pour un objectif et recevant des rappels ont épargné environ 6 % de plus ; ils étaient 3 points plus nombreux à l'atteindre (55 % sans rappel).",
+          "Au Chili, des SMS hebdomadaires sur sa propre épargne ont presque triplé le nombre de dépôts. En Afghanistan et au Niger, les rappels par SMS n'ont eu aucun effet sur l'épargne.",
+          "Petit et régulier : mettez de côté une petite somme chaque jour ou chaque semaine. Même un petit montant apporte un peu de sécurité, et la réserve grossit peu à peu.",
+          "Des astuces répandues, comme garder ses pièces ou un défi avec un montant différent chaque semaine, viennent de guides publics. Aucun résultat mesuré n'a été trouvé pour elles."
+        ],
+        "example": "Fatou règle une alarme sur son téléphone chaque soir et met 100 F CFA dans une boîte. Un mois : 30 × 100 = 3 000 F. Un an : 12 × 3 000 = 36 000 F.",
+        "action": "Réglez une alarme hebdomadaire sur votre téléphone, au nom de votre objectif, et mettez votre montant de côté quand elle sonne.",
+        "watchOut": "Un rappel ne crée pas d'argent. Il n'y a que deux façons de trouver de l'argent à épargner : dépenser moins ou gagner plus.",
+        "aliases": [
+          "rappel pour épargner",
+          "petits montants",
+          "épargner un peu",
+          "épargner chaque jour",
+          "habitude d'épargne",
+          "j'oublie d'épargner",
+          "garder ses pièces",
+          "défi épargne",
+          "petit à petit"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Bolivia, Peru, Philippines: reminders increased savings by about 6% and made clients about 3 percentage points more likely to meet their goal, compared with 55% of the comparison group",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.2 'Labels and reminders (section 3.3)'; C-ii.3 row Karlan et al."
+        },
+        {
+          "claim": "Chile, 2,687 micro-entrepreneurs, 2008-2009: feedback text messages gave almost three times as many deposits",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.1 table, row Kast, Meier & Pomeranz"
+        },
+        {
+          "claim": "Afghanistan: neither monthly surveys nor SMS reminders affected savings decisions",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.1 table, row Afghanistan defaults"
+        },
+        {
+          "claim": "Niger: no additional effects of the SMS reminders",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.4 table, row Niger"
+        },
+        {
+          "claim": "Put aside a small sum every day or every week",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md B.6 'Conseils pour l'épargne' p.30"
+        },
+        {
+          "claim": "Even a small amount can provide some financial security",
+          "source": "cfpb-emergency-fund",
+          "where": "R3-6-behaviour-habits-saving.md 4.1 CFPB bullet 5"
+        },
+        {
+          "claim": "Little by little the fund grows",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md G.3 p.150"
+        },
+        {
+          "claim": "'Count Your Coins' tip (public programme tip, no result attached)",
+          "source": "fdic-money-smart",
+          "where": "R3-6-behaviour-habits-saving.md 4.1 FDIC Money Smart Module 5"
+        },
+        {
+          "claim": "Weekly challenge with freely chosen amounts (public programme, no result attached)",
+          "source": "banque-de-france-mqda",
+          "where": "R3-6-behaviour-habits-saving.md 4.1 Banque de France défi EDUCFI"
+        },
+        {
+          "claim": "Reminders named among three mechanism families; null results kept on purpose",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md 4.2 reading guide"
+        },
+        {
+          "claim": "'There are only two ways to find money to save: spend less or earn more.'",
+          "source": "cfpb-ymyg",
+          "where": "T1.md (4) SAVING p.41"
+        },
+        {
+          "claim": "Worked example (fictional): 30 × 100 = 3,000; 12 × 3,000 = 36,000",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md B.6 p.30 (method only; figures are the writer's)"
+        }
+      ]
+    },
+    {
+      "id": "ways-to-save",
+      "sources": [
+        "ilo-ci-2023",
+        "dgjep-2018",
+        "st-pif-2023",
+        "umoa-savings-2014"
+      ],
+      "en": {
+        "title": "Compare the ways to save",
+        "summary": "You can save at home, in a group or with an institution. Each way has strengths and weaknesses. Compare them on safety, access, cost and return.",
+        "points": [
+          "At home, in kind (animals, jewellery, land) or with a trusted person: easy to reach, but exposed to theft, loss, temptation, death of animals, and hard to sell fast.",
+          "In a group, such as a tontine or a savings group: easy to join, brings discipline and solidarity. But few guarantees: a member may default, and no authority supervises it.",
+          "With an institution supervised by the State (bank, microfinance institution, Caisse Nationale d'Epargne, electronic money issuer): the safest option, may pay interest; may ask for identity papers, a minimum deposit and fees.",
+          "Four questions to compare: Is my money safe? Can I withdraw when I need to, and how fast? What does it cost in fees? Does it earn interest?"
+        ],
+        "example": "Rasmané has 50,000 F CFA. In a tin: no fee, no interest, risk of theft. In a fictional account paying 3.5% a year with a 1,000 F opening fee: interest 50,000 × 3.5 ÷ 100 = 1,750 F; 1,750 − 1,000 = 750 F gained the first year, and the money is out of the house.",
+        "action": "Take the way you save today and answer the four questions about it: safety, access, cost, return.",
+        "watchOut": "No savings product gives high returns without risk, especially in a short time. Be careful with advertising that promises it.",
+        "aliases": [
+          "where to save",
+          "where to keep money",
+          "save at home",
+          "tontine or bank",
+          "savings methods",
+          "safe place for money",
+          "bank or microfinance",
+          "compare savings",
+          "mobile money savings"
+        ]
+      },
+      "fr": {
+        "title": "Comparer les façons d'épargner",
+        "summary": "Vous pouvez épargner à la maison, dans un groupe ou auprès d'une institution. Chaque façon a ses forces et ses faiblesses. Comparez-les sur la sécurité, l'accès, le coût et le rendement.",
+        "points": [
+          "À la maison, en nature (animaux, bijoux, terrain) ou chez un proche : accès facile, mais risque de vol, de perte, de tentation, de mort des animaux, et vente difficile en urgence.",
+          "Dans un groupe, comme une tontine ou un groupe d'épargne : accès facile, discipline et solidarité. Mais peu de garanties : un membre peut ne pas payer, et aucune autorité ne le supervise.",
+          "Auprès d'une institution supervisée par l'État (banque, institution de microfinance, Caisse Nationale d'Epargne, émetteur de monnaie électronique) : l'option la plus sûre, parfois avec intérêts ; pièce d'identité, dépôt minimum et frais possibles.",
+          "Quatre questions pour comparer : mon argent est-il en sécurité ? Puis-je retirer quand j'en ai besoin, et en combien de temps ? Combien coûtent les frais ? Est-ce que cela rapporte des intérêts ?"
+        ],
+        "example": "Rasmané a 50 000 F CFA. Dans une boîte : pas de frais, pas d'intérêts, risque de vol. Sur un compte fictif à 3,5 % par an avec 1 000 F de frais d'ouverture : intérêts 50 000 × 3,5 ÷ 100 = 1 750 F ; 1 750 − 1 000 = 750 F gagnés la première année, et l'argent n'est plus à la maison.",
+        "action": "Prenez votre façon d'épargner d'aujourd'hui et répondez aux quatre questions : sécurité, accès, coût, rendement.",
+        "watchOut": "Aucun produit d'épargne ne donne de gros rendements sans risque, surtout en peu de temps. Méfiez-vous des publicités qui le promettent.",
+        "aliases": [
+          "où épargner",
+          "où garder son argent",
+          "épargner à la maison",
+          "tontine ou banque",
+          "méthodes d'épargne",
+          "endroit sûr pour l'argent",
+          "banque ou caisse",
+          "comparer les épargnes",
+          "épargne mobile money"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Informal methods (at home, in kind, entrusted to a person): easy access; no security (loss of value, theft, illness or death of livestock), temptation, hard to liquidate in an emergency",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.3 'Informelles' pp.68-69"
+        },
+        {
+          "claim": "Burkinabè booklet: informal = at home (cash, gold, jewellery), herds, land, with a friend; in-kind savings hard to liquidate, risk of theft or death of animals",
+          "source": "dgjep-2018",
+          "where": "R3-4-african-teaching-and-questions.md BF-0b key point 8; BF-0 key point 11"
+        },
+        {
+          "claim": "Group methods: easy access, discipline, solidarity; few guarantees, risk a member breaks the rules, not supervised by the authorities",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.3 'Semi-formelles' p.68"
+        },
+        {
+          "claim": "Three categories in the Burkinabè booklet: official (supervised by the State: banks, SFD/IMF, Caisse Nationale d'Epargne, e-money issuers, insurers), semi-official (groups, tontines), informal",
+          "source": "st-pif-2023",
+          "where": "R3-4-african-teaching-and-questions.md BF-0 key point 11"
+        },
+        {
+          "claim": "Formal institutions: 'the safest option', interest paid, less temptation; ID often required, minimum deposit, account fees",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.3 'Formelles' pp.68-69; R3-4-african-teaching-and-questions.md BF-0b key point 8"
+        },
+        {
+          "claim": "Criteria to compare: safety, withdraw when you want, delays, possibility of interest; cost of saving (opening, management, transaction fees)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.3 criteria p.57; C.1 product definition p.59"
+        },
+        {
+          "claim": "3.5% used in the fictional example is the regulated savings-account rate",
+          "source": "umoa-savings-2014",
+          "where": "C.md VERIFIED FACTS, Décision CM/UMOA/016/09/2014 art. 2"
+        },
+        {
+          "claim": "Worked example (fictional account and fee): 50,000 × 3.5% = 1,750; 1,750 − 1,000 = 750",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.3 comparison grid p.69 (method only; figures are the writer's)"
+        },
+        {
+          "claim": "No savings product gives large returns without risk, especially in the short term; beware misleading advertising",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.6 p.65"
+        }
+      ]
+    },
+    {
+      "id": "savings-groups",
+      "sources": [
+        "jpal-ipa",
+        "burkina24-tontine",
+        "care-vsla",
+        "ilo-ci-2023"
+      ],
+      "en": {
+        "title": "Understand how a savings group works",
+        "summary": "In a tontine or a savings group, members save together under shared rules. It builds discipline, but the money depends on every member keeping their word.",
+        "points": [
+          "In a tontine, members meet regularly and each pays the same contribution. At each round one member receives the whole pot, in turn, until everyone has received it once.",
+          "In a savings group following CARE's model, 15 to 30 members buy 1 to 5 shares per meeting. Savings are shared out after a cycle of 9 to 12 months.",
+          "Such a group can lend to members, up to three times the value of their shares and only if the cash box holds enough. A social fund helps in emergencies.",
+          "Measured in Mali (6,000 women, 500 villages, 2008–2011): average savings rose 31% in villages offered groups. No significant effect was found on health, schooling or business investment."
+        ],
+        "example": "Ten friends each pay 5,000 F CFA a month. Pot each month: 10 × 5,000 = 50,000 F, given to one member. After 10 months each has paid 10 × 5,000 = 50,000 F and received 50,000 F once. No interest: the first receives early, the last waits 10 months.",
+        "action": "Ask a group you know what happens when a member pays late and who keeps the money between meetings.",
+        "watchOut": "Late payments breed mistrust and can end a group. Burkina24 reported in 2024 an online tontine whose organiser vanished with a member's 42,000 F CFA.",
+        "aliases": [
+          "tontine",
+          "savings group",
+          "how a tontine works",
+          "village savings",
+          "group saving",
+          "is a tontine safe",
+          "online tontine",
+          "avec",
+          "saving with friends"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre le fonctionnement d'un groupe d'épargne",
+        "summary": "Dans une tontine ou un groupe d'épargne, les membres épargnent ensemble selon des règles communes. Cela donne de la discipline, mais l'argent dépend de la parole de chaque membre.",
+        "points": [
+          "Dans une tontine, les membres se réunissent régulièrement et versent chacun la même cotisation. À chaque tour, un membre reçoit toute la cagnotte, jusqu'à ce que chacun l'ait reçue une fois.",
+          "Dans un groupe d'épargne suivant le modèle de CARE, 15 à 30 membres achètent 1 à 5 parts par réunion. L'épargne est partagée après un cycle de 9 à 12 mois.",
+          "Ce groupe peut prêter à ses membres, jusqu'à trois fois la valeur de leurs parts et seulement si la caisse contient assez. Un fonds social aide en cas d'urgence.",
+          "Mesuré au Mali (6 000 femmes, 500 villages, 2008-2011) : l'épargne moyenne a augmenté de 31 % dans les villages concernés. Aucun effet significatif sur la santé, la scolarisation ou l'investissement dans une activité."
+        ],
+        "example": "Dix amis versent chacun 5 000 F CFA par mois. Cagnotte du mois : 10 × 5 000 = 50 000 F, remise à un membre. Après 10 mois, chacun a versé 10 × 5 000 = 50 000 F et reçu 50 000 F une fois. Pas d'intérêts : le premier reçoit tôt, le dernier attend 10 mois.",
+        "action": "Demandez à un groupe que vous connaissez ce qui se passe quand un membre paie en retard et qui garde l'argent entre les réunions.",
+        "watchOut": "Les retards créent la méfiance et peuvent dissoudre un groupe. Burkina24 a rapporté en 2024 une tontine en ligne dont l'organisateur a disparu avec 42 000 F CFA.",
+        "aliases": [
+          "tontine",
+          "groupe d'épargne",
+          "comment marche une tontine",
+          "caisse villageoise",
+          "épargner en groupe",
+          "la tontine est-elle sûre",
+          "tontine en ligne",
+          "avec",
+          "épargner entre amis"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "ROSCA: informal groups meeting regularly to contribute to a joint fund; members take turns receiving the pooled pot",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.2 Box 1"
+        },
+        {
+          "claim": "Tontine described in Burkina press as a rotating savings system where each in turn collects the total until the cycle ends; example of 10 people over 10 months",
+          "source": "burkina24-tontine",
+          "where": "R3-4-african-teaching-and-questions.md BF-10"
+        },
+        {
+          "claim": "VSLA: 15 to 30 members; 1 to 5 shares per meeting; loans up to three times the value of shares, only with sufficient funds in the cash box; cycle 9-12 months then share-out; social fund for emergencies",
+          "source": "care-vsla",
+          "where": "T3.md SAVINGS GROUPS (CARE VSLA)"
+        },
+        {
+          "claim": "Mali, 6,000 women in 500 villages, 2008-2011: average savings +US$3.65 or 31% in treatment villages; no significant effects on health, school enrolment, business or agricultural investment",
+          "source": "jpal-ipa",
+          "where": "R3-6-behaviour-habits-saving.md C-ii.4 table, row Beaman, Karlan, Morduch & Thuysbaert"
+        },
+        {
+          "claim": "Arrears can cause mistrust, dissent and dissolution of a VSLA",
+          "source": "care-vsla",
+          "where": "T3.md SAVINGS GROUPS, Risks"
+        },
+        {
+          "claim": "Risk that a member disappears after receiving the group's money; groups not supervised by the authorities",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.3 'Semi-formelles' p.68"
+        },
+        {
+          "claim": "Press report: online tontine, 300 F CFA a day, total 42,000 F CFA, organiser blocked the member and disappeared; victims reported to the BCLCC",
+          "source": "burkina24-tontine",
+          "where": "R3-4-african-teaching-and-questions.md BF-10 victim story (press only, attributed)"
+        },
+        {
+          "claim": "Worked example (fictional, scaled down from the press example of 10 people × 100,000 = 1 million): 10 × 5,000 = 50,000",
+          "source": "burkina24-tontine",
+          "where": "R3-4-african-teaching-and-questions.md BF-10 worked example (method only; figures are the writer's)"
+        }
+      ]
+    },
+    {
+      "id": "savings-accounts-in-burkina",
+      "sources": [
+        "ilo-ci-2023",
+        "umoa-savings-2014",
+        "fgdr-umoa",
+        "umoa-fgd-ceilings-2017",
+        "fgdr-umoa-circular-2022",
+        "fgdr-umoa-statutes-2018",
+        "rcpb",
+        "bpbf",
+        "coris-bank",
+        "la-poste-bf"
+      ],
+      "en": {
+        "title": "Know what a savings account offers",
+        "summary": "A savings account keeps your money at an institution and pays interest. In Burkina Faso the rate of ordinary savings accounts is set by a regional rule.",
+        "points": [
+          "An ordinary savings account lets you deposit and withdraw at any time. The institution pays you interest, a percentage of the sum you leave with it.",
+          "Decision CM/UMOA/016/09/2014 (UMOA Council of Ministers), in force since 1 January 2015, sets savings accounts and passbooks at 3.5%, up to 10 million F CFA. The regulators' sites list no later amendment.",
+          "If an institution fails, the FGDR-UMOA guarantee fund compensates each depositor up to 1,400,000 F CFA per bank and 300,000 F per microfinance institution (Decision 009 of 30 June 2017, article 2).",
+          "Published conditions, for example: the Caisses Populaires (2025 brochure) ask an individual for an identity document, three photos and 8,000 F CFA, including a 3,000 F minimum balance."
+        ],
+        "example": "Mariam leaves 40,000 F CFA on a savings account for a full year at 3.5%: 40,000 × 3.5 ÷ 100 = 1,400 F of interest, before any tax or fee. Two institutions in Burkina publish that they pay interest twice a year, on 30 June and 31 December.",
+        "action": "Ask one institution near you for its written savings conditions: rate, fees, minimum balance and withdrawal rules.",
+        "watchOut": "No text says that mobile-money balances are covered by the deposit guarantee. For a savings account, ask whether the rate is stated gross or net of tax.",
+        "aliases": [
+          "savings account",
+          "open an account",
+          "savings rate",
+          "caisse populaire",
+          "passbook",
+          "is my money safe at the bank",
+          "interest on savings",
+          "documents to open an account",
+          "3.5 percent"
+        ]
+      },
+      "fr": {
+        "title": "Savoir ce qu'offre un compte d'épargne",
+        "summary": "Un compte d'épargne garde votre argent dans une institution et rapporte des intérêts. Au Burkina Faso, le taux des comptes d'épargne ordinaires est fixé par une règle régionale.",
+        "points": [
+          "Un compte d'épargne ordinaire permet de déposer et de retirer à tout moment. L'institution vous verse des intérêts, un pourcentage de la somme que vous lui laissez.",
+          "Décision CM/UMOA/016/09/2014 (Conseil des Ministres de l'UMOA), en vigueur depuis le 1er janvier 2015 : comptes et livrets d'épargne à 3,5 %, jusqu'à 10 millions F CFA. Aucune modification sur les sites des régulateurs.",
+          "En cas de faillite, le fonds FGDR-UMOA indemnise chaque déposant jusqu'à 1 400 000 F CFA par banque et 300 000 F par institution de microfinance (Décision 009 du 30 juin 2017, article 2).",
+          "Conditions publiées, par exemple : les Caisses Populaires (plaquette 2025) demandent à un particulier une pièce d'identité, trois photos et 8 000 F CFA, dont 3 000 F de solde minimum."
+        ],
+        "example": "Mariam laisse 40 000 F CFA sur un compte d'épargne pendant une année entière à 3,5 % : 40 000 × 3,5 ÷ 100 = 1 400 F d'intérêts, avant impôt ou frais éventuels. Deux institutions du Burkina publient qu'elles versent les intérêts deux fois par an, au 30 juin et au 31 décembre.",
+        "action": "Demandez à une institution proche de vous ses conditions d'épargne par écrit : taux, frais, solde minimum et règles de retrait.",
+        "watchOut": "Aucun texte ne dit que les soldes de mobile money sont couverts par la garantie des dépôts. Pour l'épargne, demandez si le taux est brut ou net d'impôt.",
+        "aliases": [
+          "compte d'épargne",
+          "ouvrir un compte",
+          "taux d'épargne",
+          "caisse populaire",
+          "livret d'épargne",
+          "mon argent est-il en sécurité à la banque",
+          "intérêts sur l'épargne",
+          "pièces pour ouvrir un compte",
+          "3,5 pour cent"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Ordinary savings account: deposits and withdrawals at any time; most common type",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.1 p.59"
+        },
+        {
+          "claim": "Interest: remuneration for depositing money, usually a percentage of the sum deposited (the interest rate)",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.1 Intérêts p.67"
+        },
+        {
+          "claim": "Savings accounts and passbooks paid at a fixed 3.5% up to 10 million F CFA; Décision CM/UMOA/016/09/2014 art. 2, signed 24 Sep 2014, in force 1 January 2015",
+          "source": "umoa-savings-2014",
+          "where": "R3-5-burkina-facts.md Item 3, rows 1 and 'Who must apply it'; C.md VERIFIED FACTS (first bullet)"
+        },
+        {
+          "claim": "No amending text found: decision still listed on the BCEAO regulations page and re-uploaded by the Commission Bancaire in January 2025; absence of an amendment in the places searched (accessed 2026-10-03), not a confirmation by the regulator",
+          "source": "umoa-savings-2014",
+          "where": "R3-5-burkina-facts.md Item 3 'Still in force? Indications only; no amending text found'; section 4 NOT FOUND, item 3"
+        },
+        {
+          "claim": "FGDR-UMOA guarantees deposits of clients of credit institutions and licensed SFD, within a ceiling set by the UMOA Council of Ministers; created March 2014",
+          "source": "fgdr-umoa",
+          "where": "C.md VERIFIED FACTS (FGDR-UMOA)"
+        },
+        {
+          "claim": "Ceilings: 1,400,000 FCFA per holder for all deposits in one credit institution; 300,000 FCFA per holder in one SFD (microfinance); Décision n°009 du 30/06/2017/CM/UMOA art. 2, in force at signature; no later revision found on the fund's regulatory-texts page",
+          "source": "umoa-fgd-ceilings-2017",
+          "where": "R3-5-burkina-facts.md Item 1, rows 1-2 and closing paragraph"
+        },
+        {
+          "claim": "Same ceilings in the 2022 standard depositor form (per depositor and per institution); compensation applies when the institution fails ('défaillance')",
+          "source": "fgdr-umoa-circular-2022",
+          "where": "R3-5-burkina-facts.md Item 1, rows 3, 4 and 6 (Circulaire n°005/2022/FGDR-UMOA, Annexe)"
+        },
+        {
+          "claim": "No text read says e-money (mobile-money) balances are covered: statutes art. 23-24 do not mention e-money; members are credit institutions and SFD only; a course must not say mobile-money balances are covered",
+          "source": "fgdr-umoa-statutes-2018",
+          "where": "R3-5-burkina-facts.md Item 1 'E-money (mobile money) balances — coverage by the fund: NOT STATED'; section 4 NOT FOUND, item 1"
+        },
+        {
+          "claim": "RCPB 2025 brochure, individuals: identity documents (CNIB, passport, etc.), three ID photos, '8000 FCFA dont un solde minimum de 3000 FCFA'",
+          "source": "rcpb",
+          "where": "R3-7-banking-microfinance.md 3c RCPB table, row 'PERSONNES PHYSIQUES'"
+        },
+        {
+          "claim": "Interest paid twice a year, on 30 June and 31 December (BPBF)",
+          "source": "bpbf",
+          "where": "R3-7-banking-microfinance.md 1b 'When interest is paid'; 3c BPBF 'EPARGNE BPBF'"
+        },
+        {
+          "claim": "Savings accounts: interest twice a year (30 June and 31 December) (Coris)",
+          "source": "coris-bank",
+          "where": "R3-7-banking-microfinance.md 1b 'When interest is paid' (Coris, S17)"
+        },
+        {
+          "claim": "Rate stated 'brut' at BPBF and 'net d'impôt' at La Poste BF, both 3.5% on ordinary savings",
+          "source": "la-poste-bf",
+          "where": "R3-7-banking-microfinance.md section 4 conflict 11; 3c La Poste 'Épargne ordinaire'"
+        },
+        {
+          "claim": "Questions to ask before choosing a savings product: withdrawals, rate, tax on interest, minimum deposit or balance, fees",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.6 p.65"
+        },
+        {
+          "claim": "Worked example (fictional): 40,000 × 3.5% = 1,400",
+          "source": "umoa-savings-2014",
+          "where": "C.md VERIFIED FACTS (rate only; amount is the writer's)"
+        }
+      ]
+    },
+    {
+      "id": "interest-and-time",
+      "sources": [
+        "ilo-ci-2023",
+        "banque-de-france",
+        "iefp",
+        "sec-roadmap",
+        "amf-fr",
+        "umoa-savings-2014"
+      ],
+      "en": {
+        "title": "See how interest grows with time",
+        "summary": "Interest is what an institution pays you for the money you leave with it. When interest is left in, it earns interest too, so time works for you.",
+        "points": [
+          "Interest is the payment you receive for depositing money at an institution. It is usually a percentage of the sum, the interest rate, most often stated per year.",
+          "With compound interest, each year's interest is calculated on your money plus the interest of earlier years. You earn interest on your interest.",
+          "Time is the saver's best ally, says France's markets authority (AMF): save regularly and as early as possible. Small streams make big rivers.",
+          "Its illustration: one unit of money left for 30 years becomes 1.35 at 1% a year, 2.43 at 3% and 4.32 at 5%. These are examples, not promises."
+        ],
+        "example": "Boukary leaves 200,000 F CFA at 3.5% a year and does not touch the interest. Year 1: 200,000 × 3.5 ÷ 100 = 7,000 F; balance 207,000 F. Year 2: 207,000 × 3.5 ÷ 100 = 7,245 F; balance 214,245 F. The extra 245 F is interest earned on interest.",
+        "action": "Calculate one year of interest on your own savings, using the rate your institution gives you in writing.",
+        "watchOut": "Growth is slow at first. Be wary of anyone who promises quick profits: no savings product gives high returns without risk.",
+        "aliases": [
+          "interest",
+          "interest rate",
+          "compound interest",
+          "interest on interest",
+          "how money grows",
+          "start early",
+          "what does my account pay",
+          "calculate interest"
+        ]
+      },
+      "fr": {
+        "title": "Voir les intérêts grandir avec le temps",
+        "summary": "Les intérêts sont ce qu'une institution vous verse pour l'argent que vous lui laissez. Quand vous les laissez sur le compte, ils rapportent à leur tour : le temps travaille pour vous.",
+        "points": [
+          "Les intérêts sont la rémunération que vous recevez pour avoir déposé de l'argent dans une institution. C'est en général un pourcentage de la somme, le taux d'intérêt, le plus souvent par an.",
+          "Avec les intérêts composés, les intérêts de chaque année se calculent sur votre argent augmenté des intérêts des années précédentes. Vos intérêts rapportent des intérêts.",
+          "Le temps est le meilleur allié de l'épargnant, dit l'Autorité des marchés financiers française (AMF) : épargnez régulièrement et le plus tôt possible. Les petits ruisseaux font les grandes rivières.",
+          "Son illustration : une unité de monnaie laissée 30 ans devient 1,35 à 1 % par an, 2,43 à 3 % et 4,32 à 5 %. Ce sont des exemples, pas des promesses."
+        ],
+        "example": "Boukary laisse 200 000 F CFA à 3,5 % par an et ne touche pas aux intérêts. Année 1 : 200 000 × 3,5 ÷ 100 = 7 000 F ; solde 207 000 F. Année 2 : 207 000 × 3,5 ÷ 100 = 7 245 F ; solde 214 245 F. Les 245 F en plus sont des intérêts gagnés sur des intérêts.",
+        "action": "Calculez une année d'intérêts sur votre propre épargne, avec le taux que votre institution vous donne par écrit.",
+        "watchOut": "La croissance est lente au début. Méfiez-vous de quiconque promet des gains rapides : aucun produit d'épargne ne donne de gros rendements sans risque.",
+        "aliases": [
+          "intérêts",
+          "taux d'intérêt",
+          "intérêts composés",
+          "intérêts sur les intérêts",
+          "comment l'argent grandit",
+          "commencer tôt",
+          "combien rapporte mon compte",
+          "calculer les intérêts"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Interest: remuneration for depositing money at an institution, generally a percentage of the sum deposited",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.1 Intérêts p.67"
+        },
+        {
+          "claim": "The interest rate is generally expressed as a percentage, most often annual",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [BDF-TAUX] definitions"
+        },
+        {
+          "claim": "Compound interest: interest calculated on the capital plus the previous year's interest",
+          "source": "iefp",
+          "where": "T2.md INTEREST [V, IEFP]"
+        },
+        {
+          "claim": "'With compound interest, you earn interest on the money you save and on the interest that money earns.'",
+          "source": "sec-roadmap",
+          "where": "T4.md (h) Compound growth"
+        },
+        {
+          "claim": "Invest regularly, as early as possible; time is the most precious ally; 'Les petits ruisseaux font les grandes rivières'",
+          "source": "amf-fr",
+          "where": "T4.md (h) Compound growth [AMF]"
+        },
+        {
+          "claim": "1 unit over 30 years: 1% → 1.35; 3% → 2.43; 5% → 4.32 (AMF illustration in euros; recomputed: 1.01^30 = 1.348, 1.03^30 = 2.427, 1.05^30 = 4.322)",
+          "source": "amf-fr",
+          "where": "T4.md WORKED EXAMPLES [AMF]"
+        },
+        {
+          "claim": "3.5% used in the example is the regulated savings-account rate",
+          "source": "umoa-savings-2014",
+          "where": "C.md VERIFIED FACTS"
+        },
+        {
+          "claim": "Worked example (fictional): 200,000 × 3.5% = 7,000; 207,000 × 3.5% = 7,245; 7,245 − 7,000 = 245",
+          "source": "iefp",
+          "where": "T2.md INTEREST (method only; figures are the writer's)"
+        },
+        {
+          "claim": "Be wary of promises of quick profits (warning sign of fraud)",
+          "source": "sec-roadmap",
+          "where": "T4.md (i) Judging an investment, fraud"
+        },
+        {
+          "claim": "No savings product gives large returns without risk, especially in the short term",
+          "source": "ilo-ci-2023",
+          "where": "ILO-CI.md C.6 p.65"
+        }
+      ]
+    },
+    {
+      "id": "rising-prices",
+      "sources": [
+        "ecb",
+        "banque-de-france",
+        "amf-fr",
+        "umoa-savings-2014"
+      ],
+      "en": {
+        "title": "Understand what rising prices do to savings",
+        "summary": "When prices rise broadly, the same money buys less. Idle money keeps its number but loses value. Compare the interest rate with the rise in prices.",
+        "points": [
+          "Inflation is a broad and lasting rise in the prices of goods and services, not only of a few items. It is measured on a basket of everyday purchases.",
+          "Purchasing power is what your money can buy. With inflation, the same sum buys fewer goods and services: the value of money falls.",
+          "Money that earns nothing loses value when prices rise. Even at 2% a year, prices are more than 20% higher after ten years, the European Central Bank notes.",
+          "The real interest rate is roughly the rate you are paid minus inflation. If inflation is lower than your rate, you gain purchasing power; if it is higher, you lose some."
+        ],
+        "example": "Suppose prices rise 2% in a year. Adama keeps 50,000 F CFA in a tin: this sum loses about 50,000 × 2 ÷ 100 = 1,000 F of purchasing power. On an account at 3.5%: real rate about 3.5 − 2 = 1.5%, a gain near 750 F. If prices rise 5%: 3.5 − 5 = −1.5%.",
+        "action": "Note today's price of three things you buy often, and compare them again in three months.",
+        "watchOut": "The 2% and 5% above are assumptions for the arithmetic. No current inflation figure for Burkina Faso was found.",
+        "aliases": [
+          "inflation",
+          "rising prices",
+          "everything costs more",
+          "purchasing power",
+          "money loses value",
+          "real interest rate",
+          "cost of living",
+          "prices going up"
+        ]
+      },
+      "fr": {
+        "title": "Comprendre l'effet de la hausse des prix",
+        "summary": "Quand les prix montent de façon générale, la même somme achète moins. L'argent qui dort garde son chiffre mais perd de sa valeur. Comparez le taux d'intérêt à la hausse des prix.",
+        "points": [
+          "L'inflation est une hausse durable et générale des prix des biens et des services, pas seulement de quelques produits. On la mesure sur un panier d'achats courants.",
+          "Le pouvoir d'achat, c'est ce que votre argent permet d'acheter. Avec l'inflation, la même somme achète moins de biens et de services : la valeur de la monnaie baisse.",
+          "L'argent qui ne rapporte rien perd de la valeur quand les prix montent. À 2 % par an, les prix augmentent de plus de 20 % en dix ans, note la Banque centrale européenne.",
+          "Le taux d'intérêt réel est à peu près le taux qu'on vous verse moins l'inflation. Si l'inflation est plus basse que votre taux, vous gagnez du pouvoir d'achat ; sinon, vous en perdez."
+        ],
+        "example": "Supposons que les prix montent de 2 % en un an. Adama garde 50 000 F CFA dans une boîte : cette somme perd environ 50 000 × 2 ÷ 100 = 1 000 F de pouvoir d'achat. Sur un compte à 3,5 % : taux réel d'environ 3,5 − 2 = 1,5 %, soit un gain proche de 750 F. Si les prix montent de 5 % : 3,5 − 5 = −1,5 %.",
+        "action": "Notez le prix d'aujourd'hui de trois choses que vous achetez souvent, et comparez de nouveau dans trois mois.",
+        "watchOut": "Les 2 % et 5 % ci-dessus sont des hypothèses pour le calcul. Aucun chiffre actuel d'inflation n'a été trouvé pour le Burkina Faso.",
+        "aliases": [
+          "inflation",
+          "hausse des prix",
+          "tout coûte plus cher",
+          "pouvoir d'achat",
+          "l'argent perd de la valeur",
+          "taux d'intérêt réel",
+          "vie chère",
+          "les prix augmentent"
+        ]
+      },
+      "evidence": [
+        {
+          "claim": "Inflation: broad increase in prices of goods and services, not just of individual items; lasting and generalised rise",
+          "source": "ecb",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [ECB] definition; [BDF-INF] definitions"
+        },
+        {
+          "claim": "Measured from a basket of goods and services representative of household consumption",
+          "source": "ecb",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [ECB] METHOD (basket); [BDF-INF] Measurement"
+        },
+        {
+          "claim": "With inflation the same sum of money buys fewer goods and services; the value (purchasing power) of money falls",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [BDF-INF] Purchasing power"
+        },
+        {
+          "claim": "Inflation disadvantages savers by making their savings lose value",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [BDF-INF] key teaching points"
+        },
+        {
+          "claim": "Liquid, guaranteed savings can lose real value because of inflation",
+          "source": "amf-fr",
+          "where": "T4.md (b) Risk and return [AMF]"
+        },
+        {
+          "claim": "At 2% a year, after 10 years the general price level has increased by over 20% (recomputed: 1.02^10 = 1.219)",
+          "source": "ecb",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [ECB] 'Compounding of prices'"
+        },
+        {
+          "claim": "Real interest rate ≈ nominal interest rate − inflation rate; positive if inflation below the nominal rate, negative if above",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [BDF-TAUX] FORMULA"
+        },
+        {
+          "claim": "Worked example uses assumed inflation of 2% and 5% (method of the Banque de France percentage example); 50,000 × 2% = 1,000; 3.5 − 2 = 1.5; 50,000 × 1.5% = 750; 3.5 − 5 = −1.5",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md Topic B [BDF-INF] WORKED EXAMPLE and [BDF-TAUX] FORMULA (method only; figures are the writer's)"
+        },
+        {
+          "claim": "3.5% used in the example is the regulated savings-account rate",
+          "source": "umoa-savings-2014",
+          "where": "C.md VERIFIED FACTS"
+        },
+        {
+          "claim": "No UEMOA or Burkina inflation figure in the notes (source figures are euro area / France)",
+          "source": "banque-de-france",
+          "where": "R3-3-portfolio-inflation-open.md header note and Topic B figures"
+        }
+      ]
+    }
+  ],
+  "leftOut": [
+    "Emergency-fund size: the notes hold no Burkinabè or regional figure (the ILO booklet prints no rule); only UK (three months of essential spending) and US SEC (up to six months of income) suggestions are given, attributed. The CFPB dollar targets were not converted.",
+    "Automatic saving in Burkina Faso: no bank, microfinance or mobile-money page documenting a standing transfer, round-up, locked or labelled savings feature was found for the UEMOA; the lesson tells the learner to ask.",
+    "No trial of defaults, labelled or committed savings, or reminders in Burkina Faso exists in the notes; all evidence is from Afghanistan, Malawi, Kenya, the Philippines, Niger, Chile, Bolivia, Peru and Mali, and is stated as such.",
+    "Round-up saving, coin saving and the weekly challenge have no measured result in the notes; presented as untested tips only.",
+    "Deposit-guarantee ceiling: only unverified snippet figures; left out. Coverage of electronic-money wallets is not established and was left out.",
+    "Whether Décision CM/UMOA/016/09/2014 has been amended since 2014 is unverified; flagged in the lesson. Term-deposit and contractual-savings rate rules were left out to keep the lesson short.",
+    "Savings rates of the Caisses Populaires (RCPB) are not published in the pages read; only the membership documents and opening amount are given.",
+    "Inflation figure for Burkina Faso or the UEMOA: none in the notes; the lesson uses declared assumptions (2% and 5%).",
+    "FinScope 2016 figures on where Burkinabè save (press report only) and the MAP roadmap figure on NGO-supported groups were left out; sector figures of microfinance savings (AP/SFD-BF) were not needed.",
+    "How institutions actually compute interest (value dates by fortnight, tax on interest) is not taught; the examples say 'before any tax or fee' and assume a full year.",
+    "US SEC '$1 a day' compounding table (flagged 're-check' in the notes) was not used."
+  ]
+}
