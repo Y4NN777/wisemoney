@@ -176,7 +176,7 @@ SOURCES
 - Coris Bourse home http://www.coris-bourse.com medium
 - AMF-UMOA home https://www.amf-umoa.org/fr/ low (header only)
 - DroitMediasFinance on Instruction N°003-2025/BRVM/DG (2025-12-02), J+2 settlement, secondary, medium: https://droitmediasfinance.com/index.php/actualites/droit-des-marches-financiers/1157-uemoa-brvm-deux-instructions-boursieres-sur-le-reglement-livraison-a-j-2-et-sur-les-regles-de-suspensions-des-titres-de-creances-cotes-echus
-- DGI Burkina CGI 2023 PDF https://dgi.bf/wp-content/uploads/2023/10/CODE-GENERAL-DES-IMPOTS-2023-A-JOUR-AVEC-LA-LOI-DE-FINANCE-2023.pdf NOT READ; local copy /home/aiobi6/.aclaude/projects/-home-aiobi6-Personal-Temp-projects-WiseMoney/28be5d29-2bb3-44f4-a307-b80eea27034f/tool-results/webfetch-1791027565410-tbembh.pdf
+- DGI Burkina CGI 2023 PDF https://dgi.bf/wp-content/uploads/2023/10/CODE-GENERAL-DES-IMPOTS-2023-A-JOUR-AVEC-LA-LOI-DE-FINANCE-2023.pdf NOT READ; a local copy kept outside the repository
 
 FACTS
 - BRVM = "Bourse Régionale des Valeurs Mobilières", HQ "18, Rue Joseph Anoma. Abidjan"; "marché au comptant"; serves UMOA zone.

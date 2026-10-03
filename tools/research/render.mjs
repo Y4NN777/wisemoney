@@ -1,7 +1,8 @@
 // Renders a page in real Chrome and prints its visible text, then its links.
 // Usage: node render.mjs <url> [--links] [--wait=ms] [--max=chars]
 import { createRequire } from "node:module";
-const require = createRequire("/home/aiobi6/Personal_Temp/projects/WiseMoney/apps/web/package.json");
+// playwright-core is a dev dependency of the web app; resolve it from there, wherever the repo is checked out.
+const require = createRequire(new URL("../../apps/web/package.json", import.meta.url));
 const { chromium } = require("playwright-core");
 const [url, ...flags] = process.argv.slice(2);
 const opt = (name, fallback) => { const f = flags.find((x) => x.startsWith(`--${name}=`)); return f ? Number(f.split("=")[1]) : fallback; };
