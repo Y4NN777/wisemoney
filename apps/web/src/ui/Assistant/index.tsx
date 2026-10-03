@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { requestInsight, requestRecommendation, requestPrediction, detectPatterns } from "../../pillars/intelligence/index.ts";
-import { sendConversationMessage, loadConceptEntry } from "../../pillars/literacy/index.ts";
+import { sendConversationMessage } from "../../pillars/literacy/index.ts";
 import { getConsentLevel, setConsentLevel, revokeConsent } from "../../consent/consentStore.ts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card.tsx";
 import { Button } from "../../components/ui/button.tsx";
@@ -58,7 +58,6 @@ export default function Assistant() {
   const [insightFeed, setInsightFeed] = useState<InsightEntry[]>([]);
   const [insightLoading, setInsightLoading] = useState<FeatureId | null>(null);
 
-  const [conceptId, setConceptId] = useState<string | null>(null);
 
   const [consentDialog, setConsentDialog] = useState<FeatureId | null>(null);
   const [showConsentSettings, setShowConsentSettings] = useState(false);
@@ -283,7 +282,6 @@ export default function Assistant() {
 
   const consentFeature = consentDialog != null ? FEATURE_META[consentDialog] : null;
 
-  const conceptEntry = conceptId != null ? loadConceptEntry(conceptId) : null;
 
   if (isLoading) {
     return (
@@ -376,32 +374,9 @@ export default function Assistant() {
         </TabsContent>
 
         <TabsContent value="chat" className="space-y-4">
-          <Card className="max-w-4xl">
-            <CardHeader>
-              <CardTitle className="text-base">{t("assistant.conceptLibrary.title")}</CardTitle>
-              <CardDescription>{t("assistant.conceptLibrary.description")}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex flex-wrap gap-2">
-                {["budgeting-101", "compound-interest", "emergency-fund"].map((id) => (
-                  <Button
-                    key={id}
-                    variant={conceptId === id ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setConceptId(conceptId === id ? null : id)}
-                  >
-                    {id === "budgeting-101" ? t("assistant.conceptLibrary.budgeting101") : id === "compound-interest" ? t("assistant.conceptLibrary.compoundInterest") : t("assistant.conceptLibrary.emergencyFund")}
-                  </Button>
-                ))}
-              </div>
-              {conceptEntry != null && (
-                <div className="mt-4 rounded-lg border border-border bg-background p-3">
-                  <h3 className="mb-1 text-sm font-semibold">{conceptEntry.title}</h3>
-                  <p className="whitespace-pre-wrap text-sm text-muted-foreground">{conceptEntry.body}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <Button asChild variant="outline" size="sm" className="gap-2">
+            <Link to="/learn"><BookOpen className="h-4 w-4" />{t("assistant.openLessons")}</Link>
+          </Button>
 
           <Card className={`flex h-[60dvh] max-w-4xl flex-col ${aiAvailable ? "" : "opacity-60"}`} aria-disabled={!aiAvailable}>
             <CardHeader className="border-b pb-3">

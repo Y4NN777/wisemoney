@@ -285,6 +285,30 @@ try {
   await appPage.getByRole("heading", { name: "Where things are", exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Finish", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Money available today", { exact: true }).waitFor({ timeout: 90_000 });
+  // Literacy pillar: lessons are readable with no provider, and without the tutor notice accepted a
+  // question is answered from the lesson on this device (no request leaves the browser).
+  const learnRequests = [];
+  appPage.on("request", (request) => { if (request.url().includes("/api/learn/")) learnRequests.push(request.url()); });
+  await appPage.getByRole("link", { name: "Learn about money", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Learn", exact: true }).waitFor();
+  await appPage.getByText("Education, not advice.", { exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "Your first income", exact: true }).last().click();
+  const lessonDialog = appPage.getByRole("dialog", { name: "Your first income", exact: true });
+  await lessonDialog.getByText("Example", { exact: true }).waitFor();
+  await lessonDialog.getByText(/OECD\/INFE Core Competencies Framework/).waitFor();
+  await lessonDialog.getByRole("button", { name: "Close", exact: true }).click();
+  await appPage.getByText("Tutor answers go through Google. Nothing from your vault.", { exact: true }).waitFor();
+  await appPage.getByRole("list", { name: "Suggested lessons", exact: true }).getByRole("button", { name: "Betting is not an income", exact: true }).click();
+  await appPage.getByText(/Bookmakers build a margin into every odd/).waitFor();
+  await appPage.getByText("Lesson on this device", { exact: true }).waitFor();
+  assert.deepEqual(learnRequests, [], "a question left the browser before the tutor notice was accepted");
+  await appPage.getByLabel("Ask a money question").fill("zzzz qqqq");
+  await appPage.getByRole("button", { name: "Ask the tutor", exact: true }).click();
+  await appPage.getByText("No lesson covers this. Accept the tutor notice to ask the tutor.", { exact: true }).waitFor();
+  assert.equal(await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "learn page has horizontal overflow");
+  await appPage.screenshot({ path: `${outputDir}/learn.png`, fullPage: true });
+  await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
+  await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
 
   const syncPage = await appContext.newPage();
   syncPage.on("pageerror", (error) => appErrors.push(`sync pageerror: ${error.message}`));

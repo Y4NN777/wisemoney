@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { clearAllConsent, getConsentLevel, grantHelpProviderConsent, hasHelpProviderConsent, revokeConsent, setConsentLevel } from "./consentStore.ts";
+import { clearAllConsent, getConsentLevel, grantHelpProviderConsent, grantLearnProviderConsent, hasHelpProviderConsent, hasLearnProviderConsent, revokeConsent, setConsentLevel } from "./consentStore.ts";
 
 const values = new Map<string, string>();
 const storage: Record<string, unknown> = {
@@ -48,6 +48,18 @@ describe("consent store", () => {
     clearAllConsent();
     expect(values.get("unrelated")).toBe("keep");
     expect(getConsentLevel("literacy")).toBe("NotPrompted");
+  });
+});
+
+describe("literacy tutor consent", () => {
+  it("is separate from help consent and cleared with the rest (INV-EGR-02)", () => {
+    grantHelpProviderConsent();
+    expect(hasLearnProviderConsent()).toBe(false);
+    grantLearnProviderConsent();
+    expect(hasLearnProviderConsent()).toBe(true);
+    clearAllConsent();
+    expect(hasLearnProviderConsent()).toBe(false);
+    expect(hasHelpProviderConsent()).toBe(false);
   });
 });
 

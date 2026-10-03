@@ -28,6 +28,7 @@ import { getDashboardMode } from "./dashboardMode.ts";
 import { useOpenCaptureSheet } from "../../components/CaptureSheet/index.tsx";
 import DeviceUnlockOffer from "../../components/DeviceUnlockOffer/index.tsx";
 import AssistantCard from "../../components/AssistantCard/index.tsx";
+import LearnCard from "../../components/LearnCard/index.tsx";
 import FirstSessionFlow from "../../firstSession/FirstSessionFlow.tsx";
 import { useFirstSessionState } from "../../firstSession/hooks.ts";
 import { selectFirstSessionStep, type FirstSessionStep } from "../../firstSession/firstSession.ts";
@@ -289,6 +290,7 @@ function DashboardContent({
       />
     ),
     assistant: <AssistantCard />,
+    learn: <LearnCard />,
     charts: (
           <section aria-label={t("dashboard.analyticsOverview")} className="grid gap-3 xl:grid-cols-2">
             <Card className="interactive-surface metric-surface xl:col-span-2">

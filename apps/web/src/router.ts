@@ -4,6 +4,7 @@ import { Route as vaultLayoutRoute } from "./routes/_vault.tsx";
 import { Route as indexRoute } from "./routes/index.tsx";
 import { Route as captureRoute } from "./routes/capture.tsx";
 import { Route as assistantRoute } from "./routes/assistant.tsx";
+import { Route as learnRoute } from "./routes/learn.tsx";
 import { Route as planningRoute } from "./routes/planning.tsx";
 import { Route as settingsRoute } from "./routes/settings.tsx";
 import { Route as budgetsRoute } from "./routes/budgets.tsx";
@@ -23,6 +24,7 @@ const routeTree = rootRoute.addChildren([
     indexRoute,
     captureRoute,
     assistantRoute,
+    learnRoute,
     planningRoute,
     settingsRoute,
     budgetsRoute,

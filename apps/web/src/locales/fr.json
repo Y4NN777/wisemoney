@@ -670,13 +670,6 @@
     "unavailable": "Indisponible",
     "dismiss": "Ignorer",
     "emptyInsights": "Appuyez sur un bouton ci-dessus pour générer des analyses à partir de vos données financières.",
-    "conceptLibrary": {
-      "title": "Bibliothèque de concepts",
-      "description": "Apprenez à votre rythme",
-      "budgeting101": "Budgétisation 101",
-      "compoundInterest": "Intérêts composés",
-      "emergencyFund": "Fonds d'urgence"
-    },
     "chat": {
       "title": "Chat d'éducation financière",
       "description": "Posez des questions sur les finances personnelles",
@@ -704,7 +697,8 @@
       "limitedBtn": "Limité",
       "done": "Terminé"
     },
-    "consentSettings": "Paramètres de consentement"
+    "consentSettings": "Paramètres de consentement",
+    "openLessons": "Ouvrir les leçons"
   },
   "budgets": {
     "title": "Budgets",
@@ -1414,5 +1408,56 @@
         "body": "Enregistrez un mouvement, un transfert ou une contribution depuis n’importe où."
       }
     }
+  },
+  "learn": {
+    "title": "Apprendre",
+    "disclosure": "De l’éducation, pas du conseil.",
+    "draft": "Leçons rédigées par WiseMoney à partir de référentiels internationaux d’éducation financière. Pas encore relues par un expert local.",
+    "tutor": {
+      "title": "Demander au tuteur",
+      "placeholder": "Posez une question d’argent",
+      "send": "Demander au tuteur",
+      "stop": "Arrêter la réponse",
+      "clear": "Nouvelle conversation",
+      "suggestions": "Leçons suggérées",
+      "writing": "Rédaction…",
+      "sources": "Sources",
+      "consent": "Les réponses du tuteur passent par Google. Rien de votre coffre.",
+      "ok": "OK",
+      "personal": "Pour des questions sur vos propres chiffres :",
+      "path": {
+        "tutor": "Tuteur · Google Gemma",
+        "web": "Tuteur · avec recherche web",
+        "lesson": "Leçon sur cet appareil"
+      },
+      "errors": {
+        "needConsent": "Aucune leçon ne couvre cette question. Acceptez la mention du tuteur pour lui demander.",
+        "offline": "Aucune leçon ne couvre cette question hors ligne. Réessayez avec une connexion.",
+        "unavailable": "Le tuteur est indisponible et aucune leçon ne couvre cette question."
+      }
+    },
+    "lessons": {
+      "title": "Leçons",
+      "count_one": "{{count}} leçon",
+      "count_other": "{{count}} leçons"
+    },
+    "areas": {
+      "earn": "Gagner",
+      "spend": "Dépenser",
+      "digital": "Argent numérique",
+      "grow": "Épargner et faire grandir",
+      "borrow": "Emprunter",
+      "protect": "Protéger et construire"
+    },
+    "lesson": {
+      "example": "Exemple",
+      "watchOut": "Attention",
+      "basis": "Référentiels :",
+      "ask": "Demander au tuteur sur ce sujet",
+      "open": "Ouvrir la leçon : {{title}}"
+    }
+  },
+  "learnCard": {
+    "title": "Apprendre l’argent"
   }
 }

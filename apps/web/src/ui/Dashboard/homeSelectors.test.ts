@@ -30,7 +30,7 @@ function operation(overrides: Partial<FinancialOperation> & { id: string; timest
   };
 }
 
-const ALL_SECTIONS: HomeSectionId[] = ["summary", "quickActions", "attention", "recentMovements", "assistant", "charts", "planningCards", "aiInsight"];
+const ALL_SECTIONS: HomeSectionId[] = ["summary", "quickActions", "attention", "recentMovements", "assistant", "learn", "charts", "planningCards", "aiInsight"];
 
 describe("selectRecentMovements", () => {
   const ops = [
@@ -72,10 +72,10 @@ describe("indexTransactionsById", () => {
 });
 
 describe("selectHomeLayout", () => {
-  it("leads with the summary, ends the first viewport with the assistant entry, folds the charts first", () => {
+  it("leads with the summary, ends the first viewport with the assistant and learn entries, folds the charts first", () => {
     const layout = selectHomeLayout({ canMutate: true });
     expect(layout.aboveFold[0]).toBe("summary");
-    expect(layout.aboveFold.at(-1)).toBe("assistant");
+    expect(layout.aboveFold.slice(-2)).toEqual(["assistant", "learn"]);
     expect(layout.belowFold[0]).toBe("charts");
   });
 

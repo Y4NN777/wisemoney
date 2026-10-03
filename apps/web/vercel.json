@@ -3,6 +3,9 @@
   "functions": {
     "api/help/messages.ts": {
       "maxDuration": 60
+    },
+    "api/learn/messages.ts": {
+      "maxDuration": 60
     }
   },
   "rewrites": [

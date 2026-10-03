@@ -29,6 +29,7 @@ export type HomeSectionId =
   | "attention"
   | "recentMovements"
   | "assistant"
+  | "learn"
   | "charts"
   | "planningCards"
   | "aiInsight";
@@ -42,8 +43,8 @@ export type HomeLayout = { aboveFold: HomeSectionId[]; belowFold: HomeSectionId[
 export function selectHomeLayout(input: { canMutate: boolean }): HomeLayout {
   return {
     aboveFold: input.canMutate
-      ? ["summary", "quickActions", "attention", "recentMovements", "assistant"]
-      : ["summary", "attention", "recentMovements", "assistant"],
+      ? ["summary", "quickActions", "attention", "recentMovements", "assistant", "learn"]
+      : ["summary", "attention", "recentMovements", "assistant", "learn"],
     belowFold: ["charts", "planningCards", "aiInsight"],
   };
 }

@@ -21,7 +21,7 @@ import {
   requestPrediction,
   requestRecommendation,
 } from "./intelligence/index.ts";
-import { loadConceptEntry, sendConversationMessage } from "./literacy/index.ts";
+import { sendConversationMessage } from "./literacy/index.ts";
 
 const masterKey = {} as MasterKey;
 const snapshot = {} as FinancialStateSnapshot;
@@ -81,10 +81,5 @@ describe("AI pillars", () => {
       message: "Configure a provider",
     });
     expect(mockSubmit).not.toHaveBeenCalled();
-  });
-
-  it("loads known concepts and rejects unknown ids", () => {
-    expect(loadConceptEntry("compound-interest").title).toBe("Compound Interest");
-    expect(() => loadConceptEntry("unknown")).toThrow(/not found/);
   });
 });

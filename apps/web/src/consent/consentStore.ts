@@ -20,6 +20,9 @@ type ConsentLevel = "NotPrompted" | "Redacted" | "FullGranted";
 const STORAGE_KEY_PREFIX = "wisemoney:consent:";
 const HELP_PROVIDER_CONSENT_KEY = "wisemoney.help.google-consent.v1";
 const HELP_PROVIDER_CONSENT_VERSION = 1;
+/** The literacy tutor has its own consent: INV-EGR-02, FR-LRN-10 (ADR-0013). */
+const LEARN_PROVIDER_CONSENT_KEY = "wisemoney.learn.google-consent.v1";
+const LEARN_PROVIDER_CONSENT_VERSION = 1;
 
 /**
  * Get the current consent level for a feature.
@@ -72,6 +75,7 @@ export function clearAllConsent(): void {
     localStorage.removeItem(key);
   }
   localStorage.removeItem(HELP_PROVIDER_CONSENT_KEY);
+  localStorage.removeItem(LEARN_PROVIDER_CONSENT_KEY);
 }
 
 /** Versioned disclosure acceptance for the public Google-powered help chat. */
@@ -91,4 +95,19 @@ export function grantHelpProviderConsent(storage: Pick<Storage, "setItem"> = loc
     version: HELP_PROVIDER_CONSENT_VERSION,
     accepted: true,
   }));
+}
+
+export function hasLearnProviderConsent(storage: Pick<Storage, "getItem"> = localStorage): boolean {
+  try {
+    const raw = storage.getItem(LEARN_PROVIDER_CONSENT_KEY);
+    if (raw == null) return false;
+    const parsed = JSON.parse(raw) as { version?: unknown; accepted?: unknown };
+    return parsed.version === LEARN_PROVIDER_CONSENT_VERSION && parsed.accepted === true;
+  } catch {
+    return false;
+  }
+}
+
+export function grantLearnProviderConsent(storage: Pick<Storage, "setItem"> = localStorage): void {
+  storage.setItem(LEARN_PROVIDER_CONSENT_KEY, JSON.stringify({ version: LEARN_PROVIDER_CONSENT_VERSION, accepted: true }));
 }

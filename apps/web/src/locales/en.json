@@ -670,13 +670,6 @@
     "unavailable": "Unavailable",
     "dismiss": "Dismiss",
     "emptyInsights": "Tap a button above to generate insights from your financial data.",
-    "conceptLibrary": {
-      "title": "Concept Library",
-      "description": "Learn at your own pace",
-      "budgeting101": "Budgeting 101",
-      "compoundInterest": "Compound Interest",
-      "emergencyFund": "Emergency Fund"
-    },
     "chat": {
       "title": "Financial Literacy Chat",
       "description": "Ask anything about personal finance",
@@ -704,7 +697,8 @@
       "limitedBtn": "Limited",
       "done": "Done"
     },
-    "consentSettings": "Consent settings"
+    "consentSettings": "Consent settings",
+    "openLessons": "Open the lessons"
   },
   "budgets": {
     "title": "Budgets",
@@ -1414,5 +1408,56 @@
         "body": "Record a movement, a transfer or a goal contribution from anywhere."
       }
     }
+  },
+  "learn": {
+    "title": "Learn",
+    "disclosure": "Education, not advice.",
+    "draft": "Lessons written by WiseMoney from international financial-education frameworks. Not yet reviewed by a local expert.",
+    "tutor": {
+      "title": "Ask the tutor",
+      "placeholder": "Ask a money question",
+      "send": "Ask the tutor",
+      "stop": "Stop the answer",
+      "clear": "New conversation",
+      "suggestions": "Suggested lessons",
+      "writing": "Writing…",
+      "sources": "Sources",
+      "consent": "Tutor answers go through Google. Nothing from your vault.",
+      "ok": "OK",
+      "personal": "For questions about your own numbers:",
+      "path": {
+        "tutor": "Tutor · Google Gemma",
+        "web": "Tutor · with web search",
+        "lesson": "Lesson on this device"
+      },
+      "errors": {
+        "needConsent": "No lesson covers this. Accept the tutor notice to ask the tutor.",
+        "offline": "No lesson covers this offline. Try again with a connection.",
+        "unavailable": "The tutor is unavailable and no lesson covers this."
+      }
+    },
+    "lessons": {
+      "title": "Lessons",
+      "count_one": "{{count}} lesson",
+      "count_other": "{{count}} lessons"
+    },
+    "areas": {
+      "earn": "Earn",
+      "spend": "Spend",
+      "digital": "Digital money",
+      "grow": "Save and grow",
+      "borrow": "Borrow",
+      "protect": "Protect and build"
+    },
+    "lesson": {
+      "example": "Example",
+      "watchOut": "Watch out",
+      "basis": "Based on:",
+      "ask": "Ask the tutor about this",
+      "open": "Open the lesson: {{title}}"
+    }
+  },
+  "learnCard": {
+    "title": "Learn about money"
   }
 }

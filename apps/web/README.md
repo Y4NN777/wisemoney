@@ -76,6 +76,13 @@ disabled on the Google project. `HELP_GEMMA_MODEL` defaults to
 key to the Generative Language API where Google Cloud key restrictions are
 available.
 
+The literacy tutor (`/api/learn/messages`, ADR-0013, `docs/api/learn.openapi.yaml`)
+uses a key from a second Google project: `LITERACY_GEMINI_API_KEY`. Its request
+schema is closed (question, locale, recent turns, lesson ids). `LITERACY_WEB_SEARCH=on`
+asks Gemma to ground current facts with Google Search and falls back to lessons
+only if the provider refuses the tool. Without the key the page still works:
+lessons answer on the device.
+
 The PWA implements admission in TypeScript using a FIFO queue, Web Locks, and
 browser storage shared across tabs. Text costs one unit, an image costs two,
 reservations expire automatically, failed provider requests are refunded, and the
