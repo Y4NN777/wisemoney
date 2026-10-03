@@ -1,5 +1,6 @@
-import { LITERACY_UNITS_EN } from "./corpus.en.ts";
-import { LITERACY_UNITS_FR } from "./corpus.fr.ts";
+// Reached by the Vercel functions in api/: relative imports here must use .js specifiers (api/serverGraph.test.ts).
+import { LITERACY_UNITS_EN } from "./corpus.en.js";
+import { LITERACY_UNITS_FR } from "./corpus.fr.js";
 
 /**
  * Literacy corpus v0 (ADR-0013): modern, international financial literacy written for young

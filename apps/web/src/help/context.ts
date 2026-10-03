@@ -1,4 +1,5 @@
-import { HELP_KNOWLEDGE_VERSION, HELP_SURFACES, type HelpLocale, type SurfaceId } from "./corpus.ts";
+// Reached by the Vercel functions in api/: relative imports here must use .js specifiers (api/serverGraph.test.ts).
+import { HELP_KNOWLEDGE_VERSION, HELP_SURFACES, type HelpLocale, type SurfaceId } from "./corpus.js";
 
 export const APP_FAULT_CODES = [
   "dashboard_load", "storage_unavailable", "render_conflict", "network_unavailable", "unknown",

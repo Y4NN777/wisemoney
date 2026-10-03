@@ -1,4 +1,4 @@
-import type { LiteracyUnit } from "./corpus.ts";
+import type { LiteracyUnit } from "./corpus.js";
 
 const YOUTH = "oecd-infe-youth";
 const DIGITAL = "eu-oecd-digital";
