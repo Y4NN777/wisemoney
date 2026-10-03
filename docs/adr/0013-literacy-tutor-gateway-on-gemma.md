@@ -2,8 +2,8 @@
 
 | Field    | Value |
 | -------- | ----- |
-| Status   | Proposed (awaiting Y4NN's approval before `api/learn` is built) |
-| Date     | 2026-09-26 |
+| Status   | Accepted (Y4NN, 2026-10-03, with the amendments in §Amendments at acceptance) |
+| Date     | 2026-09-26 proposed · 2026-10-03 accepted |
 | Diátaxis | Explanation |
 | Source   | Y4NN 2026-09-26 ("wire the learning AI to also gemma with another api key … knowledge related more to international and local financial literacy"); research log `docs/research/2026-09-26-literacy-gemma.md`; plan `docs/plans/first-session-wisebot-literacy.md` Track 3; `docs/WISEBOT_KNOWLEDGE_ARCHITECTURE.md` (2026-08-30, deferred); ADR-0001, ADR-0002, ADR-0011; CONTRACT INV-EGR-01/02/03 |
 | Binds    | `apps/web/api/learn/*` (new gateway); `apps/web/src/pillars/literacy`; `apps/web/src/consent/consentStore.ts` (new feature key); literacy corpus v0 (`docs/literacy/corpus-v0.md`); Vercel env `LITERACY_GEMINI_API_KEY` |
@@ -59,6 +59,23 @@ configured").
    Nothing from your vault."), plus a permanent "education, not advice" line in
    the tutor surface. Regulatory figures and fees in answers carry the unit's
    "as of" date.
+
+## Amendments at acceptance (2026-10-03)
+
+- **Corpus direction (Y4NN).** "Literacy is not tontine": the corpus is modern, international
+  financial literacy adapted to young Africans (first income, hustle income, family obligations,
+  digital money and safety, loan apps, betting, crypto and trading scams, compounding, investing),
+  with local practices as context. It replaces the Burkina-practice-centred list of the proposal.
+  The units are original text written for WiseMoney on the OECD/INFE youth framework and the
+  EU/OECD digital-finance competences; no local expert has reviewed them yet and the app says so.
+- **Request schema is stricter than proposed.** The help-style safe context is not accepted:
+  question, locale, recent turns and unit ids only (`docs/api/learn.openapi.yaml`).
+- **Web search is a server switch.** `LITERACY_WEB_SEARCH=on` attaches Gemma's `google_search`
+  tool so current facts (fees, rates, regulation) come with visible sources. Google's own pages
+  disagree on whether Gemma supports it (research log §D), so a 400 with the tool drops to a
+  lessons-only request. The question still goes only to Google; INV-EGR-04 is unchanged.
+- **Without the tutor notice accepted, or offline, the lesson answers on the device** and no
+  request is made. The device-local daily allowance is shared with WiseBot.
 
 ## Consequences
 

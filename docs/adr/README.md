@@ -50,7 +50,7 @@ the decisions and specs actually state.
 | [ADR-0010](./0010-dependency-security-baseline-and-scanning-policy.md) | Dependency security baseline and scanning policy | Accepted | `/dep-audit` 2026-06-05 |
 | [ADR-0011](./0011-mvp-ai-provider-strategy-managed-redacted-byo-key-full-egress.md) | MVP AI provider strategy — managed redacted-only via free models; full-egress BYO-key only; NVIDIA hosted dropped | Accepted | T-S0-02; ARCHITECTURE §9a/§9b; THREAT_MODEL §2.1, §7; 2026-06-05 |
 | [ADR-0012](./0012-client-auth-session-and-token-storage.md) | Client auth session and token storage | Accepted | SRS OQ-06; CONTRACT INV-AUTH-06/07; THREAT_MODEL §2.4, §6; 2026-06-05 |
-| [ADR-0013](./0013-literacy-tutor-gateway-on-gemma.md) | Literacy tutor on a dedicated Gemma gateway with zero vault egress | Proposed | Y4NN 2026-09-26; research 2026-09-26; SRS §5.5; CONTRACT INV-EGR-04 |
+| [ADR-0013](./0013-literacy-tutor-gateway-on-gemma.md) | Literacy tutor on a dedicated Gemma gateway with zero vault egress | Accepted | Y4NN 2026-09-26; research 2026-09-26; SRS §5.5; CONTRACT INV-EGR-04 |
 
 ---
 

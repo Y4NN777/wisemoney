@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: WiseMoney literacy tutor gateway
+  version: 0.1.0
+  summary: Stateless gateway between the WiseMoney PWA and Gemma for general financial-literacy questions.
+  description: |
+    Reference · 2026-10-03 · ADR-0013 · CONTRACT INV-EGR-04.
+    The request schema is closed: any property not listed here is rejected with 400, so no
+    vault-derived value can be carried, whatever the client's consent state.
+    The provider key (`LITERACY_GEMINI_API_KEY`) and the model id never leave the server.
+servers:
+  - url: /
+paths:
+  /api/learn/messages:
+    post:
+      operationId: sendLearnMessage
+      summary: Ask the tutor one question and stream the answer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LearnMessageRequest" }
+      responses:
+        "200":
+          description: Server-sent events. `meta` once, then `delta` zero or more times, `sources` at most once, then `done`.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: |
+                  event: meta    data: {"unitIds": string[], "webSearch": boolean}
+                  event: delta   data: {"text": string}
+                  event: sources data: {"items": [{"title": string, "uri": string}]}
+                  event: done    data: {}
+        "400": { $ref: "#/components/responses/Problem" }
+        "403": { $ref: "#/components/responses/Problem" }
+        "405": { $ref: "#/components/responses/Problem" }
+        "413": { $ref: "#/components/responses/Problem" }
+        "503": { $ref: "#/components/responses/Problem" }
+components:
+  schemas:
+    LearnMessageRequest:
+      type: object
+      additionalProperties: false
+      required: [question, locale]
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: The text the learner typed. Nothing else about the learner is sent.
+        locale:
+          type: string
+          enum: [en, fr]
+        history:
+          type: array
+          maxItems: 8
+          items:
+            type: object
+            additionalProperties: false
+            required: [role, text]
+            properties:
+              role: { type: string, enum: [user, assistant] }
+              text: { type: string, minLength: 1, maxLength: 2000 }
+        unitIds:
+          type: array
+          maxItems: 3
+          description: Ids of corpus units the client wants as grounding. Each must exist in the server's corpus; the server sends its own trusted text for them. Omitted, the server retrieves units from the question.
+          items: { type: string, pattern: "^[a-z0-9-]{1,48}$" }
+    Problem:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string }
+  responses:
+    Problem:
+      description: Error with a public message. 503 covers a missing key, a disallowed model, and provider failure.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Problem" }

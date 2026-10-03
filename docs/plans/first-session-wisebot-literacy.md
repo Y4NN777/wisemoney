@@ -1,6 +1,6 @@
 # First session · WiseBot UI · Literacy AI — plan
 
-Status: Tracks 1–2 DONE, Track 3 planned (ADR-0013 proposed) · 2026-09-26 · From Y4NN's review of the guided first session ("the checklist must be forcefully executed — see TickTick"), the WiseBot panel and the learning AI.
+Status: Tracks 1–3 DONE (Track 3 built 2026-10-03; key and web-search check pending on Vercel) · 2026-09-26 · From Y4NN's review of the guided first session ("the checklist must be forcefully executed — see TickTick"), the WiseBot panel and the learning AI.
 
 ## Track 1 — First session as a required, task-shaped flow (TickTick pattern)
 
@@ -40,4 +40,4 @@ Facts: help WiseBot = `api/help/_helpGateway.ts`, Gemma via the Gemini API, serv
 
 Sequencing proposed: Track 1 → Track 2 → Track 3 research runs in parallel with 1–2 (agents), its implementation after the ADR is approved.
 
-Track 3 state 2026-09-26: research logged (`docs/research/2026-09-26-literacy-gemma.md`); ADR-0013 proposed; SRS §5.5 (FR-LRN-08…11) and CONTRACT INV-EGR-04 added; corpus v0 inventory at `docs/literacy/corpus-v0.md`. Next, on approval: `api/learn` gateway (key `LITERACY_GEMINI_API_KEY`), literacy pillar routing, corpus units as data, consent key and disclosure.
+Track 3 state 2026-09-26: research logged (`docs/research/2026-09-26-literacy-gemma.md`); ADR-0013 proposed; SRS §5.5 (FR-LRN-08…11) and CONTRACT INV-EGR-04 added; corpus v0 inventory at `docs/literacy/corpus-v0.md`. Built 2026-10-03 after Y4NN's approval and corpus redirection (ADR-0013 amendments): `api/learn` gateway with a closed schema and an optional web-search switch, 32 bilingual units, `/learn` page (lessons + tutor) with a Home entry, separate consent. To do on Vercel: create the second Google project key, set `LITERACY_GEMINI_API_KEY`, then try `LITERACY_WEB_SEARCH=on`.

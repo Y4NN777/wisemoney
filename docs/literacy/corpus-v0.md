@@ -1,42 +1,20 @@
 # Literacy corpus v0 — inventory
 
-Quadrant: Reference · Date: 2026-09-26 · Status: Proposed (ADR-0013) · Source: `docs/research/2026-09-26-literacy-gemma.md` §B–C.
+Quadrant: Reference · Date: 2026-10-03 (replaces the 2026-09-26 proposal) · ADR-0013 · Data: `apps/web/src/literacy/corpus.{en,fr}.ts`, version `0.1.0-2026-10-03`.
 
-Thirty-two bilingual units (EN + FR), shipped in the bundle next to the help corpus and retrieved lexically. **Basis** says where the text comes from; **Rights** is one of *adapt* (CC BY, attribution and the ILO notice where required), *cite* (facts restated with source and "as of" date; no text reuse), *original* (written for WiseMoney, needs local expert review before release). Figures carry their "as of" date and are reviewed quarterly and on any regulatory change.
+Direction (Y4NN, 2026-10-03): modern, international financial literacy adapted to young Africans; local practices are context, not the subject. Thirty-two units, EN + FR, same ids and figures in both (test-enforced). Each unit: summary, three or four points, one worked example in CFA francs, one warning, search aliases, framework basis.
 
-| # | Id | Title (EN / FR) | Basis | Rights |
-| --- | --- | --- | --- | --- |
-| A1 | money-basics | What money does — XOF and the euro peg / À quoi sert l'argent — le franc CFA et l'ancrage à l'euro | OECD/INFE core competencies; BCEAO | cite |
-| A2 | cash-wallet-bank | Cash, mobile wallet, bank account / Espèces, portefeuille mobile, compte bancaire | ILO booklets; OECD/INFE | adapt |
-| A3 | receipts-sms | Reading a receipt and an SMS confirmation / Lire un reçu et un SMS de confirmation | CGAP Burkina survey (missing SMS 32 %) | original |
-| A4 | cost-of-waiting | Prices and the cost of waiting / Les prix et le coût d'attendre | OECD/INFE | original |
-| B5 | mm-open-kyc | Opening and identifying a mobile-money account (KYC tiers, caps) / Ouvrir et identifier un compte mobile money | BCEAO 2020 communiqué; operator T&Cs | cite |
-| B6 | mm-fees | Mobile-money fees explained, per operator "as of" table / Les frais du mobile money, opérateur par opérateur | Orange Money BF, Coris Money grids; Moov unverified | cite |
-| B7 | mm-wrong-recipient | Wrong recipient and complaints / Erreur de destinataire et réclamations | BCEAO Instruction 001-01-2024 art. 16; operator SLA | cite |
-| B8 | mm-fraud-pin | Fraud and PIN hygiene / Fraude et hygiène du code PIN | CGAP (fraud targeting 18 %) | original |
-| B9 | mm-paying | Paying bills, school fees and merchants / Payer factures, scolarité et commerçants | operator pages | cite |
-| B10 | mm-to-bank | Mobile money to and from a bank / Du mobile money à la banque et retour | operator pages; BCEAO | cite |
-| C11 | income-expenses | Income vs expenses, needs vs wants / Revenus et dépenses, besoins et envies | ILO booklets | adapt |
-| C12 | monthly-budget | A monthly budget / Un budget mensuel | ILO booklets; OECD/INFE | adapt |
-| C13 | irregular-income | Irregular income: harvest, trade, daily work / Revenus irréguliers : récolte, commerce, journalier | ILO farmers booklet (CI) | adapt |
-| C14 | lean-season | The lean-season plan / Le plan de soudure | FEWS NET seasons | original |
-| C15 | school-fees | The school-fee calendar / Le calendrier des frais de scolarité | school year 1 Oct; 2026 fee-cap decree | cite |
-| C16 | emergency-fund | An emergency fund in XOF / Une réserve d'urgence en francs CFA | OECD/INFE; ILO | adapt |
-| D17 | where-to-save | Why and where to save: cash, wallet, SFD, bank / Pourquoi et où épargner | ILO; AP/SFD-BF directory | adapt |
-| D18 | tontines | Tontines: rules and risks / Les tontines : règles et risques | gap — original with local review | original |
-| D19 | vsla | Savings groups (VSLA/AVEC) / Les groupes d'épargne (AVEC) | CARE methodology (reference only) | original |
-| D20 | goals-set-asides | Goals and automatic set-asides / Objectifs et mises de côté automatiques | OECD/INFE | original |
-| E21 | cost-of-credit | What credit costs: interest, TAEG, fees / Ce que coûte un crédit | BCEAO usury ceilings (conflict flagged) | cite |
-| E22 | microfinance-loans | Microfinance loans in Burkina / Le crédit en microfinance au Burkina | AP/SFD-BF; BCEAO | cite |
-| E23 | informal-credit | Informal credit and its true cost / Le crédit informel et son vrai coût | gap — original with local review | original |
-| E24 | debt-danger-signs | Debt danger signs / Les signaux d'alerte du surendettement | OECD/INFE | original |
-| E25 | group-guarantees | Group guarantees / Les cautions solidaires | ILO; CARE | adapt |
-| F26 | insurance-basics | Insurance basics / Les bases de l'assurance | OECD/INFE | original |
-| F27 | scams-pyramids | Scams and pyramid schemes / Arnaques et pyramides | CGAP; OECD/INFE | original |
-| F28 | consumer-rights | Your rights as a financial consumer / Vos droits de consommateur financier | BCEAO Instruction 001-01-2024 | cite |
-| F29 | remittances | Remittances and comparing costs / Transferts de la diaspora et comparaison des coûts | World Bank Remittance Prices (CC BY) | adapt |
-| G30 | business-pots | Small-business money: separate pots / L'argent de l'activité : des caisses séparées | ILO booklets | adapt |
-| G31 | long-term | Long-term goals: land, housing, retirement (CNSS/CARFO) / Objectifs de long terme | gap — original with local review | original |
-| G32 | glossary | Glossary EN/FR / Lexique FR/EN | all units | original |
+**Provenance.** Every unit is original text written for WiseMoney. Structure follows the OECD/INFE Core Competencies Framework on Financial Literacy for Youth (2015) and the digital-finance competences of the EU/OECD-INFE framework for adults (2022); no text is reused from them. Arithmetic in every example was checked by hand. Hard facts used: the euro parity of the CFA franc (655.957), the BRVM as the WAEMU regional exchange, the existence of a legal usury ceiling in the WAEMU (no figure given: sources conflict, research log §B). No operator fee, cap or rate is stated; units tell the learner to check the current grid, and the tutor may fetch current figures with sources when web search is on.
 
-Before release: confirm each ILO booklet's copyright page (CC BY 4.0 applies to material dated on or after 3 May 2023, with the mandatory "not prepared, reviewed or endorsed by the ILO" notice); resolve the Moov Money fee grid and the usury-ceiling conflict, or ship those units with the figure marked unverified; local expert review for every *original* unit touching Burkina practice (B8, C14, D18, E23, G31).
+**Review status.** Editorial draft. No local expert review yet; the Learn page says so. Review before removing that line: all of *Digital money* and *Borrow*, plus `family-support`, `betting`, `investing-basics`, `long-term`.
+
+| Area | Units |
+| --- | --- |
+| Earn | `money-goals` · `first-income` · `irregular-income` · `family-support` · `lifestyle-pressure` |
+| Spend | `budget-basics` · `budget-methods` · `tracking-spending` · `inflation` · `big-moments` |
+| Digital money | `mobile-money` · `accounts` · `digital-safety` · `scams-ponzi` · `betting` · `remittances-fx` |
+| Save and grow | `emergency-fund` · `where-to-save` · `compound-interest` · `risk-return` · `investing-basics` · `crypto-forex` |
+| Borrow | `credit-basics` · `true-cost-credit` · `digital-loans` · `debt-capacity` · `out-of-debt` |
+| Protect and build | `insurance` · `consumer-rights` · `business-money` · `net-worth-records` · `long-term` |
+
+Not in v0: tax basics, country-specific pension rules, operator fee tables, local-language glossary.

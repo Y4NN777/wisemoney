@@ -296,8 +296,8 @@ layer, transparent to the user.
 
 **FR-LRN-08** `[MVP]` When a managed literacy gateway is configured, general
 teaching questions are answered through it without a BYO key. Its request carries
-only the typed question, the locale, recent turns, grounding unit ids, and the
-help-style safe context. Any vault-derived value, aggregate included, is rejected
+only the typed question, the locale, recent turns and grounding unit ids
+(`docs/api/learn.openapi.yaml`). Any vault-derived value, aggregate included, is rejected
 by the gateway schema (CONTRACT INV-EGR-04).
 
 **FR-LRN-09** `[MVP]` Answers are grounded in a bilingual, versioned literacy
@@ -308,8 +308,9 @@ source, licence status, and "as of" date for any figure. Units are readable offl
 and a permanent "education, not advice" disclosure; consent for help or for any
 other AI feature does not extend to it.
 
-**FR-LRN-11** `[MVP]` The tutor states which path produced an answer (managed
-corpus tutor or the user's own provider) whenever both are available.
+**FR-LRN-11** `[MVP]` Every answer states what produced it: the managed tutor, the
+managed tutor with web search, or the lesson on the device. Questions about the
+user's own numbers are pointed to the Assistant (BYO path) when it is available.
 
 ---
 

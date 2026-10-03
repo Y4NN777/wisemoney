@@ -31,8 +31,9 @@
 - `docs/ARCHITECTURE.md` — system architecture
 - `docs/THREAT_MODEL.md` — STRIDE security threat model
 - `docs/diagrams/C4/` — C4 diagrams (Context / Container / Component)
-- `docs/adr/` — architecture decision records (ADR-0001…0013; 0013 proposed)
-- `docs/literacy/corpus-v0.md` — literacy corpus inventory (Track 3)
+- `docs/adr/` — architecture decision records (ADR-0001…0013)
+- `docs/literacy/corpus-v0.md` — literacy corpus inventory (32 units, editorial draft)
+- `docs/api/learn.openapi.yaml` — literacy tutor gateway contract
 - `docs/runbooks/` — operational runbooks (mixed: active local procedures +
   pre-production outlines)
 - `docs/intake/intent-v0.1.md` — source intent + full decision log (locked + Gate-1…5)
@@ -50,7 +51,7 @@
   centre capture button that opens an amount-first sheet; Settings in the header;
   Assistant reached from Settings and a Home card once a provider is usable. Routes:
   `/`, `/operations`, `/planning` (+ `/budgets`, `/goals`, `/planned-expenses`,
-  `/recurring`, `/debts`), `/assistant`, `/settings`, `/help`, `/updates`, all app
+  `/recurring`, `/debts`), `/assistant`, `/learn`, `/settings`, `/help`, `/updates`, all app
   routes under the pathless `_vault` layout. Home shows one viewport (summary, one
   attention card, five recent movements) with the rest under a fold. Local
   financial-state flows are event-sourced and covered by domain/pillar tests.
@@ -59,6 +60,9 @@
   after setup from Settings › Security, sealed refresh-token session store, BYO-key
   settings, import/export, and consent/redaction modules. One-step onboarding
   (landing → passphrase → app).
+- **Literacy:** `/learn` shows 32 bilingual lessons (offline) and a tutor on Gemma through
+  `api/learn` (closed schema, zero vault egress, own consent, optional web search); the
+  lesson answers on the device when offline, unconfigured, or before consent.
 - **AI orchestration:** Managed path attaches Bearer auth, `X-Egress-Level`,
   `X-Feature`, and full-consent assertions when available; assertion failures
   downgrade to redacted payloads. BYO direct-provider path remains a future slice.
@@ -104,8 +108,9 @@
   double-issuance race.
 - Add Postgres-backed integration tests for edge handlers.
 - Implement BYO direct-provider orchestration.
-- Literacy tutor on Gemma: on ADR-0013 approval, build `api/learn`, route the literacy
-  pillar, ship corpus v0 units as data (`docs/plans/first-session-wisebot-literacy.md`).
+- Literacy tutor: set `LITERACY_GEMINI_API_KEY` (second Google project) on Vercel, then
+  verify `LITERACY_WEB_SEARCH=on` with a real call (docs conflict, research log §D).
+- Literacy corpus v0: local expert review before removing the "not yet reviewed" line.
 - Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
 - Activity page date presets (day/week/month), then drop `TransactionActivity` from Home.
 

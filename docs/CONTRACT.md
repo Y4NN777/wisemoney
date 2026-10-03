@@ -164,7 +164,7 @@ carries an explicit user-as-principal acceptance of client-only enforcement.*
 **INV-EGR-04** The managed literacy gateway (`api/learn`, ADR-0013) must not
 carry any vault-derived value: no amounts, balances, merchants, categories, budget
 or goal figures, and none of the FR-CONSENT-07 aggregates. Its request schema is
-closed (question, locale, recent turns, grounding unit ids, safe context) and the
+closed (question, locale, recent turns, grounding unit ids) and the
 gateway rejects any other field, independent of client consent state.
 
 *Why: the destination is free-tier Gemma on the Gemini API, whose terms allow
