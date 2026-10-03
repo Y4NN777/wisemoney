@@ -1434,7 +1434,8 @@
         "needConsent": "No lesson covers this. Accept the tutor notice to ask the tutor.",
         "offline": "No lesson covers this offline. Try again with a connection.",
         "unavailable": "The tutor is unavailable and no lesson covers this."
-      }
+      },
+      "webCaution": "Figures found on the web can be wrong or out of date. Check the source before acting."
     },
     "lessons": {
       "title": "Lessons",

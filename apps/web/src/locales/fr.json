@@ -1434,7 +1434,8 @@
         "needConsent": "Aucune leçon ne couvre cette question. Acceptez la mention du tuteur pour lui demander.",
         "offline": "Aucune leçon ne couvre cette question hors ligne. Réessayez avec une connexion.",
         "unavailable": "Le tuteur est indisponible et aucune leçon ne couvre cette question."
-      }
+      },
+      "webCaution": "Les chiffres trouvés sur le web peuvent être faux ou dépassés. Vérifiez la source avant d’agir."
     },
     "lessons": {
       "title": "Leçons",

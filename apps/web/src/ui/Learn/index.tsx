@@ -176,6 +176,9 @@ export default function Learn() {
                       </div>
                     )}
                     {message.answer.sources.length > 0 && (
+                      <p className="text-[11px] leading-snug text-muted-foreground">{t("learn.tutor.webCaution")}</p>
+                    )}
+                    {message.answer.sources.length > 0 && (
                       <ul className="space-y-1" aria-label={t("learn.tutor.sources")}>
                         {message.answer.sources.map((source) => (
                           <li key={source.uri}>
