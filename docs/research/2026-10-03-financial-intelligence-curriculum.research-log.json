@@ -1,0 +1,16 @@
+{
+  "agent": "Baruch",
+  "team": "research",
+  "sprint": "S0",
+  "trigger": "requested",
+  "query_intent": "What should WiseMoney's Financial Literacy pillar teach, and from which sources, to give complete beginners among young people in Burkina Faso / UEMOA financial intelligence as a whole (understanding money, earning, budgeting, saving, borrowing, protecting, investing, portfolio basics, building wealth), with real local facts (BRVM, SGIs such as Coris Bourse, regulation, tax)?",
+  "tools_invoked": ["Jakin", "Ezra", "Caleb", "Shaphan", "Shemaiah"],
+  "research_output_summary": "Eleven-topic curriculum spine identified with support from at least three recognised programmes: money/banking/payments, income/work, goals/planning/budgeting, saving, credit/borrowing/debt, scams/fraud/identity protection, insurance/risk, consumer rights/protection, taxes, investing/retirement, entrepreneurship. Verified facts: UMOA usury ceilings (14% banks, 24% others, effective 1 June 2026 per Décision n°19/29-12-2025), BRVM market hours and SGI list for Burkina, tax rates from 2023 CGI (read directly), BIC operator, micro-insurance CIMA rules, global Findex 2025 Burkina data. Not resolved: no teaching content retrieved (only topic lists); no beginner questions from West African learners found; deposit-guarantee ceiling, cryptoasset legal status, broker/fund fees, PREF-UEMOA modules, post-2023 tax code changes remain unverified. Method caveat: WebFetch returns digests; several official sites (amf-umoa.org, BCEAO subpages, coris-bourse.com) returned partial or shell content. Second research round on teaching content in progress.",
+  "applied_to_task": "exploration",
+  "outcome": "partial",
+  "knowledge_graph_write": false,
+  "curated_library_match": false,
+  "cognee_node_id": null,
+  "timestamp": "2026-10-03T00:00:00Z",
+  "curated_promotion_candidate": null
+}
