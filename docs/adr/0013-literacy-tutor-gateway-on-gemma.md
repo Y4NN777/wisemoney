@@ -71,9 +71,9 @@ configured").
 - **Request schema is stricter than proposed.** The help-style safe context is not accepted:
   question, locale, recent turns and unit ids only (`docs/api/learn.openapi.yaml`).
 - **Web search is a server switch.** `LITERACY_WEB_SEARCH=on` attaches Gemma's `google_search`
-  tool so current facts (fees, rates, regulation) come with visible sources. Google's own pages
-  disagree on whether Gemma supports it (research log §D), so a 400 with the tool drops to a
-  lessons-only request. The question still goes only to Google; INV-EGR-04 is unchanged.
+  tool so current facts (fees, rates, regulation) come with visible sources. Verified working in
+  production on 2026-10-03 although Google's pricing page says otherwise (research log §D); a 400
+  with the tool still drops to a lessons-only request. The question still goes only to Google; INV-EGR-04 is unchanged.
 - **Without the tutor notice accepted, or offline, the lesson answers on the device** and no
   request is made. The device-local daily allowance is shared with WiseBot.
 

@@ -56,7 +56,7 @@ Checked for Y4NN's question "what about the web search for Gemma 4". The officia
 - The pricing page lists "Grounding with Google Search" as "Not available" for Gemma 4 on both tiers. [S6]
 - The grounding page (updated 2026-09-23) lists only Gemini models as supported. [S21]
 
-UNVERIFIED which is right: no call was made with a real key. The gateway therefore treats it as an optional server switch with a lessons-only fallback (ADR-0013 amendments). To settle it: set `LITERACY_WEB_SEARCH=on`, ask a current-fact question, and check that the answer is labelled "with web search" and lists sources.
+VERIFIED 2026-10-03 against production (`gemma-4-26b-a4b-it`, free-tier key, `LITERACY_WEB_SEARCH=on`): the tool is accepted and grounding sources come back. Two questions (WAEMU usury ceilings; Orange Money BF withdrawal fees) returned five sources each, mixing official sites (bceao.int, orange.bf) with press, Scribd and Facebook. The Gemma page is right; the pricing page is not. The usury answer (banks 14 %, microfinance 24 % from 1 June 2026) matches the press report in §B, not the older BCEAO page. Consequence: the tutor prompt now requires naming the site and reserving "official" for the official site; the lessons-only fallback stays in case Google withdraws the tool.
 
 ## Sources
 

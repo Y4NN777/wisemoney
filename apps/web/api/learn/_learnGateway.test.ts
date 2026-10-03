@@ -67,6 +67,7 @@ describe("literacy tutor gateway", () => {
     const instruction = sent.body.systemInstruction.parts[0]!.text;
     expect(instruction).toContain("Betting is not an income");
     expect(instruction).toContain("Teach, do not advise");
+    expect(instruction).toContain("Never ask about the learner's own money");
     expect(instruction).toContain("Never state current fees, rates, limits, or regulations");
     expect(sent.body.contents.map(({ role }) => role)).toEqual(["model", "user"]);
   });
@@ -112,7 +113,7 @@ describe("literacy tutor gateway", () => {
     process.env.LITERACY_WEB_SEARCH = "on";
     const grounded = { candidates: [{ groundingMetadata: { groundingChunks: [
       { web: { uri: "https://www.bceao.int/fr/taux", title: "bceao.int" } },
-      { web: { uri: "https://www.bceao.int/fr/taux", title: "bceao.int" } },
+      { web: { uri: "https://redirect.example/other-link-to-the-same-site", title: "bceao.int" } },
       { web: { uri: "http://insecure.example/x", title: "insecure" } },
       { web: { uri: "javascript:alert(1)", title: "bad" } },
       { web: { uri: "https://example.org/a" } },
@@ -125,6 +126,7 @@ describe("literacy tutor gateway", () => {
     const sent = sentBody(fetchMock);
     expect(sent.body.tools).toEqual([{ google_search: {} }]);
     expect(sent.body.systemInstruction.parts[0]!.text).toContain("use Google Search");
+    expect(sent.body.systemInstruction.parts[0]!.text).toContain("Call a figure official only when it comes from that official site");
     expect(events).toContain('"webSearch":true');
     expect(events).toContain('event: sources\ndata: {"items":[{"title":"bceao.int","uri":"https://www.bceao.int/fr/taux"},{"title":"example.org","uri":"https://example.org/a"}]}');
   });

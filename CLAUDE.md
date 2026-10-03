@@ -108,8 +108,8 @@
   double-issuance race.
 - Add Postgres-backed integration tests for edge handlers.
 - Implement BYO direct-provider orchestration.
-- Literacy tutor: set `LITERACY_GEMINI_API_KEY` (second Google project) on Vercel, then
-  verify `LITERACY_WEB_SEARCH=on` with a real call (docs conflict, research log §D).
+- Server functions run on Node 20 (root `engines`), which is past end of life; move to a
+  current LTS as its own change. Add a post-deploy probe of `/api/help` and `/api/learn`.
 - Literacy corpus v0: local expert review before removing the "not yet reviewed" line.
 - Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
 - Activity page date presets (day/week/month), then drop `TransactionActivity` from Home.
