@@ -17,6 +17,8 @@ Quadrant: Reference · Date: 2026-09-26 · Pipeline: two web-research runs (Gemm
 
 **Recommendation carried into the ADR:** second Google Cloud project with its own AI Studio key (`LITERACY_GEMINI_API_KEY`), model pinned server-side, tutor route sends only the typed question plus an allow-listed non-financial context (no amounts, merchants, balances), no image upload, a visible "education, not advice" line and the Google-data disclosure; Vertex AI MaaS is the durable upgrade if a no-training guarantee becomes a product requirement.
 
+> 2026-10-03: for curriculum and local facts, see `2026-10-03-financial-intelligence-curriculum.md`, which supersedes sections B–C below and resolves the usury-ceiling conflict.
+
 ## B. Corpus sources
 
 **International**
