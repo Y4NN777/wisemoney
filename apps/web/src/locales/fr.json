@@ -280,8 +280,8 @@
     },
     "deviceUnlockOffer": {
       "title": "Déverrouillez plus vite la prochaine fois",
-      "body": "Utilisez le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. Activez-le dans les réglages.",
-      "action": "Ouvrir les réglages",
+      "body": "Utilisez le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. Activez-le dans Paramètres.",
+      "action": "Ouvrir Paramètres",
       "dismiss": "Pas maintenant"
     },
     "recentMovements": "Mouvements récents",
@@ -362,7 +362,7 @@
     "heading": "Enregistrer un mouvement d’argent",
     "ariaLabel": "Saisie d’une transaction",
     "empty": {
-      "categoriesManage": "Aucune catégorie. Créez-en une dans Gérer.",
+      "categoriesManage": "Aucune catégorie. Créez-en une dans Paramètres, Comptes et catégories.",
       "noOtherAccounts": "Aucun autre compte disponible."
     },
     "tabs": {
@@ -1246,7 +1246,7 @@
     "back": "Retour",
     "eyebrow": "Guide WiseMoney",
     "title": "Trouvez votre chemin dans vos finances.",
-    "intro": "Des parcours courts expliquent chaque fonction importante de WiseMoney. Recherchez localement, lisez hors ligne ou développez une étape quand vous en avez besoin.",
+    "intro": "Des parcours courts expliquent les principales fonctions de WiseMoney. Recherchez localement, lisez hors ligne ou développez un parcours quand vous en avez besoin.",
     "paths": "parcours guidés, du démarrage au dépannage",
     "searchLabel": "Recherche rapide",
     "searchPlaceholder": "Essayez « installer », « transfert » ou « sauvegarde »",
@@ -1312,7 +1312,7 @@
     },
     "footer": {
       "privateTitle": "Vos comptes restent privés",
-      "privateBody": "Le guide et WiseBot expliquent comment utiliser WiseMoney sans ouvrir vos comptes ni lire vos transactions. L’Assistant financier n’analyse vos informations qu’après votre accord explicite.",
+      "privateBody": "Le guide et WiseBot expliquent comment utiliser WiseMoney sans ouvrir vos comptes ni lire vos transactions. L’Assistant n’analyse vos informations qu’après votre accord explicite.",
       "offlineTitle": "L’aide reste disponible sans Internet",
       "offlineBody": "Une fois WiseMoney ouvert sur cet appareil, tous les parcours du guide restent disponibles sans connexion. WiseBot, lui, a besoin d’Internet."
     },
@@ -1329,7 +1329,7 @@
     "retry": "Réessayer",
     "undo": "Annuler",
     "unknown": "Inconnu",
-    "noCategories": "Aucune catégorie. Créez-en une dans Gérer."
+    "noCategories": "Aucune catégorie. Créez-en une dans Paramètres, Comptes et catégories."
   },
   "captureSheet": {
     "cashName": "Espèces",

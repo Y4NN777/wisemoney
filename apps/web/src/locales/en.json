@@ -362,7 +362,7 @@
     "heading": "Record money movement",
     "ariaLabel": "Capture transaction",
     "empty": {
-      "categoriesManage": "No categories yet. Create one in Manage.",
+      "categoriesManage": "No categories yet. Create one in Settings, Accounts & categories.",
       "noOtherAccounts": "No other accounts available."
     },
     "tabs": {
@@ -1246,7 +1246,7 @@
     "back": "Back",
     "eyebrow": "WiseMoney guide",
     "title": "Find your way around your money.",
-    "intro": "Short paths explain every important WiseMoney feature. Search locally, read offline, or open a step when you need more detail.",
+    "intro": "Short paths explain the main WiseMoney features. Search locally, read offline, or open a path when you need more detail.",
     "paths": "guided paths from setup to troubleshooting",
     "searchLabel": "Quick search",
     "searchPlaceholder": "Try “install”, “transfer”, or “backup”",
@@ -1312,7 +1312,7 @@
     },
     "footer": {
       "privateTitle": "Your accounts stay private",
-      "privateBody": "The guide and WiseBot explain how to use WiseMoney without opening your accounts or reading your transactions. The Financial Assistant analyzes your information only after you explicitly agree.",
+      "privateBody": "The guide and WiseBot explain how to use WiseMoney without opening your accounts or reading your transactions. The Assistant analyzes your information only after you explicitly agree.",
       "offlineTitle": "Help remains available without Internet",
       "offlineBody": "Once WiseMoney has been opened on this device, every guide path remains available without a connection. WiseBot needs Internet."
     },
@@ -1329,7 +1329,7 @@
     "retry": "Retry",
     "undo": "Undo",
     "unknown": "Unknown",
-    "noCategories": "No categories yet. Create one in Manage."
+    "noCategories": "No categories yet. Create one in Settings, Accounts & categories."
   },
   "captureSheet": {
     "cashName": "Cash",

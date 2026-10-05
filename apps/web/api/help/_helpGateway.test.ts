@@ -53,7 +53,7 @@ describe("stateless Gemini help gateway", () => {
       contents: Array<{ role: string; parts: Array<Record<string, unknown>> }>;
     };
     expect(providerBody.systemInstruction.parts[0]?.text).toContain("Create and manage an account");
-    expect(providerBody.systemInstruction.parts[0]?.text).toContain("Open Capture");
+    expect(providerBody.systemInstruction.parts[0]?.text).toContain("Open Accounts & categories, then the Accounts tab.");
     expect(providerBody.systemInstruction.parts[0]?.text).toContain("WiseMoney tracks accounts, income, expenses, transfers");
     expect(providerBody.systemInstruction.parts[0]?.text).toContain("Resolve short follow-up questions from the conversation history");
     expect(providerBody.systemInstruction.parts[0]?.text).toContain("Never replace a feature-specific answer with generic onboarding");
@@ -83,7 +83,7 @@ describe("stateless Gemini help gateway", () => {
     };
     const instruction = providerBody.systemInstruction.parts[0]?.text ?? "";
     expect(instruction).toContain("[virements] Transférer entre deux comptes et suivre le transfert");
-    expect(instruction).toContain("Ouvrez Saisie puis Envoyer ou déplacer de l’argent");
+    expect(instruction).toContain("Touchez le bouton + (Saisie), puis l’onglet Transfert.");
     expect(instruction).toContain("ouvrez Activité");
     expect(instruction).not.toContain("[demarrage]");
     expect(instruction).not.toContain("[sauvegarde]");
