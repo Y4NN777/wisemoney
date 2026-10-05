@@ -34,9 +34,14 @@ describe("product release notes", () => {
       const french = getReleaseContent(release, "fr-FR");
       const english = getReleaseContent(release, "en-US");
       expect(french.title.trim()).not.toBe("");
-      expect(english.summary.trim()).not.toBe("");
+      expect(english.title.trim()).not.toBe("");
       expect(french.highlights.map(({ id }) => id)).toEqual(english.highlights.map(({ id }) => id));
-      expect([...french.highlights, ...english.highlights].every(({ title, body }) => title.trim().length > 0 && body.trim().length > 0)).toBe(true);
+      // The notes stay a short list of titles (Y4NN, 2026-10-05: "too much info, even I do not want to read").
+      expect(french.highlights.length).toBeLessThanOrEqual(6);
+      for (const { title } of [...french.highlights, ...english.highlights]) {
+        expect(title.trim().length).toBeGreaterThan(0);
+        expect(title.trim().split(/\s+/).length, title).toBeLessThanOrEqual(8);
+      }
       expect(release.githubUrl).toBe(`https://github.com/Y4NN777/wisemoney/releases/tag/v${release.version}`);
     }
   });

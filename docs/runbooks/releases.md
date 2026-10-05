@@ -66,7 +66,9 @@ through a pull request and release a patch version.
 1. Develop on a short-lived branch and merge through a pull request to `main`.
 2. Release Please maintains one release pull request from Conventional Commits.
 3. Before merging it, add the new bilingual entry at the top of
-   `apps/web/src/releases/releases.json`. The release check intentionally fails
+   `apps/web/src/releases/releases.json`: one title and at most six highlights,
+   each a title of eight words or fewer, no paragraphs (a unit test enforces it;
+   the Updates page shows them as a list). The release check intentionally fails
    until this user-facing note, both package versions, and the changelog agree.
 4. Review the proposed SemVer bump and edit technical notes for clarity.
 5. Merge the release pull request. Release Please creates a **draft** GitHub

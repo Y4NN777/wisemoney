@@ -1233,29 +1233,19 @@
   },
   "updatesPage": {
     "back": "Retour",
-    "eyebrow": "Première version officielle",
     "title": "Nouveautés",
-    "current": "Version actuelle",
-    "official": "Officielle",
-    "highlights": "Ce que vous pouvez faire",
     "history": "Historique des versions",
-    "historyDescription": "Chaque version publiée reste consultable ici.",
     "technicalDetails": "Détails techniques",
-    "needHelp": "Besoin d’un coup de main ?",
-    "needHelpDescription": "Le guide explique chaque parcours étape par étape.",
-    "openHelp": "Ouvrir le guide"
+    "openHelp": "Ouvrir le guide",
+    "version": "Version"
   },
   "helpPage": {
     "open": "Ouvrir l’aide",
     "shortLabel": "Aide",
     "back": "Retour",
     "eyebrow": "Guide WiseMoney",
-    "title": "Trouvez votre chemin dans vos finances.",
-    "intro": "Des parcours courts expliquent les principales fonctions de WiseMoney. Recherchez localement, lisez hors ligne ou développez un parcours quand vous en avez besoin.",
-    "paths": "parcours guidés, du démarrage au dépannage",
     "searchLabel": "Recherche rapide",
-    "searchPlaceholder": "Essayez « installer », « transfert » ou « sauvegarde »",
-    "contents": "Sur cette page",
+    "searchPlaceholder": "installer, transfert, sauvegarde…",
     "results": "Résultats d’aide",
     "resultCount_one": "{{count}} parcours correspondant",
     "resultCount_other": "{{count}} parcours correspondants",
@@ -1274,8 +1264,6 @@
       "open": "Ouvrir WiseBot",
       "title": "WiseBot",
       "scope": "Questions sur l’utilisation de l’application",
-      "mobileTitle": "Une question sur WiseMoney ?",
-      "mobileDescription": "WiseBot vous aide à trouver une fonction et à comprendre comment l’utiliser.",
       "askWiseBot": "Demander à WiseBot",
       "newConversation": "Nouvelle conversation",
       "stop": "Arrêter la réponse",
@@ -1316,15 +1304,7 @@
       "guideLink": "Ouvrir le guide : {{title}}",
       "openGuide": "Ouvrir le guide complet"
     },
-    "footer": {
-      "privateTitle": "Vos comptes restent privés",
-      "privateBody": "Le guide et WiseBot expliquent comment utiliser WiseMoney sans ouvrir vos comptes ni lire vos transactions. L’Assistant n’analyse vos informations qu’après votre accord explicite.",
-      "offlineTitle": "L’aide reste disponible sans Internet",
-      "offlineBody": "Une fois WiseMoney ouvert sur cet appareil, tous les parcours du guide restent disponibles sans connexion. WiseBot, lui, a besoin d’Internet."
-    },
     "updates": {
-      "title": "Découvrez les nouveautés",
-      "description": "Consultez ce que chaque version de WiseMoney vous apporte.",
       "action": "Voir les nouveautés"
     }
   },

@@ -1233,29 +1233,19 @@
   },
   "updatesPage": {
     "back": "Back",
-    "eyebrow": "First official release",
     "title": "What’s new",
-    "current": "Current version",
-    "official": "Official",
-    "highlights": "What you can do",
     "history": "Version history",
-    "historyDescription": "Every published version remains available here.",
     "technicalDetails": "Technical details",
-    "needHelp": "Need a hand?",
-    "needHelpDescription": "The guide explains each journey step by step.",
-    "openHelp": "Open the guide"
+    "openHelp": "Open the guide",
+    "version": "Version"
   },
   "helpPage": {
     "open": "Open help",
     "shortLabel": "Help",
     "back": "Back",
     "eyebrow": "WiseMoney guide",
-    "title": "Find your way around your money.",
-    "intro": "Short paths explain the main WiseMoney features. Search locally, read offline, or open a path when you need more detail.",
-    "paths": "guided paths from setup to troubleshooting",
     "searchLabel": "Quick search",
-    "searchPlaceholder": "Try “install”, “transfer”, or “backup”",
-    "contents": "On this page",
+    "searchPlaceholder": "install, transfer, backup…",
     "results": "Help results",
     "resultCount_one": "{{count}} matching path",
     "resultCount_other": "{{count}} matching paths",
@@ -1274,8 +1264,6 @@
       "open": "Open WiseBot",
       "title": "WiseBot",
       "scope": "Questions about using the app",
-      "mobileTitle": "A question about WiseMoney?",
-      "mobileDescription": "WiseBot helps you find a feature and understand how to use it.",
       "askWiseBot": "Ask WiseBot",
       "newConversation": "New conversation",
       "stop": "Stop response",
@@ -1316,15 +1304,7 @@
       "guideLink": "Open the guide: {{title}}",
       "openGuide": "Open the full guide"
     },
-    "footer": {
-      "privateTitle": "Your accounts stay private",
-      "privateBody": "The guide and WiseBot explain how to use WiseMoney without opening your accounts or reading your transactions. The Assistant analyzes your information only after you explicitly agree.",
-      "offlineTitle": "Help remains available without Internet",
-      "offlineBody": "Once WiseMoney has been opened on this device, every guide path remains available without a connection. WiseBot needs Internet."
-    },
     "updates": {
-      "title": "Discover what’s new",
-      "description": "See what each WiseMoney version brings you.",
       "action": "See what’s new"
     }
   },

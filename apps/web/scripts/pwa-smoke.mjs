@@ -76,10 +76,12 @@ try {
 
   const reducedMotionContext = await browser.newContext({ reducedMotion: "reduce" });
   const reducedMotionPage = await reducedMotionContext.newPage();
-  await reducedMotionPage.goto(`${baseURL}/help`, { waitUntil: "networkidle" });
-  const orbitAnimation = await reducedMotionPage.locator(".help-orbit").evaluate((element) =>
-    getComputedStyle(element, "::after").animationName);
-  assert.equal(orbitAnimation, "none", "reduced motion did not stop the looping help animation");
+  // The setup card plays an entrance animation; with reduced motion it must not.
+  await reducedMotionPage.goto(baseURL, { waitUntil: "networkidle" });
+  await reducedMotionPage.getByRole("button", { name: "Start", exact: true }).last().click();
+  const entranceAnimation = await reducedMotionPage.locator("main .metric-surface").first().evaluate((element) =>
+    getComputedStyle(element).animationName);
+  assert.equal(entranceAnimation, "none", "reduced motion did not stop the entrance animation");
   await reducedMotionContext.close();
 
   for (const device of [
@@ -139,7 +141,7 @@ try {
     await page.reload({ waitUntil: "networkidle" });
     await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     await page.getByRole("button", { name: "Open help", exact: true }).click();
-    await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
+    await page.getByRole("heading", { name: "WiseMoney guide", exact: true }).waitFor();
     await page.getByRole("button", { name: device.name === "mobile" ? "Ask WiseBot" : "Open WiseBot", exact: true }).click();
     const wiseBotDialog = page.getByRole("dialog", { name: "WiseBot", exact: true });
     await wiseBotDialog.waitFor();
@@ -186,7 +188,7 @@ try {
     await page.getByRole("combobox", { name: /^Choisir la langue/ }).click();
     await page.getByRole("option", { name: "English", exact: true }).click();
     await page.getByRole("button", { name: "Back", exact: true }).click();
-    await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
+    await page.getByRole("heading", { name: "WiseMoney guide", exact: true }).waitFor();
     await page.getByRole("button", { name: "Back", exact: true }).click();
     await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}.png`, fullPage: true });
@@ -217,7 +219,7 @@ try {
     await context.setOffline(true);
     await page.goto(`${baseURL}/help`, { waitUntil: "domcontentloaded" });
     await page.waitForFunction(() => !document.body.innerText.includes("Loading"), undefined, { timeout: 10_000 });
-    await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
+    await page.getByRole("heading", { name: "WiseMoney guide", exact: true }).waitFor();
     await page.getByLabel("Quick search").fill("offline");
     await page.getByText("Use WiseMoney offline and recover from a problem", { exact: true }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}-offline.png`, fullPage: true });
@@ -541,7 +543,7 @@ try {
   // The full guide is one tap inside the WiseBot panel.
   await appPage.getByRole("banner").getByRole("button", { name: "Open WiseBot", exact: true }).click();
   await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).getByRole("button", { name: "Open the full guide", exact: true }).click();
-  await appPage.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
+  await appPage.getByRole("heading", { name: "WiseMoney guide", exact: true }).waitFor();
   await appPage.getByLabel("Quick search").fill("total balance");
   await appPage.getByText("Read the dashboard and activity", { exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Back", exact: true }).click();

@@ -6,73 +6,59 @@
     "content": {
       "fr": {
         "title": "Votre argent, plus clair au quotidien",
-        "summary": "Cette première version officielle réunit le suivi, la planification et la sauvegarde de vos finances dans un espace privé qui fonctionne sur vos appareils.",
         "highlights": [
           {
             "id": "track",
-            "title": "Suivez ce qui entre et ce qui sort",
-            "body": "Regroupez vos comptes, revenus, dépenses et mouvements entre comptes. Le tableau de bord résume le mois sans compter les mouvements internes comme des dépenses ; la vue Activité permet de rechercher et d’exporter chaque opération en CSV ou XLSX."
+            "title": "Suivez ce qui entre et ce qui sort"
           },
           {
             "id": "plan",
-            "title": "Préparez ce qui vient",
-            "body": "Budgets, objectifs, opérations récurrentes, dépenses prévues, dettes et créances vivent dans un même espace de planification, avec des échéances quand elles sont utiles."
+            "title": "Préparez ce qui vient"
           },
           {
             "id": "remind",
-            "title": "Gardez les échéances en vue",
-            "body": "WiseMoney peut préparer des rappels sur cet appareil et ajouter vos échéances au calendrier, sans y inscrire vos montants ni vos soldes."
+            "title": "Gardez les échéances en vue"
           },
           {
             "id": "protect",
-            "title": "Gardez le contrôle de vos données",
-            "body": "Votre espace financier est chiffré sur l’appareil. Vous l’ouvrez avec le déverrouillage de l’appareil ou votre phrase privée, puis choisissez quand le verrouiller, le sauvegarder, le restaurer ou partager des informations avec un service d’assistance optionnel."
+            "title": "Gardez le contrôle de vos données"
           },
           {
             "id": "understand",
-            "title": "Comprenez avant de décider",
-            "body": "Le guide bilingue explique chaque parcours avec des étapes concrètes. WiseBot connaît ces mêmes parcours, conserve le sujet des questions suivantes et peut proposer rarement une aide locale ; rien n’est envoyé à un service d’IA avant votre demande explicite. L’Assistant financier reste séparé."
+            "title": "Comprenez avant de décider"
           },
           {
             "id": "carry",
-            "title": "Emportez WiseMoney avec vous",
-            "body": "Dès l’accueil, trois repères résument le suivi, la planification et la protection. L’interface claire, sombre ou automatique s’adapte au téléphone avec une navigation compacte et reste accessible sans connexion après sa première ouverture."
+            "title": "Emportez WiseMoney avec vous"
           }
         ]
       },
       "en": {
         "title": "Clearer money decisions, every day",
-        "summary": "This first official release brings financial tracking, planning, and backups together in a private space that works across your devices.",
         "highlights": [
           {
             "id": "track",
-            "title": "See what comes in and goes out",
-            "body": "Bring accounts, income, expenses, and movements between accounts together. The dashboard summarizes the month without counting internal movements as spending; Activity lets you search and export every operation as CSV or XLSX."
+            "title": "See what comes in and goes out"
           },
           {
             "id": "plan",
-            "title": "Prepare for what comes next",
-            "body": "Budgets, goals, recurring items, planned expenses, debts, and receivables share one planning space, with due dates where they are useful."
+            "title": "Prepare for what comes next"
           },
           {
             "id": "remind",
-            "title": "Keep useful dates in view",
-            "body": "WiseMoney can prepare reminders on this device and add due dates to your calendar without including amounts or balances."
+            "title": "Keep useful dates in view"
           },
           {
             "id": "protect",
-            "title": "Stay in control of your data",
-            "body": "Your financial space is encrypted on the device. Open it with the device screen lock or your private passphrase, then choose when to lock, back up, restore, or share information with an optional assistant service."
+            "title": "Stay in control of your data"
           },
           {
             "id": "understand",
-            "title": "Understand before you decide",
-            "body": "The bilingual guide explains every journey with concrete steps. WiseBot uses those same journeys, keeps the topic across follow-up questions, and can occasionally offer local help; nothing is sent to an AI service until you explicitly ask. The Financial Assistant remains separate."
+            "title": "Understand before you decide"
           },
           {
             "id": "carry",
-            "title": "Take WiseMoney with you",
-            "body": "From the landing page, three clear cues summarize tracking, planning, and protection. The light, dark, or automatic interface adapts to phones with compact navigation and remains available offline after its first opening."
+            "title": "Take WiseMoney with you"
           }
         ]
       }

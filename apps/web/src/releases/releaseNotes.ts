@@ -2,15 +2,14 @@ import releaseData from "./releases.json";
 
 export type ReleaseLocale = "en" | "fr";
 
+/** One thing the version lets the user do, as a title of a few words. No paragraph: the guide explains. */
 export type ProductReleaseHighlight = {
   id: string;
   title: string;
-  body: string;
 };
 
 export type ProductReleaseContent = {
   title: string;
-  summary: string;
   highlights: ProductReleaseHighlight[];
 };
 

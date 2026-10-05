@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpRight, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BookOpen, Check } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
@@ -26,6 +26,7 @@ export default function UpdatesPage() {
   const { t, i18n } = useTranslation();
   const language = i18n.resolvedLanguage ?? i18n.language;
   const currentContent = getReleaseContent(CURRENT_RELEASE, language);
+  const olderReleases = PRODUCT_RELEASES.slice(1);
 
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
@@ -48,107 +49,54 @@ export default function UpdatesPage() {
         </div>
       </header>
 
-      <main>
-        <section id={releaseAnchor(CURRENT_RELEASE.version)} className="scroll-mt-16 border-b border-border">
-          <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.65fr)]">
-            <div className="px-4 py-12 sm:px-6 sm:py-16 lg:border-r lg:border-border lg:px-8 lg:py-24">
-              <p className="text-sm font-bold text-ocean-primary">{t("updatesPage.eyebrow")}</p>
-              <h1 className="mt-5 max-w-3xl text-[clamp(2rem,5vw,4.25rem)] font-bold leading-[1.02] tracking-tight">
-                {t("updatesPage.title")}
-              </h1>
-              <p className="mt-8 max-w-3xl text-xl font-semibold leading-tight sm:text-3xl">
-                {currentContent.title}
-              </p>
-              <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                {currentContent.summary}
-              </p>
-            </div>
-
-            <aside className="grid min-h-72 grid-rows-[1fr_auto] bg-primary text-white">
-              <div className="flex items-start justify-between gap-4 p-5 sm:p-8">
-                <span className="text-sm font-bold">{t("updatesPage.current")}</span>
-                <span className="rounded-full border border-white/40 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]">
-                  {t("updatesPage.official")}
-                </span>
-              </div>
-              <div className="border-t border-white/25 p-5 sm:p-8">
-                <p className="text-[clamp(2.5rem,6vw,4rem)] font-bold leading-none tracking-tight tabular-nums">
-                  {CURRENT_RELEASE.version}
-                </p>
-                <p className="mt-4 text-sm text-white/75">
-                  {formatReleaseDate(CURRENT_RELEASE.releasedAt, language)}
-                </p>
-              </div>
-            </aside>
-          </div>
+      {/* One short screen: the version, its date, and what it lets you do as a list of titles.
+          The page used to carry a hero, a summary and a paragraph per item; nobody read it. */}
+      <main className="mx-auto max-w-2xl space-y-6 px-4 py-6 sm:px-6 sm:py-10">
+        <section id={releaseAnchor(CURRENT_RELEASE.version)} className="scroll-mt-20">
+          <h1 className="page-title">{t("updatesPage.title")}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t("updatesPage.version")} <span className="font-semibold text-foreground tabular-nums">{CURRENT_RELEASE.version}</span>
+            {" · "}{formatReleaseDate(CURRENT_RELEASE.releasedAt, language)}
+          </p>
+          <p className="mt-4 text-lg font-semibold leading-snug">{currentContent.title}</p>
+          <ul className="mt-4 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
+            {currentContent.highlights.map((highlight) => (
+              <li key={highlight.id} className="flex items-center gap-3 px-4 py-3 text-sm font-medium">
+                <Check className="h-4 w-4 shrink-0 text-positive" aria-hidden="true" />
+                {highlight.title}
+              </li>
+            ))}
+          </ul>
         </section>
 
-        <section aria-labelledby="release-highlights" className="border-b border-border bg-muted">
-          <div className="mx-auto max-w-[1440px]">
-            <div className="border-b border-border px-4 py-6 sm:px-8">
-              <h2 id="release-highlights" className="text-2xl font-bold sm:text-3xl">{t("updatesPage.highlights")}</h2>
-            </div>
-            <ol className="grid sm:grid-cols-2 lg:grid-cols-3">
-              {currentContent.highlights.map((highlight, index) => (
-                <li
-                  key={highlight.id}
-                  className="min-h-64 border-b border-border bg-card p-5 sm:p-8 sm:[&:nth-child(odd)]:border-r lg:border-r lg:[&:nth-child(3n)]:border-r-0"
-                >
-                  <span className="text-3xl font-bold leading-none tracking-tight text-ocean-primary tabular-nums">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="mt-10 text-xl font-bold leading-tight sm:text-2xl">{highlight.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">{highlight.body}</p>
+        {olderReleases.length > 0 && (
+          <section aria-labelledby="release-history">
+            <h2 id="release-history" className="text-sm font-semibold text-muted-foreground">{t("updatesPage.history")}</h2>
+            <ol className="mt-2 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
+              {olderReleases.map((release) => (
+                <li id={releaseAnchor(release.version)} key={release.version} className="scroll-mt-20 px-4 py-3">
+                  <p className="text-sm font-semibold">
+                    <span className="tabular-nums">{release.version}</span>
+                    <span className="font-normal text-muted-foreground">{" · "}{formatReleaseDate(release.releasedAt, language)}</span>
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{getReleaseContent(release, language).title}</p>
                 </li>
               ))}
             </ol>
-          </div>
-        </section>
+          </section>
+        )}
 
-        <section aria-labelledby="release-history" className="border-b border-border">
-          <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[minmax(250px,0.45fr)_minmax(0,1.55fr)]">
-            <div className="border-b border-border px-4 py-8 sm:px-8 lg:border-b-0 lg:border-r">
-              <h2 id="release-history" className="text-2xl font-bold">{t("updatesPage.history")}</h2>
-              <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{t("updatesPage.historyDescription")}</p>
-            </div>
-            <ol>
-              {PRODUCT_RELEASES.map((release) => {
-                const content = getReleaseContent(release, language);
-                return (
-                  <li
-                    id={release.version === CURRENT_RELEASE.version ? undefined : releaseAnchor(release.version)}
-                    key={release.version}
-                    className="scroll-mt-16 grid gap-4 border-b border-border px-4 py-7 last:border-b-0 sm:grid-cols-[9rem_1fr_auto] sm:items-center sm:px-8"
-                  >
-                    <a href={`#${releaseAnchor(release.version)}`} className="text-3xl font-bold tracking-[-0.04em] text-ocean-primary tabular-nums">
-                      {release.version}
-                    </a>
-                    <div>
-                      <p className="font-bold">{content.title}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">{formatReleaseDate(release.releasedAt, language)}</p>
-                    </div>
-                    <a className="inline-flex items-center gap-2 text-sm font-bold text-ocean-primary hover:underline" href={release.githubUrl} target="_blank" rel="noreferrer">
-                      {t("updatesPage.technicalDetails")} <ArrowUpRight className="h-4 w-4" />
-                    </a>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-        </section>
-      </main>
-
-      <footer className="bg-primary text-white">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-5 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <div>
-            <p className="text-xl font-bold">{t("updatesPage.needHelp")}</p>
-            <p className="mt-1 text-sm text-white/70">{t("updatesPage.needHelpDescription")}</p>
-          </div>
-          <Button type="button" variant="secondary" className="min-h-11 border border-primary-foreground bg-primary-foreground text-ocean-primary" onClick={() => openHelp()}>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button type="button" variant="outline" className="gap-2" onClick={() => openHelp()}>
             <BookOpen className="h-4 w-4" /> {t("updatesPage.openHelp")}
           </Button>
+          <Button asChild variant="ghost" className="gap-2 text-ocean-primary">
+            <a href={CURRENT_RELEASE.githubUrl} target="_blank" rel="noreferrer">
+              {t("updatesPage.technicalDetails")} <ArrowUpRight className="h-4 w-4" />
+            </a>
+          </Button>
         </div>
-      </footer>
+      </main>
     </div>
   );
 }
