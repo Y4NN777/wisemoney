@@ -19,7 +19,7 @@ import {
 } from "../../hooks/useFinancialState.ts";
 import { convertUsingContext, DEFAULT_BASE_CURRENCY } from "../../domain/currencyStore.ts";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
-import { formatMoney, parseMajorUnits } from "../../types/money.ts";
+import { amountPlaceholder, currencyLabel, formatMoney, parseMajorUnits } from "../../types/money.ts";
 import { orderCategoriesForDirection, recentAccountIds, recentCategoryIds } from "../../domain/captureOrdering.ts";
 import { recordCoachFormFault } from "../../coach/index.ts";
 
@@ -275,16 +275,16 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
       <div className="space-y-2">
         <Label htmlFor="capture-sheet-amount">{t("capture.transaction.amount")}</Label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{currency}</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{currencyLabel(currency)}</span>
           <Input
             id="capture-sheet-amount"
             ref={amountRef}
             type="text"
             inputMode="decimal"
-            placeholder="0.00"
+            placeholder={amountPlaceholder(currency)}
             value={amountStr}
             onChange={(event) => setAmountStr(event.target.value)}
-            className="h-14 pl-14 text-xl tabular-nums"
+            className="h-14 pl-18 text-xl tabular-nums"
             required
           />
         </div>
@@ -561,16 +561,16 @@ function TransferForm({ onDone }: { onDone: () => void }) {
       <div className="space-y-2">
         <Label htmlFor="capture-sheet-transfer-amount">{t("capture.transfer.amount")}</Label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{currency}</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{currencyLabel(currency)}</span>
           <Input
             id="capture-sheet-transfer-amount"
             ref={amountRef}
             type="text"
             inputMode="decimal"
-            placeholder="0.00"
+            placeholder={amountPlaceholder(currency)}
             value={amountStr}
             onChange={(event) => setAmountStr(event.target.value)}
-            className="h-14 pl-14 text-xl tabular-nums"
+            className="h-14 pl-18 text-xl tabular-nums"
             required
           />
         </div>
@@ -680,16 +680,16 @@ function GoalForm({ onDone }: { onDone: () => void }) {
           <div className="space-y-2">
             <Label htmlFor="capture-sheet-goal-amount">{t("capture.goal.amount")}</Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{goalCurrency}</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{currencyLabel(goalCurrency)}</span>
               <Input
                 id="capture-sheet-goal-amount"
                 ref={amountRef}
                 type="text"
                 inputMode="decimal"
-                placeholder="0.00"
+                placeholder={amountPlaceholder(goalCurrency)}
                 value={amountStr}
                 onChange={(event) => setAmountStr(event.target.value)}
-                className="h-14 pl-14 text-xl tabular-nums"
+                className="h-14 pl-18 text-xl tabular-nums"
                 required
               />
             </div>

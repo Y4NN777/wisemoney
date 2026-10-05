@@ -11,7 +11,7 @@ import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Archive, AlertTriangle, Info } from "lucide-react";
 import { toast } from "sonner";
-import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
+import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits, currencyLabel } from "../../types/money.ts";
 import { useTranslation } from "react-i18next";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 
@@ -147,7 +147,7 @@ export default function Budgets() {
                 <p className="text-xs leading-relaxed text-muted-foreground">{t("budgets.categoryHelp")}</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="budget-limit">{t("budgets.monthlyLimit", { currency: snapshot?.baseCurrency ?? "XOF" })}</Label>
+                <Label htmlFor="budget-limit">{t("budgets.monthlyLimit", { currency: currencyLabel(snapshot?.baseCurrency ?? "XOF") })}</Label>
                 <Input
                   id="budget-limit"
                   type="number"

@@ -4,7 +4,8 @@ import { db } from "@/db/schema.ts";
 import { getSnapshot, readTransactionsInRange } from "@/domain/financialState.ts";
 import type { DebtCreditState, PlannedExpenseState } from "@/domain/financialState.ts";
 import { compareFinancialEvents } from "@/domain/eventStore.ts";
-import { formatMoney } from "@/types/money.ts";
+// Files keep the platform form (hyphen-minus), which spreadsheets read as a negative number.
+import { formatMoneyPlain as formatMoney } from "@/types/money.ts";
 import { exportJSON } from "./index.ts";
 
 const CYCLE_HISTORY_SETTING_ID = "cycleHistory";

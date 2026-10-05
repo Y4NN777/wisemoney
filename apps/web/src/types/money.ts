@@ -135,19 +135,58 @@ export function convertMoney(
   return { minorUnits: result, currency: toCode };
 }
 
-export function formatMoney(
+function displayLocale(locale?: string): string | undefined {
+  return locale ?? (typeof document === "undefined" ? undefined : document.documentElement.lang || undefined);
+}
+
+/**
+ * An amount as written into files (CSV, spreadsheet, calendar): the platform's own form, with a
+ * hyphen-minus that other programs read as a negative number.
+ */
+export function formatMoneyPlain(
   amount: Money,
   locale?: string
 ): string {
   assertValidMoney(amount);
   const digits = currencyFractionDigits(amount.currency);
-  const displayLocale = locale ?? (typeof document === "undefined" ? undefined : document.documentElement.lang || undefined);
-  return new Intl.NumberFormat(displayLocale, {
+  return new Intl.NumberFormat(displayLocale(locale), {
     style: "currency",
     currency: amount.currency,
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(amount.minorUnits / 10 ** digits);
+}
+
+const MINUS_SIGN = "\u2212";
+
+/** An amount as shown on screen: a negative carries a true minus sign, everywhere the same. */
+export function formatMoney(
+  amount: Money,
+  locale?: string
+): string {
+  return formatMoneyPlain(amount, locale).replace("-", MINUS_SIGN);
+}
+
+/** A flow with its direction: "+" for money in, a minus sign for money out, nothing for zero. */
+export function formatSignedMoney(amount: Money, locale?: string): string {
+  const absolute = formatMoney({ minorUnits: Math.abs(amount.minorUnits), currency: amount.currency }, locale);
+  if (amount.minorUnits === 0) return absolute;
+  return `${amount.minorUnits > 0 ? "+" : MINUS_SIGN}${absolute}`;
+}
+
+/** The currency as amounts print it ("F CFA", "€"), for labels and input adornments. */
+export function currencyLabel(currency: string, locale?: string): string {
+  assertValidMoney({ minorUnits: 0, currency });
+  const part = new Intl.NumberFormat(displayLocale(locale), { style: "currency", currency })
+    .formatToParts(0)
+    .find((candidate) => candidate.type === "currency");
+  return part?.value ?? currency;
+}
+
+/** The empty-amount hint for an input: "0" for a currency without decimals, never "0.00". */
+export function amountPlaceholder(currency: string, locale?: string): string {
+  const digits = currencyFractionDigits(currency);
+  return new Intl.NumberFormat(displayLocale(locale), { minimumFractionDigits: digits, maximumFractionDigits: digits, useGrouping: false }).format(0);
 }
 
 export function parseMajorUnits(input: string, currency: string): number | null {

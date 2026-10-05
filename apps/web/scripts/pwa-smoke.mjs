@@ -384,7 +384,7 @@ try {
   await appPage.getByRole("button", { name: "Add", exact: true }).click();
   await appPage.getByLabel("Debtor name").fill("Smoke Debtor");
   await appPage.getByLabel("Motive").fill("Invoice smoke test");
-  await appPage.getByLabel("Amount (XOF)").fill("12500");
+  await appPage.getByLabel(/^Amount \(F.CFA\)/).fill("12500");
   await appPage.locator("form").getByRole("button", { name: "Add", exact: true }).click();
   await appPage.locator("main").getByText("Smoke Debtor", { exact: true }).first().waitFor();
   await appPage.locator("main").getByText("Invoice smoke test", { exact: true }).first().waitFor();
@@ -415,7 +415,7 @@ try {
   await appPage.getByLabel("Label", { exact: true }).fill("Smoke subscription");
   await appPage.getByLabel("Category", { exact: true }).click();
   await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
-  await appPage.getByLabel("Amount (XOF)", { exact: true }).fill("2500");
+  await appPage.getByLabel(/^Amount \(F.CFA\)$/).fill("2500");
   await appPage.getByRole("button", { name: "Create Recurring Item", exact: true }).click();
   await appPage.locator("main").getByText("Smoke subscription", { exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Archive Smoke subscription", exact: true }).click();
@@ -433,7 +433,7 @@ try {
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText(/Smoke transaction/).waitFor();
   await appPage.getByRole("listitem").filter({ hasText: "Smoke transaction" }).getByRole("button", { name: /Edit transaction from/ }).click();
-  await appPage.getByLabel("Amount (XOF)", { exact: true }).fill("1500");
+  await appPage.getByLabel(/^Amount \(F.CFA\)$/).fill("1500");
   await appPage.getByLabel("Note", { exact: true }).last().fill("Smoke transaction updated");
   await appPage.getByRole("button", { name: "Save", exact: true }).click();
   await appPage.getByText(/Smoke transaction updated/).waitFor();

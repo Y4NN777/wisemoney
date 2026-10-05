@@ -10,7 +10,7 @@ import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Archive, Target } from "lucide-react";
 import { toast } from "sonner";
-import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
+import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits, currencyLabel } from "../../types/money.ts";
 import { parseLocalDateInput } from "../../lib/localDate.ts";
 import { useTranslation } from "react-i18next";
 
@@ -119,7 +119,7 @@ export default function Goals() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="goal-target">{t("goals.targetAmount", { currency: snapshot?.baseCurrency ?? "XOF" })}</Label>
+                <Label htmlFor="goal-target">{t("goals.targetAmount", { currency: currencyLabel(snapshot?.baseCurrency ?? "XOF") })}</Label>
                 <Input
                   id="goal-target"
                   type="number"

@@ -20,7 +20,7 @@ import {
 } from "@/hooks/useFinancialState.ts";
 import { categoryDisplayName } from "@/lib/categoryName.ts";
 import { formatLocalDateInput, parseLocalDateInput } from "@/lib/localDate.ts";
-import { currencyFractionDigits, formatMoney, parseMajorUnits } from "@/types/money.ts";
+import { currencyFractionDigits, formatMoney, parseMajorUnits, amountPlaceholder } from "@/types/money.ts";
 import { createReminderCalendar, downloadCalendarExport } from "@/calendar/ics.ts";
 import { useReminders } from "@/reminders/ReminderProvider.tsx";
 
@@ -116,7 +116,7 @@ function ExpenseFields({
       </div>
       <div className="space-y-2">
         <Label htmlFor="planned-amount">{t("capture.plannedExpenses.fields.estimatedAmount")}</Label>
-        <Input id="planned-amount" type="text" inputMode="decimal" placeholder="0.00" value={draft.amount}
+        <Input id="planned-amount" type="text" inputMode="decimal" placeholder={amountPlaceholder(draft.currency)} value={draft.amount}
           onChange={(event) => onChange({ amount: event.target.value })}
           aria-invalid={errors.amount != null} aria-describedby={fieldError("amount")} required />
         {errors.amount != null && <p id="amount-error" role="alert" className="text-sm text-destructive">{errors.amount}</p>}

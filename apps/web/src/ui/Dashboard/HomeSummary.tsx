@@ -53,23 +53,22 @@ export function FinancialOverview({
   return (
     <section aria-label={t("dashboard.balanceSummary")} className="grid gap-3 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.65fr)]">
       <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
-          <div>
-            <p className="flex flex-wrap items-center gap-x-2 text-xs font-medium text-ocean-primary">
-              <span>{accountName ?? t("dashboard.allActiveAccounts")}</span>
-              <Link to="/settings" search={{ panel: "accounts" }} className="underline underline-offset-4 hover:text-ocean-dark">
-                {t("dashboard.manageAccounts")}
-              </Link>
-            </p>
-            <CardTitle className="mt-1 text-base">
-              {t(isCurrentPeriod ? "dashboard.availableToday" : "dashboard.balanceAtPeriodEnd")}
-            </CardTitle>
-          </div>
+        {/* The balance is the one loud thing on Home: label above it, links below it. */}
+        <CardHeader className="flex flex-row items-start justify-between gap-4 pb-1">
+          <CardTitle className="text-sm font-normal text-muted-foreground">
+            {t(isCurrentPeriod ? "dashboard.availableToday" : "dashboard.balanceAtPeriodEnd")}
+          </CardTitle>
           <Wallet className="h-5 w-5 shrink-0 text-ocean-primary" />
         </CardHeader>
         <CardContent>
-          <p className="break-words text-xl font-semibold tracking-tight tabular-nums sm:text-2xl">
+          <p className="break-words text-3xl font-semibold tracking-tight tabular-nums sm:text-4xl">
             {formatMoney(snapshot.totalBalance.minorUnits, currency)}
+          </p>
+          <p className="mt-2 flex min-h-6 flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+            <span>{accountName ?? t("dashboard.allActiveAccounts")}</span>
+            <Link to="/settings" search={{ panel: "accounts" }} className="py-1 font-medium text-ocean-primary underline underline-offset-4 hover:text-ocean-dark">
+              {t("dashboard.manageAccounts")}
+            </Link>
           </p>
           {afterCommitments != null && afterCommitments.minorUnits !== snapshot.totalBalance.minorUnits && (
             <div className="mt-4 border-t border-border pt-3">
@@ -95,7 +94,7 @@ export function FinancialOverview({
                 <p className="text-xs font-medium text-muted-foreground">{t("dashboard.moneyReceived")}</p>
                 <ArrowDown className={`h-4 w-4 ${snapshot.periodIncome.minorUnits === 0 ? "text-muted-foreground" : "text-positive"}`} />
               </div>
-              <p className={`mt-1 text-xl font-semibold tabular-nums ${snapshot.periodIncome.minorUnits === 0 ? "text-foreground" : "text-positive"}`}>
+              <p className={`mt-1 text-base font-semibold tabular-nums ${snapshot.periodIncome.minorUnits === 0 ? "text-foreground" : "text-positive"}`}>
                 {formatSignedMoney(snapshot.periodIncome.minorUnits, currency)}
               </p>
               {comparison != null && (
@@ -107,7 +106,7 @@ export function FinancialOverview({
                 <p className="text-xs font-medium text-muted-foreground">{t("dashboard.moneySpent")}</p>
                 <ArrowUp className={`h-4 w-4 ${snapshot.periodExpenses.minorUnits === 0 ? "text-muted-foreground" : "text-negative"}`} />
               </div>
-              <p className={`mt-1 text-xl font-semibold tabular-nums ${snapshot.periodExpenses.minorUnits === 0 ? "text-foreground" : "text-negative"}`}>
+              <p className={`mt-1 text-base font-semibold tabular-nums ${snapshot.periodExpenses.minorUnits === 0 ? "text-foreground" : "text-negative"}`}>
                 {formatSignedMoney(-snapshot.periodExpenses.minorUnits, currency)}
               </p>
               {comparison != null && (
@@ -116,7 +115,7 @@ export function FinancialOverview({
             </div>
             <div className="bg-ocean-wash/55 p-3">
               <p className="text-xs font-medium text-muted-foreground">{t("dashboard.periodDifference")}</p>
-              <p className={`mt-1 text-xl font-semibold tabular-nums ${netTone}`}>
+              <p className={`mt-1 text-base font-semibold tabular-nums ${netTone}`}>
                 {formatSignedMoney(net, currency)}
               </p>
             </div>

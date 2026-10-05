@@ -12,7 +12,7 @@ import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
-import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
+import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits, currencyLabel } from "../../types/money.ts";
 import { formatLocalDateInput, parseLocalDateInput } from "../../lib/localDate.ts";
 import { createReminderCalendar, downloadCalendarExport, type CalendarExport, type CalendarLocale } from "../../calendar/ics.ts";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
@@ -462,7 +462,7 @@ export default function Debts() {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="debt-credit-amount">{t("debts.fields.amount", { currency })}</Label>
+                  <Label htmlFor="debt-credit-amount">{t("debts.fields.amount", { currency: currencyLabel(currency) })}</Label>
                   <Input
                     id="debt-credit-amount"
                     type="number"

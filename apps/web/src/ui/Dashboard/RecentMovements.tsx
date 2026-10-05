@@ -109,7 +109,7 @@ function TransactionRow({
       </div>
       <div className="ml-2 flex shrink-0 items-center gap-1">
         <span className={`text-sm font-medium ${isIncome ? "text-positive" : "text-negative"}`}>
-          {isIncome ? "+" : "-"}{formatMoney(Math.abs(transaction.amount.minorUnits), transaction.amount.currency)}
+          {isIncome ? "+" : "\u2212"}{formatMoney(Math.abs(transaction.amount.minorUnits), transaction.amount.currency)}
         </span>
         {canMutate && (
           <>

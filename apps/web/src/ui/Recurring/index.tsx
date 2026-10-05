@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Plus, Repeat, CheckCircle2, Archive, CalendarPlus } from "lucide-react";
 import { toast } from "sonner";
-import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
+import { currencyInputStep, currencyLabel, formatMoney as formatMoneyValue, parseMajorUnits } from "../../types/money.ts";
 import { formatLocalDateInput, parseLocalDateInput } from "../../lib/localDate.ts";
 import { useTranslation } from "react-i18next";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
@@ -198,7 +198,7 @@ export default function Recurring() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="recur-amount">{t("recurring.amount", { currency: snapshot?.baseCurrency ?? "XOF" })}</Label>
+                <Label htmlFor="recur-amount">{t("recurring.amount", { currency: currencyLabel(snapshot?.baseCurrency ?? "XOF") })}</Label>
                 <Input
                   id="recur-amount"
                   type="number"
@@ -275,7 +275,7 @@ export default function Recurring() {
                     </p>
                   </div>
                   <span className={`text-sm font-medium ${item.direction === "income" ? "text-green-600" : "text-red-500"}`}>
-                    {item.direction === "income" ? "+" : "-"}
+                    {item.direction === "income" ? "+" : "\u2212"}
                     {formatMoney(item.amount.minorUnits, item.amount.currency)}
                   </span>
                 </div>

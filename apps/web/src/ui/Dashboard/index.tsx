@@ -21,7 +21,7 @@ import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 import { requestInsight } from "../../pillars/intelligence/index.ts";
 import type { AIResult } from "../../pillars/intelligence/index.ts";
 import { useTranslation } from "react-i18next";
-import { parseMajorUnits } from "../../types/money.ts";
+import { currencyLabel, parseMajorUnits } from "../../types/money.ts";
 import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
@@ -558,7 +558,7 @@ function DashboardContent({
                 </Select>
               </div>
               <div className="space-y-2">
-                <label htmlFor="edit-transaction-amount" className="text-sm font-medium">{t("dashboard.transactionActions.amount", { currency: transactionEdit.transaction.amount.currency })}</label>
+                <label htmlFor="edit-transaction-amount" className="text-sm font-medium">{t("dashboard.transactionActions.amount", { currency: currencyLabel(transactionEdit.transaction.amount.currency) })}</label>
                 <Input id="edit-transaction-amount" inputMode="decimal" value={transactionEdit.amount} onChange={(event) => setTransactionEdit((value) => value == null ? null : { ...value, amount: event.target.value })} />
               </div>
               <div className="space-y-2">

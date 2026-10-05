@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  amountPlaceholder,
   convertMoney,
   currencyFractionDigits,
   currencyInputStep,
+  currencyLabel,
   formatMoney,
+  formatMoneyPlain,
+  formatSignedMoney,
   parseMajorUnits,
 } from "./money.ts";
 
@@ -45,5 +49,30 @@ describe("convertMoney", () => {
       .toThrow("invalid rate string");
     expect(() => convertMoney({ minorUnits: Number.MAX_SAFE_INTEGER, currency: "USD" }, "KWD", "999999999"))
       .toThrow("overflow");
+  });
+});
+
+describe("money on screen", () => {
+  it("writes a negative with a true minus sign, and keeps the hyphen for files", () => {
+    expect(formatMoney({ minorUnits: -18200, currency: "XOF" }, "fr")).toMatch(/^−/);
+    expect(formatMoney({ minorUnits: -18200, currency: "XOF" }, "fr")).not.toContain("-");
+    expect(formatMoneyPlain({ minorUnits: -18200, currency: "XOF" }, "fr")).toMatch(/^-/);
+  });
+
+  it("signs a flow the same way everywhere and leaves zero unsigned", () => {
+    expect(formatSignedMoney({ minorUnits: 500, currency: "XOF" }, "fr")).toMatch(/^\+500/);
+    expect(formatSignedMoney({ minorUnits: -500, currency: "XOF" }, "fr")).toMatch(/^−500/);
+    expect(formatSignedMoney({ minorUnits: 0, currency: "XOF" }, "fr")).toMatch(/^0/);
+  });
+
+  it("hints an empty amount without decimals the currency does not have", () => {
+    expect(amountPlaceholder("XOF", "fr")).toBe("0");
+    expect(amountPlaceholder("EUR", "fr")).toBe("0,00");
+    expect(amountPlaceholder("EUR", "en")).toBe("0.00");
+  });
+
+  it("labels a currency the way amounts print it", () => {
+    expect(currencyLabel("XOF", "fr").replace(/\s/g, " ")).toBe("F CFA");
+    expect(currencyLabel("EUR", "fr")).toBe("€");
   });
 });

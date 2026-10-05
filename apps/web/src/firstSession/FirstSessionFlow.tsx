@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useOpenCaptureSheet } from "../components/CaptureSheet/index.tsx";
 import type { FinancialStateSnapshot } from "../domain/financialState.ts";
 import { categoryDisplayName } from "../lib/categoryName.ts";
-import { formatMoney, parseMajorUnits } from "../types/money.ts";
+import { formatMoney, parseMajorUnits, currencyLabel } from "../types/money.ts";
 import { useCreateAccount, useCreateBudget, useCreateGoal, useUpdateAccount } from "../hooks/useFinancialState.ts";
 import { AccountCurrencyPicker } from "../ui/Capture/ManagementSections.tsx";
 import { useChangeStartingCurrency, useSaveFirstSession } from "./hooks.ts";
@@ -255,7 +255,7 @@ function PlanStep({ snapshot, done, onLater, laterPending }: { snapshot: Financi
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="first-session-plan-amount">{t(kind === "budget" ? "budgets.monthlyLimit" : "goals.targetAmount", { currency })}</Label>
+            <Label htmlFor="first-session-plan-amount">{t(kind === "budget" ? "budgets.monthlyLimit" : "goals.targetAmount", { currency: currencyLabel(currency) })}</Label>
             <Input id="first-session-plan-amount" inputMode="decimal" value={amount} onChange={(event) => setAmount(event.target.value)} required />
           </div>
           <Button type="submit" size="sm" disabled={createBudget.isPending || createGoal.isPending}>{t("firstSession.plan.save")}</Button>

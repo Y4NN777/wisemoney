@@ -4,7 +4,7 @@ import type { } from "../../domain/financialOperations.ts";
 
 import type { } from "../../pillars/intelligence/index.ts";
 
-import { formatMoney as formatMoneyValue } from "../../types/money.ts";
+import { formatMoney as formatMoneyValue, formatSignedMoney as formatSignedMoneyValue } from "../../types/money.ts";
 
 export function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -20,6 +20,5 @@ export function computePrevPeriod(year: number, month: number): { year: number; 
 }
 
 export function formatSignedMoney(minorUnits: number, currency: string): string {
-  if (minorUnits === 0) return formatMoney(0, currency);
-  return `${minorUnits > 0 ? "+" : "−"}${formatMoney(Math.abs(minorUnits), currency)}`;
+  return formatSignedMoneyValue({ minorUnits, currency });
 }

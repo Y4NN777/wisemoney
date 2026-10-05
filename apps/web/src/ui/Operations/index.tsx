@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import type { FinancialOperation, FinancialOperationKind } from "../../domain/financialOperations.ts";
 import { useFinancialOperations, useFinancialState } from "../../hooks/useFinancialState.ts";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
-import { formatMoney } from "../../types/money.ts";
+import { formatMoney, formatSignedMoney } from "../../types/money.ts";
 import { parseOperationsSearch, Route, type OperationsSearch } from "../../routes/operations.tsx";
 import { ACTIVITY_PRESETS, getActivityPresetBounds, type ActivityPreset } from "../../analytics/dateRanges.ts";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
@@ -207,14 +207,15 @@ export default function Operations() {
 
       <section aria-label={t("operations.summary")} className="grid divide-y divide-border overflow-hidden rounded-lg border border-border bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {([
+          // Signed as on Home: money in carries "+", money out a minus sign.
           { key: "received", amount: totals.received, tone: totals.received.minorUnits > 0 ? "text-positive" : "text-foreground" },
-          { key: "spent", amount: totals.spent, tone: totals.spent.minorUnits > 0 ? "text-negative" : "text-foreground" },
+          { key: "spent", amount: { minorUnits: -totals.spent.minorUnits, currency: totals.spent.currency }, tone: totals.spent.minorUnits > 0 ? "text-negative" : "text-foreground" },
           { key: "difference", amount: totals.difference, tone: "text-foreground" },
         ] as const).map((item) => (
           <div key={item.key} className="p-4">
             <p className="text-xs font-medium text-muted-foreground">{t(`operations.${item.key}`)}</p>
             <p className={`mt-1 text-xl font-semibold tabular-nums ${item.tone}`}>
-              {formatMoney(item.amount)}
+              {formatSignedMoney(item.amount)}
             </p>
           </div>
         ))}
@@ -279,7 +280,7 @@ export default function Operations() {
             <section key={group.day} aria-labelledby={`operations-day-${group.day}`}>
               <h2 id={`operations-day-${group.day}`} className="flex flex-wrap items-center justify-between gap-2 border-y border-border bg-accent/45 px-4 py-2 text-xs font-semibold text-muted-foreground first:border-t-0">
                 <span>{new Intl.DateTimeFormat(i18n.language, { dateStyle: "full" }).format(new Date(`${group.day}T12:00:00`))}</span>
-                <span className="tabular-nums">{t("operations.daySubtotal", { amount: formatMoney(groupTotals.difference) })}</span>
+                <span className="tabular-nums">{t("operations.daySubtotal", { amount: formatSignedMoney(groupTotals.difference) })}</span>
               </h2>
               <ul>{group.operations.map((operation) => {
                 const Icon = operationIcon(operation.kind);
