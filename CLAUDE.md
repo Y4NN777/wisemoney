@@ -50,7 +50,8 @@
 
 - **Web app:** React 18 + TypeScript PWA. Three-tab IA (Home · Activity · Plan) with a
   centre capture button that opens an amount-first sheet; Settings in the header;
-  Assistant reached from Settings and a Home card once a provider is usable. Routes:
+  Assistant reached from Settings and a Home card once a provider is usable. The header holds
+  reminders, help (opens WiseBot) and Settings. Routes:
   `/`, `/operations`, `/planning` (+ `/budgets`, `/goals`, `/planned-expenses`,
   `/recurring`, `/debts`), `/assistant`, `/learn`, `/settings`, `/help`, `/updates`, all app
   routes under the pathless `_vault` layout. Home shows one viewport (summary, one
@@ -101,6 +102,10 @@
 - UX audit 2026-10, blocks A and B (2026-10-05, `docs/designs/ux-audit-2026-10.md`): landing
   download 375 → 169 KB, first run 20 → 11 taps, coach tip bound to its page, balance as the
   Home hero, one money format, one focus ring, AA field borders, help topics rewritten.
+  Block C the same day: three header controls with WiseBot behind the help button, Settings as
+  a list with one screen per section (`?panel=<id>`), titles on the page, Plan as one list,
+  edit and delete from Activity, restore link on the landing page, lessons in a sheet and
+  linked from Plan (`/learn?unit=<id>`).
 
 ### Tracked Follow-Ups
 
@@ -120,10 +125,9 @@
 - Literacy course v1: local expert review before removing the "not yet reviewed" line; get the
   two Burkinabè booklets from their official publishers; ask brokers for fee grids.
 - Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
-- UX audit block C (design proposal first): header, WiseBot launcher position, Settings
-  grouping, Plan empty rows, boxed titles, lesson dialog; then a test with five real users and a
-  run on a real low-end Android phone. Open defects listed in the audit doc (missing
-  `planning.frequency.*` / `planning.debtKinds.*` keys, no edit for older transactions).
+- After the UX audit: a test with five real users and a run on a real low-end Android phone;
+  raise Button and Input to 44 px by default (Home, Activity and Plan still have smaller
+  controls); currency listbox keyboard model; chart text alternative.
 
 ### Blockers
 

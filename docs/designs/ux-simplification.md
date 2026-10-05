@@ -10,6 +10,7 @@ Problem: users get lost; the loop costs too much (walkthrough: first expense ≈
 3. **Activity** = existing `/operations`, promoted into the tab bar.
 4. **Plan** = one scrolling page; Budgets, Goals, Planned, Recurring, Debts as collapsible sections; empty sections collapse to one quiet row (no five zero-tiles).
 5. **Capture sheet** = amount-first, keypad focused; auto-creates a "Cash" account in the base currency on first save; categories filtered by direction, recents first, category optional; Transfer/Goal move into the sheet overflow; Manage (accounts/categories) moves to Settings.
+   Amended 2026-10-05: Transfer and Goal stay as tabs of the sheet. They are real tabs with arrow keys since the accessibility pass, and an overflow would hide two of the three things the sheet does.
 6. **Onboarding in one step**: delete the setup-preview slides; landing → passphrase → app. Device unlock offered after second unlock or in Settings. Remove the "Online backup is not connected" paragraph. No deployment/infrastructure vocabulary in user-facing strings.
 
 7. **Visual detail — box rounding**: boxes stay rounded, but *consistently*. `index.css` defines the radius scale twice (fixed values at ~L125–130, then overridden at ~L258–261), so components round unevenly; rebuilt screens use one radius scale (cards / controls / focus ring) from a single token set.

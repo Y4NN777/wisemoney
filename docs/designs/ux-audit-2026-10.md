@@ -1,6 +1,6 @@
 # UX Audit 2026-10 — Findings, Decisions, Open Items
 
-Explanation · 2026-10-05 · Status: blocks A and B shipped locally (commits `0cc315a`…`a5d3476`); block C open.
+Explanation · 2026-10-05 · Status: blocks A and B live (`44db447`); block C committed locally the same day.
 Method: 66 screenshots at phone size (EN, FR, dark), per-screen measurements, five specialist reviews
 (published guidance, WCAG 2.2 AA, performance, cognitive UX, visual craft), each claim checked against the code.
 Published guidance read on 2026-10-03: `research-sources/notes/UX-1-published-guidance.md` (git-ignored, 53 sources).
@@ -32,16 +32,27 @@ Live figures measured on 2026-10-05 after the deploy of `44db447`; unthrottled l
 5. **One focus indicator** for every control; per-component ring classes are not to be reintroduced.
 6. **Help topics follow the app in the same change** that moves a screen or renames a button.
 
-## Block C — open, design proposal first
+## Block C — done 2026-10-05 (commits `b132a84`…`6879dbc`, local until pushed)
 
-- Header: six controls in three styles at 360 px; language picker duplicated in Settings.
-- WiseBot launcher floats over content (Plan's Debts chevron, Home's spent row).
-- Settings: 83 controls on one page, 65 under 44 px.
-- Plan: five equal "0 …" cards for a new space (decision 4 of `ux-simplification.md` not fully landed).
-- Page titles in bordered cards; card inside card on Home.
-- Capture sheet: Transfer and Goal still top-level tabs (decision 5 said overflow).
-- Lesson dialog: centred modal, 14 px bullets; a sheet with 16 px text would read better.
-- Learn is not linked from Plan or from a recorded movement.
+Y4NN's choices: header = bell, help, settings; WiseBot behind the help icon; Settings as a list with one
+screen per section; extras = edit from Activity, restore on landing, lesson as a sheet, lesson links in Plan.
+
+| Item | Result, measured at 360 px in French |
+|---|---|
+| Header | Three controls, 44 px each, one style; no language picker or install button in the app shell |
+| WiseBot | Opens from the help button; no floating button on app pages; a button to the full guide in the panel |
+| Settings | List of 21 controls (was 83 on one page); every section control at least 44 px except hidden checkbox inputs and two 40 px currency options |
+| Titles and Plan | Titles on the page at 24 px; Plan is one card of five rows; no nested box on Home |
+| Edit from Activity | Income and expenses editable and deletable from the detail sheet, whatever their age |
+| Restore | Link on the landing page while the device holds no space |
+| Lessons | Bottom sheet, 16 px body, left-aligned; `/learn?unit=<id>`; Plan links Budgets, Goals, Debts to a lesson |
+| Plan row labels | Use existing keys; a test resolves them in both locales |
+
+Still under 44 px after block C (not Settings): 12 controls on Home, 10 on Activity, 6 on Plan, mostly
+`size="sm"` buttons, the month arrows and row icon buttons. The fix belongs in the Button and Input
+primitives (default 44 px), as its own change, because it alters every screen's density.
+Capture sheet: Transfer and Goal stay as tabs (see `ux-simplification.md` decision 5, amended).
+The landing download is unchanged by block C (148 KB of preloaded files, about 170 KB before paint).
 
 ## Not established
 
@@ -52,10 +63,9 @@ Live figures measured on 2026-10-05 after the deploy of `44db447`; unthrottled l
 - Screen-reader output, 200 % zoom, 320 px reflow, sunlight legibility.
 - No Burkina-specific research on icons, numeracy or trust was found.
 
-## Found on the way, not fixed (out of scope)
+## Found on the way, still open
 
-- Plan rows for recurring items and debts use `planning.frequency.*` and `planning.debtKinds.*`, keys that exist
-  in neither locale file (`src/ui/Planning/planSections.ts:88,101`): those rows would show the raw key.
-- A transaction older than Home's five recent movements cannot be edited or deleted anywhere.
-- Restore is reachable only in the installed app with no space; a browser tab must create a space, then import.
 - Currency listbox keyboard model; chart text alternative.
+- Buttons and fields are 32 to 40 px by default outside Settings (see block C).
+- `HELP_KNOWLEDGE_VERSION` is unchanged although the help topics were rewritten twice: client and server
+  compare it for equality, so a bump needs a rollout decision.
