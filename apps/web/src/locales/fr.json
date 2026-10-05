@@ -1225,7 +1225,8 @@
         "saveRateFailed": "Échec de l’enregistrement du taux",
         "removeRateFailed": "Échec de la suppression du taux"
       }
-    }
+    },
+    "sectionsAria": "Sections des paramètres"
   },
   "updatesPage": {
     "back": "Retour",

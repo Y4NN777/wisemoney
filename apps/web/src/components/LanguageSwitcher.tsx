@@ -50,7 +50,7 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
           key={language.code}
           type="button"
           onClick={() => changeLanguage(language.code)}
-          className={`min-h-8 rounded px-2 text-xs font-semibold transition-colors ${
+          className={`min-h-11 min-w-11 rounded px-3 text-sm font-semibold transition-colors ${
             currentLanguage === language.code
               ? "bg-primary text-primary-foreground"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"

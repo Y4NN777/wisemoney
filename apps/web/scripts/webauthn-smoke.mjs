@@ -47,7 +47,7 @@ try {
   await page.getByRole("heading", { name: "Currency and accounts", exact: true }).waitFor({ timeout: 90_000 });
 
   // Device unlock is enabled after setup, from Settings > Security, by confirming the passphrase once.
-  await page.getByRole("link", { name: "Settings", exact: true }).click();
+  await page.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await page.getByText("Security and session", { exact: true }).click();
   await page.getByRole("button", { name: "Turn on device unlock", exact: true }).click();
   await page.getByLabel("Private passphrase", { exact: true }).fill(passphrase);

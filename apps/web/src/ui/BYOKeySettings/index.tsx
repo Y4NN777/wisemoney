@@ -163,7 +163,7 @@ export default function BYOKeySettings() {
                             ? t("byoKey.placeholders.configured")
                             : t("byoKey.placeholders.enter", { provider: t(`byoKey.providers.${provider.id}`) })
                         }
-                        className="pr-8"
+                        className="pr-12"
                       />
                       <button
                         type="button"
@@ -173,7 +173,7 @@ export default function BYOKeySettings() {
                           else next.add(provider.id);
                           setVisibleProviders(next);
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
                         aria-label={isVisible ? t("byoKey.hideKey") : t("byoKey.showKey")}
                       >
                         {isVisible ? (

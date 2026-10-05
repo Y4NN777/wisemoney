@@ -5,8 +5,8 @@ import CurrencySection from "./CurrencySection.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Download, Languages, ShieldCheck, Sparkles, SunMoon, WalletCards } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, BellRing, Bot, ChevronRight, Coins, DatabaseBackup, Download, Info, Languages, ShieldCheck, Sparkles, SunMoon, WalletCards, type LucideIcon } from "lucide-react";
 import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
 import { Button } from "../../components/ui/button.tsx";
@@ -18,7 +18,7 @@ import CoachSettingsSection from "../../components/CoachSettingsSection.tsx";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
 import { ManagementSections } from "../Capture/ManagementSections.tsx";
 import type { ManageSection } from "../../routes/capture.tsx";
-import { Route as SettingsRoute, parseSettingsSearch } from "../../routes/settings.tsx";
+import { Route as SettingsRoute, parseSettingsSearch, type SettingsPanelId } from "../../routes/settings.tsx";
 
 function AccountsCategoriesSection({ initialSection = "accounts" }: { initialSection?: ManageSection }) {
   const { t } = useTranslation();
@@ -45,49 +45,119 @@ function AccountsCategoriesSection({ initialSection = "accounts" }: { initialSec
   );
 }
 
-function SettingsPanel({
-  icon,
-  title,
-  description,
-  children,
-  open = false,
-}: {
-  icon: ReactNode;
-  title: string;
-  /** Optional: primary screens carry titles only (copy strip, 2026-09-25). */
-  description?: string;
-  children: ReactNode;
-  /** Opened and scrolled into view on mount — used by deep links such as ?panel=accounts. */
-  open?: boolean;
-}) {
-  const panelRef = useRef<HTMLDetailsElement | null>(null);
-  useEffect(() => {
-    if (open) panelRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
-  }, [open]);
+type SectionId = Exclude<SettingsPanelId, "categories">;
+
+/** The sections of Settings, in list order. Each opens alone on its own screen (`?panel=<id>`). */
+const SECTIONS: readonly { id: SectionId; icon: LucideIcon; titleKey: string }[] = [
+  { id: "accounts", icon: WalletCards, titleKey: "settings.sections.organization.title" },
+  { id: "money", icon: Coins, titleKey: "settings.sections.money.title" },
+  { id: "reminders", icon: BellRing, titleKey: "settings.sections.reminders.title" },
+  { id: "security", icon: ShieldCheck, titleKey: "settings.sections.security.title" },
+  { id: "data", icon: DatabaseBackup, titleKey: "settings.sections.data.title" },
+  { id: "tips", icon: Bot, titleKey: "settings.sections.coach.title" },
+  { id: "assistant", icon: Sparkles, titleKey: "settings.sections.ai.title" },
+  { id: "about", icon: Info, titleKey: "settings.about.title" },
+];
+
+function RemindersSection() {
+  const reminders = useReminders();
   return (
-    <details ref={panelRef} open={open || undefined} className="group overflow-hidden rounded-lg border border-border bg-card">
-      <summary className="interactive-surface flex cursor-pointer list-none items-center gap-3 p-4">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
-          {icon}
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold text-foreground">{title}</span>
-          {description != null && <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{description}</span>}
-        </span>
-        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
-      </summary>
-      <div className="border-t border-border bg-background/45 p-3 sm:p-4">{children}</div>
-    </details>
+    <ReminderSettingsSection
+      settings={reminders.settings}
+      permission={reminders.permission}
+      onChange={reminders.updateSettings}
+      onRequestPermission={reminders.requestPermission}
+      onTestNotification={reminders.testNotification}
+      onExportWeeklyCalendar={reminders.exportWeeklyCalendar}
+    />
   );
 }
 
+function AssistantSection() {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Button asChild variant="outline" className="mb-4 w-full gap-2 sm:w-auto">
+        <Link to="/assistant">
+          <Bot className="h-4 w-4" />
+          {t("settings.sections.ai.openAssistant")}
+        </Link>
+      </Button>
+      <BYOKeySettings />
+    </>
+  );
+}
+
+function AboutSection() {
+  const { t } = useTranslation();
+  const install = useInstallAction();
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">{t("settings.about.version", { version: PRODUCT_VERSION })}</p>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        {!install.installed && (
+          <Button type="button" variant="outline" className="gap-2" onClick={install.run}>
+            <Download className="h-4 w-4" />
+            {t("settings.about.install")}
+          </Button>
+        )}
+        <Button type="button" variant="outline" onClick={() => openUpdates(PRODUCT_VERSION)}>
+          {t("settings.about.action")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function SectionBody({ panel }: { panel: SettingsPanelId }) {
+  switch (panel) {
+    case "accounts":
+    case "categories":
+      return <AccountsCategoriesSection initialSection={panel} />;
+    case "money":
+      return <CurrencySection />;
+    case "reminders":
+      return <RemindersSection />;
+    case "security":
+      return <DevicesSection />;
+    case "data":
+      return <ExportImportSection />;
+    case "tips":
+      return <CoachSettingsSection />;
+    case "assistant":
+      return <AssistantSection />;
+    case "about":
+      return <AboutSection />;
+  }
+}
+
+/**
+ * Settings is a short list: language and appearance inline (one control each), then one row per
+ * section. A row opens that section alone, with a way back; nothing else is on the screen
+ * (UX audit 2026-10: the former single page held 83 controls).
+ */
 export default function Settings() {
   const { t } = useTranslation();
-  const reminders = useReminders();
-  const install = useInstallAction();
   // The route's search type is circular through the lazy component; re-parse like Operations does.
   const rawSearch: unknown = SettingsRoute.useSearch();
   const { panel } = parseSettingsSearch(typeof rawSearch === "object" && rawSearch != null ? rawSearch as Record<string, unknown> : {});
+
+  if (panel != null) {
+    const section = SECTIONS.find((candidate) => candidate.id === (panel === "categories" ? "accounts" : panel))!;
+    return (
+      <main aria-label={t(section.titleKey)} className="app-page max-w-4xl">
+        <Link to="/settings" search={{}} className="interactive-surface -ml-2 inline-flex min-h-11 items-center gap-2 rounded-md px-2 text-sm font-medium text-muted-foreground">
+          <ArrowLeft className="h-4 w-4" />
+          {t("settings.title")}
+        </Link>
+        <h1 className="page-title">{t(section.titleKey)}</h1>
+        <div className="settings-section motion-enter">
+          <SectionBody panel={panel} />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main aria-label={t("settings.title")} className="app-page max-w-4xl">
       <div className="page-head">
@@ -126,91 +196,21 @@ export default function Settings() {
         </div>
       </section>
 
-      <div className="grid gap-3 motion-enter">
-        <SettingsPanel
-          icon={<WalletCards className="h-5 w-5" />}
-          title={t("settings.sections.organization.title")}
-          open={panel != null}
-        >
-          <AccountsCategoriesSection initialSection={panel ?? "accounts"} />
-        </SettingsPanel>
-        <SettingsPanel
-          icon={<Bot className="h-5 w-5" />}
-          title={t("settings.sections.coach.title")}
-        >
-          <CoachSettingsSection />
-        </SettingsPanel>
-        <SettingsPanel
-          icon={<BellRing className="h-5 w-5" />}
-          title={t("settings.sections.reminders.title")}
-        >
-          <ReminderSettingsSection
-            settings={reminders.settings}
-            permission={reminders.permission}
-            onChange={reminders.updateSettings}
-            onRequestPermission={reminders.requestPermission}
-            onTestNotification={reminders.testNotification}
-            onExportWeeklyCalendar={reminders.exportWeeklyCalendar}
-          />
-        </SettingsPanel>
-        <SettingsPanel
-          icon={<Coins className="h-5 w-5" />}
-          title={t("settings.sections.money.title")}
-        >
-          <CurrencySection />
-        </SettingsPanel>
-        <SettingsPanel
-          icon={<DatabaseBackup className="h-5 w-5" />}
-          title={t("settings.sections.data.title")}
-        >
-          <ExportImportSection />
-        </SettingsPanel>
-        <SettingsPanel
-          icon={<Bot className="h-5 w-5" />}
-          title={t("settings.sections.ai.title")}
-        >
-          <Button asChild variant="outline" size="sm" className="mb-4 w-full gap-2 sm:w-auto">
-            <Link to="/assistant">
-              <Bot className="h-4 w-4" />
-              {t("settings.sections.ai.openAssistant")}
-            </Link>
-          </Button>
-          <BYOKeySettings />
-        </SettingsPanel>
-        <SettingsPanel
-          icon={<ShieldCheck className="h-5 w-5" />}
-          title={t("settings.sections.security.title")}
-        >
-          <DevicesSection />
-        </SettingsPanel>
-      </div>
-
-      <section aria-label={t("settings.about.title")} className="motion-enter border-t border-border pt-4">
-        <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
-              <Sparkles className="h-5 w-5" />
-            </span>
-            <div>
-              <h2 className="text-sm font-semibold">{t("settings.about.title")}</h2>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                {t("settings.about.version", { version: PRODUCT_VERSION })}
-              </p>
-            </div>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            {!install.installed && (
-              <Button type="button" variant="outline" className="gap-2" onClick={install.run}>
-                <Download className="h-4 w-4" />
-                {t("settings.about.install")}
-              </Button>
-            )}
-            <Button type="button" variant="outline" onClick={() => openUpdates(PRODUCT_VERSION)}>
-              {t("settings.about.action")}
-            </Button>
-          </div>
-        </div>
-      </section>
+      <nav aria-label={t("settings.sectionsAria")} className="motion-enter overflow-hidden rounded-lg border border-border bg-card">
+        <ul className="divide-y divide-border">
+          {SECTIONS.map((section) => (
+            <li key={section.id}>
+              <Link to="/settings" search={{ panel: section.id }} className="interactive-surface flex min-h-14 items-center gap-3 px-4 py-2">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
+                  <section.icon className="h-5 w-5" />
+                </span>
+                <span className="min-w-0 flex-1 text-sm font-semibold">{t(section.titleKey)}</span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </main>
   );
 }

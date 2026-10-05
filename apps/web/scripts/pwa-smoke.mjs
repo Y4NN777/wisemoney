@@ -362,7 +362,7 @@ try {
   await syncPage.setViewportSize({ width: 390, height: 844 });
   // Inside the app the language is changed from Settings; the header no longer carries a picker.
   assert.equal(await syncPage.getByRole("combobox", { name: /^Choose language/ }).count(), 0, "the app header still carries a language picker");
-  await syncPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await syncPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await syncPage.getByRole("button", { name: "Français", exact: true }).click();
   await syncPage.getByRole("heading", { name: "Paramètres", exact: true }).waitFor();
   await syncPage.getByRole("navigation", { name: "Navigation principale", exact: true }).getByRole("link", { name: "Accueil", exact: true }).click();
@@ -380,7 +380,7 @@ try {
   assert.equal(await syncPage.locator(".route-transition").evaluate((element) => getComputedStyle(element).animationName), "route-transition-in",
     "app navigation did not animate the incoming page");
   await syncPage.screenshot({ path: `${outputDir}/bottom-navigation-fr.png`, fullPage: true });
-  await syncPage.getByRole("link", { name: "Paramètres", exact: true }).click();
+  await syncPage.getByRole("banner").getByRole("link", { name: "Paramètres", exact: true }).click();
   await syncPage.getByRole("button", { name: "English", exact: true }).click();
   await syncPage.getByRole("heading", { name: "Settings", exact: true }).waitFor();
   await syncPage.setViewportSize({ width: 1280, height: 900 });
@@ -404,7 +404,7 @@ try {
   await appPage.locator("main").getByText("Partially paid", { exact: true }).first().waitFor();
   await appPage.screenshot({ path: `${outputDir}/debts.png`, fullPage: true });
 
-  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Accounts & categories", { exact: true }).click();
   for (const [name, balance] of [["Smoke Savings", "0"]]) {
     await appPage.getByRole("button", { name: "New", exact: true }).last().click();
@@ -551,14 +551,14 @@ try {
   await appPage.screenshot({ path: `${outputDir}/transfer-history-mobile.png`, fullPage: true });
   await appPage.setViewportSize({ width: 1280, height: 900 });
 
-  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByRole("radio", { name: "Dark", exact: true }).click();
   assert.equal(await appPage.locator("html").evaluate((element) => element.classList.contains("dark")), true, "dark theme was not applied");
   assert.equal(await appPage.locator('meta[name="theme-color"]').getAttribute("content"), "#111318", "dark theme-color was not applied");
   assert.equal(await appPage.evaluate(() => localStorage.getItem("wisemoney.theme.preference.v1")), "dark", "dark theme choice was not persisted");
   await appPage.screenshot({ path: `${outputDir}/settings-dark.png`, fullPage: true });
   await appPage.setViewportSize({ width: 390, height: 844 });
-  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Accounts & categories", { exact: true }).click();
   const inactiveCategoriesTab = appPage.getByRole("tab", { name: "Categories", exact: true });
   // The tabs now live on the Settings page itself, so the theme switch's colour transition is still
@@ -579,7 +579,7 @@ try {
   );
   await appPage.screenshot({ path: `${outputDir}/capture-management-dark.png`, fullPage: true });
   await appPage.setViewportSize({ width: 1280, height: 900 });
-  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();
   await appPage.getByLabel("Private passphrase", { exact: true }).waitFor();
@@ -603,12 +603,12 @@ try {
   // At phone width the bottom bar names the link by its visible label, "Home".
   await appPage.getByRole("link", { name: "Home", exact: true }).waitFor({ timeout: 90_000 });
   await appPage.setViewportSize({ width: 1280, height: 900 });
-  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByRole("radio", { name: "Light", exact: true }).click();
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Smoke Cash → Smoke Savings", { exact: true }).waitFor();
 
-  await appPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Data and backup", { exact: true }).click();
   await appPage.getByRole("button", { name: "Archive and start again", exact: true }).click();
   await appPage.getByLabel("Cycle name", { exact: true }).fill("Smoke cycle 2026");

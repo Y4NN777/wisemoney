@@ -316,6 +316,17 @@
     @apply flex flex-col gap-3 rounded-lg border border-border bg-card/80 p-3 sm:flex-row sm:items-center sm:justify-between;
   }
 
+  /* A Settings section on its own screen: every control is at least 44 px, the size a thumb
+     needs (Apple HIG 44 pt, WCAG 2.5.5). Toggles and tabs keep their own geometry. */
+  .settings-section :is(button, a, [role="combobox"]):not([role="switch"], [role="checkbox"], [role="tab"], [role="option"]) {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+
+  .settings-section input:not([type="checkbox"], [type="radio"]) {
+    min-height: 2.75rem;
+  }
+
   .page-title {
     @apply text-lg font-semibold tracking-normal sm:text-xl;
   }
