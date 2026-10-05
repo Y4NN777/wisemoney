@@ -4,7 +4,7 @@ import { CalendarDays, CalendarPlus, CheckCircle2, Pencil, Plus, Trash2 } from "
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button.tsx";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
 import {
   Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog.tsx";
@@ -355,11 +355,7 @@ export function PlannedExpensesSection({
   return (
     <Card className="overflow-hidden border-primary/25 bg-card shadow-none">
       <CardHeader className="border-b border-border bg-muted">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CardTitle className="text-lg">{t("capture.plannedExpenses.title")}</CardTitle>
-            <p className="mt-1 text-sm text-muted-foreground">{t("capture.plannedExpenses.description")}</p>
-          </div>
+        <div className="flex justify-end">
           <Button type="button" onClick={() => { setDraft(newDraft(snapshot)); setDraftErrors({}); setCreateOpen(true); }} disabled={isWriting}>
             <Plus className="mr-2 h-4 w-4" />{t("capture.plannedExpenses.add")}
           </Button>

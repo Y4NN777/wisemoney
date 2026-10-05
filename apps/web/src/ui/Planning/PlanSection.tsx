@@ -31,7 +31,7 @@ export default function PlanSection({
     return parts.join(" · ");
   };
   return (
-    <section aria-labelledby={labelId} className="rounded-lg border border-border bg-card">
+    <section aria-labelledby={labelId}>
       <div className="flex min-h-14 items-center gap-3 px-4 py-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
           <Icon className="h-5 w-5" />

@@ -312,8 +312,9 @@
     @apply space-y-4 pb-4;
   }
 
+  /* A page title sits on the page itself; cards are for content (UX audit 2026-10). */
   .page-head {
-    @apply flex flex-col gap-3 rounded-lg border border-border bg-card/80 p-3 sm:flex-row sm:items-center sm:justify-between;
+    @apply flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between;
   }
 
   /* A Settings section on its own screen: every control is at least 44 px, the size a thumb
@@ -328,7 +329,7 @@
   }
 
   .page-title {
-    @apply text-lg font-semibold tracking-normal sm:text-xl;
+    @apply text-2xl font-semibold tracking-tight;
   }
 
   .panel-grid {

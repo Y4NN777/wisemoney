@@ -88,8 +88,8 @@ export function FinancialOverview({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="grid divide-y divide-border rounded-lg border border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-            <div className="p-3">
+          <div className="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            <div className="py-3 sm:px-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-medium text-muted-foreground">{t("dashboard.moneyReceived")}</p>
                 <ArrowDown className={`h-4 w-4 ${snapshot.periodIncome.minorUnits === 0 ? "text-muted-foreground" : "text-positive"}`} />
@@ -101,7 +101,7 @@ export function FinancialOverview({
                 <PeriodComparisonText comparison={comparison.incomeChange} invert={false} currency={currency} />
               )}
             </div>
-            <div className="p-3">
+            <div className="py-3 sm:px-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-medium text-muted-foreground">{t("dashboard.moneySpent")}</p>
                 <ArrowUp className={`h-4 w-4 ${snapshot.periodExpenses.minorUnits === 0 ? "text-muted-foreground" : "text-negative"}`} />
@@ -113,7 +113,7 @@ export function FinancialOverview({
                 <PeriodComparisonText comparison={comparison.expenseChange} invert currency={currency} />
               )}
             </div>
-            <div className="bg-ocean-wash/55 p-3">
+            <div className="rounded-md bg-ocean-wash/55 p-3">
               <p className="text-xs font-medium text-muted-foreground">{t("dashboard.periodDifference")}</p>
               <p className={`mt-1 text-base font-semibold tabular-nums ${netTone}`}>
                 {formatSignedMoney(net, currency)}

@@ -36,7 +36,7 @@ export default function Planning() {
       ) : error != null || snapshot == null ? (
         <AppFaultPanel faultCode={classifyAppError(error)} surfaceId="planning" onRetry={() => { void refetch(); }} />
       ) : (
-        <div className="space-y-2">
+        <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
           {sections.map((section) => (
             <PlanSection
               key={section.id}
