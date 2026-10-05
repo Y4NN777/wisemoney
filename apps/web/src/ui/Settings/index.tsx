@@ -6,13 +6,14 @@ import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Languages, ShieldCheck, Sparkles, SunMoon, WalletCards } from "lucide-react";
+import { BellRing, Bot, ChevronDown, Coins, DatabaseBackup, Download, Languages, ShieldCheck, Sparkles, SunMoon, WalletCards } from "lucide-react";
 import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { openUpdates } from "../../releases/navigation.ts";
 import { PRODUCT_VERSION } from "../../releases/releaseNotes.ts";
 import ThemeSettings from "../../components/ThemeSettings.tsx";
+import { useInstallAction } from "../../components/HelpActions.tsx";
 import CoachSettingsSection from "../../components/CoachSettingsSection.tsx";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
 import { ManagementSections } from "../Capture/ManagementSections.tsx";
@@ -83,6 +84,7 @@ function SettingsPanel({
 export default function Settings() {
   const { t } = useTranslation();
   const reminders = useReminders();
+  const install = useInstallAction();
   // The route's search type is circular through the lazy component; re-parse like Operations does.
   const rawSearch: unknown = SettingsRoute.useSearch();
   const { panel } = parseSettingsSearch(typeof rawSearch === "object" && rawSearch != null ? rawSearch as Record<string, unknown> : {});
@@ -196,9 +198,17 @@ export default function Settings() {
               </p>
             </div>
           </div>
-          <Button type="button" variant="outline" className="shrink-0" onClick={() => openUpdates(PRODUCT_VERSION)}>
-            {t("settings.about.action")}
-          </Button>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            {!install.installed && (
+              <Button type="button" variant="outline" className="gap-2" onClick={install.run}>
+                <Download className="h-4 w-4" />
+                {t("settings.about.install")}
+              </Button>
+            )}
+            <Button type="button" variant="outline" onClick={() => openUpdates(PRODUCT_VERSION)}>
+              {t("settings.about.action")}
+            </Button>
+          </div>
         </div>
       </section>
     </main>

@@ -345,6 +345,9 @@ export default function HelpChat({
               <h2 className="truncate text-sm font-bold">{t("helpPage.chat.title")}</h2>
               <p className="truncate text-xs text-muted-foreground">{online ? t("helpPage.chat.status.ready") : t("helpPage.chat.status.offline")}</p>
             </div>
+            <button type="button" onClick={() => { closePanel(); openHelp(); }} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted" aria-label={t("helpPage.chat.openGuide")} title={t("helpPage.chat.openGuide")}>
+              <BookOpen className="h-5 w-5" />
+            </button>
             <div ref={menuRef} className="relative">
               <button type="button" onClick={() => setMenuOpen((current) => !current)} aria-haspopup="menu" aria-expanded={menuOpen} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted" aria-label={t("helpPage.chat.menu")}>
                 <MoreVertical className="h-5 w-5" />

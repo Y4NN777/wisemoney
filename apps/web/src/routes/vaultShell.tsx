@@ -1,10 +1,10 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, ListOrdered, PlusCircle, ClipboardList, Settings as SettingsIcon } from "lucide-react";
+import { CircleHelp, LayoutDashboard, ListOrdered, PlusCircle, ClipboardList, Settings as SettingsIcon } from "lucide-react";
 import CaptureSheet, { useOpenCaptureSheet } from "../components/CaptureSheet/index.tsx";
 import Logo from "../components/Logo.tsx";
 import { Skeleton } from "../components/ui/skeleton.tsx";
-import HelpActions from "../components/HelpActions.tsx";
-import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
+import { useHideWiseBotLauncher, useWiseBot } from "../help/WiseBotProvider.tsx";
+import { surfaceFromPathname } from "../help/context.ts";
 import { Fragment, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import ReminderCenter, { type ReminderViewModel } from "../components/ReminderCenter.tsx";
@@ -61,6 +61,10 @@ function RootLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { reminders, markRead, dismiss } = useReminders();
+  const wiseBot = useWiseBot();
+  // Inside the app WiseBot opens from the header's help button; the floating launcher, which
+  // sat over page content, is kept for the screens without a header (landing, unlock, help).
+  useHideWiseBotLauncher();
   const reminderViews: ReminderViewModel[] = reminders.map((reminder) => ({
     id: reminder.id,
     type: reminder.type,
@@ -100,24 +104,31 @@ function RootLayout() {
             ))}
             <CaptureNavItem />
           </nav>
-          <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-1 sm:gap-2">
+          <div className="ml-auto flex items-center justify-end gap-1">
             <ReminderCenter reminders={reminderViews} onMarkRead={markRead} onDismiss={dismiss} onOpenReminder={openReminder} />
-            <HelpActions compact />
-            <LanguageSwitcher compact />
+            <button
+              type="button"
+              onClick={() => wiseBot.openWiseBot({ entryPoint: "manual", surfaceId: surfaceFromPathname(pathname) })}
+              aria-label={t("helpPage.chat.open")}
+              title={t("helpPage.chat.open")}
+              className="interactive-surface flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground"
+            >
+              <CircleHelp className="h-5 w-5" />
+            </button>
             <Link
               to="/settings"
               aria-label={t("nav.settings")}
               title={t("nav.settings")}
-              className="interactive-surface flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground"
+              className="interactive-surface flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground"
               activeProps={{ className: "bg-ocean-wash text-ocean-dark" }}
             >
-              <SettingsIcon className="h-4 w-4" />
+              <SettingsIcon className="h-5 w-5" />
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 pb-20 pt-4 md:px-6 md:pt-6 lg:pb-8">
+      <main className="flex-1 overflow-y-auto px-4 pb-[calc(5rem+var(--safe-area-bottom))] pt-4 md:px-6 md:pt-6 lg:pb-8">
         <div key={pathname} className="route-transition mx-auto w-full max-w-7xl">
           <Suspense fallback={<Skeleton className="h-40 w-full" />}>
             <Outlet />

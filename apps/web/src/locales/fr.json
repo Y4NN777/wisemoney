@@ -1139,7 +1139,8 @@
     "about": {
       "title": "À propos de WiseMoney",
       "version": "Version {{version}}",
-      "action": "Voir les nouveautés"
+      "action": "Voir les nouveautés",
+      "install": "Installer WiseMoney"
     },
     "sections": {
       "coach": {
@@ -1308,7 +1309,8 @@
       },
       "menu": "Plus",
       "suggestions": "Questions suggérées",
-      "guideLink": "Ouvrir le guide : {{title}}"
+      "guideLink": "Ouvrir le guide : {{title}}",
+      "openGuide": "Ouvrir le guide complet"
     },
     "footer": {
       "privateTitle": "Vos comptes restent privés",

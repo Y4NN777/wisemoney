@@ -8,17 +8,23 @@ type HelpActionsProps = {
   compact?: boolean;
 };
 
-export default function HelpActions({ compact = false }: HelpActionsProps) {
-  const { t } = useTranslation();
+/** The install action shared by the landing header and Settings: the browser prompt when it exists, the guide otherwise. */
+export function useInstallAction() {
   const install = usePwaInstall();
-
-  const handleInstall = () => {
+  const run = () => {
     if (install.canPrompt) {
       void install.promptInstall().catch(() => openHelp("installation"));
       return;
     }
     openHelp("installation");
   };
+  return { installed: install.installed, canPrompt: install.canPrompt, run };
+}
+
+export default function HelpActions({ compact = false }: HelpActionsProps) {
+  const { t } = useTranslation();
+  const install = useInstallAction();
+  const handleInstall = install.run;
 
   return (
     <div className="flex items-center gap-2">

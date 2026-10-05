@@ -300,7 +300,7 @@ try {
   await appPage.getByRole("link", { name: "Learn about money", exact: true }).click();
   await appPage.getByRole("heading", { name: "Learn", exact: true }).waitFor();
   await appPage.getByText("Education, not advice.", { exact: true }).waitFor();
-  assert.equal(await appPage.getByRole("button", { name: "Open WiseBot", exact: true }).count(), 0, "the WiseBot launcher covers the tutor composer on the learn page");
+  assert.equal(await appPage.getByRole("button", { name: "Open WiseBot", exact: true }).count(), 1, "inside the app WiseBot has one entry, the header help button, and no floating launcher");
   await appPage.getByText(/Portfolio and the long term/).waitFor();
   await appPage.getByRole("button", { name: "Turn a wish into a goal", exact: true }).click();
   const lessonDialog = appPage.getByRole("dialog", { name: "Turn a wish into a goal", exact: true });
@@ -324,7 +324,13 @@ try {
   await appPage.screenshot({ path: `${outputDir}/learn.png`, fullPage: true });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
-  await appPage.getByRole("button", { name: "Open WiseBot", exact: true }).waitFor();
+  // The header's help button opens the WiseBot panel.
+  assert.equal(await appPage.getByRole("banner").getByRole("combobox").count(), 0, "the app header still carries a language picker");
+  assert.equal(await appPage.getByRole("banner").getByRole("button", { name: /Install/ }).count(), 0, "the app header still carries an install button");
+  await appPage.getByRole("banner").getByRole("button", { name: "Open WiseBot", exact: true }).click();
+  await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).waitFor();
+  await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
+  await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).waitFor({ state: "detached" });
 
   const syncPage = await appContext.newPage();
   syncPage.on("pageerror", (error) => appErrors.push(`sync pageerror: ${error.message}`));
@@ -354,8 +360,12 @@ try {
   await syncPage.getByRole("button", { name: "Open", exact: true }).click();
   await syncPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor({ timeout: 90_000 });
   await syncPage.setViewportSize({ width: 390, height: 844 });
-  await syncPage.getByRole("combobox", { name: /^Choose language/ }).click();
-  await syncPage.getByRole("option", { name: "Français", exact: true }).click();
+  // Inside the app the language is changed from Settings; the header no longer carries a picker.
+  assert.equal(await syncPage.getByRole("combobox", { name: /^Choose language/ }).count(), 0, "the app header still carries a language picker");
+  await syncPage.getByRole("link", { name: "Settings", exact: true }).click();
+  await syncPage.getByRole("button", { name: "Français", exact: true }).click();
+  await syncPage.getByRole("heading", { name: "Paramètres", exact: true }).waitFor();
+  await syncPage.getByRole("navigation", { name: "Navigation principale", exact: true }).getByRole("link", { name: "Accueil", exact: true }).click();
   // The link is named by its visible label (WCAG 2.5.3), not by a longer hidden one.
   const compactDashboardLink = syncPage.getByRole("navigation", { name: "Navigation principale", exact: true }).getByRole("link", { name: "Accueil", exact: true });
   await compactDashboardLink.waitFor();
@@ -370,8 +380,9 @@ try {
   assert.equal(await syncPage.locator(".route-transition").evaluate((element) => getComputedStyle(element).animationName), "route-transition-in",
     "app navigation did not animate the incoming page");
   await syncPage.screenshot({ path: `${outputDir}/bottom-navigation-fr.png`, fullPage: true });
-  await syncPage.getByRole("combobox", { name: /^Choisir la langue/ }).click();
-  await syncPage.getByRole("option", { name: "English", exact: true }).click();
+  await syncPage.getByRole("link", { name: "Paramètres", exact: true }).click();
+  await syncPage.getByRole("button", { name: "English", exact: true }).click();
+  await syncPage.getByRole("heading", { name: "Settings", exact: true }).waitFor();
   await syncPage.setViewportSize({ width: 1280, height: 900 });
   await syncPage.getByRole("link", { name: "Plan", exact: true }).click();
   await syncPage.getByRole("link", { name: /^Debts & Receivables/ }).click();
@@ -507,7 +518,9 @@ try {
   assert.match(appPage.url(), /preset=all/, "preset is not carried in the URL");
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
-  await appPage.getByRole("button", { name: "Open help", exact: true }).click();
+  // The full guide is one tap inside the WiseBot panel.
+  await appPage.getByRole("banner").getByRole("button", { name: "Open WiseBot", exact: true }).click();
+  await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).getByRole("button", { name: "Open the full guide", exact: true }).click();
   await appPage.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
   await appPage.getByLabel("Quick search").fill("total balance");
   await appPage.getByText("Read the dashboard and activity", { exact: true }).waitFor();

@@ -58,10 +58,10 @@ export default function ReminderCenter({ reminders, onMarkRead, onDismiss, onOpe
           type="button"
           variant="ghost"
           size="icon"
-          className="relative"
+          className="relative h-11 w-11 text-muted-foreground [&_svg]:size-5"
           aria-label={t("reminders.center.open", { count: unreadCount })}
         >
-          <Bell className="h-4 w-4" />
+          <Bell />
           {unreadCount > 0 && (
             <span className="absolute -right-0.5 -top-0.5 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-ocean-primary px-1 text-[10px] font-bold leading-none text-white">
               {unreadCount > 99 ? "99+" : unreadCount}

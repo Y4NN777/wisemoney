@@ -90,8 +90,8 @@ export function useWiseBot(): WiseBotContextValue {
 }
 
 /**
- * A page with its own chat composer (the Learn tutor) hides the floating WiseBot launcher while it
- * is mounted: the launcher sat on top of the send button at 375 px. WiseBot stays reachable from
+ * Hides the floating WiseBot launcher while the caller is mounted. The app shell uses it: inside
+ * the app the launcher covered page content at phone width, so WiseBot opens from
  * the header help button.
  */
 export function useHideWiseBotLauncher(): void {

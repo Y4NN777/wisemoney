@@ -9,7 +9,6 @@ import { Button } from "../../components/ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../components/ui/dialog.tsx";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
-import { useHideWiseBotLauncher } from "../../help/WiseBotProvider.tsx";
 import { getAICapability } from "../../lib/capabilities.ts";
 import {
   LITERACY_AREAS,
@@ -49,7 +48,6 @@ export default function Learn() {
   const locale = literacyLocale(i18n.resolvedLanguage ?? i18n.language);
   const units = getLiteracyUnits(locale);
   const online = useOnline();
-  useHideWiseBotLauncher();
   const capability = useQuery({ queryKey: AI_CAPABILITY_QUERY_KEY, queryFn: getAICapability });
 
   const [messages, setMessages] = useState<TutorMessage[]>([]);
