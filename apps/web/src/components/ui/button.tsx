@@ -21,10 +21,12 @@ const buttonVariants = cva(
         link: "text-ocean-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        // Every size is at least 44 px tall, the size a thumb needs (Apple HIG 44 pt, WCAG 2.5.5);
+        // "sm" is narrower and quieter, not shorter.
+        default: "h-11 px-4 py-2",
+        sm: "h-11 rounded-md px-3 text-xs",
+        lg: "h-12 rounded-md px-8",
+        icon: "h-11 w-11",
       },
     },
     defaultVariants: {

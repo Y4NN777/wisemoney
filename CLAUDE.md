@@ -126,8 +126,8 @@
   two Burkinabè booklets from their official publishers; ask brokers for fee grids.
 - Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
 - After the UX audit: a test with five real users and a run on a real low-end Android phone;
-  raise Button and Input to 44 px by default (Home, Activity and Plan still have smaller
-  controls); currency listbox keyboard model; chart text alternative.
+  currency listbox keyboard model; chart text alternative (its data points are the only
+  targets left under 44 px).
 
 ### Blockers
 

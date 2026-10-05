@@ -606,7 +606,8 @@ try {
   await appPage.setViewportSize({ width: 390, height: 844 });
   const unlockBackButton = appPage.getByRole("button", { name: "Back to overview", exact: true });
   const unlockBackBox = await unlockBackButton.boundingBox();
-  assert.ok(unlockBackBox != null && unlockBackBox.width <= 40,
+  // 44 px: the arrow alone, at the minimum touch size.
+  assert.ok(unlockBackBox != null && unlockBackBox.width <= 44,
     "mobile unlock back action did not collapse to its arrow");
   assert.equal(await unlockBackButton.locator("span").isVisible(), false,
     "mobile unlock back label remained visible");

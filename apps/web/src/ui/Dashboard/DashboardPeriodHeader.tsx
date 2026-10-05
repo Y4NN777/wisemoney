@@ -96,18 +96,18 @@ export function DashboardPeriodHeader({
           </Select>
         )}
         {!isCurrent && (
-          <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-muted-foreground" onClick={onCurrent}>
+          <Button variant="ghost" size="sm" className="h-11 px-2 text-xs text-muted-foreground" onClick={onCurrent}>
             {t("dashboard.today")}
           </Button>
         )}
         <div className="flex h-9 items-center rounded-full border border-border bg-card p-0.5">
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={onPrevious} aria-label={t("dashboard.previousMonth")}>
+          <Button variant="ghost" size="icon" className="h-11 w-11 rounded-full" onClick={onPrevious} aria-label={t("dashboard.previousMonth")}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="min-w-24 px-2 text-center text-sm font-medium" aria-live="polite">
             {t(`dashboard.months.${selectedMonth - 1}`)}{isCurrentYear ? "" : ` ${selectedYear}`}
           </span>
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={onNext} aria-label={t("dashboard.nextMonth")} disabled={isCurrent}>
+          <Button variant="ghost" size="icon" className="h-11 w-11 rounded-full" onClick={onNext} aria-label={t("dashboard.nextMonth")} disabled={isCurrent}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

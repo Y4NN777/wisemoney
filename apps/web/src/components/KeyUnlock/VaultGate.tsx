@@ -357,7 +357,7 @@ function AuthTopBar({ onBack }: { onBack: () => void }) {
           type="button"
           variant="ghost"
           onClick={onBack}
-          className="h-9 w-9 gap-2 px-0 sm:w-auto sm:px-4"
+          className="h-11 w-11 gap-2 px-0 sm:w-auto sm:px-4"
           aria-label={t("keyUnlock.backToOverview")}
           title={t("keyUnlock.backToOverview")}
         >

@@ -158,7 +158,7 @@ export default function Learn() {
               <ul className="flex flex-wrap gap-2" aria-label={t("learn.tutor.suggestions")}>
                 {LITERACY_STARTERS.map((starter) => (
                   <li key={starter.id}>
-                    <button type="button" onClick={() => ask(starter.question[locale], starter.unitIds)} disabled={busy} className="rounded-2xl border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
+                    <button type="button" onClick={() => ask(starter.question[locale], starter.unitIds)} disabled={busy} className="min-h-11 rounded-2xl border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
                       {starter.question[locale]}
                     </button>
                   </li>
@@ -219,7 +219,7 @@ export default function Learn() {
             <div className="mb-2 flex items-center gap-2 rounded-lg bg-ocean-wash px-3 py-2 text-xs" role="note">
               <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-primary" />
               <span className="min-w-0 flex-1 leading-snug">{t("learn.tutor.consent")}</span>
-              <Button type="button" size="sm" className="h-8" onClick={() => { grantLearnProviderConsent(); setConsent(true); }}>{t("learn.tutor.ok")}</Button>
+              <Button type="button" size="sm" className="h-11 min-w-11" onClick={() => { grantLearnProviderConsent(); setConsent(true); }}>{t("learn.tutor.ok")}</Button>
             </div>
           )}
           <form onSubmit={handleSubmit} className="grid grid-cols-[1fr_2.5rem] items-end gap-2">
@@ -231,7 +231,7 @@ export default function Learn() {
               disabled={busy}
               placeholder={t("learn.tutor.placeholder")}
               aria-label={t("learn.tutor.placeholder")}
-              className="min-h-10 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-base text-foreground focus-visible:border-primary sm:text-sm"
+              className="min-h-11 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-base text-foreground focus-visible:border-primary sm:text-sm"
             />
             {busy
               ? <Button type="button" size="icon" variant="outline" className="rounded-full" onClick={() => controller.current?.abort()} aria-label={t("learn.tutor.stop")}><Square className="h-4 w-4" /></Button>

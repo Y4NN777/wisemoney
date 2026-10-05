@@ -206,7 +206,7 @@ export default function Operations() {
             role="tab"
             aria-selected={preset === candidate}
             onClick={() => updateSearch({ preset: candidate, start: undefined, end: undefined })}
-            className={`min-h-9 rounded-md px-2 text-sm font-medium transition-colors ${preset === candidate ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`min-h-11 rounded-md px-2 text-sm font-medium transition-colors ${preset === candidate ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             {t(`operations.presets.${candidate}`)}
           </button>

@@ -116,7 +116,7 @@ function TransactionRow({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="h-11 w-11"
               aria-label={t("dashboard.transactionActions.editAria", { date: formatDate(transaction.timestamp) })}
               title={t("dashboard.transactionActions.edit")}
               onClick={() => onEdit(transaction)}
@@ -126,7 +126,7 @@ function TransactionRow({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-destructive hover:text-destructive"
+              className="h-11 w-11 text-destructive hover:text-destructive"
               aria-label={t("dashboard.transactionActions.deleteAria", { date: formatDate(transaction.timestamp) })}
               title={t("dashboard.transactionActions.delete")}
               onClick={() => onDelete(transaction)}

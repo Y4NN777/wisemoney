@@ -388,7 +388,7 @@ export default function HelpChat({
                       <li>{t("helpPage.chat.consent.sensitive")}</li>
                     </ul>
                   </div>
-                  <button type="button" onClick={() => setShowPrivacy(false)} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-background/60" aria-label={t("helpPage.chat.consent.hide")}>
+                  <button type="button" onClick={() => setShowPrivacy(false)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-background/60" aria-label={t("helpPage.chat.consent.hide")}>
                     <X className="h-4 w-4" />
                   </button>
                 </div>
@@ -476,7 +476,7 @@ export default function HelpChat({
               <div className="mb-2 flex items-center gap-2 rounded-lg bg-ocean-wash px-3 py-2 text-xs" role="note">
                 <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-primary" />
                 <span className="min-w-0 flex-1 leading-snug">{t("helpPage.chat.consent.line")}</span>
-                <Button type="button" size="sm" className="h-8" onClick={acceptConsent}>{t("helpPage.chat.consent.ok")}</Button>
+                <Button type="button" size="sm" className="h-11" onClick={acceptConsent}>{t("helpPage.chat.consent.ok")}</Button>
               </div>
             )}
             {ticket != null && (
@@ -489,7 +489,7 @@ export default function HelpChat({
               <div className="mb-2 flex items-center gap-2 rounded-md border border-border p-2">
                 <img src={imageDataUrl} alt={t("helpPage.chat.imagePreview")} className="h-12 w-12 rounded-md object-cover" />
                 <span className="min-w-0 flex-1 text-xs text-muted-foreground">{t("helpPage.chat.imageCost")}</span>
-                <Button type="button" size="icon" variant="ghost" className="h-8 w-8" onClick={() => setImageDataUrl(null)} aria-label={t("helpPage.chat.removeImage")}>
+                <Button type="button" size="icon" variant="ghost" className="h-11 w-11" onClick={() => setImageDataUrl(null)} aria-label={t("helpPage.chat.removeImage")}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
@@ -508,7 +508,7 @@ export default function HelpChat({
                 disabled={!online || submitting}
                 placeholder={t("helpPage.chat.placeholder")}
                 aria-label={t("helpPage.chat.placeholder")}
-                className="min-h-10 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-base text-foreground focus-visible:border-primary sm:text-sm"
+                className="min-h-11 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-base text-foreground focus-visible:border-primary sm:text-sm"
               />
               <Button type="submit" size="icon" className="rounded-full" disabled={!online || busy || !consentAccepted || input.trim().length === 0} aria-label={t("helpPage.chat.send")}>
                 <Send className="h-4 w-4" />

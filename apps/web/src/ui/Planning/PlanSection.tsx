@@ -39,7 +39,7 @@ export default function PlanSection({
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">
           <Icon className="h-5 w-5" />
         </span>
-        <Link to={section.to} className="interactive-surface min-w-0 flex-1 rounded-md">
+        <Link to={section.to} className="interactive-surface flex min-h-11 min-w-0 flex-1 flex-col justify-center rounded-md">
           <span id={labelId} className="block text-sm font-semibold">{label}</span>
           <span className="mt-0.5 block text-xs text-muted-foreground">{status}</span>
         </Link>

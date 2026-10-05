@@ -86,7 +86,7 @@ function RootLayout() {
     <div className="flex min-h-dvh flex-col bg-background">
       <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-background/88 backdrop-blur-xl">
         <div className="mx-auto flex min-h-14 w-full max-w-7xl flex-wrap items-center justify-between gap-1 px-2 py-2 sm:px-5">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex min-h-11 items-center gap-3">
             <Logo className="h-7 w-auto" />
           </Link>
           <nav aria-label={t("nav.mainAria")} className="hidden items-center gap-1 lg:flex">

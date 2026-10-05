@@ -77,17 +77,17 @@ function AlertRow({
       </div>
       <div className="flex items-center gap-1 sm:self-center">
         {!read && (
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={onRead} aria-label={t("dashboard.attention.markRead")} title={t("dashboard.attention.markRead")}>
+          <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={onRead} aria-label={t("dashboard.attention.markRead")} title={t("dashboard.attention.markRead")}>
             <Check className="h-4 w-4" />
           </Button>
         )}
-        <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={onSnooze} aria-label={t("dashboard.attention.snooze")} title={t("dashboard.attention.snooze")}>
+        <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={onSnooze} aria-label={t("dashboard.attention.snooze")} title={t("dashboard.attention.snooze")}>
           <Clock3 className="h-4 w-4" />
         </Button>
-        <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={onDismiss} aria-label={t("dashboard.attention.dismiss")} title={t("dashboard.attention.dismiss")}>
+        <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={onDismiss} aria-label={t("dashboard.attention.dismiss")} title={t("dashboard.attention.dismiss")}>
           <X className="h-4 w-4" />
         </Button>
-        <Button asChild variant="ghost" size="icon" className="h-8 w-8" onClick={onRead}>
+        <Button asChild variant="ghost" size="icon" className="h-11 w-11" onClick={onRead}>
           <Link to={alertHref(alert)} aria-label={t("dashboard.attention.open")} title={t("dashboard.attention.open")}>
             <ArrowUpRight className="h-4 w-4" />
           </Link>

@@ -74,7 +74,7 @@ function PwaUpdateNotice({
           <Button type="button" size="sm" className="shrink-0" onClick={onInstall}>{t("app.updateNow")}</Button>
           <button
             type="button"
-            className="interactive-surface flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ocean-dark"
+            className="interactive-surface flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-ocean-dark"
             onClick={onDismiss}
             aria-label={t("app.updateDismiss")}
           >
@@ -110,7 +110,7 @@ function PwaUpdateNotice({
           )}
         </div>
         {!installing && (
-          <button type="button" className="interactive-surface -mr-1 -mt-1 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground" onClick={onDismiss} aria-label={t("app.updateDismiss")}>
+          <button type="button" className="interactive-surface -mr-1 -mt-1 flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground" onClick={onDismiss} aria-label={t("app.updateDismiss")}>
             <X className="h-4 w-4" />
           </button>
         )}

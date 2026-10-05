@@ -66,7 +66,7 @@ export function FinancialOverview({
           </p>
           <p className="mt-2 flex min-h-6 flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
             <span>{accountName ?? t("dashboard.allActiveAccounts")}</span>
-            <Link to="/settings" search={{ panel: "accounts" }} className="py-1 font-medium text-ocean-primary underline underline-offset-4 hover:text-ocean-dark">
+            <Link to="/settings" search={{ panel: "accounts" }} className="inline-flex min-h-11 items-center font-medium text-ocean-primary underline underline-offset-4 hover:text-ocean-dark">
               {t("dashboard.manageAccounts")}
             </Link>
           </p>

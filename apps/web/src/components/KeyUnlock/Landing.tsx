@@ -40,7 +40,7 @@ export default function LandingOnboarding({ onStart, onRestore, hasVault, busy =
           <div className="flex shrink-0 items-center gap-2">
             <HelpActions compact />
             <Suspense fallback={<span aria-hidden="true" className="block h-9 w-[76px]" />}><LanguageSwitcher compact /></Suspense>
-            <Button type="button" onClick={onStart} disabled={busy} className="ml-2 hidden h-9 px-4 sm:inline-flex">
+            <Button type="button" onClick={onStart} disabled={busy} className="ml-2 hidden h-11 px-4 sm:inline-flex">
               {hasVault ? t("keyUnlock.landing.openApp") : t("keyUnlock.landing.start")}
             </Button>
           </div>

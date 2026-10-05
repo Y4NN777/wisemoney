@@ -289,7 +289,7 @@ function CurrencySelect({ id, value, onValueChange, compact = false }: { id: str
         id={id}
         type="button"
         variant="outline"
-        className={`h-auto min-h-10 w-full justify-between px-3 py-2 text-left ${compact ? "min-w-28" : "min-h-12"}`}
+        className={`h-auto min-h-11 w-full justify-between px-3 py-2 text-left ${compact ? "min-w-28" : "min-h-12"}`}
         onClick={() => setOpen((next) => !next)}
         aria-haspopup="listbox"
         aria-expanded={open}

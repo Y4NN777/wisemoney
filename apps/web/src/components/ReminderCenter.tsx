@@ -115,7 +115,7 @@ export default function ReminderCenter({ reminders, onMarkRead, onDismiss, onOpe
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-11 w-11"
                         onClick={() => onDismiss(reminder.id)}
                         aria-label={t("reminders.center.dismiss", { label: reminder.label })}
                       >
@@ -125,7 +125,7 @@ export default function ReminderCenter({ reminders, onMarkRead, onDismiss, onOpe
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-11 w-11"
                         onClick={() => openReminder(reminder)}
                         aria-label={t("reminders.center.view", { label: reminder.label })}
                       >

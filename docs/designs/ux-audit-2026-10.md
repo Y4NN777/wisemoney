@@ -48,9 +48,11 @@ screen per section; extras = edit from Activity, restore on landing, lesson as a
 | Lessons | Bottom sheet, 16 px body, left-aligned; `/learn?unit=<id>`; Plan links Budgets, Goals, Debts to a lesson |
 | Plan row labels | Use existing keys; a test resolves them in both locales |
 
-Still under 44 px after block C (not Settings): 12 controls on Home, 10 on Activity, 6 on Plan, mostly
-`size="sm"` buttons, the month arrows and row icon buttons. The fix belongs in the Button and Input
-primitives (default 44 px), as its own change, because it alters every screen's density.
+Touch targets, done 2026-10-05 after block C: Button, Input, Select, tabs and the dialog and sheet close
+buttons are 44 px by default, and the remaining small controls were raised one by one. Measured at 360 px
+in French on Home, Activity, Plan and its five pages, Learn, Assistant, Settings and the capture sheet:
+no link, button or field under 44 px. Not covered: the focusable data points of the two charts under
+Home's fold (14 px high), which belong to the chart text alternative below.
 Capture sheet: Transfer and Goal stay as tabs (see `ux-simplification.md` decision 5, amended).
 The landing download is unchanged by block C (148 KB of preloaded files, about 170 KB before paint).
 
@@ -66,6 +68,5 @@ The landing download is unchanged by block C (148 KB of preloaded files, about 1
 ## Found on the way, still open
 
 - Currency listbox keyboard model; chart text alternative.
-- Buttons and fields are 32 to 40 px by default outside Settings (see block C).
 - `HELP_KNOWLEDGE_VERSION` is unchanged although the help topics were rewritten twice: client and server
   compare it for equality, so a bump needs a rollout decision.
