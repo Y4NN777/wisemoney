@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import en from "../../locales/en.json";
+import fr from "../../locales/fr.json";
 import type { FinancialStateSnapshot } from "../../domain/financialState.ts";
 import { PLAN_SECTION_ORDER, isPlanSectionEmpty, selectPlanSections, type PlanSection } from "./planSections.ts";
 
@@ -54,10 +56,10 @@ describe("selectPlanSections", () => {
     expect(byId.goals.rows.at(0)).toMatchObject({ label: "Bike", amount: xof(400), secondary: xof(1000), dueAt: 5 });
     expect(byId.plannedExpenses.count).toBe(1);
     expect(byId.plannedExpenses.rows.at(0)).toMatchObject({ label: "Rent", amount: xof(300), dueAt: 9 });
-    expect(byId.recurring.rows.at(0)).toMatchObject({ label: "Phone", detailKey: "planning.frequency.monthly" });
+    expect(byId.recurring.rows.at(0)).toMatchObject({ label: "Phone", detailKey: "recurring.monthly" });
     expect(byId.debts.count).toBe(2);
     expect(byId.debts.rows.map((row) => row.label)).toEqual(["Awa", "Moussa"]);
-    expect(byId.debts.rows.at(0)).toMatchObject({ detailKey: "planning.debtKinds.debt", dueAt: 3 });
+    expect(byId.debts.rows.at(0)).toMatchObject({ detailKey: "debts.kind.debt", dueAt: 3 });
   });
 
   it("caps rows but counts everything", () => {
@@ -66,5 +68,18 @@ describe("selectPlanSections", () => {
     expect(debts.count).toBe(7);
     expect(debts.rows).toHaveLength(2);
     expect(isPlanSectionEmpty(debts)).toBe(false);
+  });
+
+  it("labels rows with keys that exist in both languages", () => {
+    // The rows once pointed at keys in neither locale file and printed the raw key (2026-10).
+    const resolve = (resource: unknown, key: string) => key.split(".").reduce<unknown>((node, part) => (node as Record<string, unknown> | undefined)?.[part], resource);
+    const keys = [
+      ...(["weekly", "monthly", "yearly"] as const).map((frequency) => `recurring.${frequency}`),
+      ...(["debt", "receivable"] as const).map((kind) => `debts.kind.${kind}`),
+    ];
+    for (const key of keys) {
+      expect(typeof resolve(en, key), `en ${key}`).toBe("string");
+      expect(typeof resolve(fr, key), `fr ${key}`).toBe("string");
+    }
   });
 });

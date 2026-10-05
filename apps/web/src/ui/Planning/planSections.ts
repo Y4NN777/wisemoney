@@ -85,7 +85,7 @@ export function selectPlanSections(snapshot: FinancialStateSnapshot, limit = PLA
         amount: item.amount,
         secondary: null,
         dueAt: null,
-        detailKey: `planning.frequency.${item.frequency}`,
+        detailKey: `recurring.${item.frequency}`,
       })),
     },
     debts: {
@@ -98,7 +98,7 @@ export function selectPlanSections(snapshot: FinancialStateSnapshot, limit = PLA
         amount: item.amount,
         secondary: null,
         dueAt: item.dueDate,
-        detailKey: `planning.debtKinds.${item.kind}`,
+        detailKey: `debts.kind.${item.kind}`,
       })),
     },
   };
