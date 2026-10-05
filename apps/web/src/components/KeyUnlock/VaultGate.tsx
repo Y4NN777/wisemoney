@@ -22,10 +22,11 @@ import { ArrowLeft, ArrowRight, LockOpen, Upload } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
+import { Card, CardContent, CardHeader } from "../../components/ui/card.tsx";
 import Logo from "../../components/Logo.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import LandingOnboarding from "./Landing.tsx";
+import PassphraseInput from "./PassphraseInput.tsx";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -293,9 +294,8 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="restore-passphrase">{t("keyUnlock.restore.passphrase")}</Label>
-                  <Input
+                  <PassphraseInput
                     id="restore-passphrase"
-                    type="password"
                     value={passphrase}
                     onChange={(e) => setPassphrase(e.target.value)}
                     autoComplete="new-password"
@@ -304,9 +304,8 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="restore-confirm-passphrase">{t("keyUnlock.restore.confirmPassphrase")}</Label>
-                  <Input
+                  <PassphraseInput
                     id="restore-confirm-passphrase"
-                    type="password"
                     value={confirmPassphrase}
                     onChange={(e) => setConfirmPassphrase(e.target.value)}
                     autoComplete="new-password"
@@ -315,9 +314,8 @@ function RestoreWorkspace({ onBack, onCreateNew, onReady, error, setError }: Res
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="restore-export-passphrase">{t("keyUnlock.restore.exportPassphrase")}</Label>
-                  <Input
+                  <PassphraseInput
                     id="restore-export-passphrase"
-                    type="password"
                     value={exportPassphrase}
                     onChange={(e) => setExportPassphrase(e.target.value)}
                     autoComplete="off"
@@ -466,39 +464,40 @@ function LocalSetup({ onBack, onReady, error, setError }: LocalSetupProps) {
       <Logo className="w-48 h-auto" />
       <Card className="metric-surface w-full max-w-sm">
         <CardHeader>
-          <CardTitle>{t("keyUnlock.setup.title")}</CardTitle>
+          <h1 className="font-semibold leading-none tracking-normal">{t("keyUnlock.setup.title")}</h1>
         </CardHeader>
         <CardContent>
           {error != null && (
-            <p role="alert" className="text-destructive text-sm mb-4">{error}</p>
+            <p id="setup-error" role="alert" className="text-destructive text-sm mb-4">{error}</p>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="setup-passphrase">{t("keyUnlock.login.passphraseTitle")}</Label>
-              <Input
+              <PassphraseInput
                 id="setup-passphrase"
-                type="password"
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
                 required
                 autoComplete="new-password"
                 autoFocus
+                aria-describedby="setup-passphrase-hint"
               />
+              <p id="setup-passphrase-hint" className="text-xs leading-relaxed text-muted-foreground">
+                {t("keyUnlock.login.passphraseDescription")}
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirm-passphrase">{t("keyUnlock.setup.confirmPassphrase")}</Label>
-              <Input
+              <PassphraseInput
                 id="confirm-passphrase"
-                type="password"
                 value={confirmPassphrase}
                 onChange={(e) => setConfirmPassphrase(e.target.value)}
                 required
                 autoComplete="new-password"
+                aria-invalid={error != null}
+                aria-describedby={error != null ? "setup-error" : undefined}
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t("keyUnlock.login.passphraseDescription")}
-            </p>
             <Button type="submit" disabled={submitting || passphrase.length === 0} className="w-full">
               {submitting ? t("keyUnlock.setup.submitting") : t("keyUnlock.setup.createVault")}
             </Button>
@@ -563,19 +562,20 @@ function PassphraseUnlock({ onBack, onUnlock, error, setError }: PassphraseUnloc
         <section className="w-full max-w-sm border-y border-border py-6">
           <h1 className="text-2xl font-semibold tracking-normal">{t("keyUnlock.unlock.title")}</h1>
           {error != null && (
-            <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>
+            <p id="unlock-error" role="alert" className="mt-4 text-sm text-destructive">{error}</p>
           )}
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="unlock-passphrase">{t("keyUnlock.unlock.passphrase")}</Label>
-              <Input
+              <PassphraseInput
                 id="unlock-passphrase"
-                type="password"
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
                 required
                 autoFocus
                 autoComplete="current-password"
+                aria-invalid={error != null}
+                aria-describedby={error != null ? "unlock-error" : undefined}
               />
             </div>
             <Button type="submit" disabled={submitting} className="w-full">

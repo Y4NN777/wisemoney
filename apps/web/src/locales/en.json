@@ -49,9 +49,9 @@
     },
     "login": {
       "passphraseTitle": "Private passphrase",
-      "passphraseDescription": "Cannot be recovered if lost. Keep it safe.",
+      "passphraseDescription": "Three random words make a good passphrase; spaces are fine. Nobody can reset it for you: write it down and keep it somewhere safe. A backup from Settings protects your data.",
       "errors": {
-        "passwordsMismatch": "Passwords do not match"
+        "passwordsMismatch": "The two passphrases do not match"
       }
     },
     "unlock": {
@@ -132,6 +132,10 @@
         "passphraseRequired": "A passphrase is required",
         "failed": "Restore failed"
       }
+    },
+    "passphrase": {
+      "show": "Show passphrase",
+      "hide": "Hide passphrase"
     }
   },
   "nav": {

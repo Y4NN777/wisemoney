@@ -49,9 +49,9 @@
     },
     "login": {
       "passphraseTitle": "Phrase privée",
-      "passphraseDescription": "Irrécupérable si perdue. Gardez-la en lieu sûr.",
+      "passphraseDescription": "Trois mots au hasard font une bonne phrase privée ; les espaces sont permis. Personne ne peut la réinitialiser pour vous : notez-la et gardez-la en lieu sûr. Une sauvegarde depuis Paramètres protège vos données.",
       "errors": {
-        "passwordsMismatch": "Les mots de passe ne correspondent pas"
+        "passwordsMismatch": "Les deux phrases privées ne correspondent pas"
       }
     },
     "unlock": {
@@ -132,6 +132,10 @@
         "passphraseRequired": "Une phrase secrète est requise",
         "failed": "Échec de la restauration"
       }
+    },
+    "passphrase": {
+      "show": "Afficher la phrase privée",
+      "hide": "Masquer la phrase privée"
     }
   },
   "nav": {
