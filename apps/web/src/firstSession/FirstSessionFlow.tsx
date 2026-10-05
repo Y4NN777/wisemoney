@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Check, ChevronRight, Landmark, ListChecks, Map as MapIcon, PlusCircle, Target, Wallet } from "lucide-react";
+import { Check, ChevronRight, Landmark, PlusCircle, Target, Wallet } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button.tsx";
 import { Input } from "../components/ui/input.tsx";
@@ -12,19 +12,19 @@ import { formatMoney, parseMajorUnits } from "../types/money.ts";
 import { useCreateAccount, useCreateBudget, useCreateGoal, useUpdateAccount } from "../hooks/useFinancialState.ts";
 import { AccountCurrencyPicker } from "../ui/Capture/ManagementSections.tsx";
 import { useChangeStartingCurrency, useSaveFirstSession } from "./hooks.ts";
-import { FIRST_SESSION_STEPS, isAccountsStepDone, isPlanStepDone, type FirstSessionState, type FirstSessionStep } from "./firstSession.ts";
+import { FIRST_SESSION_STEPS, isAccountsCustomised, isPlanStepDone, type FirstSessionState, type FirstSessionStep } from "./firstSession.ts";
 
 const ACCOUNT_TYPES = ["cash", "mobile_money", "checking", "savings", "credit", "investment"] as const;
 
 /**
- * Home until the first session is done: one step at a time, each step is the real action, and a
- * step only unlocks "Continue" once the data shows it happened (TickTick pattern, track 1).
+ * Home until the first session is done: one step at a time, each step is the real action. The
+ * account step accepts the defaults; the movement and plan steps unlock their button once the
+ * data shows they happened (TickTick pattern, track 1). "Later" on the plan step ends the flow.
  */
 export default function FirstSessionFlow({
   snapshot,
   hasMovement,
   state,
-  derivedStep,
   defaultAccountNames,
   cursor,
   onCursorChange,
@@ -32,7 +32,6 @@ export default function FirstSessionFlow({
   snapshot: FinancialStateSnapshot;
   hasMovement: boolean;
   state: FirstSessionState | null;
-  derivedStep: Exclude<FirstSessionStep, "done">;
   defaultAccountNames: readonly string[];
   /** Owned by the parent (which never unmounts) so a data refetch cannot reset the step in view. */
   cursor: Exclude<FirstSessionStep, "done">;
@@ -40,12 +39,12 @@ export default function FirstSessionFlow({
 }) {
   const { t } = useTranslation();
   const save = useSaveFirstSession();
-  // The cursor lags the derived step so a finished step shows its tick and a Continue button
+  // The step in view is owned by the parent, so a finished step shows its tick and its button
   // instead of jumping away the instant the data changes.
   const setCursor = onCursorChange;
   const index = FIRST_SESSION_STEPS.indexOf(cursor);
-  const derivedIndex = FIRST_SESSION_STEPS.indexOf(derivedStep);
-  const stepDone = derivedIndex > index;
+  const planDone = isPlanStepDone(snapshot);
+  const stepDone = cursor === "accounts" ? true : cursor === "movement" ? hasMovement : planDone;
   const persist = (patch: Partial<FirstSessionState>) => save.mutate({ completed: false, planLater: false, ...(state ?? {}), ...patch });
   const advance = () => setCursor(FIRST_SESSION_STEPS[Math.min(index + 1, FIRST_SESSION_STEPS.length - 1)]!);
 
@@ -53,7 +52,8 @@ export default function FirstSessionFlow({
     <main aria-label={t("firstSession.aria")} className="app-page max-w-2xl">
       <ol aria-label={t("firstSession.progressAria")} className="flex items-center gap-2">
         {FIRST_SESSION_STEPS.map((step, i) => {
-          const done = i < derivedIndex || (i === index && stepDone);
+          // The account step is never "achieved" while in view: it only confirms defaults.
+          const done = i < index || (i === index && stepDone && step !== "accounts");
           const current = i === index;
           return (
             <li key={step} className="flex flex-1 items-center gap-2" aria-current={current ? "step" : undefined}>
@@ -70,14 +70,13 @@ export default function FirstSessionFlow({
         <h1 className="text-lg font-semibold sm:text-xl">{t(`firstSession.${cursor}.title`)}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{t(`firstSession.${cursor}.body`)}</p>
         <div className="mt-5">
-          {cursor === "accounts" && <AccountsStep snapshot={snapshot} hasMovement={hasMovement} done={isAccountsStepDone(snapshot, defaultAccountNames)} />}
+          {cursor === "accounts" && <AccountsStep snapshot={snapshot} hasMovement={hasMovement} customised={isAccountsCustomised(snapshot, defaultAccountNames)} />}
           {cursor === "movement" && <MovementStep done={hasMovement} />}
-          {cursor === "plan" && <PlanStep snapshot={snapshot} done={isPlanStepDone(snapshot) || state?.planLater === true} onLater={() => persist({ planLater: true })} />}
-          {cursor === "tour" && <TourStep />}
+          {cursor === "plan" && <PlanStep snapshot={snapshot} done={planDone} onLater={() => persist({ planLater: true, completed: true })} laterPending={save.isPending} />}
         </div>
         <div className="mt-6 flex justify-end">
-          {cursor === "tour" ? (
-            <Button type="button" onClick={() => persist({ completed: true })} disabled={save.isPending}>
+          {cursor === "plan" ? (
+            <Button type="button" onClick={() => persist({ completed: true })} disabled={!planDone || save.isPending}>
               {t("firstSession.finish")}
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -93,7 +92,7 @@ export default function FirstSessionFlow({
   );
 }
 
-function AccountsStep({ snapshot, hasMovement, done }: { snapshot: FinancialStateSnapshot; hasMovement: boolean; done: boolean }) {
+function AccountsStep({ snapshot, hasMovement, customised }: { snapshot: FinancialStateSnapshot; hasMovement: boolean; customised: boolean }) {
   const { t } = useTranslation();
   const changeCurrency = useChangeStartingCurrency();
   const updateAccount = useUpdateAccount();
@@ -181,7 +180,7 @@ function AccountsStep({ snapshot, hasMovement, done }: { snapshot: FinancialStat
           {t("firstSession.accounts.addAnother")}
         </Button>
       )}
-      {done && <p className="flex items-center gap-2 text-sm text-positive"><Check className="h-4 w-4" />{t("firstSession.accounts.done")}</p>}
+      {customised && <p className="flex items-center gap-2 text-sm text-positive"><Check className="h-4 w-4" />{t("firstSession.accounts.done")}</p>}
     </div>
   );
 }
@@ -200,7 +199,7 @@ function MovementStep({ done }: { done: boolean }) {
   );
 }
 
-function PlanStep({ snapshot, done, onLater }: { snapshot: FinancialStateSnapshot; done: boolean; onLater: () => void }) {
+function PlanStep({ snapshot, done, onLater, laterPending }: { snapshot: FinancialStateSnapshot; done: boolean; onLater: () => void; laterPending: boolean }) {
   const { t } = useTranslation();
   const createBudget = useCreateBudget();
   const createGoal = useCreateGoal();
@@ -262,30 +261,7 @@ function PlanStep({ snapshot, done, onLater }: { snapshot: FinancialStateSnapsho
           <Button type="submit" size="sm" disabled={createBudget.isPending || createGoal.isPending}>{t("firstSession.plan.save")}</Button>
         </form>
       )}
-      <Button type="button" variant="ghost" size="sm" onClick={onLater}>{t("firstSession.plan.later")}</Button>
+      <Button type="button" variant="ghost" size="sm" onClick={onLater} disabled={laterPending}>{t("firstSession.plan.later")}</Button>
     </div>
-  );
-}
-
-function TourStep() {
-  const { t } = useTranslation();
-  const items = [
-    { icon: <ListChecks className="h-4 w-4" />, key: "home" },
-    { icon: <MapIcon className="h-4 w-4" />, key: "activity" },
-    { icon: <Target className="h-4 w-4" />, key: "plan" },
-    { icon: <PlusCircle className="h-4 w-4" />, key: "capture" },
-  ] as const;
-  return (
-    <ul className="divide-y divide-border rounded-lg border border-border">
-      {items.map((item) => (
-        <li key={item.key} className="flex items-start gap-3 p-3">
-          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary">{item.icon}</span>
-          <span>
-            <span className="block text-sm font-semibold">{t(`firstSession.tour.${item.key}.title`)}</span>
-            <span className="block text-xs text-muted-foreground">{t(`firstSession.tour.${item.key}.body`)}</span>
-          </span>
-        </li>
-      ))}
-    </ul>
   );
 }

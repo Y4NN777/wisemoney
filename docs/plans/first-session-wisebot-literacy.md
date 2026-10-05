@@ -18,6 +18,8 @@ Replaces the dismissible "First steps" card (`components/FirstSteps`) and the th
 4. **Intro screens stay** (once per device, skippable) but shrink to what the stepper does not cover: what the app is, the passphrase rule.
 5. Verify: fresh space at 375 px FR/EN — the user cannot reach the dashboard without an account named and a movement recorded; reload mid-flow resumes at the right step; restore of a backup with data skips the flow; smokes updated (setup walk + first movement now happen inside the stepper).
 
+Track 1 amended 2026-10-05 (UX audit, Y4NN: "trim"): three steps, not four. The intro slides are gone again (design decision 6), the account step accepts the default account (Continue is always enabled; the currency check stays), and the tour step is removed: "Later" or a saved plan ends the flow. Measured at 360 px in French: 11 taps from landing to Home (was 20).
+
 ## Track 2 — WiseBot panel rework
 
 Done 2026-09-26 (`8bbcb37`): header without cell borders and an overflow menu, one-line consent above the composer, three corpus suggestions, bubbles with guide chips that open the help entry from any page.

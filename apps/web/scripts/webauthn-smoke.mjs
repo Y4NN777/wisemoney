@@ -40,7 +40,6 @@ try {
   });
   await page.reload({ waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Start", exact: true }).last().click();
-  await page.getByRole("button", { name: "Skip", exact: true }).click();
   const passphrase = "WiseMoney-WebAuthn-Smoke-2026";
   await page.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await page.getByLabel("Confirm private passphrase", { exact: true }).fill(passphrase);

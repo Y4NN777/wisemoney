@@ -61,7 +61,7 @@ describe("localization resources", () => {
           expect(words(value), `${group}.${key}`).toBeLessThanOrEqual(6);
         }
       }
-      for (const step of ["accounts", "movement", "plan", "tour"]) {
+      for (const step of ["accounts", "movement", "plan"]) {
         const node = (r.firstSession as Record<string, Record<string, string>>)[step]!;
         expect(words(node.label), `firstSession.${step}.label`).toBeLessThanOrEqual(4);
         expect(words(node.title), `firstSession.${step}.title`).toBeLessThanOrEqual(4);

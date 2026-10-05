@@ -31,7 +31,7 @@ import AssistantCard from "../../components/AssistantCard/index.tsx";
 import LearnCard from "../../components/LearnCard/index.tsx";
 import FirstSessionFlow from "../../firstSession/FirstSessionFlow.tsx";
 import { useFirstSessionState } from "../../firstSession/hooks.ts";
-import { selectFirstSessionStep, type FirstSessionStep } from "../../firstSession/firstSession.ts";
+import { firstSessionEntryStep, selectFirstSessionStep, type FirstSessionStep } from "../../firstSession/firstSession.ts";
 import { comparePeriodAmounts } from "./periodComparison.ts";
 import {
   selectAccountDistribution,
@@ -604,8 +604,8 @@ export default function Dashboard() {
   const currentQuery = useFinancialState();
   const hasMovementQuery = useHasAnyMoneyMovement();
   const firstSessionQuery = useFirstSessionState();
-  // The step in view lags the derived step (see FirstSessionFlow); it is remembered here because
-  // Dashboard never unmounts while the flow may (operations query turning on shows a skeleton).
+  // The step in view is remembered here because Dashboard never unmounts while the flow may
+  // (operations query turning on shows a skeleton); see FirstSessionFlow.
   const [firstSessionCursor, setFirstSessionCursor] = useState<FirstSessionStep | null>(null);
   const firstSessionStart = useRef<FirstSessionStep | null>(null);
   const defaultAccountNames = [...new Set([...i18n.languages.map((language) => t("captureSheet.cashName", { lng: language })), "Cash", "Espèces"])];
@@ -668,17 +668,15 @@ export default function Dashboard() {
     snapshot: currentQuery.data,
     hasMovement: hasMovementQuery.data === true,
     state: firstSessionQuery.data ?? null,
-    defaultAccountNames,
   });
   if (firstSessionStep !== "done") {
-    if (firstSessionStart.current == null) firstSessionStart.current = firstSessionStep;
+    if (firstSessionStart.current == null) firstSessionStart.current = firstSessionEntryStep(firstSessionStep);
     const cursor = firstSessionCursor ?? firstSessionStart.current;
     return (
       <FirstSessionFlow
         snapshot={currentQuery.data}
         hasMovement={hasMovementQuery.data === true}
         state={firstSessionQuery.data ?? null}
-        derivedStep={firstSessionStep}
         defaultAccountNames={defaultAccountNames}
         cursor={cursor !== "done" ? cursor : firstSessionStep}
         onCursorChange={setFirstSessionCursor}

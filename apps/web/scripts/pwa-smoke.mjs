@@ -241,9 +241,7 @@ try {
   });
   await appPage.goto(baseURL, { waitUntil: "networkidle" });
   await appPage.getByRole("button", { name: "Start", exact: true }).last().click();
-  // Intro: two screens, then the passphrase form (the last button shares the setup button's name).
-  await appPage.getByRole("button", { name: "Next", exact: true }).click();
-  await appPage.getByRole("button", { name: "Create private space", exact: true }).click();
+  // Start leads straight to the passphrase form: no intro screens.
   const passphrase = "WiseMoney-Smoke-Test-Only-2026";
   await appPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await appPage.getByLabel("Confirm private passphrase").fill(passphrase);
@@ -278,12 +276,10 @@ try {
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByText("Recorded. Find it in Activity.", { exact: true }).waitFor({ timeout: 30_000 });
   await appPage.getByRole("button", { name: "Continue", exact: true }).click();
-  // Step 3: planning is optional here; step 4 ends the first session and reveals the dashboard.
+  // Step 3: planning is optional here; "Later" ends the first session and reveals the dashboard.
   await appPage.getByRole("heading", { name: "One plan", exact: true }).waitFor();
+  assert.equal(await appPage.getByRole("button", { name: "Finish", exact: true }).isDisabled(), true, "Finish is offered before a plan exists");
   await appPage.getByRole("button", { name: "Later", exact: true }).click();
-  await appPage.getByRole("button", { name: "Continue", exact: true }).click();
-  await appPage.getByRole("heading", { name: "Where things are", exact: true }).waitFor();
-  await appPage.getByRole("button", { name: "Finish", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Money available today", { exact: true }).waitFor({ timeout: 90_000 });
   // The coach shows its single per-session tip about 20 s in. It is a card beside the page (no
   // backdrop), announced as a status, and it stays on the page it was chosen for.

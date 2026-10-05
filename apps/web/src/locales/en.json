@@ -132,21 +132,6 @@
         "passphraseRequired": "A passphrase is required",
         "failed": "Restore failed"
       }
-    },
-    "intro": {
-      "aria": "Before you start",
-      "skip": "Skip",
-      "stepLabel": "{{number}} of {{total}}",
-      "steps": {
-        "device": {
-          "title": "Your money, on this device",
-          "body": "WiseMoney keeps your accounts, budgets and due dates here. No sign-up, no e-mail, nothing sent anywhere."
-        },
-        "passphrase": {
-          "title": "One passphrase, your only key",
-          "body": "It protects everything. Nobody can recover it for you, so keep it somewhere safe — an export is your backup."
-        }
-      }
     }
   },
   "nav": {
@@ -1337,7 +1322,6 @@
     "cancel": "Cancel",
     "close": "Close",
     "back": "Back",
-    "next": "Next",
     "retry": "Retry",
     "undo": "Undo",
     "unknown": "Unknown",
@@ -1367,7 +1351,7 @@
     "accounts": {
       "label": "Currency & accounts",
       "title": "Currency and accounts",
-      "body": "Pick the currency you count in, then name the account we made for you or add another: cash, mobile money, bank.",
+      "body": "Check the currency you count in. Rename the account we made for you or add another if you wish: cash, mobile money, bank.",
       "nameLabel": "Rename {{name}}",
       "save": "Save",
       "addAnother": "Add another account",
@@ -1394,27 +1378,6 @@
       "later": "Later",
       "invalid": "Name, category and amount are needed.",
       "done": "Plan set."
-    },
-    "tour": {
-      "label": "Where things are",
-      "title": "Where things are",
-      "body": "Four places; that is the whole app.",
-      "home": {
-        "title": "Home",
-        "body": "Where you stand: balance, this month, what needs you."
-      },
-      "activity": {
-        "title": "Activity",
-        "body": "Everything that happened, by day, with filters and export."
-      },
-      "plan": {
-        "title": "Plan",
-        "body": "Budgets, goals, planned and recurring items, debts."
-      },
-      "capture": {
-        "title": "The + button",
-        "body": "Record a movement, a transfer or a goal contribution from anywhere."
-      }
     }
   },
   "learn": {

@@ -132,21 +132,6 @@
         "passphraseRequired": "Une phrase secrète est requise",
         "failed": "Échec de la restauration"
       }
-    },
-    "intro": {
-      "aria": "Avant de commencer",
-      "skip": "Passer",
-      "stepLabel": "{{number}} sur {{total}}",
-      "steps": {
-        "device": {
-          "title": "Votre argent, sur cet appareil",
-          "body": "WiseMoney garde vos comptes, budgets et échéances ici. Pas d’inscription, pas d’e-mail, rien n’est envoyé ailleurs."
-        },
-        "passphrase": {
-          "title": "Une phrase privée, votre seule clé",
-          "body": "Elle protège tout. Personne ne peut la récupérer pour vous : gardez-la en lieu sûr — un export sert de sauvegarde."
-        }
-      }
     }
   },
   "nav": {
@@ -1337,7 +1322,6 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "back": "Retour",
-    "next": "Suivant",
     "retry": "Réessayer",
     "undo": "Annuler",
     "unknown": "Inconnu",
@@ -1367,7 +1351,7 @@
     "accounts": {
       "label": "Devise et comptes",
       "title": "Devise et comptes",
-      "body": "Choisissez la devise dans laquelle vous comptez, puis nommez le compte créé pour vous ou ajoutez-en un : espèces, mobile money, banque.",
+      "body": "Vérifiez la devise dans laquelle vous comptez. Renommez le compte créé pour vous ou ajoutez-en un si vous le souhaitez : espèces, mobile money, banque.",
       "nameLabel": "Renommer {{name}}",
       "save": "Enregistrer",
       "addAnother": "Ajouter un compte",
@@ -1394,27 +1378,6 @@
       "later": "Plus tard",
       "invalid": "Nom, catégorie et montant sont nécessaires.",
       "done": "Plan posé."
-    },
-    "tour": {
-      "label": "Se repérer",
-      "title": "Se repérer",
-      "body": "Quatre endroits ; c’est toute l’app.",
-      "home": {
-        "title": "Accueil",
-        "body": "Où vous en êtes : solde, ce mois-ci, ce qui vous attend."
-      },
-      "activity": {
-        "title": "Activité",
-        "body": "Tout ce qui s’est passé, jour par jour, avec filtres et export."
-      },
-      "plan": {
-        "title": "Plan",
-        "body": "Budgets, objectifs, dépenses prévues, récurrents, dettes."
-      },
-      "capture": {
-        "title": "Le bouton +",
-        "body": "Enregistrez un mouvement, un transfert ou une contribution depuis n’importe où."
-      }
     }
   },
   "learn": {
