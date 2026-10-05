@@ -322,7 +322,7 @@ function CurrencySelect({ id, value, onValueChange, compact = false }: { id: str
                     <button
                       key={currency.code}
                       type="button"
-                      className="flex w-full items-center justify-between gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-accent focus:bg-accent focus:outline-none"
+                      className="flex w-full items-center justify-between gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-accent focus:bg-accent"
                       onClick={() => chooseCurrency(currency.code)}
                       role="option"
                       aria-selected={currency.code === value}

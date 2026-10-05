@@ -72,7 +72,7 @@ function AlertRow({
         {informational ? <Info className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
       </span>
       <div className="min-w-0">
-        <h3 className="text-sm font-semibold">{alertTitle(alert, t)}</h3>
+        <h2 className="text-sm font-semibold">{alertTitle(alert, t)}</h2>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground"><AlertBody alert={alert} snapshot={snapshot} /></p>
       </div>
       <div className="flex items-center gap-1 sm:self-center">

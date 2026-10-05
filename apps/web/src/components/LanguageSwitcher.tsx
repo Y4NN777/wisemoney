@@ -23,7 +23,7 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
   if (compact) {
     return (
       <Select value={currentLanguage} onValueChange={changeLanguage}>
-        <SelectTrigger className="h-9 w-[76px] gap-1 px-2 shadow-none" aria-label={t("language.choose")}>
+        <SelectTrigger className="h-9 w-[76px] gap-1 px-2 shadow-none" aria-label={`${t("language.choose")} (${currentLanguage})`}>
           <span className="flex items-center gap-1.5">
             <Languages className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <span className="text-xs font-semibold">{currentLanguage}</span>

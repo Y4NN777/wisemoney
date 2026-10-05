@@ -8,7 +8,7 @@ export default function LearnCard() {
   return (
     <Link
       to="/learn"
-      className="flex items-center gap-3 rounded-lg border border-border bg-card p-3 text-sm font-semibold hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="flex items-center gap-3 rounded-lg border border-border bg-card p-3 text-sm font-semibold hover:bg-muted"
     >
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-wash text-ocean-primary" aria-hidden="true">
         <GraduationCap className="h-5 w-5" />

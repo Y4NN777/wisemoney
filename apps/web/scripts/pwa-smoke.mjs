@@ -130,7 +130,7 @@ try {
     });
     assert.deepEqual(darkPrimaryAction, { background: "rgb(0, 119, 182)", foreground: "rgb(255, 255, 255)" },
       `${device.name}: dark theme primary action drifted from WiseMoney blue`);
-    const darkLanguageIcon = await page.getByRole("combobox", { name: "Choose language", exact: true })
+    const darkLanguageIcon = await page.getByRole("combobox", { name: /^Choose language/ })
       .locator("svg").first().evaluate((element) => getComputedStyle(element).color);
     assert.equal(darkLanguageIcon, "rgb(0, 119, 182)",
       `${device.name}: language switcher drifted from WiseMoney blue`);
@@ -179,25 +179,25 @@ try {
     await page.getByRole("button", { name: "See what’s new", exact: true }).click();
     await page.getByRole("heading", { name: "What’s new", exact: true }).waitFor();
     await page.getByText("1.0.0", { exact: true }).first().waitFor();
-    await page.getByRole("combobox", { name: "Choose language", exact: true }).click();
+    await page.getByRole("combobox", { name: /^Choose language/ }).click();
     await page.getByRole("option", { name: "Français", exact: true }).click();
     await page.getByRole("heading", { name: "Nouveautés", exact: true }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}-updates-fr.png`, fullPage: true });
-    await page.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+    await page.getByRole("combobox", { name: /^Choisir la langue/ }).click();
     await page.getByRole("option", { name: "English", exact: true }).click();
     await page.getByRole("button", { name: "Back", exact: true }).click();
     await page.getByRole("heading", { name: "Find your way around your money.", exact: true }).waitFor();
     await page.getByRole("button", { name: "Back", exact: true }).click();
     await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     await page.screenshot({ path: `${outputDir}/${device.name}.png`, fullPage: true });
-    await page.getByRole("combobox", { name: "Choose language", exact: true }).click();
+    await page.getByRole("combobox", { name: /^Choose language/ }).click();
     await page.getByRole("option", { name: "Français", exact: true }).click();
     await page.getByRole("heading", { name: "Gérez votre argent. Gardez le contrôle.", exact: true }).waitFor();
     await page.getByText("Chiffré sur cet appareil", { exact: true }).waitFor();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true,
       `${device.name}: French landing has horizontal overflow`);
     await page.screenshot({ path: `${outputDir}/${device.name}-landing-fr.png`, fullPage: true });
-    await page.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+    await page.getByRole("combobox", { name: /^Choisir la langue/ }).click();
     await page.getByRole("option", { name: "English", exact: true }).click();
 
     const registration = await page.evaluate(async () => {
@@ -334,7 +334,7 @@ try {
   await syncPage.goto(baseURL, { waitUntil: "networkidle" });
   await syncPage.getByRole("button", { name: "Open app", exact: true }).click();
   await syncPage.getByLabel("Private passphrase", { exact: true }).waitFor();
-  await syncPage.getByRole("combobox", { name: "Choose language", exact: true }).click();
+  await syncPage.getByRole("combobox", { name: /^Choose language/ }).click();
   await syncPage.getByRole("option", { name: "Français", exact: true }).click();
   try {
     await syncPage.getByLabel("Phrase privée", { exact: true }).waitFor({ timeout: 5_000 });
@@ -347,19 +347,18 @@ try {
     1,
     "language switch left the passphrase unlock screen",
   );
-  await syncPage.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+  await syncPage.getByRole("combobox", { name: /^Choisir la langue/ }).click();
   await syncPage.getByRole("option", { name: "English", exact: true }).click();
   await syncPage.getByLabel("Private passphrase", { exact: true }).waitFor();
   await syncPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await syncPage.getByRole("button", { name: "Open", exact: true }).click();
   await syncPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor({ timeout: 90_000 });
   await syncPage.setViewportSize({ width: 390, height: 844 });
-  await syncPage.getByRole("combobox", { name: "Choose language", exact: true }).click();
+  await syncPage.getByRole("combobox", { name: /^Choose language/ }).click();
   await syncPage.getByRole("option", { name: "Français", exact: true }).click();
-  const compactDashboardLink = syncPage.getByRole("link", { name: "Tableau de bord", exact: true });
+  // The link is named by its visible label (WCAG 2.5.3), not by a longer hidden one.
+  const compactDashboardLink = syncPage.getByRole("navigation", { name: "Navigation principale", exact: true }).getByRole("link", { name: "Accueil", exact: true });
   await compactDashboardLink.waitFor();
-  assert.equal((await compactDashboardLink.textContent())?.trim(), "Accueil",
-    "French bottom navigation did not use the compact dashboard label");
   const bottomNav = syncPage.getByRole("navigation", { name: "Navigation principale", exact: true });
   assert.equal(await bottomNav.getByRole("link").count(), 3, "bottom navigation should hold exactly three destinations");
   assert.equal(await bottomNav.getByRole("button").count(), 1, "bottom navigation should hold exactly one capture button");
@@ -371,7 +370,7 @@ try {
   assert.equal(await syncPage.locator(".route-transition").evaluate((element) => getComputedStyle(element).animationName), "route-transition-in",
     "app navigation did not animate the incoming page");
   await syncPage.screenshot({ path: `${outputDir}/bottom-navigation-fr.png`, fullPage: true });
-  await syncPage.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+  await syncPage.getByRole("combobox", { name: /^Choisir la langue/ }).click();
   await syncPage.getByRole("option", { name: "English", exact: true }).click();
   await syncPage.setViewportSize({ width: 1280, height: 900 });
   await syncPage.getByRole("link", { name: "Plan", exact: true }).click();
@@ -578,7 +577,7 @@ try {
     "mobile unlock back action did not collapse to its arrow");
   assert.equal(await unlockBackButton.locator("span").isVisible(), false,
     "mobile unlock back label remained visible");
-  const unlockLanguageBox = await appPage.getByRole("combobox", { name: "Choose language", exact: true }).boundingBox();
+  const unlockLanguageBox = await appPage.getByRole("combobox", { name: /^Choose language/ }).boundingBox();
   assert.ok(unlockLanguageBox != null && unlockLanguageBox.width <= 80,
     "mobile unlock language switcher is not compact");
   assert.equal(await appPage.locator('main svg[aria-label="WiseMoney logo"]').count(), 1,
@@ -588,7 +587,8 @@ try {
   await appPage.screenshot({ path: `${outputDir}/unlock-mobile-dark.png`, fullPage: true });
   await appPage.getByLabel("Private passphrase", { exact: true }).fill(passphrase);
   await appPage.getByRole("button", { name: "Open", exact: true }).click();
-  await appPage.getByRole("link", { name: "Dashboard", exact: true }).waitFor({ timeout: 90_000 });
+  // At phone width the bottom bar names the link by its visible label, "Home".
+  await appPage.getByRole("link", { name: "Home", exact: true }).waitFor({ timeout: 90_000 });
   await appPage.setViewportSize({ width: 1280, height: 900 });
   await appPage.getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByRole("radio", { name: "Light", exact: true }).click();

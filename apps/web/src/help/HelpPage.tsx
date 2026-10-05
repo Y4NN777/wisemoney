@@ -120,9 +120,9 @@ export default function HelpPage() {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("helpPage.searchPlaceholder")}
-                className="h-12 border-foreground/20 bg-background pl-10 pr-14 text-base shadow-none hover:border-primary/50 focus-visible:border-primary focus-visible:ring-ring"
+                className="h-12 border-foreground/20 bg-background pl-10 pr-14 text-base shadow-none hover:border-primary/50 focus-visible:border-primary"
               />
-              <kbd className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 rounded-md border border-foreground/20 bg-muted px-2 py-1 text-[11px] text-muted-foreground sm:block">⌘ K</kbd>
+              <kbd className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 rounded-md border border-foreground/20 bg-muted px-2 py-1 text-xs text-muted-foreground sm:block">⌘ K</kbd>
             </div>
           </div>
         </section>

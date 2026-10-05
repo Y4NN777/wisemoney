@@ -44,7 +44,7 @@ export default function PlanSection({
       </div>
       {section.count > 0 && (
         <details open className="border-t border-border">
-          <summary className="cursor-pointer list-none px-4 py-2 text-xs font-medium text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset">
+          <summary className="cursor-pointer list-none px-4 py-2 text-xs font-medium text-muted-foreground">
             {t("planning.section.toggle", { count: section.count })}
           </summary>
           <ul className="divide-y divide-border">

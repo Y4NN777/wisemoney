@@ -28,7 +28,7 @@ function SettingToggle({ checked, label, onChange }: { checked: boolean; label: 
         onChange={(event) => onChange(event.target.checked)}
         className="peer sr-only"
       />
-      <span className="relative h-6 w-11 shrink-0 rounded-full border border-border bg-muted transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4.5 after:w-4.5 after:rounded-full after:bg-card after:shadow-sm after:transition-transform peer-checked:border-ocean-primary peer-checked:bg-ocean-primary peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-ring" />
+      <span className="relative h-6 w-11 shrink-0 rounded-full border border-border bg-muted transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4.5 after:w-4.5 after:rounded-full after:bg-card after:shadow-sm after:transition-transform peer-checked:border-ocean-primary peer-checked:bg-ocean-primary peer-checked:after:translate-x-5 peer- peer-" />
       <span className="text-sm font-medium">{label}</span>
     </label>
   );
@@ -111,7 +111,7 @@ export default function ReminderSettingsSection({
                   aria-describedby={`reminder-lead-help-${type}`}
                   className="mt-1 h-9"
                 />
-                <p id={`reminder-lead-help-${type}`} className="mt-1 text-[11px] text-muted-foreground">{t("reminders.settings.leadDaysHelp")}</p>
+                <p id={`reminder-lead-help-${type}`} className="mt-1 text-xs text-muted-foreground">{t("reminders.settings.leadDaysHelp")}</p>
               </div>
             )}
           </div>

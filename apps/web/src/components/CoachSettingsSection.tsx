@@ -7,7 +7,7 @@ function SettingToggle({ checked, label, onChange }: { checked: boolean; label: 
   return (
     <label className="flex cursor-pointer items-center gap-3">
       <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="peer sr-only" />
-      <span className="relative h-6 w-11 shrink-0 rounded-full border border-border bg-muted transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4.5 after:w-4.5 after:rounded-full after:bg-card after:shadow-sm after:transition-transform peer-checked:border-ocean-primary peer-checked:bg-ocean-primary peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-ring" />
+      <span className="relative h-6 w-11 shrink-0 rounded-full border border-border bg-muted transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4.5 after:w-4.5 after:rounded-full after:bg-card after:shadow-sm after:transition-transform peer-checked:border-ocean-primary peer-checked:bg-ocean-primary peer-checked:after:translate-x-5 peer- peer-" />
       <span className="text-sm font-medium">{label}</span>
     </label>
   );

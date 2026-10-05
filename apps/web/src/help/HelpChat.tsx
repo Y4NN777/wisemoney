@@ -477,7 +477,7 @@ export default function HelpChat({
               </div>
             )}
             {ticket != null && (
-              <p className="mb-2 text-[11px] text-muted-foreground">
+              <p className="mb-2 text-xs text-muted-foreground">
                 {t("helpPage.chat.quota", { count: ticket.remainingUnits })}
                 {resetTime == null ? "" : ` · ${t("helpPage.chat.reset", { time: resetTime })}`}
               </p>

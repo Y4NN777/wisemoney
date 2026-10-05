@@ -401,7 +401,7 @@ function DashboardContent({
                         <span className="shrink-0 tabular-nums text-muted-foreground">{formatMoney(account.amount.minorUnits, account.amount.currency)}</span>
                       </div>
                       {account.share == null ? (
-                        <p className="text-[11px] text-muted-foreground">{t("dashboard.accountShareUnavailable")}</p>
+                        <p className="text-xs text-muted-foreground">{t("dashboard.accountShareUnavailable")}</p>
                       ) : (
                         <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-ocean-primary" style={{ width: `${Math.min(100, account.share)}%` }} /></div>
                       )}
@@ -438,7 +438,7 @@ function DashboardContent({
                         <div className="flex items-center justify-between text-sm">
                           <span className="flex items-center gap-1 min-w-0">
                             <span className="truncate">{budget.name}</span>
-                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal shrink-0">
+                            <Badge variant="outline" className="text-xs px-1.5 py-0 h-4 font-normal shrink-0">
                               {cat?.name ?? t("common.unknown")}
                             </Badge>
                             {(nearingLimit || limitReached) && <Info className="h-3 w-3 text-attention shrink-0" />}

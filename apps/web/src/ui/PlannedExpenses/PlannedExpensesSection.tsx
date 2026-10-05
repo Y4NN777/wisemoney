@@ -158,7 +158,7 @@ function ExpenseFields({
       <div className="space-y-2 sm:col-span-2">
         <Label htmlFor="planned-note">{t("capture.plannedExpenses.fields.note")}</Label>
         <textarea id="planned-note" value={draft.note} onChange={(event) => onChange({ note: event.target.value })}
-          className="min-h-24 w-full rounded-md border border-input bg-card px-3 py-2 text-base outline-none focus:border-primary focus:ring-1 focus:ring-ring sm:text-sm" />
+          className="min-h-24 w-full rounded-md border border-input bg-card px-3 py-2 text-base focus:border-primary sm:text-sm" />
       </div>
     </div>
   );
@@ -372,7 +372,7 @@ export function PlannedExpensesSection({
             <section key={priority} className="grid border-b border-border last:border-b-0 lg:grid-cols-[8rem_minmax(0,1fr)]" aria-labelledby={`planned-${priority}`}>
               <header className="border-b border-border bg-muted p-4 lg:border-b-0 lg:border-r">
                 <p aria-hidden="true" className="text-3xl font-semibold leading-none tabular-nums text-primary">{PRIORITY_NUMBER[priority]}</p>
-                <h3 id={`planned-${priority}`} className="mt-2 text-sm font-semibold">{t(`capture.plannedExpenses.priorityGroups.${priority}`)}</h3>
+                <h2 id={`planned-${priority}`} className="mt-2 text-sm font-semibold">{t(`capture.plannedExpenses.priorityGroups.${priority}`)}</h2>
               </header>
               {items.length === 0 ? (
                 <p className="p-5 text-sm text-muted-foreground">{t("capture.plannedExpenses.emptyPriority")}</p>
@@ -418,7 +418,7 @@ export function PlannedExpensesSection({
         })}
 
         <details className="border-t border-border">
-          <summary className="cursor-pointer bg-muted px-4 py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset">
+          <summary className="cursor-pointer bg-muted px-4 py-3 text-sm font-semibold">
             {t("capture.plannedExpenses.history.title")} <span className="font-normal tabular-nums text-muted-foreground">({history.length})</span>
           </summary>
           {history.length === 0 ? <p className="p-5 text-sm text-muted-foreground">{t("capture.plannedExpenses.history.empty")}</p> : (

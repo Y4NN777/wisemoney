@@ -299,7 +299,7 @@ export default function ExportImportSection() {
       <Card className="border-ocean-primary/25">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Archive className="h-5 w-5 text-ocean-primary" />
+            <Archive className="h-5 w-5 text-primary" />
             {t("exportImport.cycle.title")}
           </CardTitle>
           <CardDescription>{t("exportImport.cycle.description")}</CardDescription>
@@ -352,7 +352,7 @@ export default function ExportImportSection() {
                         {formatCycleDate(cycle.archivedAt, document.documentElement.lang || "en")} · {t("exportImport.cycle.eventCount", { count: cycle.eventCount })}
                       </p>
                     </div>
-                    <code className="shrink-0 text-[10px] text-muted-foreground" title={cycle.backupSha256}>
+                    <code className="shrink-0 text-xs text-muted-foreground" title={cycle.backupSha256}>
                       {cycle.backupSha256.slice(0, 10)}…
                     </code>
                   </div>
@@ -592,7 +592,7 @@ export default function ExportImportSection() {
                 <summary className="cursor-pointer px-3 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground">
                   {t("exportImport.cycle.checksum")}
                 </summary>
-                <code className="block break-all border-t border-border px-3 py-2.5 text-[11px] leading-relaxed text-muted-foreground">{preparedCycle.backupSha256}</code>
+                <code className="block break-all border-t border-border px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">{preparedCycle.backupSha256}</code>
               </details>
 
               <div className="space-y-3 border-t border-border pt-4">

@@ -207,7 +207,7 @@ export default function Budgets() {
                     <div className="flex items-center gap-2 min-w-0">
                       <div className="min-w-0">
                         <span className="text-sm font-medium block truncate">{budget.name}</span>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal mt-0.5">
+                        <Badge variant="outline" className="text-xs px-1.5 py-0 h-4 font-normal mt-0.5">
                           {cat?.name ?? t("budgets.unknown")}
                         </Badge>
                       </div>
@@ -274,7 +274,7 @@ export default function Budgets() {
                   <CardContent className="py-2 flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <span className="text-sm block truncate">{budget.name}</span>
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal mt-0.5">
+                      <Badge variant="outline" className="text-xs px-1.5 py-0 h-4 font-normal mt-0.5">
                         {cat?.name ?? t("budgets.unknown")}
                       </Badge>
                     </div>

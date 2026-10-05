@@ -141,7 +141,7 @@ export default function Learn() {
                 </span>
                 <h2 className="text-sm font-semibold">{t("learn.tutor.title")}</h2>
               </div>
-              <p className="text-[11px] text-muted-foreground">{t("learn.tutor.startersNote")}</p>
+              <p className="text-xs text-muted-foreground">{t("learn.tutor.startersNote")}</p>
               <ul className="flex flex-wrap gap-2" aria-label={t("learn.tutor.suggestions")}>
                 {LITERACY_STARTERS.map((starter) => (
                   <li key={starter.id}>
@@ -168,7 +168,7 @@ export default function Learn() {
                   : <p className="whitespace-pre-wrap leading-relaxed">{message.text || t("learn.tutor.writing")}</p>}
                 {message.answer != null && (
                   <div className="mt-2 space-y-2 border-t border-foreground/10 pt-2">
-                    <p className="text-[11px] text-muted-foreground">{pathLabel(message.answer)}</p>
+                    <p className="text-xs text-muted-foreground">{pathLabel(message.answer)}</p>
                     {message.answer.unitIds.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
                         {message.answer.unitIds.flatMap((id) => units.find((unit) => unit.id === id) ?? []).map((unit) => (
@@ -179,7 +179,7 @@ export default function Learn() {
                       </div>
                     )}
                     {message.answer.sources.length > 0 && (
-                      <p className="text-[11px] leading-snug text-muted-foreground">{t("learn.tutor.webCaution")}</p>
+                      <p className="text-xs leading-snug text-muted-foreground">{t("learn.tutor.webCaution")}</p>
                     )}
                     {message.answer.sources.length > 0 && (
                       <ul className="space-y-1" aria-label={t("learn.tutor.sources")}>
@@ -225,7 +225,7 @@ export default function Learn() {
               : <Button type="submit" size="icon" className="rounded-full" disabled={input.trim().length === 0} aria-label={t("learn.tutor.send")}><Send className="h-4 w-4" /></Button>}
           </form>
           {capability.data?.available === true && (
-            <p className="mt-2 text-[11px] text-muted-foreground">
+            <p className="mt-2 text-xs text-muted-foreground">
               {t("learn.tutor.personal")} <Link to="/assistant" className="font-semibold text-ocean-primary underline underline-offset-2">{t("assistant.title")}</Link>
             </p>
           )}
@@ -238,7 +238,7 @@ export default function Learn() {
           const areaUnits = units.filter((unit) => unit.area === area);
           return (
             <details key={area} className="group rounded-lg border border-border bg-card" open={index === 0}>
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-semibold">
                 <span><span className="mr-2 tabular-nums text-ocean-primary">{index + 1}</span>{t(`learn.areas.${area}`)}</span>
                 <span className="flex items-center gap-2 text-xs font-normal text-muted-foreground">
                   {t("learn.lessons.count", { count: areaUnits.length })}
@@ -258,7 +258,7 @@ export default function Learn() {
             </details>
           );
         })}
-        <p className="px-1 text-[11px] leading-relaxed text-muted-foreground">{t("learn.draft")}</p>
+        <p className="px-1 text-xs leading-relaxed text-muted-foreground">{t("learn.draft")}</p>
       </section>
 
       <Dialog open={openUnit != null} onOpenChange={(open) => { if (!open) setOpenUnit(null); }}>
@@ -283,7 +283,7 @@ export default function Learn() {
               <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-ocean-primary">{t("learn.lesson.action")}</p>
               {openUnit.action}
             </div>
-            <div className="text-[11px] leading-relaxed text-muted-foreground">
+            <div className="text-xs leading-relaxed text-muted-foreground">
               <p className="font-semibold">{t("learn.lesson.basis")}</p>
               <ul className="mt-1 space-y-1">
                 {openUnit.sources.flatMap((id) => LITERACY_SOURCES[id] == null ? [] : [{ id, ...LITERACY_SOURCES[id] }]).map((source) => (

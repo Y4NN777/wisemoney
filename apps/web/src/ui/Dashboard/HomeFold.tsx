@@ -13,7 +13,7 @@ export default function HomeFold({ children }: { children: ReactNode }) {
   return (
     <section aria-label={t("dashboard.fold.aria")}>
       <details open={open} onToggle={(event) => setOpen(event.currentTarget.open)} className="group">
-        <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-border bg-card px-4 py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-border bg-card px-4 py-3 text-sm font-semibold">
           {t(open ? "dashboard.fold.less" : "dashboard.fold.more")}
           <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" />
         </summary>

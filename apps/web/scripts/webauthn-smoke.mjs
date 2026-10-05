@@ -84,13 +84,13 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Open my space", exact: true }).click();
   await page.getByRole("heading", { name: "Open WiseMoney", exact: true }).waitFor();
-  await page.getByRole("combobox", { name: "Choose language", exact: true }).click();
+  await page.getByRole("combobox", { name: /^Choose language/ }).click();
   await page.getByRole("option", { name: "Français", exact: true }).click();
   await page.getByRole("heading", { name: "Ouvrir WiseMoney", exact: true }).waitFor();
   await page.getByText("Utilisez le déverrouillage de cet appareil.", { exact: true }).waitFor();
   await page.getByRole("button", { name: "Utiliser ma phrase privée", exact: true }).waitFor();
   await page.screenshot({ path: `${outputDir}/device-unlock-mobile-fr.png`, fullPage: true });
-  await page.getByRole("combobox", { name: "Choisir la langue", exact: true }).click();
+  await page.getByRole("combobox", { name: /^Choisir la langue/ }).click();
   await page.getByRole("option", { name: "English", exact: true }).click();
   await page.getByText("Use this device’s screen lock.", { exact: true }).waitFor();
   await page.getByRole("button", { name: "Use my private passphrase", exact: true }).waitFor();

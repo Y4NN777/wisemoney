@@ -116,11 +116,11 @@ function LandingGlimpse() {
         <p className="mt-1 text-xs text-muted-foreground">{t("keyUnlock.landing.glimpse.caption")}</p>
         <div className="mt-5 grid grid-cols-2 gap-2">
           <div className="rounded-lg border border-border bg-background p-3">
-            <p className="text-[11px] text-muted-foreground">{t("dashboard.moneyReceived")}</p>
+            <p className="text-xs text-muted-foreground">{t("dashboard.moneyReceived")}</p>
             <p className="mt-1 text-base font-semibold tracking-[0.2em] text-positive/70">{masked}</p>
           </div>
           <div className="rounded-lg border border-border bg-background p-3">
-            <p className="text-[11px] text-muted-foreground">{t("dashboard.moneySpent")}</p>
+            <p className="text-xs text-muted-foreground">{t("dashboard.moneySpent")}</p>
             <p className="mt-1 text-base font-semibold tracking-[0.2em] text-negative/70">{masked}</p>
           </div>
         </div>

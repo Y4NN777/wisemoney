@@ -137,13 +137,12 @@ function RootLayout() {
               {index === CAPTURE_SLOT_INDEX && <CaptureNavItem compact />}
               <Link
                 to={item.to}
-                aria-label={t(item.labelKey)}
                 activeOptions={{ exact: item.exact }}
                 className="flex h-full min-w-16 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-muted-foreground transition-[background-color,color,transform] duration-200 active:scale-95"
                 activeProps={{ className: "text-ocean-dark bg-ocean-wash/80" }}
               >
                 <item.icon className="h-5 w-5" />
-                <span className="text-[11px] leading-tight font-medium">
+                <span className="text-xs leading-tight font-medium">
                   {t(item.compactLabelKey)}
                 </span>
               </Link>

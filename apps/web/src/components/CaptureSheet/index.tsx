@@ -12,6 +12,7 @@ import {
 import { Input } from "../ui/input.tsx";
 import { Label } from "../ui/label.tsx";
 import { Button } from "../ui/button.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs.tsx";
 import { Select, SelectContent, SelectEmptyState, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx";
 import {
   useCreateAccount, useCurrencyContext, useDeleteTransaction, useFinancialState, useHasAnyMoneyMovement,
@@ -106,23 +107,24 @@ export default function CaptureSheet() {
           <DialogHeader className="flex flex-row items-center pr-10 pb-2 pt-1">
             <DialogTitle className="text-sm font-semibold">{t("capture.heading")}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-3 gap-1 rounded-md border border-border bg-muted p-1" role="tablist" aria-label={t("capture.ariaLabel")}>
-            {CAPTURE_MODES.map((candidate) => (
-              <button
-                key={candidate}
-                type="button"
-                role="tab"
-                aria-selected={mode === candidate}
-                onClick={() => switchMode(candidate)}
-                className={`min-h-10 rounded-sm px-2 text-sm font-medium transition-colors ${mode === candidate ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                {t(`capture.tabs.${candidate}`)}
-              </button>
-            ))}
-          </div>
-          {mode === "transaction" && <TransactionForm direction={initialDirection} onDone={closeSheet} />}
-          {mode === "transfer" && <TransferForm onDone={closeSheet} />}
-          {mode === "goal" && <GoalForm onDone={closeSheet} />}
+          {/* Real tabs: arrow keys move between them and each form is the panel of its tab. Activation
+              is manual (Enter or Space) because each form takes the focus to its amount field. */}
+          <Tabs value={mode} onValueChange={(next) => switchMode(next as CaptureMode)} activationMode="manual" className="grid gap-4">
+            <TabsList className="grid h-auto w-full grid-cols-3 gap-1 rounded-md bg-muted p-1 shadow-none" aria-label={t("capture.ariaLabel")}>
+              {CAPTURE_MODES.map((candidate) => (
+                <TabsTrigger
+                  key={candidate}
+                  value={candidate}
+                  className="min-h-11 whitespace-normal rounded-sm px-2 text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none"
+                >
+                  {t(`capture.tabs.${candidate}`)}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <TabsContent value="transaction" className="mt-0" tabIndex={-1}><TransactionForm direction={initialDirection} onDone={closeSheet} /></TabsContent>
+            <TabsContent value="transfer" className="mt-0" tabIndex={-1}><TransferForm onDone={closeSheet} /></TabsContent>
+            <TabsContent value="goal" className="mt-0" tabIndex={-1}><GoalForm onDone={closeSheet} /></TabsContent>
+          </Tabs>
         </DialogContent>
       )}
     </Dialog>
