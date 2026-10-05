@@ -124,7 +124,6 @@
   grouping, Plan empty rows, boxed titles, lesson dialog; then a test with five real users and a
   run on a real low-end Android phone. Open defects listed in the audit doc (missing
   `planning.frequency.*` / `planning.debtKinds.*` keys, no edit for older transactions).
-- Re-measure the landing page on the live site after deploy (target LCP ≤ 2.5 s on Slow 4G).
 
 ### Blockers
 

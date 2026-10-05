@@ -10,15 +10,15 @@ Earlier decisions stand: `ux-simplification.md`, `../plans/first-session-wisebot
 
 | What | Before | After | How measured |
 |---|---|---|---|
-| Landing download before first paint | 375 KB, 17 requests | 169 KB, 10 requests | Chrome, cold, no service worker |
-| Landing LCP, Slow 4G (1.6 Mbps, CPU ÷4) | 3.5 s live, 3.0 s local | 1.6 s local | median of 3; budget 2.5 s |
-| Landing LCP, 3G (400 kbps, CPU ÷6) | 10.1 s | 5.1 s local | median of 3 |
+| Landing download before first paint | 375 KB, 17 requests | 177–207 KB live (169 KB local) | Chrome, cold, no service worker |
+| Landing LCP, Slow 4G (1.6 Mbps, CPU ÷4) | 3.5 s live, 3.0 s local | 2.2 s live, 1.6 s local | median of 3; budget 2.5 s |
+| Landing LCP, 3G (400 kbps, CPU ÷6) | 10.1 s live | 5.9 s live, 5.1 s local | median of 3 |
 | Taps, landing → Home | 20 | 11 | scripted walk, 360 px, French |
 | Focus ring contrast | 1.5:1 | 4.6:1 light, 5.2:1 dark | computed from tokens |
 | Field border contrast | 1.40:1 light, 1.80:1 dark | 3.4:1, 3.5:1 | computed from tokens |
 | Text under 12 px | 20 sites | 1 (reminder count badge) | source and rendered check |
 
-The live numbers must be re-measured after deploy; "after" figures are from the local preview.
+Live figures measured on 2026-10-05 after the deploy of `44db447`; unthrottled live LCP went from 1.4 s to 0.8 s.
 
 ## Decisions (Y4NN, 2026-10-05)
 
