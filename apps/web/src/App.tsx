@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { RouterProvider } from "@tanstack/react-router";
 import { useRegisterSW } from "virtual:pwa-register/react";
-import { Toaster } from "./components/ui/sonner.tsx";
 import { Button } from "./components/ui/button.tsx";
 import { useTranslation } from "react-i18next";
 import {
@@ -19,6 +18,9 @@ import { WiseBotProvider } from "./help/WiseBotProvider.tsx";
 import { router } from "./router.ts";
 import { VaultUnlockedSetterContext } from "./lib/vaultUnlocked.ts";
 import { Check, Download, LoaderCircle, RotateCcw, X } from "lucide-react";
+
+// Toasts only fire from inside the app, so the toast library loads after the first paint.
+const Toaster = lazy(() => import("./components/ui/sonner.tsx").then((module) => ({ default: module.Toaster })));
 
 type UpdateStage = "hidden" | "available" | "installing" | "finalizing" | "installed" | "failed";
 
@@ -235,7 +237,7 @@ export default function App() {
     <PwaInstallProvider>
       <VaultUnlockedSetterContext.Provider value={setVaultUnlocked}>
         <WiseBotProvider vaultUnlocked={vaultUnlocked}>
-          <Toaster />
+          <Suspense fallback={null}><Toaster /></Suspense>
           <PwaUpdateHandler vaultUnlocked={vaultUnlocked} />
           <RouterProvider router={router} />
         </WiseBotProvider>

@@ -1,5 +1,5 @@
 import "./index.css";
-import "./i18n.ts";
+import { i18nReady } from "./i18n.ts";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -26,12 +26,16 @@ if (rootElement === null) {
   throw new Error("Root element #root not found in index.html");
 }
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </ThemeProvider>
-  </StrictMode>
-);
+// The first render waits for the language in use, so no screen ever paints raw keys. A failed
+// load still renders: the service-worker update notice and the error screens must stay reachable.
+void i18nReady.catch(() => undefined).then(() => {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </StrictMode>
+  );
+});

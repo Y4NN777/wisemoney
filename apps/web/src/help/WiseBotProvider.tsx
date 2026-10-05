@@ -1,8 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, lazy, Suspense, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import HelpChat from "./HelpChat.tsx";
-import { getHelpSections, getProductTask, type SurfaceId } from "./corpus.ts";
-import { createSafeHelpContext, type AppFaultCode, type HelpEntryPoint } from "./context.ts";
+import type { SurfaceId } from "./corpus.ts";
+import type { AppFaultCode, HelpEntryPoint } from "./context.ts";
+import type { WiseBotRequest } from "./HelpChatHost.tsx";
+
+// The panel and the help corpus are not needed to paint a page: they load right after it.
+const HelpChatHost = lazy(() => import("./HelpChatHost.tsx"));
 
 export type WiseBotOpenInput = {
   entryPoint?: HelpEntryPoint;
@@ -30,33 +33,26 @@ export function requestWiseBot(input: WiseBotOpenInput = {}): void {
 export function WiseBotProvider({ children, vaultUnlocked }: { children: ReactNode; vaultUnlocked: boolean }) {
   const { i18n } = useTranslation();
   const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith("fr") ? "fr" : "en";
-  const sections = useMemo(() => getHelpSections(locale), [locale]);
   const [isOpen, setIsOpen] = useState(false);
   const [launcherHolds, setLauncherHolds] = useState(0);
-  const [request, setRequest] = useState(() => ({
+  const [request, setRequest] = useState<WiseBotRequest>(() => ({
     id: 0,
     prompt: "",
-    context: createSafeHelpContext({ locale, surfaceId: "help" }),
+    taskId: null,
+    surfaceId: "help",
   }));
 
   const openWiseBot = useCallback((input: WiseBotOpenInput = {}) => {
-    const task = input.taskId == null ? null : getProductTask(locale, input.taskId);
-    const prompt = input.prompt ?? (task == null ? "" : locale === "fr"
-      ? `Comment utiliser « ${task.title} » ?`
-      : `How do I use “${task.title}”?`);
     setRequest((current) => ({
       id: current.id + 1,
-      prompt,
-      context: createSafeHelpContext({
-        locale,
-        ...(input.entryPoint == null ? {} : { entryPoint: input.entryPoint }),
-        ...(input.surfaceId == null ? {} : { surfaceId: input.surfaceId }),
-        ...(input.taskId == null ? {} : { taskId: input.taskId }),
-        ...(input.faultCode == null ? {} : { faultCode: input.faultCode }),
-      }),
+      prompt: input.prompt ?? "",
+      taskId: input.taskId ?? null,
+      ...(input.entryPoint == null ? {} : { entryPoint: input.entryPoint }),
+      ...(input.surfaceId == null ? {} : { surfaceId: input.surfaceId }),
+      ...(input.faultCode == null ? {} : { faultCode: input.faultCode }),
     }));
     setIsOpen(true);
-  }, [locale]);
+  }, []);
 
   const closeWiseBot = useCallback(() => setIsOpen(false), []);
   const hideLauncher = useCallback(() => {
@@ -74,15 +70,15 @@ export function WiseBotProvider({ children, vaultUnlocked }: { children: ReactNo
   return (
     <WiseBotContext.Provider value={value}>
       {children}
-      <HelpChat
-        sections={sections}
-        openRequest={request.id}
-        initialPrompt={request.prompt}
-        safeContext={request.context}
-        vaultUnlocked={vaultUnlocked}
-        launcherHidden={launcherHolds > 0}
-        onOpenChange={setIsOpen}
-      />
+      <Suspense fallback={null}>
+        <HelpChatHost
+          locale={locale}
+          request={request}
+          vaultUnlocked={vaultUnlocked}
+          launcherHidden={launcherHolds > 0}
+          onOpenChange={setIsOpen}
+        />
+      </Suspense>
     </WiseBotContext.Provider>
   );
 }

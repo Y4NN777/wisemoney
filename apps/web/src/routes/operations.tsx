@@ -1,5 +1,6 @@
 import { isActivityPreset, type ActivityPreset } from "../analytics/dateRanges.ts";
-import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
+import { vaultPage } from "./vaultPage.ts";
 import type { FinancialOperationKind } from "../domain/financialOperations.ts";
 import { Route as vaultLayoutRoute } from "./_vault.tsx";
 
@@ -54,5 +55,5 @@ export const Route = createRoute({
   getParentRoute: () => vaultLayoutRoute,
   path: "/operations",
   validateSearch: parseOperationsSearch,
-  component: lazyRouteComponent(() => import("../ui/Operations/index.tsx")),
+  component: vaultPage(() => import("../ui/Operations/index.tsx")),
 });

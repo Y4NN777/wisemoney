@@ -79,10 +79,12 @@ export default defineConfig({
             return "crypto-storage-vendor";
           }
           if (id.includes("/i18next") || id.includes("/react-i18next/")) return "i18n-vendor";
-          if (id.includes("/@radix-ui/") || id.includes("/lucide-react/") || id.includes("/sonner/")) {
-            return "ui-vendor";
-          }
-          return "vendor";
+          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id)) return "vendor";
+          // Icons are a few hundred bytes each: one shared file instead of one request per icon.
+          if (id.includes("/lucide-react/")) return "icons";
+          // Other UI libraries are left to Rollup, which groups them by the screens that use them:
+          // one shared chunk made the landing page download the select, dialog and toast code.
+          return undefined;
         },
       },
     },
