@@ -59,8 +59,10 @@
 - **Client data/security:** Dexie-backed local persistence, AES-GCM envelope
   helpers, passphrase key management with device unlock (WebAuthn PRF) enabled
   after setup from Settings › Security, sealed refresh-token session store, BYO-key
-  settings, import/export, and consent/redaction modules. One-step onboarding
-  (landing → passphrase → app).
+  settings, import/export, and consent/redaction modules. First run: landing →
+  passphrase (show toggle, plain guidance) → three-step first session (currency and account
+  accepted as they are, first movement, one plan or "Later"). The landing page loads
+  without the vault, storage or app code; one locale per visit.
 - **Literacy:** `/learn` shows 77 bilingual lessons in eight parts (offline), written only from
   cited sources (`apps/web/content/literacy/`, built by `tools/literacy/assemble.py`), and a tutor on Gemma through
   `api/learn` (closed schema, zero vault egress, own consent, optional web search); the
@@ -96,6 +98,9 @@
   (`docs/plans/ux-simplification-implementation.md`).
 - Required first session with a locale-guessed currency step, WiseBot panel rework
   (2026-09-26, `docs/plans/first-session-wisebot-literacy.md` Tracks 1–2).
+- UX audit 2026-10, blocks A and B (2026-10-05, `docs/designs/ux-audit-2026-10.md`): landing
+  download 375 → 169 KB, first run 20 → 11 taps, coach tip bound to its page, balance as the
+  Home hero, one money format, one focus ring, AA field borders, help topics rewritten.
 
 ### Tracked Follow-Ups
 
@@ -115,7 +120,11 @@
 - Literacy course v1: local expert review before removing the "not yet reviewed" line; get the
   two Burkinabè booklets from their official publishers; ask brokers for fee grids.
 - Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
-- Activity page date presets (day/week/month), then drop `TransactionActivity` from Home.
+- UX audit block C (design proposal first): header, WiseBot launcher position, Settings
+  grouping, Plan empty rows, boxed titles, lesson dialog; then a test with five real users and a
+  run on a real low-end Android phone. Open defects listed in the audit doc (missing
+  `planning.frequency.*` / `planning.debtKinds.*` keys, no edit for older transactions).
+- Re-measure the landing page on the live site after deploy (target LCP ≤ 2.5 s on Slow 4G).
 
 ### Blockers
 
