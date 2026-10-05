@@ -105,7 +105,8 @@
         "caption": "Your numbers appear here, and stay on this device.",
         "footer": "Protected by your passphrase"
       },
-      "howItWorks": "How it works"
+      "howItWorks": "How it works",
+      "restore": "I have a backup: restore it"
     },
     "restore": {
       "aria": "Restore an existing WiseMoney space",

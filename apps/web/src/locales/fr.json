@@ -105,7 +105,8 @@
         "caption": "Vos chiffres apparaissent ici, et restent sur cet appareil.",
         "footer": "Protégé par votre phrase privée"
       },
-      "howItWorks": "Comment ça marche"
+      "howItWorks": "Comment ça marche",
+      "restore": "J’ai une sauvegarde : la restaurer"
     },
     "restore": {
       "aria": "Restaurer un espace WiseMoney existant",

@@ -240,6 +240,11 @@ try {
     if (message.type() === "error") appErrors.push(`console: ${message.text()}`);
   });
   await appPage.goto(baseURL, { waitUntil: "networkidle" });
+  // A backup can be restored from the landing page, and the way back returns to it.
+  await appPage.getByRole("button", { name: "I have a backup: restore it", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Bring your saved space to this device", exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "Back to overview", exact: true }).click();
+  await appPage.getByRole("button", { name: "Start", exact: true }).last().waitFor();
   await appPage.getByRole("button", { name: "Start", exact: true }).last().click();
   // Start leads straight to the passphrase form: no intro screens.
   const passphrase = "WiseMoney-Smoke-Test-Only-2026";

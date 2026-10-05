@@ -26,6 +26,7 @@ import { Card, CardContent, CardHeader } from "../../components/ui/card.tsx";
 import Logo from "../../components/Logo.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import LandingOnboarding from "./Landing.tsx";
+import type { LandingRequest } from "./index.tsx";
 import PassphraseInput from "./PassphraseInput.tsx";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -43,15 +44,15 @@ type VaultGateProps = {
   onVaultUnlockedChange: (unlocked: boolean) => void;
   /** What the gate module shows while this one loads; reused until vault discovery answers. */
   pending: ReactNode;
-  /** Start was tapped on the landing page before this module had loaded. */
-  startRequested: boolean;
-  onStartHandled: () => void;
+  /** What was tapped on the landing page before this module had loaded. */
+  requested: LandingRequest | null;
+  onRequestHandled: () => void;
   /** The unlocked application shell; rendered once the vault is open. */
   children: ReactNode;
 };
 
 /** Setup, unlock and restore: everything behind the landing page that needs storage or keys. */
-export default function VaultGate({ onVaultUnlockedChange, pending, startRequested, onStartHandled, children }: VaultGateProps) {
+export default function VaultGate({ onVaultUnlockedChange, pending, requested, onRequestHandled, children }: VaultGateProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const translationRef = useRef(t);
@@ -125,13 +126,16 @@ export default function VaultGate({ onVaultUnlockedChange, pending, startRequest
   }, []);
 
   const start = () => setFlow(vaultUnlockFlow);
-  // Start may have been tapped while this module was still loading: honour it as soon as
-  // discovery has put the landing page in charge, and only then.
+  // Restore is for a device with no space; with one, the link is not shown and a stale request is ignored.
+  const restore = () => { if (vaultUnlockFlow === "setup") setFlow("restore"); };
+  // Start or the restore link may have been tapped while this module was still loading: honour
+  // it as soon as discovery has put the landing page in charge, and only then.
   useEffect(() => {
-    if (!startRequested || flow !== "landing") return;
-    onStartHandled();
-    setFlow(vaultUnlockFlow);
-  }, [flow, onStartHandled, startRequested, vaultUnlockFlow]);
+    if (requested == null || flow !== "landing") return;
+    onRequestHandled();
+    if (requested === "restore" && vaultUnlockFlow === "setup") setFlow("restore");
+    else if (requested === "start") setFlow(vaultUnlockFlow);
+  }, [flow, onRequestHandled, requested, vaultUnlockFlow]);
 
   let content: React.ReactNode;
 
@@ -141,6 +145,7 @@ export default function VaultGate({ onVaultUnlockedChange, pending, startRequest
     content = (
       <LandingOnboarding
         onStart={start}
+        onRestore={restore}
         hasVault={vaultUnlockFlow !== "setup"}
       />
     );

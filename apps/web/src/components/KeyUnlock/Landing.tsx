@@ -11,6 +11,8 @@ const LanguageSwitcher = lazy(() => import("../LanguageSwitcher.tsx"));
 
 type LandingOnboardingProps = {
   onStart: () => void;
+  /** Opens the restore screen; offered only while this device holds no space. */
+  onRestore: () => void;
   hasVault: boolean;
   /** Start was tapped while the vault flows were still loading. */
   busy?: boolean;
@@ -21,7 +23,7 @@ type LandingOnboardingProps = {
  * The public landing page, kept apart from the vault flows so that a first visit paints it
  * without downloading the storage, key-derivation and application code (UX audit 2026-10).
  */
-export default function LandingOnboarding({ onStart, hasVault, busy = false }: LandingOnboardingProps) {
+export default function LandingOnboarding({ onStart, onRestore, hasVault, busy = false }: LandingOnboardingProps) {
   const { t } = useTranslation();
   const primaryLabel = hasVault ? t("keyUnlock.landing.openVault") : t("keyUnlock.landing.start");
   const assurances = [
@@ -64,6 +66,11 @@ export default function LandingOnboarding({ onStart, hasVault, busy = false }: L
               {primaryLabel}
               <ArrowRight className="h-4 w-4" />
             </Button>
+            {!hasVault && (
+              <button type="button" onClick={onRestore} disabled={busy} className="-mt-4 inline-flex min-h-11 items-center self-start text-sm font-medium text-ocean-primary underline underline-offset-4">
+                {t("keyUnlock.landing.restore")}
+              </button>
+            )}
             <ul aria-label={t("keyUnlock.landing.assurancesAria")} className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               {assurances.map((item) => (
                 <li key={item.label} className="flex items-center gap-2">

@@ -18,6 +18,8 @@ function GateLoading() {
   );
 }
 
+export type LandingRequest = "start" | "restore";
+
 type KeyUnlockProps = {
   onVaultUnlockedChange: (unlocked: boolean) => void;
   /** The unlocked application shell; rendered once the vault is open. */
@@ -27,23 +29,25 @@ type KeyUnlockProps = {
 /**
  * The vault gate. The landing page paints from this small module; the vault flows (storage,
  * key derivation, setup, unlock, restore) arrive in their own chunk and take over once they
- * know whether a space exists. A tap on Start before then is remembered and honoured.
+ * know whether a space exists. A tap on Start or on the restore link before then is remembered
+ * and honoured.
  */
 export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlockProps) {
-  const [startRequested, setStartRequested] = useState(false);
+  // What was tapped on the landing page before the vault flows had loaded, if anything.
+  const [requested, setRequested] = useState<LandingRequest | null>(null);
   const [hasVaultHint] = useState(readVaultHint);
   // An installed app with no space opens on the restore screen, and a space still unlocked in
   // memory (back from a public page) reopens directly: neither passes through the landing page.
   const pending = (isStandaloneDisplayMode() && !hasVaultHint) || getCachedMasterKey() != null
     ? <GateLoading />
-    : <LandingOnboarding hasVault={hasVaultHint} busy={startRequested} onStart={() => setStartRequested(true)} />;
+    : <LandingOnboarding hasVault={hasVaultHint} busy={requested != null} onStart={() => setRequested("start")} onRestore={() => setRequested("restore")} />;
   return (
     <Suspense fallback={pending}>
       <VaultGate
         onVaultUnlockedChange={onVaultUnlockedChange}
         pending={pending}
-        startRequested={startRequested}
-        onStartHandled={() => setStartRequested(false)}
+        requested={requested}
+        onRequestHandled={() => setRequested(null)}
       >
         {children}
       </VaultGate>
