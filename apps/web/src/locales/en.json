@@ -938,7 +938,9 @@
     "section": {
       "toggle_one": "{{count}} item",
       "toggle_other": "{{count}} items",
-      "seeAll": "See all {{count}}"
+      "seeAll": "See all {{count}}",
+      "lesson": "Lesson",
+      "lessonAria": "Lesson about {{section}}"
     }
   },
   "debts": {

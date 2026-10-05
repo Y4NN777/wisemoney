@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, type LucideIcon } from "lucide-react";
+import { ArrowRight, GraduationCap, type LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { formatMoney } from "../../types/money.ts";
 import type { PlanRow, PlanSection as PlanSectionModel } from "./planSections.ts";
@@ -15,11 +15,14 @@ export default function PlanSection({
   label,
   status,
   icon: Icon,
+  lessonId,
 }: {
   section: PlanSectionModel;
   label: string;
   status: string;
   icon: LucideIcon;
+  /** The lesson that explains this section, when the course has one. Only the id: the course itself loads on the Learn page. */
+  lessonId?: string | undefined;
 }) {
   const { t, i18n } = useTranslation();
   const labelId = `plan-${section.id}-label`;
@@ -40,6 +43,17 @@ export default function PlanSection({
           <span id={labelId} className="block text-sm font-semibold">{label}</span>
           <span className="mt-0.5 block text-xs text-muted-foreground">{status}</span>
         </Link>
+        {lessonId != null && (
+          <Link
+            to="/learn"
+            search={{ unit: lessonId }}
+            aria-label={t("planning.section.lessonAria", { section: label })}
+            className="interactive-surface inline-flex min-h-11 shrink-0 items-center gap-1 rounded-md px-2 text-xs font-medium text-ocean-primary"
+          >
+            <GraduationCap className="h-4 w-4" />
+            {t("planning.section.lesson")}
+          </Link>
+        )}
         <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
       </div>
       {section.count > 0 && (

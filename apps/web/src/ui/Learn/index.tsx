@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, ChevronRight, ExternalLink, GraduationCap, Send, ShieldCheck, Square, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -13,11 +13,13 @@ import { getAICapability } from "../../lib/capabilities.ts";
 import {
   LITERACY_AREAS,
   LITERACY_SOURCES,
+  getLiteracyUnit,
   getLiteracyUnits,
   literacyLocale,
   type LiteracyUnit,
 } from "../../literacy/corpus.ts";
 import { LITERACY_STARTERS } from "../../literacy/starters.ts";
+import { Route as LearnRoute, parseLearnSearch } from "../../routes/learn.tsx";
 import { TutorUnavailableError, askTutor, type TutorAnswer } from "../../pillars/literacy/index.ts";
 
 type TutorMessage = {
@@ -56,6 +58,19 @@ export default function Learn() {
   const [error, setError] = useState<string | null>(null);
   const [consent, setConsent] = useState(() => hasLearnProviderConsent());
   const [openUnit, setOpenUnit] = useState<LiteracyUnit | null>(null);
+  // `?unit=<id>` (links from Plan) opens that lesson. The route's search type is circular through
+  // the lazy component, so it is re-parsed here as Settings and Activity do.
+  const rawSearch: unknown = LearnRoute.useSearch();
+  const { unit: linkedUnitId } = parseLearnSearch(typeof rawSearch === "object" && rawSearch != null ? rawSearch as Record<string, unknown> : {});
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (linkedUnitId != null) setOpenUnit(getLiteracyUnit(locale, linkedUnitId));
+  }, [linkedUnitId, locale]);
+  const closeLesson = () => {
+    setOpenUnit(null);
+    // Drop the link's parameter so closing is final and the same link can open the lesson again.
+    if (linkedUnitId != null) void navigate({ to: "/learn", search: {}, replace: true });
+  };
   const messageId = useRef(0);
   const controller = useRef<AbortController | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
@@ -259,29 +274,31 @@ export default function Learn() {
         <p className="px-1 text-xs leading-relaxed text-muted-foreground">{t("learn.draft")}</p>
       </section>
 
-      <Dialog open={openUnit != null} onOpenChange={(open) => { if (!open) setOpenUnit(null); }}>
+      <Dialog open={openUnit != null} onOpenChange={(open) => { if (!open) closeLesson(); }}>
         {openUnit != null && (
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="pr-6 text-base">{openUnit.title}</DialogTitle>
-              <DialogDescription className="text-sm text-foreground/80">{openUnit.summary}</DialogDescription>
+          // A lesson is 200 to 260 words: on a phone it reads in a sheet from the bottom edge, at
+          // body size and left-aligned; wider screens keep a centred dialog.
+          <DialogContent className="inset-x-0 bottom-0 top-auto max-h-[92dvh] w-full max-w-none translate-x-0 translate-y-0 rounded-t-2xl rounded-b-none border-b-0 p-5 text-base leading-[1.55] data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:inset-x-auto sm:bottom-auto sm:left-[50%] sm:top-[50%] sm:w-[calc(100%-2rem)] sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-lg sm:border-b sm:p-6">
+            <DialogHeader className="text-left">
+              <DialogTitle className="pr-8 text-lg leading-snug">{openUnit.title}</DialogTitle>
+              <DialogDescription className="text-base text-foreground/80">{openUnit.summary}</DialogDescription>
             </DialogHeader>
-            <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed">
+            <ul className="list-disc space-y-2 pl-5">
               {openUnit.points.map((point) => <li key={point}>{point}</li>)}
             </ul>
-            <div className="rounded-lg bg-ocean-wash p-3 text-sm leading-relaxed">
+            <div className="rounded-lg bg-ocean-wash p-3">
               <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-ocean-primary">{t("learn.lesson.example")}</p>
               {openUnit.example}
             </div>
-            <div className="rounded-lg border border-border p-3 text-sm leading-relaxed">
+            <div className="rounded-lg border border-border p-3">
               <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("learn.lesson.watchOut")}</p>
               {openUnit.watchOut}
             </div>
-            <div className="rounded-lg border border-ocean-primary/40 p-3 text-sm leading-relaxed">
+            <div className="rounded-lg border border-ocean-primary/40 p-3">
               <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-ocean-primary">{t("learn.lesson.action")}</p>
               {openUnit.action}
             </div>
-            <div className="text-xs leading-relaxed text-muted-foreground">
+            <div className="text-sm leading-relaxed text-muted-foreground">
               <p className="font-semibold">{t("learn.lesson.basis")}</p>
               <ul className="mt-1 space-y-1">
                 {openUnit.sources.flatMap((id) => LITERACY_SOURCES[id] == null ? [] : [{ id, ...LITERACY_SOURCES[id] }]).map((source) => (
@@ -293,7 +310,7 @@ export default function Learn() {
                 ))}
               </ul>
             </div>
-            <Button type="button" onClick={() => { const unit = openUnit; setOpenUnit(null); ask(unit.title, [unit.id]); }} disabled={busy}>
+            <Button type="button" className="h-11" onClick={() => { const unit = openUnit; closeLesson(); ask(unit.title, [unit.id]); }} disabled={busy}>
               {t("learn.lesson.ask")}
             </Button>
           </DialogContent>

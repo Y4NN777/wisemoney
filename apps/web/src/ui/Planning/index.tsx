@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { HandCoins, ListTodo, Repeat, Target, Wallet, type LucideIcon } from "lucide-react";
 import PlanSection from "./PlanSection.tsx";
-import { selectPlanSections, type PlanSectionId } from "./planSections.ts";
+import { PLAN_SECTION_LESSONS, selectPlanSections, type PlanSectionId } from "./planSections.ts";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { useFinancialState } from "../../hooks/useFinancialState.ts";
 import AppFaultPanel from "../../errors/AppFaultPanel.tsx";
@@ -44,6 +44,7 @@ export default function Planning() {
               label={presentation[section.id].label}
               status={presentation[section.id].status(section.count)}
               icon={presentation[section.id].icon}
+              lessonId={PLAN_SECTION_LESSONS[section.id]}
             />
           ))}
         </div>

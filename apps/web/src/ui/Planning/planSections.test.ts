@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import en from "../../locales/en.json";
 import fr from "../../locales/fr.json";
 import type { FinancialStateSnapshot } from "../../domain/financialState.ts";
-import { PLAN_SECTION_ORDER, isPlanSectionEmpty, selectPlanSections, type PlanSection } from "./planSections.ts";
+import { LITERACY_UNITS_EN } from "../../literacy/corpus.en.ts";
+import { LITERACY_UNITS_FR } from "../../literacy/corpus.fr.ts";
+import { PLAN_SECTION_LESSONS, PLAN_SECTION_ORDER, isPlanSectionEmpty, selectPlanSections, type PlanSection } from "./planSections.ts";
 
 const xof = (minorUnits: number) => ({ minorUnits, currency: "XOF" });
 
@@ -80,6 +82,13 @@ describe("selectPlanSections", () => {
     for (const key of keys) {
       expect(typeof resolve(en, key), `en ${key}`).toBe("string");
       expect(typeof resolve(fr, key), `fr ${key}`).toBe("string");
+    }
+  });
+
+  it("links sections only to lessons that exist in both languages", () => {
+    for (const lessonId of Object.values(PLAN_SECTION_LESSONS)) {
+      expect(LITERACY_UNITS_EN.some((unit) => unit.id === lessonId), `en ${lessonId}`).toBe(true);
+      expect(LITERACY_UNITS_FR.some((unit) => unit.id === lessonId), `fr ${lessonId}`).toBe(true);
     }
   });
 });

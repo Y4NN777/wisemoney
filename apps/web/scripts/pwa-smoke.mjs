@@ -528,6 +528,14 @@ try {
   await appPage.getByRole("button", { name: "Save", exact: true }).click();
   await appPage.getByText("Transaction updated.", { exact: true }).waitFor();
   await appPage.getByText(/Edited from activity/).first().waitFor();
+  // Plan links each of Budgets, Goals and Debts to its lesson; closing the lesson clears the link.
+  await appPage.getByRole("link", { name: "Plan", exact: true }).click();
+  await appPage.getByRole("link", { name: "Lesson about Budgets", exact: true }).click();
+  const linkedLesson = appPage.getByRole("dialog", { name: "Build your first budget", exact: true });
+  await linkedLesson.getByText("Do this week", { exact: true }).waitFor();
+  await linkedLesson.getByRole("button", { name: "Close", exact: true }).click();
+  await linkedLesson.waitFor({ state: "detached" });
+  assert.doesNotMatch(appPage.url(), /unit=/, "closing a linked lesson left its parameter in the URL");
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
   // The full guide is one tap inside the WiseBot panel.
