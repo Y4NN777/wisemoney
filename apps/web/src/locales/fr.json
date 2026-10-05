@@ -1107,6 +1107,14 @@
     "copied": "Identifiant copié"
   },
   "coach": {
+    "card": {
+      "label": "Conseil WiseBot",
+      "kicker": "Besoin d’aide ?",
+      "dismiss": "Fermer ce conseil",
+      "steps": "Voir les étapes",
+      "askBot": "Demander à WiseBot",
+      "later": "Plus tard"
+    },
     "settings": {
       "inApp": "Conseils dans l’application",
       "inAppHelp": "Une suggestion par session, au bon moment.",

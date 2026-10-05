@@ -285,6 +285,18 @@ try {
   await appPage.getByRole("heading", { name: "Where things are", exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Finish", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Money available today", { exact: true }).waitFor({ timeout: 90_000 });
+  // The coach shows its single per-session tip about 20 s in. It is a card beside the page (no
+  // backdrop), announced as a status, and it stays on the page it was chosen for.
+  const coachTip = appPage.getByLabel("WiseBot tip", { exact: true });
+  await coachTip.waitFor({ timeout: 25_000 });
+  assert.equal(await appPage.locator(".coach-overlay").count(), 0, "coach tip still covers the page with a backdrop");
+  assert.equal(await coachTip.getAttribute("role"), "status", "coach tip is not announced as a status");
+  await appPage.getByRole("link", { name: "Activity", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Activity", exact: true }).waitFor();
+  await coachTip.waitFor({ state: "detached" });
+  await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
+  await appPage.getByText("Money available today", { exact: true }).first().waitFor();
+  assert.equal(await coachTip.count(), 0, "coach tip came back after the user left its page");
   // Literacy pillar: lessons are readable with no provider, and without the tutor notice accepted a
   // question is answered from the lesson on this device (no request leaves the browser).
   const learnRequests = [];
@@ -424,18 +436,6 @@ try {
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText(/Smoke transaction/).waitFor();
-  // The coach shows its single per-session tip about 20 s in, over the bottom of Home where the
-  // recent movements now sit; verify it here (blur, smooth close) before touching the rows.
-  const coachTip = appPage.getByLabel("WiseBot tip", { exact: true });
-  await coachTip.waitFor({ timeout: 25_000 });
-  assert.match(
-    await appPage.locator(".coach-overlay").evaluate((element) => getComputedStyle(element).backdropFilter),
-    /blur\(3px\)/,
-    "coach tip overlay does not blur the page behind it",
-  );
-  await appPage.getByRole("button", { name: "Dismiss this tip", exact: true }).click();
-  assert.equal(await coachTip.getAttribute("data-closing"), "true", "coach tip does not enter its smooth closing state");
-  await coachTip.waitFor({ state: "detached" });
   await appPage.getByRole("listitem").filter({ hasText: "Smoke transaction" }).getByRole("button", { name: /Edit transaction from/ }).click();
   await appPage.getByLabel("Amount (XOF)", { exact: true }).fill("1500");
   await appPage.getByLabel("Note", { exact: true }).last().fill("Smoke transaction updated");

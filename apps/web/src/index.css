@@ -347,17 +347,9 @@
     transform-origin: bottom right;
   }
 
-  .coach-overlay {
-    animation: coach-overlay-in 180ms var(--ease-standard) both;
-  }
-
   .coach-card {
     animation: coach-card-in 260ms var(--ease-emphasized) both;
     transform-origin: bottom right;
-  }
-
-  .coach-overlay-closing {
-    animation: coach-overlay-out 180ms var(--ease-standard) both;
   }
 
   .coach-card-closing {
@@ -426,16 +418,6 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-@keyframes coach-overlay-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes coach-overlay-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
 }
 
 @keyframes coach-card-in {
