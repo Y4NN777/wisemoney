@@ -1,5 +1,70 @@
 [
   {
+    "version": "1.1.0",
+    "releasedAt": "2026-10-05",
+    "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.1.0",
+    "content": {
+      "fr": {
+        "title": "Apprendre l’argent, et aller plus vite",
+        "highlights": [
+          {
+            "id": "learn",
+            "title": "77 leçons d’argent et un tuteur"
+          },
+          {
+            "id": "speed",
+            "title": "Une ouverture plus rapide"
+          },
+          {
+            "id": "start",
+            "title": "Un démarrage en moins d’étapes"
+          },
+          {
+            "id": "simple",
+            "title": "Des écrans plus simples, moins de texte"
+          },
+          {
+            "id": "correct",
+            "title": "Corrigez un mouvement depuis Activité"
+          },
+          {
+            "id": "restore",
+            "title": "Restaurez une sauvegarde dès l’accueil"
+          }
+        ]
+      },
+      "en": {
+        "title": "Learn about money, and move faster",
+        "highlights": [
+          {
+            "id": "learn",
+            "title": "77 money lessons and a tutor"
+          },
+          {
+            "id": "speed",
+            "title": "A faster first load"
+          },
+          {
+            "id": "start",
+            "title": "Fewer steps to get started"
+          },
+          {
+            "id": "simple",
+            "title": "Simpler screens, less text"
+          },
+          {
+            "id": "correct",
+            "title": "Correct a movement from Activity"
+          },
+          {
+            "id": "restore",
+            "title": "Restore a backup from the landing page"
+          }
+        ]
+      }
+    }
+  },
+  {
     "version": "1.0.0",
     "releasedAt": "2026-08-17",
     "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.0.0",

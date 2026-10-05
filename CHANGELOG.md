@@ -5,6 +5,40 @@ All notable changes to WiseMoney are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-10-05
+
+### Added
+
+- **Financial literacy** — a Learn page with 77 bilingual lessons in eight parts,
+  written only from cited sources and readable offline, and a tutor with its own
+  consent that sends nothing from the vault.
+- **Editing from Activity** — an income or expense can be corrected or deleted
+  from its detail sheet, whatever its age.
+- **Restore from the landing page** — a backup can be restored without first
+  creating an empty space.
+- **Lesson links in Plan** — Budgets, Goals and Debts link to their lesson.
+
+### Changed
+
+- **First load** — the landing page paints before the vault and app code load:
+  about 175 KB before first paint instead of 375 KB.
+- **First run** — no intro screens, the default account is accepted, no tour
+  step; a passphrase field can show what is typed.
+- **Navigation** — three tabs with a capture button; the header holds
+  reminders, help (WiseBot) and settings; Settings is a list with one screen per
+  section.
+- **Home** — the balance is the largest figure; one money format on screen.
+- **Help and Updates pages** — a title and a list instead of long pages; help
+  topics rewritten to match the app.
+
+### Fixed
+
+- Keyboard focus is visible; field borders and dark-theme text meet WCAG AA
+  contrast; no text under 12 px; every button, link and field is at least 44 px.
+- A WiseBot tip stays on the page where it appeared.
+- The help and tutor gateways load on the production host.
+- Plan rows show the frequency and the debt kind.
+
 ## [1.0.0] - 2026-08-17
 
 WiseMoney 1.0.0 is the first official release. It establishes the complete
