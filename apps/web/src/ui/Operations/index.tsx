@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowDownLeft, ArrowRightLeft, ArrowUpRight, CalendarDays, Download, ListFilter, PiggyBank, Repeat2, Search, X } from "lucide-react";
+import { ArrowDownLeft, ArrowRightLeft, ArrowUpRight, CalendarDays, Download, ListFilter, Pencil, PiggyBank, Repeat2, Search, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { filterFinancialOperations, groupOperationsByLocalDay, operationAmountForAccount, operationEffect, summarizeMonthlyActivity } from "../../analytics/operations.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
@@ -8,7 +8,8 @@ import { Button } from "../../components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../../components/ui/sheet.tsx";
 import type { FinancialOperation, FinancialOperationKind } from "../../domain/financialOperations.ts";
-import { useFinancialOperations, useFinancialState } from "../../hooks/useFinancialState.ts";
+import { useFinancialOperations, useFinancialState, useTransactionsInRange } from "../../hooks/useFinancialState.ts";
+import { TransactionEditDialogs, useTransactionEditing } from "../../components/TransactionEditing/index.tsx";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { formatMoney, formatSignedMoney } from "../../types/money.ts";
 import { parseOperationsSearch, Route, type OperationsSearch } from "../../routes/operations.tsx";
@@ -115,6 +116,13 @@ export default function Operations() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [exporting, setExporting] = useState<"csv" | "xlsx" | null>(null);
   const snapshot = snapshotQuery.data;
+  // An income or expense can be corrected or deleted from its detail sheet. An operation's id is
+  // its transaction event id, so the editable record is looked up by that id; transfers and goal
+  // contributions have no such record and stay read-only.
+  const editing = useTransactionEditing();
+  const transactionsQuery = useTransactionsInRange(0, snapshot?.asOfTimestamp ?? 0);
+  const transactionsById = useMemo(() => new Map((transactionsQuery.data ?? []).map((transaction) => [transaction.id, transaction])), [transactionsQuery.data]);
+  const selectedTransaction = selected == null ? null : transactionsById.get(selected.id) ?? null;
 
   const index = useMemo(() => ({
     accounts: Object.fromEntries((snapshot?.accounts ?? []).map((item) => [item.id, item.name])),
@@ -316,9 +324,20 @@ export default function Operations() {
               <div className="grid gap-1 py-3 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-3"><dt className="text-xs text-muted-foreground">{t("operations.amount")}</dt><dd className="min-w-0"><OperationAmount operation={selected} accountId={contextAccountId} /></dd></div>
               <div className="grid gap-1 py-3 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-3"><dt className="text-xs text-muted-foreground">{t("operations.details")}</dt><dd className="min-w-0 break-words text-sm">{operationContext(selected, snapshot, t)}</dd></div>
             </dl>
+            {selectedTransaction != null && (
+              <div className="mt-6 grid grid-cols-2 gap-2">
+                <Button type="button" variant="outline" className="h-11" onClick={() => { setSelected(null); editing.startEdit(selectedTransaction); }}>
+                  <Pencil className="h-4 w-4" />{t("dashboard.transactionActions.edit")}
+                </Button>
+                <Button type="button" variant="outline" className="h-11 text-destructive" onClick={() => { setSelected(null); editing.startDelete(selectedTransaction); }}>
+                  <Trash2 className="h-4 w-4" />{t("dashboard.transactionActions.delete")}
+                </Button>
+              </div>
+            )}
           </>}
         </SheetContent>
       </Sheet>
+      {snapshot != null && <TransactionEditDialogs editing={editing} categories={snapshot.categories} />}
     </main>
   );
 }

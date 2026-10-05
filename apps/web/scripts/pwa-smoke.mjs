@@ -516,6 +516,13 @@ try {
   await appPage.getByRole("tab", { name: "All", exact: true }).click();
   assert.equal(await appPage.getByRole("tab", { name: "All", exact: true }).getAttribute("aria-selected"), "true", "All preset did not select");
   assert.match(appPage.url(), /preset=all/, "preset is not carried in the URL");
+  // A movement can be corrected from its detail sheet in Activity, however old it is.
+  await appPage.locator("main li").getByRole("button").filter({ hasText: "Food & Dining" }).first().click();
+  await appPage.getByRole("dialog").getByRole("button", { name: "Edit transaction", exact: true }).click();
+  await appPage.getByLabel("Note", { exact: true }).last().fill("Edited from activity");
+  await appPage.getByRole("button", { name: "Save", exact: true }).click();
+  await appPage.getByText("Transaction updated.", { exact: true }).waitFor();
+  await appPage.getByText(/Edited from activity/).first().waitFor();
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
   // The full guide is one tap inside the WiseBot panel.

@@ -1,28 +1,23 @@
 import { Fragment, useRef, useState, useMemo, useEffect, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { useDeleteTransaction, useFinancialOperations, useFinancialState, useHasAnyMoneyMovement, useHistoricalState, useTransactionsInRange, useUpdateTransaction } from "../../hooks/useFinancialState.ts";
+import { useFinancialOperations, useFinancialState, useHasAnyMoneyMovement, useHistoricalState, useTransactionsInRange } from "../../hooks/useFinancialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Progress } from "../../components/ui/progress.tsx";
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { Button } from "../../components/ui/button.tsx";
-import { Input } from "../../components/ui/input.tsx";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import {
   AlertTriangle, ArrowUp, ArrowDown, Wallet, TrendingUp, Target, Repeat,
   Info, BarChart3,
   Lightbulb, ArrowRightLeft, CalendarDays,
 } from "lucide-react";
-import type { FinancialStateSnapshot, TransactionDisplay } from "../../domain/financialState.ts";
+import type { FinancialStateSnapshot } from "../../domain/financialState.ts";
 import type { FinancialOperation } from "../../domain/financialOperations.ts";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { getAICapability, type AICapability } from "../../lib/capabilities.ts";
 import { requestInsight } from "../../pillars/intelligence/index.ts";
 import type { AIResult } from "../../pillars/intelligence/index.ts";
 import { useTranslation } from "react-i18next";
-import { currencyLabel, parseMajorUnits } from "../../types/money.ts";
-import { toast } from "sonner";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { getDashboardMode } from "./dashboardMode.ts";
 import { useOpenCaptureSheet } from "../../components/CaptureSheet/index.tsx";
@@ -53,7 +48,7 @@ import AttentionCardHost from "./AttentionCardHost.tsx";
 import { SpendingBar, CashFlowTrendChart, BalanceTrendChart } from "./HomeCharts.tsx";
 import { HealthRail } from "./HomePlanningCards.tsx";
 import { InsightCard } from "./AiInsightCard.tsx";
-import { type TransactionEdit, amountInput } from "./transactionEdit.ts";
+import { TransactionEditDialogs, useTransactionEditing } from "../../components/TransactionEditing/index.tsx";
 import { FirstTransactionDashboard } from "./FirstTransactionDashboard.tsx";
 import { DashboardPeriodHeader } from "./DashboardPeriodHeader.tsx";
 import { type PeriodComparisonSummary, FinancialOverview } from "./HomeSummary.tsx";
@@ -104,10 +99,7 @@ function DashboardContent({
   const [aiInsight, setAiInsight] = useState<AIResult | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiCapability, setAiCapability] = useState<AICapability | null>(null);
-  const [transactionEdit, setTransactionEdit] = useState<TransactionEdit | null>(null);
-  const [transactionToDelete, setTransactionToDelete] = useState<TransactionDisplay | null>(null);
-  const updateTransaction = useUpdateTransaction();
-  const deleteTransaction = useDeleteTransaction();
+  const editing = useTransactionEditing();
 
   const periodStart = snapshot.periodStart;
   const periodEnd = Math.min(snapshot.periodEnd, snapshot.asOfTimestamp);
@@ -222,42 +214,6 @@ function DashboardContent({
   const currency = overviewSnapshot.totalBalance.currency;
   const asOfDayStart = new Date(snapshot.asOfTimestamp).setHours(0, 0, 0, 0);
 
-  const saveTransaction = async () => {
-    if (transactionEdit == null) return;
-    const minorUnits = parseMajorUnits(transactionEdit.amount, transactionEdit.transaction.amount.currency);
-    if (minorUnits == null || minorUnits <= 0) {
-      toast.error(t("dashboard.transactionActions.invalidAmount"));
-      return;
-    }
-    try {
-      await updateTransaction.mutateAsync({
-        originalEventId: transactionEdit.transaction.id,
-        accountId: transactionEdit.transaction.accountId,
-        categoryId: transactionEdit.categoryId,
-        amount: { minorUnits, currency: transactionEdit.transaction.amount.currency },
-        direction: transactionEdit.direction,
-        note: transactionEdit.note,
-        tags: transactionEdit.transaction.tags,
-        merchant: transactionEdit.transaction.merchant,
-      });
-      setTransactionEdit(null);
-      toast.success(t("dashboard.transactionActions.updated"));
-    } catch {
-      toast.error(t("dashboard.transactionActions.updateFailed"));
-    }
-  };
-
-  const confirmDeleteTransaction = async () => {
-    if (transactionToDelete == null) return;
-    try {
-      await deleteTransaction.mutateAsync({ originalEventId: transactionToDelete.id });
-      setTransactionToDelete(null);
-      toast.success(t("dashboard.transactionActions.deleted"));
-    } catch {
-      toast.error(t("dashboard.transactionActions.deleteFailed"));
-    }
-  };
-
   const layout = selectHomeLayout({ canMutate });
   const sections: Record<HomeSectionId, ReactNode> = {
     summary: (
@@ -279,14 +235,8 @@ function DashboardContent({
         canMutate={canMutate}
         loading={operationsLoading || periodTransactionsLoading}
         activityContext={{ start: periodStart, end: periodEnd, ...(accountId == null ? {} : { accountId }) }}
-        onEdit={(transaction) => setTransactionEdit({
-          transaction,
-          categoryId: transaction.categoryId,
-          direction: transaction.direction,
-          amount: amountInput(transaction),
-          note: transaction.note,
-        })}
-        onDelete={setTransactionToDelete}
+        onEdit={editing.startEdit}
+        onDelete={editing.startDelete}
       />
     ),
     assistant: <AssistantCard />,
@@ -528,64 +478,7 @@ function DashboardContent({
         {layout.belowFold.map((id) => <Fragment key={id}>{sections[id]}</Fragment>)}
       </HomeFold>
 
-      <Dialog open={transactionEdit != null} onOpenChange={(open) => { if (!open) setTransactionEdit(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("dashboard.transactionActions.editTitle")}</DialogTitle>
-            <DialogDescription>{t("dashboard.transactionActions.editDescription")}</DialogDescription>
-          </DialogHeader>
-          {transactionEdit != null && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="edit-transaction-category" className="text-sm font-medium">{t("dashboard.transactionActions.category")}</label>
-                <Select value={transactionEdit.categoryId} onValueChange={(categoryId) => setTransactionEdit((value) => value == null ? null : { ...value, categoryId })}>
-                  <SelectTrigger id="edit-transaction-category"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {snapshot.categories.filter((category) => !category.isArchived).map((category) => (
-                      <SelectItem key={category.id} value={category.id}>{categoryDisplayName(category, t)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="edit-transaction-direction" className="text-sm font-medium">{t("dashboard.transactionActions.type")}</label>
-                <Select value={transactionEdit.direction} onValueChange={(direction) => setTransactionEdit((value) => value == null ? null : { ...value, direction: direction as "income" | "expense" })}>
-                  <SelectTrigger id="edit-transaction-direction"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="expense">{t("dashboard.transactionActions.expense")}</SelectItem>
-                    <SelectItem value="income">{t("dashboard.transactionActions.income")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="edit-transaction-amount" className="text-sm font-medium">{t("dashboard.transactionActions.amount", { currency: currencyLabel(transactionEdit.transaction.amount.currency) })}</label>
-                <Input id="edit-transaction-amount" inputMode="decimal" value={transactionEdit.amount} onChange={(event) => setTransactionEdit((value) => value == null ? null : { ...value, amount: event.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="edit-transaction-note" className="text-sm font-medium">{t("dashboard.transactionActions.note")}</label>
-                <Input id="edit-transaction-note" value={transactionEdit.note} onChange={(event) => setTransactionEdit((value) => value == null ? null : { ...value, note: event.target.value })} />
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setTransactionEdit(null)}>{t("dashboard.transactionActions.cancel")}</Button>
-            <Button onClick={() => { void saveTransaction(); }} disabled={updateTransaction.isPending}>{t("dashboard.transactionActions.save")}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={transactionToDelete != null} onOpenChange={(open) => { if (!open) setTransactionToDelete(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("dashboard.transactionActions.deleteTitle")}</DialogTitle>
-            <DialogDescription>{t("dashboard.transactionActions.deleteDescription")}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setTransactionToDelete(null)}>{t("dashboard.transactionActions.cancel")}</Button>
-            <Button variant="destructive" onClick={() => { void confirmDeleteTransaction(); }} disabled={deleteTransaction.isPending}>{t("dashboard.transactionActions.confirmDelete")}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <TransactionEditDialogs editing={editing} categories={snapshot.categories} />
     </div>
   );
 }
