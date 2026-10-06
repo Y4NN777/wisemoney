@@ -64,10 +64,12 @@
   passphrase (show toggle, plain guidance) → three-step first session (currency and account
   accepted as they are, first movement, one plan or "Later"). The landing page loads
   without the vault, storage or app code; one locale per visit.
-- **Literacy:** `/learn` shows 77 bilingual lessons in eight parts (offline), written only from
-  cited sources (`apps/web/content/literacy/`, built by `tools/literacy/assemble.py`), and a tutor on Gemma through
-  `api/learn` (closed schema, zero vault egress, own consent, optional web search); the
-  lesson answers on the device when offline, unconfigured, or before consent.
+- **Literacy:** `/learn` ("Éducation financière") is a conversation with a tutor on Gemma through
+  `api/learn` (closed schema, zero vault egress, own consent, optional web search). The 77 bilingual
+  lessons (`apps/web/content/literacy/`, built by `tools/literacy/assemble.py`, written only from cited
+  sources) are its knowledge base on the server, retrieved by `gemini-embedding-001` vectors
+  (`tools/literacy/embed.mjs`, measured on 55 labelled questions in `api/learn/_retrievalEval.ts`); keyword
+  search is the fallback. No lessons on the phone: the tutor needs a connection.
 - **AI orchestration:** Managed path attaches Bearer auth, `X-Egress-Level`,
   `X-Feature`, and full-consent assertions when available; assertion failures
   downgrade to redacted payloads. BYO direct-provider path remains a future slice.

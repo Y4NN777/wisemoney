@@ -4,6 +4,8 @@ Quadrant: Reference · Generated from `apps/web/content/literacy/area-*.json` by
 
 77 lessons in 8 parts, English and French, written only from the cited sources (Y4NN, 2026-10-03: nothing from model knowledge). Not yet reviewed by a local expert.
 
+Since 2026-10-06 the lessons are the knowledge base of the tutor ("Éducation financière"), not pages in the app: the server retrieves them by embeddings (ADR-0013 amendment). After changing a lesson, regenerate with this script, then run `tools/literacy/embed.mjs`.
+
 ## start
 
 | Lesson | Title (EN) | Sources |

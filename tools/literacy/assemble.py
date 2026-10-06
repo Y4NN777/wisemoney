@@ -138,7 +138,8 @@ def main():
     DOCS.mkdir(parents=True, exist_ok=True)
     course = ["# Literacy course v1 — lessons and their sources", "",
               "Quadrant: Reference · Generated from `apps/web/content/literacy/area-*.json` by `tools/literacy/assemble.py` (writer rules: `writer-brief.md`) · Research: `docs/research/2026-10-03-*.md` · Claim-level traceability: `evidence-v1.md`.", "",
-              f"{len(lessons)} lessons in {len(path)} parts, English and French, written only from the cited sources (Y4NN, 2026-10-03: nothing from model knowledge). Not yet reviewed by a local expert.", ""]
+              f"{len(lessons)} lessons in {len(path)} parts, English and French, written only from the cited sources (Y4NN, 2026-10-03: nothing from model knowledge). Not yet reviewed by a local expert.", "",
+              "Since 2026-10-06 the lessons are the knowledge base of the tutor (\"Éducation financière\"), not pages in the app: the server retrieves them by embeddings (ADR-0013 amendment). After changing a lesson, regenerate with this script, then run `tools/literacy/embed.mjs`.", ""]
     for area in AREAS:
         course += [f"## {area}", "", "| Lesson | Title (EN) | Sources |", "| --- | --- | --- |"]
         course += [f"| `{l['id']}` | {l['en']['title']} | {', '.join(l['sources'])} |" for a, l in lessons if a == area]
