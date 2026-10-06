@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { X } from "lucide-react";
+import Logo from "../components/Logo.tsx";
 import { useTranslation } from "react-i18next";
 import { db } from "../db/schema.ts";
 import { getProductTask } from "../help/corpus.ts";
@@ -52,11 +53,12 @@ function hasBackupMarker(): boolean {
   try { return localStorage.getItem(BACKUP_MARKER_KEY) != null; } catch { return false; }
 }
 
-function CoachCard({ nudge, onLater, onDismiss, onHelp }: {
+function CoachCard({ nudge, onLater, onDismiss, onHelp, onBot }: {
   nudge: CoachNudge;
   onLater: () => void;
   onDismiss: () => void;
   onHelp: () => void;
+  onBot: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const [closing, setClosing] = useState(false);
@@ -83,8 +85,9 @@ function CoachCard({ nudge, onLater, onDismiss, onHelp }: {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
   if (task == null) return null;
-  // A plain card beside the page, like the app's other cards: the task's title, a link to its
-  // steps, and "Later". No backdrop, no robot, no second paragraph (Y4NN, 2026-10-06: "trop IA").
+  // A plain card beside the page, like the app's other cards: the task's title, WiseBot as one light
+  // pill with its logo (the tip is where people find out WiseBot exists), the steps, and "Later".
+  // No backdrop, no robot, no second paragraph (Y4NN, 2026-10-06: "trop IA").
   return (
     <aside
       role="status"
@@ -98,9 +101,15 @@ function CoachCard({ nudge, onLater, onDismiss, onHelp }: {
           <X className="h-4 w-4" />
         </button>
       </div>
-      <div className="flex items-center gap-1 px-2 pb-2">
-        <Button type="button" variant="ghost" className="text-ocean-primary" onClick={() => closeSmoothly(onHelp)}>{t("coach.card.steps")}</Button>
-        <Button type="button" variant="ghost" className="text-muted-foreground" onClick={() => closeSmoothly(onLater)}>{t("coach.card.later")}</Button>
+      <div className="px-3 pt-2">
+        <button type="button" onClick={() => closeSmoothly(onBot)} className="inline-flex h-11 items-center gap-2 rounded-full bg-ocean-wash pl-1.5 pr-4 text-sm font-medium text-ocean-dark transition-colors hover:bg-ocean-wash/70">
+          <span aria-hidden="true"><Logo variant="icon" className="h-8 w-8" /></span>
+          {t("coach.card.askBot")}
+        </button>
+      </div>
+      <div className="flex items-center justify-between px-1.5 pb-1.5">
+        <Button type="button" variant="ghost" className="px-2.5 text-ocean-primary" onClick={() => closeSmoothly(onHelp)}>{t("coach.card.steps")}</Button>
+        <Button type="button" variant="ghost" className="px-2.5 text-muted-foreground" onClick={() => closeSmoothly(onLater)}>{t("coach.card.later")}</Button>
       </div>
     </aside>
   );
@@ -277,6 +286,10 @@ export function CoachProvider({ children }: { children: ReactNode }) {
         onLater={() => recordAndClose("later")}
         onDismiss={() => recordAndClose("dismissed")}
         onHelp={() => { recordAndClose("help_opened"); openHelp(nudge.taskId); }}
+        onBot={() => {
+          recordAndClose("bot_opened");
+          wiseBot.openWiseBot({ entryPoint: "coach", surfaceId: surfaceFromPathname(pathname), taskId: nudge.taskId });
+        }}
       />}
     </CoachContext.Provider>
   );

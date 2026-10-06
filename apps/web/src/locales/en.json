@@ -1101,7 +1101,8 @@
       "label": "WiseBot tip",
       "dismiss": "Dismiss this tip",
       "steps": "View steps",
-      "later": "Later"
+      "later": "Later",
+      "askBot": "Ask WiseBot"
     },
     "settings": {
       "inApp": "In-app tips",

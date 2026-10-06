@@ -1101,7 +1101,8 @@
       "label": "Conseil WiseBot",
       "dismiss": "Fermer ce conseil",
       "steps": "Voir les étapes",
-      "later": "Plus tard"
+      "later": "Plus tard",
+      "askBot": "Demander à WiseBot"
     },
     "settings": {
       "inApp": "Conseils dans l’application",
