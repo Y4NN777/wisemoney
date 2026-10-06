@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, ArrowUpRight, Check, Clock3, Info, SlidersHorizontal, X } from "lucide-react";
+import { AlertTriangle, Info, SlidersHorizontal, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { selectDashboardAlerts, type DashboardAlert } from "../analytics/dashboard.ts";
@@ -66,31 +66,28 @@ function AlertRow({
 }) {
   const { t } = useTranslation();
   const informational = alert.severity === "info";
+  // Title, one line, and words for the two actions people use (Y4NN, 2026-10-06): four bare icons
+  // (read, snooze, hide, open) were not readable. Opening marks the alert read; ✕ hides it.
   return (
-    <article className={`grid gap-3 border-t border-border px-4 py-4 first:border-t-0 sm:grid-cols-[auto_minmax(0,1fr)_auto] ${read ? "opacity-65" : ""}`}>
-      <span className={`flex h-9 w-9 items-center justify-center border ${alert.severity === "critical" ? "border-negative/35 bg-negative-wash text-negative" : informational ? "border-information/35 bg-information-wash text-information" : "border-attention/35 bg-attention-wash text-attention"}`}>
-        {informational ? <Info className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
-      </span>
-      <div className="min-w-0">
-        <h2 className="text-sm font-semibold">{alertTitle(alert, t)}</h2>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground"><AlertBody alert={alert} snapshot={snapshot} /></p>
-      </div>
-      <div className="flex items-center gap-1 sm:self-center">
-        {!read && (
-          <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={onRead} aria-label={t("dashboard.attention.markRead")} title={t("dashboard.attention.markRead")}>
-            <Check className="h-4 w-4" />
-          </Button>
-        )}
-        <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={onSnooze} aria-label={t("dashboard.attention.snooze")} title={t("dashboard.attention.snooze")}>
-          <Clock3 className="h-4 w-4" />
-        </Button>
-        <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={onDismiss} aria-label={t("dashboard.attention.dismiss")} title={t("dashboard.attention.dismiss")}>
+    <article className={`border-t border-border px-4 pb-2 pt-3 first:border-t-0 ${read ? "opacity-65" : ""}`}>
+      <div className="flex items-start gap-3">
+        <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${alert.severity === "critical" ? "bg-negative-wash text-negative" : informational ? "bg-information-wash text-information" : "bg-attention-wash text-attention"}`} aria-hidden="true">
+          {informational ? <Info className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+        </span>
+        <div className="min-w-0 flex-1 pt-1">
+          <h2 className="text-sm font-semibold leading-snug">{alertTitle(alert, t)}</h2>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground"><AlertBody alert={alert} snapshot={snapshot} /></p>
+        </div>
+        <Button type="button" variant="ghost" size="icon" className="-mr-2 -mt-1 shrink-0 text-muted-foreground" onClick={onDismiss} aria-label={t("dashboard.attention.dismiss")} title={t("dashboard.attention.dismiss")}>
           <X className="h-4 w-4" />
         </Button>
-        <Button asChild variant="ghost" size="icon" className="h-11 w-11" onClick={onRead}>
-          <Link to={alertHref(alert)} aria-label={t("dashboard.attention.open")} title={t("dashboard.attention.open")}>
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
+      </div>
+      <div className="flex items-center justify-between pl-10">
+        <Button asChild variant="ghost" className="px-2 text-ocean-primary" onClick={onRead}>
+          <Link to={alertHref(alert)}>{t("dashboard.attention.open")}</Link>
+        </Button>
+        <Button type="button" variant="ghost" className="px-2 text-muted-foreground" onClick={onSnooze} title={t("dashboard.attention.snooze")}>
+          {t("dashboard.attention.later")}
         </Button>
       </div>
     </article>

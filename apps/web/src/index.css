@@ -467,3 +467,21 @@
     transition-duration: 1ms !important;
   }
 }
+
+/* Toast actions ("Annuler"): the app's blue text action at a 44 px target instead of the library's
+   small black button. Unlayered on purpose: sonner injects unlayered styles at runtime, and a rule
+   inside @layer would lose to them whatever its specificity. */
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-button] {
+  height: 2.75rem;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--ocean-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-button]:hover {
+  background: var(--ocean-wash);
+}
+

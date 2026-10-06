@@ -162,12 +162,12 @@
       "viewAll": "View all ({{count}})",
       "budgetApproaching": "Budget close to its limit",
       "budgetThresholdBody": "“{{name}}” has reached {{percentage}}% of its limit.",
-      "markRead": "Mark as read",
       "snooze": "Remind me tomorrow",
       "dismiss": "Hide",
       "open": "View",
       "snoozed": "Reminder postponed until tomorrow.",
-      "dismissed": "Alert hidden."
+      "dismissed": "Alert hidden.",
+      "later": "Later"
     },
     "aiInsight": "AI insight",
     "viaProvider": "via {{provider}}",
