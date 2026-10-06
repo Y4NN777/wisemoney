@@ -1,5 +1,8 @@
 import { json } from "../help/_helpGateway.js";
-import { findRelevantUnits, getLiteracyUnits, unitAsMarkdown, type LiteracyLocale, type LiteracyUnit } from "../../src/literacy/corpus.js";
+import { LITERACY_SOURCES, getLiteracyUnits, unitAsMarkdown, type LiteracyLocale, type LiteracyUnit } from "../../src/literacy/corpus.js";
+import { EMBEDDING_DIMENSIONS, EMBEDDING_MODEL, normalizeVector } from "./_embedding.js";
+import { LESSON_VECTORS } from "./_lessonVectors.js";
+import { buildLessonIndex, retrieveLessons, type LessonIndex } from "./_retrieval.js";
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -7,6 +10,9 @@ declare const process: { env: Record<string, string | undefined> };
  * Literacy tutor gateway (ADR-0013, contract: docs/api/learn.openapi.yaml).
  * INV-EGR-04: the request schema is closed. Only the typed question, the locale, recent turns and
  * corpus unit ids are accepted; anything else is rejected before a provider call is made.
+ * Retrieval runs here (amended 2026-10-06): the question is embedded with the same model as the
+ * lessons and the closest lessons ground the answer. `unitIds` from clients built before that are
+ * still accepted and ignored.
  */
 const GEMINI_API_ORIGIN = "https://generativelanguage.googleapis.com";
 const PINNED_MODEL = "gemma-4-26b-a4b-it";
@@ -17,6 +23,8 @@ const MAX_UNIT_IDS = 3;
 const MAX_SOURCES = 5;
 const MAX_SOURCE_TITLE_LENGTH = 120;
 const PROVIDER_TIMEOUT_MS = 90_000;
+/** Retrieval must not hold the answer back: past this, keyword search takes over. */
+const EMBEDDING_TIMEOUT_MS = 4_000;
 const MAX_PROVIDER_ATTEMPTS = 3;
 const RETRY_STEP_MS = 350;
 const ALLOWED_BODY_KEYS = new Set(["question", "locale", "history", "unitIds"]);
@@ -25,7 +33,8 @@ const UNIT_ID_PATTERN = /^[a-z0-9-]{1,48}$/;
 
 type GatewayConfig = { apiKey: string; model: string; webSearch: boolean };
 type Turn = { role: "user" | "model"; parts: Array<{ text: string }> };
-type ValidRequest = { question: string; locale: LiteracyLocale; history: Turn[]; units: LiteracyUnit[] };
+type ValidRequest = { question: string; locale: LiteracyLocale; history: Turn[] };
+type GroundedRequest = ValidRequest & { units: LiteracyUnit[] };
 export type LearnSource = { title: string; uri: string };
 
 class RequestError extends Error {
@@ -76,20 +85,64 @@ export function validateLearnRequest(body: Record<string, unknown>): ValidReques
     return { role: role === "assistant" ? "model" : "user", parts: [{ text: trimmed }] };
   });
 
-  const corpus = getLiteracyUnits(locale);
+  // Older clients still send the lessons they picked on the phone: checked for shape, then ignored.
   const rawIds = body.unitIds ?? [];
   if (!Array.isArray(rawIds) || rawIds.length > MAX_UNIT_IDS) throw new RequestError(400, REJECTED);
-  const requested = rawIds.map((id) => {
-    if (typeof id !== "string" || !UNIT_ID_PATTERN.test(id)) throw new RequestError(400, REJECTED);
-    const unit = corpus.find((candidate) => candidate.id === id);
-    if (unit == null) throw new RequestError(400, REJECTED);
-    return unit;
-  });
-  const units = requested.length > 0 ? [...new Set(requested)] : findRelevantUnits(corpus, question, MAX_UNIT_IDS);
-  return { question, locale, history, units };
+  if (rawIds.some((id) => typeof id !== "string" || !UNIT_ID_PATTERN.test(id))) throw new RequestError(400, REJECTED);
+  return { question, locale, history };
 }
 
-function systemInstruction(input: ValidRequest, webSearch: boolean): string {
+const lessonIndexes = new Map<LiteracyLocale, LessonIndex>();
+
+function lessonIndex(locale: LiteracyLocale): LessonIndex {
+  let index = lessonIndexes.get(locale);
+  if (index == null) {
+    index = buildLessonIndex(getLiteracyUnits(locale), LESSON_VECTORS.lessons[locale]);
+    lessonIndexes.set(locale, index);
+  }
+  return index;
+}
+
+/** The question as a unit vector in the lessons' space, or null (then keyword search ranks). */
+async function embedQuestion(config: GatewayConfig, question: string, signal: AbortSignal): Promise<Float32Array | null> {
+  try {
+    const response = await fetch(`${GEMINI_API_ORIGIN}/v1beta/models/${EMBEDDING_MODEL}:embedContent`, {
+      method: "POST",
+      signal: AbortSignal.any([signal, AbortSignal.timeout(EMBEDDING_TIMEOUT_MS)]),
+      headers: { "content-type": "application/json", "x-goog-api-key": config.apiKey },
+      body: JSON.stringify({
+        model: `models/${EMBEDDING_MODEL}`,
+        content: { parts: [{ text: question }] },
+        taskType: "RETRIEVAL_QUERY",
+        outputDimensionality: EMBEDDING_DIMENSIONS,
+      }),
+    });
+    if (!response.ok) {
+      await response.body?.cancel().catch(() => undefined);
+      return null;
+    }
+    const values = ((await response.json()) as { embedding?: { values?: unknown } }).embedding?.values;
+    if (!Array.isArray(values) || values.length !== EMBEDDING_DIMENSIONS || values.some((value) => typeof value !== "number")) return null;
+    return normalizeVector(values as number[]);
+  } catch {
+    if (signal.aborted) throw signal.reason;
+    return null;
+  }
+}
+
+/** What the answer is drawn from, for the one-line source under it: lesson title and its publishers. */
+function lessonCredits(units: readonly LiteracyUnit[]): Array<{ id: string; title: string; publishers: string[] }> {
+  return units.map((unit) => ({
+    id: unit.id,
+    title: unit.title,
+    publishers: [...new Set(unit.sources.flatMap((id) => {
+      const name = LITERACY_SOURCES[id]?.name;
+      return name == null ? [] : [name.split(" — ")[0]!.trim()];
+    }))],
+  }));
+}
+
+function systemInstruction(input: GroundedRequest, webSearch: boolean): string {
   const language = input.locale === "fr" ? "French" : "English";
   const currentFacts = webSearch
     ? "- For current facts (fees, rates, limits, regulations, prices), use Google Search. Prefer the provider's, the regulator's, or the central bank's own page. Name the site each figure comes from. Call a figure official only when it comes from that official site; if it comes from the press, a forum, or a document-sharing site, say so, and if sources disagree, say so instead of choosing. Always add that it can change."
@@ -115,7 +168,7 @@ WISEMONEY LESSONS
 ${lessons}`;
 }
 
-function providerBody(input: ValidRequest, webSearch: boolean) {
+function providerBody(input: GroundedRequest, webSearch: boolean) {
   return {
     systemInstruction: { parts: [{ text: systemInstruction(input, webSearch) }] },
     contents: [...input.history, { role: "user", parts: [{ text: input.question }] }],
@@ -141,7 +194,7 @@ function delay(milliseconds: number, signal: AbortSignal): Promise<void> {
  * Because that page may be the one that becomes true, a 400 with the tool attached drops to a
  * lessons-only request instead of failing the learner.
  */
-async function providerRequest(config: GatewayConfig, input: ValidRequest, signal: AbortSignal): Promise<{ response: Response; webSearch: boolean }> {
+async function providerRequest(config: GatewayConfig, input: GroundedRequest, signal: AbortSignal): Promise<{ response: Response; webSearch: boolean }> {
   const endpoint = `${GEMINI_API_ORIGIN}/v1beta/models/${config.model}:streamGenerateContent?alt=sse`;
   let webSearch = config.webSearch;
   for (let attempt = 0; attempt < MAX_PROVIDER_ATTEMPTS; attempt += 1) {
@@ -216,7 +269,9 @@ function sseEvent(event: "meta" | "delta" | "sources" | "done", value: unknown):
 export async function sendLearnMessage(request: Request): Promise<Response> {
   try {
     const config = getConfig();
-    const input = validateLearnRequest(await readBody(request));
+    const valid = validateLearnRequest(await readBody(request));
+    const queryVector = await embedQuestion(config, valid.question, request.signal);
+    const input: GroundedRequest = { ...valid, units: retrieveLessons(lessonIndex(valid.locale), valid.question, queryVector) };
     const provider = await providerRequest(config, input, request.signal);
     if (provider.response.body == null) throw new Error("provider-body-missing");
 
@@ -235,7 +290,12 @@ export async function sendLearnMessage(request: Request): Promise<Response> {
           for (const source of parsed.sources) if (sources.size < MAX_SOURCES && !sources.has(source.title)) sources.set(source.title, source);
         };
         try {
-          controller.enqueue(sseEvent("meta", { unitIds: input.units.map(({ id }) => id), webSearch: provider.webSearch }));
+          controller.enqueue(sseEvent("meta", {
+            unitIds: input.units.map(({ id }) => id),
+            webSearch: provider.webSearch,
+            lessons: lessonCredits(input.units),
+            retrieval: queryVector == null ? "keywords" : "embeddings",
+          }));
           while (true) {
             const result = await upstream.read();
             if (result.done) break;

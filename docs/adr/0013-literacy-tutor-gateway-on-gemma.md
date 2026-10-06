@@ -77,6 +77,26 @@ configured").
 - **Without the tutor notice accepted, or offline, the lesson answers on the device** and no
   request is made. The device-local daily allowance is shared with WiseBot.
 
+## Amendment: retrieval on the server (2026-10-06)
+
+Y4NN rejected the lesson catalogue: the lessons are the tutor's knowledge base, reached by
+retrieval (RAG), not pages. Research notes RAG-1 and RAG-2 (2026-10-05) and a measurement:
+
+- **Embeddings.** Each lesson is embedded once with `gemini-embedding-001` (768 dimensions,
+  `RETRIEVAL_DOCUMENT`, int8) by `tools/literacy/embed.mjs` into `api/learn/_lessonVectors.ts`; the
+  gateway embeds the question (`RETRIEVAL_QUERY`) and sends the 4 closest lessons to Gemma.
+  On-device ONNX models were rejected: the smallest official French-capable one is 118 MB and
+  nothing shows it running on 2–4 GB phones.
+- **Measured, not assumed.** On 55 labelled questions (`api/learn/_retrievalEval.ts`): embeddings
+  55/55 (MRR 0.947); keyword search (BM25) 41/55; both merged by reciprocal rank fusion 47/55; the
+  former on-device keyword matching 43/55. The research found fusion better elsewhere; here it is
+  worse, so keyword search is only the fallback when the embedding call fails or times out (4 s).
+- **Egress.** The question now also goes to Google's embedding endpoint, same key, provider and
+  terms as Gemma. INV-EGR-04 is unchanged: no vault-derived value is sent. `unitIds` from older
+  clients are accepted and ignored.
+- **No on-device answer.** Offline or before the notice is accepted, the tutor says it needs a
+  connection; the phone no longer carries the lessons. This replaces the last amendment above.
+
 ## Consequences
 
 - The managed tutor is usable with no account and no BYO key, at the price of

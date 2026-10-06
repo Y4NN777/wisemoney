@@ -28,7 +28,7 @@ paths:
               schema:
                 type: string
                 description: |
-                  event: meta    data: {"unitIds": string[], "webSearch": boolean}
+                  event: meta    data: {"unitIds": string[], "webSearch": boolean, "lessons": [{"id": string, "title": string, "publishers": string[]}], "retrieval": "embeddings" | "keywords"}
                   event: delta   data: {"text": string}
                   event: sources data: {"items": [{"title": string, "uri": string}]}
                   event: done    data: {}
@@ -65,7 +65,7 @@ components:
         unitIds:
           type: array
           maxItems: 3
-          description: Ids of corpus units the client wants as grounding. Each must exist in the server's corpus; the server sends its own trusted text for them. Omitted, the server retrieves units from the question.
+          description: Sent by clients built before 2026-10-06. Checked for shape and ignored; the server retrieves lessons from the question (ADR-0013, amendment of 2026-10-06).
           items: { type: string, pattern: "^[a-z0-9-]{1,48}$" }
     Problem:
       type: object

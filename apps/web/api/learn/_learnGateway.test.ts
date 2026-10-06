@@ -1,8 +1,28 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { decodeVector } from "./_embedding.ts";
 import { extractLearnFrames, sendLearnMessage } from "./_learnGateway.ts";
+import { LESSON_VECTORS } from "./_lessonVectors.ts";
 
 const ORIGINAL_ENV = { ...process.env };
 const ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:streamGenerateContent?alt=sse";
+const EMBED_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent";
+
+/** An embedding response equal to a lesson's own vector, so that lesson ranks first. */
+function embeddingOf(locale: "en" | "fr", id: string): Response {
+  const stored = LESSON_VECTORS.lessons[locale].find((vector) => vector.id === id)!;
+  return Response.json({ embedding: { values: Array.from(decodeVector(stored)) } });
+}
+
+/**
+ * fetch as the gateway sees it: the embedding call answered by `embedding`, every other call (Gemma)
+ * by `gemma`. Assertions on the Gemma request read `gemma.mock.calls`.
+ */
+function routedFetch(gemma: ReturnType<typeof vi.fn>, embedding: () => Response | Promise<Response>) {
+  const embed = vi.fn(embedding);
+  const fetchMock = vi.fn((url: string, init?: RequestInit) => (url === EMBED_ENDPOINT ? embed() : gemma(url, init)));
+  vi.stubGlobal("fetch", fetchMock);
+  return { fetchMock, embed };
+}
 
 beforeEach(() => {
   process.env = { ...ORIGINAL_ENV, LITERACY_GEMINI_API_KEY: "literacy-project-token", GEMINI_API_KEY: "help-project-token" };
@@ -42,9 +62,9 @@ function sentBody(fetchMock: ReturnType<typeof vi.fn>, call = 0) {
 }
 
 describe("literacy tutor gateway", () => {
-  it("uses its own key, the pinned model, and grounds the answer in the matching lesson", async () => {
+  it("embeds the question with its own key, grounds the answer in the closest lessons and credits them", async () => {
     const fetchMock = vi.fn().mockResolvedValue(providerStream(answer));
-    vi.stubGlobal("fetch", fetchMock);
+    const { embed } = routedFetch(fetchMock, () => embeddingOf("en", "build-a-budget"));
 
     const response = await sendLearnMessage(request({
       question: "How do I build a budget for the month?",
@@ -54,8 +74,11 @@ describe("literacy tutor gateway", () => {
 
     expect(response.status).toBe(200);
     const events = await response.text();
-    expect(events).toMatch(/event: meta\ndata: \{"unitIds":\[[^\]]*"build-a-budget"/);
+    expect(events).toMatch(/event: meta\ndata: \{"unitIds":\["build-a-budget"/);
     expect(events).toContain('"webSearch":false');
+    expect(events).toContain('"retrieval":"embeddings"');
+    expect(events).toMatch(/"lessons":\[\{"id":"build-a-budget","title":"Build your first budget","publishers":\[[^\]]+\]/);
+    expect(embed).toHaveBeenCalledTimes(1);
     expect(events).toContain('event: delta\ndata: {"text":"Players lose on average."}');
     expect(events.endsWith("event: done\ndata: {}\n\n")).toBe(true);
 
@@ -72,14 +95,28 @@ describe("literacy tutor gateway", () => {
     expect(sent.body.contents.map(({ role }) => role)).toEqual(["model", "user"]);
   });
 
-  it("answers in French from the French corpus and honours requested unit ids", async () => {
+  it("answers in French from the French lessons and ignores unit ids sent by older clients", async () => {
     const fetchMock = vi.fn().mockResolvedValue(providerStream(answer));
-    vi.stubGlobal("fetch", fetchMock);
-    const response = await sendLearnMessage(request({ question: "Explique-moi ça", locale: "fr", unitIds: ["interest-and-time"] }));
-    expect(await response.text()).toContain('"unitIds":["interest-and-time"]');
+    routedFetch(fetchMock, () => embeddingOf("fr", "interest-and-time"));
+    const response = await sendLearnMessage(request({ question: "si je laisse mon argent des années, il grossit comment ?", locale: "fr", unitIds: ["spot-a-scam"] }));
+    const events = await response.text();
+    expect(events).toContain('"unitIds":["interest-and-time"');
+    expect(events).not.toMatch(/"unitIds":\["spot-a-scam"/);
     const instruction = sentBody(fetchMock).body.systemInstruction.parts[0]!.text;
     expect(instruction).toContain("in French");
     expect(instruction).toContain("Voir les intérêts grandir avec le temps");
+  });
+
+  it("falls back to keyword search when the question cannot be embedded, and still answers", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(providerStream(answer));
+    const { embed } = routedFetch(fetchMock, () => new Response("{}", { status: 429 }));
+    const response = await sendLearnMessage(request({ question: "Comment marche une tontine ?", locale: "fr" }));
+    expect(response.status).toBe(200);
+    const events = await response.text();
+    expect(events).toContain('"retrieval":"keywords"');
+    expect(events).toContain('"savings-groups"');
+    expect(embed).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it.each([
@@ -87,7 +124,7 @@ describe("literacy tutor gateway", () => {
     ["the help gateway's safe context", { question: "Why?", locale: "en", safeContext: { surfaceId: "dashboard" } }],
     ["an image", { question: "Why?", locale: "en", image: "data:image/jpeg;base64,YWJj" }],
     ["an extra field inside a turn", { question: "Why?", locale: "en", history: [{ role: "user", text: "Hi", balance: 5 }] }],
-    ["an unknown unit id", { question: "Why?", locale: "en", unitIds: ["not-a-lesson"] }],
+    ["a malformed unit id", { question: "Why?", locale: "en", unitIds: ["Not A Lesson!"] }],
     ["a missing locale", { question: "Why?" }],
     ["an unsupported locale", { question: "Why?", locale: "de" }],
     ["an empty question", { question: "   ", locale: "en" }],
@@ -119,7 +156,7 @@ describe("literacy tutor gateway", () => {
       { web: { uri: "https://example.org/a" } },
     ] } }] };
     const fetchMock = vi.fn().mockResolvedValue(providerStream(answer, grounded));
-    vi.stubGlobal("fetch", fetchMock);
+    routedFetch(fetchMock, () => embeddingOf("en", "the-legal-ceiling"));
 
     const events = await (await sendLearnMessage(request({ question: "What is the usury ceiling today?", locale: "en" }))).text();
 
@@ -136,7 +173,7 @@ describe("literacy tutor gateway", () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(new Response("{}", { status: 400 }))
       .mockResolvedValueOnce(providerStream(answer));
-    vi.stubGlobal("fetch", fetchMock);
+    routedFetch(fetchMock, () => embeddingOf("en", "build-a-budget"));
 
     const response = await sendLearnMessage(request({ question: "How does a budget work?", locale: "en" }));
 
@@ -150,7 +187,7 @@ describe("literacy tutor gateway", () => {
 
   it("returns 503 without a key, with a foreign model, or when the provider fails", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response("{}", { status: 403 }));
-    vi.stubGlobal("fetch", fetchMock);
+    routedFetch(fetchMock, () => embeddingOf("en", "build-a-budget"));
     const body = { question: "How does a budget work?", locale: "en" };
 
     expect((await sendLearnMessage(request(body))).status).toBe(503);

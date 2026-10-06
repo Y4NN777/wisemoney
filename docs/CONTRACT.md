@@ -165,7 +165,9 @@ carries an explicit user-as-principal acceptance of client-only enforcement.*
 carry any vault-derived value: no amounts, balances, merchants, categories, budget
 or goal figures, and none of the FR-CONSENT-07 aggregates. Its request schema is
 closed (question, locale, recent turns, grounding unit ids) and the
-gateway rejects any other field, independent of client consent state.
+gateway rejects any other field, independent of client consent state. Since
+2026-10-06 the same question is also sent to the embedding endpoint for retrieval
+(ADR-0013 amendment); the same rule applies to it.
 
 *Why: the destination is free-tier Gemma on the Gemini API, whose terms allow
 training and human review of submitted content; a schema that admits aggregates
