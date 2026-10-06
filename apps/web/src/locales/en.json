@@ -688,7 +688,7 @@
       "done": "Done"
     },
     "consentSettings": "Consent settings",
-    "openLessons": "Open the lessons"
+    "openLessons": "Financial education"
   },
   "budgets": {
     "title": "Budgets",
@@ -938,9 +938,7 @@
     "section": {
       "toggle_one": "{{count}} item",
       "toggle_other": "{{count}} items",
-      "seeAll": "See all {{count}}",
-      "lesson": "Lesson",
-      "lessonAria": "Lesson about {{section}}"
+      "seeAll": "See all {{count}}"
     }
   },
   "debts": {
@@ -1371,11 +1369,9 @@
     }
   },
   "learn": {
-    "title": "Learn",
-    "disclosure": "Education, not advice.",
-    "draft": "Each lesson is written from the sources listed inside it. Not yet reviewed by a local expert.",
+    "title": "Financial education",
+    "disclosure": "Education, not advice. Not yet reviewed by a local expert.",
     "tutor": {
-      "title": "Where do you want to start?",
       "placeholder": "Ask a money question",
       "send": "Ask the tutor",
       "stop": "Stop the answer",
@@ -1386,44 +1382,17 @@
       "consent": "Tutor answers go through Google. Nothing from your vault.",
       "ok": "OK",
       "personal": "For questions about your own numbers:",
-      "path": {
-        "tutor": "Tutor · Google Gemma",
-        "web": "Tutor · with web search",
-        "lesson": "Lesson on this device"
-      },
       "errors": {
-        "needConsent": "No lesson covers this. Accept the tutor notice to ask the tutor.",
-        "offline": "No lesson covers this offline. Try again with a connection.",
-        "unavailable": "The tutor is unavailable and no lesson covers this."
+        "needConsent": "Accept the notice below first.",
+        "offline": "You need a connection to ask a question.",
+        "unavailable": "The service is not answering. Try again in a moment."
       },
       "webCaution": "Figures found on the web can be wrong or out of date. Check the source before acting.",
-      "startersNote": "Questions asked by readers in Burkina Faso (LeFaso.net)."
-    },
-    "lessons": {
-      "title": "Lessons, step by step",
-      "count_one": "{{count}} lesson",
-      "count_other": "{{count}} lessons"
-    },
-    "areas": {
-      "start": "Know where you are going",
-      "manage": "Manage your money",
-      "save": "Save without effort",
-      "bank": "Banks, microfinance, mobile money",
-      "borrow": "Borrow wisely",
-      "protect": "Protect yourself",
-      "invest": "Start investing",
-      "grow": "Portfolio and the long term"
-    },
-    "lesson": {
-      "example": "Example",
-      "watchOut": "Watch out",
-      "basis": "Sources",
-      "ask": "Ask the tutor about this",
-      "open": "Open the lesson: {{title}}",
-      "action": "Do this week"
+      "startersNote": "Questions asked by readers in Burkina Faso (LeFaso.net).",
+      "source": "Source: {{title}} — {{publisher}}"
     }
   },
   "learnCard": {
-    "title": "Learn about money"
+    "title": "Financial education"
   }
 }

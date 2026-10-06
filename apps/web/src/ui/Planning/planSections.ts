@@ -25,16 +25,6 @@ export const PLAN_SECTION_ORDER: readonly PlanSectionId[] = ["budgets", "goals",
 export const PLAN_ROW_LIMIT = 5;
 
 /**
- * The lesson a Plan section links to, so that a first budget, goal or debt can be read about at
- * the moment it is set up. Ids are lesson ids of the literacy course; a test checks they exist.
- */
-export const PLAN_SECTION_LESSONS: Partial<Record<PlanSectionId, string>> = {
-  budgets: "build-a-budget",
-  goals: "set-goals",
-  debts: "how-much-can-you-repay",
-};
-
-/**
  * One scrolling Plan page (ux-simplification decision 4): every section from snapshot
  * fields only, with the same "active" predicates the hub used for its counts.
  */

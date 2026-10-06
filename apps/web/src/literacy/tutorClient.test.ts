@@ -3,7 +3,7 @@ import { streamLearnMessage } from "./tutorClient.ts";
 
 afterEach(() => vi.unstubAllGlobals());
 
-const input = { question: "How do I budget?", locale: "en" as const, history: [], unitIds: ["budget-basics"] };
+const input = { question: "How do I budget?", locale: "en" as const, history: [] };
 
 function sse(body: string, contentType = "text/event-stream; charset=utf-8", status = 200): Response {
   return new Response(body, { status, headers: { "content-type": contentType } });
@@ -12,7 +12,7 @@ function sse(body: string, contentType = "text/event-stream; charset=utf-8", sta
 describe("streamLearnMessage", () => {
   it("sends the closed schema and forwards text, meta and https sources", async () => {
     const fetchMock = vi.fn().mockResolvedValue(sse(
-      'event: meta\ndata: {"unitIds":["budget-basics"],"webSearch":true}\n\n' +
+      'event: meta\ndata: {"unitIds":["build-a-budget"],"webSearch":true,"lessons":[{"id":"build-a-budget","title":"Build your first budget","publishers":["OECD",3]},{"title":"no id"}],"retrieval":"embeddings"}\n\n' +
       'event: delta\ndata: {"text":"Every franc "}\n\nevent: delta\ndata: {"text":"gets a job."}\n\n' +
       'event: sources\ndata: {"items":[{"title":"a","uri":"https://a.example"},{"title":"b","uri":"http://b.example"},{"uri":"https://c.example"}]}\n\n' +
       "event: done\ndata: {}\n\n",
@@ -25,20 +25,13 @@ describe("streamLearnMessage", () => {
     await streamLearnMessage({ ...input, history: Array.from({ length: 10 }, (_, index) => ({ role: "user" as const, text: `q${index}` })) }, { onText: (chunk) => text.push(chunk), onMeta, onSources });
 
     expect(text.join("")).toBe("Every franc gets a job.");
-    expect(onMeta).toHaveBeenCalledWith({ unitIds: ["budget-basics"], webSearch: true });
+    expect(onMeta).toHaveBeenCalledWith({ unitIds: ["build-a-budget"], webSearch: true, lessons: [{ id: "build-a-budget", title: "Build your first budget", publishers: ["OECD"] }] });
     expect(onSources).toHaveBeenCalledWith([{ title: "a", uri: "https://a.example" }]);
     const [url, init] = fetchMock.mock.calls[0] as [string, { body: string }];
     expect(url).toBe("/api/learn/messages");
     const body = JSON.parse(init.body) as Record<string, unknown>;
-    expect(Object.keys(body).sort()).toEqual(["history", "locale", "question", "unitIds"]);
+    expect(Object.keys(body).sort()).toEqual(["history", "locale", "question"]);
     expect(body.history).toHaveLength(8);
-  });
-
-  it("omits unitIds when there are none", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(sse('event: delta\ndata: {"text":"ok"}\n\n'));
-    vi.stubGlobal("fetch", fetchMock);
-    await streamLearnMessage({ ...input, unitIds: [] }, { onText: () => undefined });
-    expect(Object.keys(JSON.parse((fetchMock.mock.calls[0] as [string, { body: string }])[1].body) as object).sort()).toEqual(["history", "locale", "question"]);
   });
 
   it.each([

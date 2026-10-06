@@ -1,8 +1,10 @@
-import type { LiteracyLocale } from "./corpus.ts";
+export type LiteracyLocale = "en" | "fr";
 
 export type TutorTurn = { role: "user" | "assistant"; text: string };
 export type TutorSource = { title: string; uri: string };
-export type TutorMeta = { unitIds: string[]; webSearch: boolean };
+/** A lesson the server grounded the answer in, with the publishers its sources come from. */
+export type TutorLesson = { id: string; title: string; publishers: string[] };
+export type TutorMeta = { unitIds: string[]; webSearch: boolean; lessons: TutorLesson[] };
 
 export type TutorStreamHandlers = {
   onText: (text: string) => void;
@@ -24,10 +26,15 @@ function consumeFrames(buffer: string, handlers: TutorStreamHandlers): string {
     }
     if (data.length === 0) continue;
     try {
-      const value = JSON.parse(data.join("\n")) as { text?: unknown; unitIds?: unknown; webSearch?: unknown; items?: unknown };
+      const value = JSON.parse(data.join("\n")) as { text?: unknown; unitIds?: unknown; webSearch?: unknown; items?: unknown; lessons?: unknown };
       if (event === "delta" && typeof value.text === "string") handlers.onText(value.text);
       if (event === "meta" && Array.isArray(value.unitIds)) {
-        handlers.onMeta?.({ unitIds: value.unitIds.filter((id): id is string => typeof id === "string"), webSearch: value.webSearch === true });
+        const lessons = Array.isArray(value.lessons) ? value.lessons.flatMap((item) => {
+          const { id, title, publishers } = (item ?? {}) as { id?: unknown; title?: unknown; publishers?: unknown };
+          if (typeof id !== "string" || typeof title !== "string") return [];
+          return [{ id, title, publishers: Array.isArray(publishers) ? publishers.filter((name): name is string => typeof name === "string") : [] }];
+        }) : [];
+        handlers.onMeta?.({ unitIds: value.unitIds.filter((id): id is string => typeof id === "string"), webSearch: value.webSearch === true, lessons });
       }
       if (event === "sources" && Array.isArray(value.items)) {
         handlers.onSources?.(value.items.flatMap((item) => {
@@ -44,10 +51,11 @@ function consumeFrames(buffer: string, handlers: TutorStreamHandlers): string {
 
 /**
  * Calls the literacy gateway (docs/api/learn.openapi.yaml). The body is the closed schema of
- * INV-EGR-04: question, locale, recent turns, unit ids. Nothing from the vault is ever added here.
+ * INV-EGR-04: question, locale and recent turns; the server picks the lessons. Nothing from the
+ * vault is ever added here.
  */
 export async function streamLearnMessage(
-  input: { question: string; locale: LiteracyLocale; history: TutorTurn[]; unitIds: string[]; signal?: AbortSignal },
+  input: { question: string; locale: LiteracyLocale; history: TutorTurn[]; signal?: AbortSignal },
   handlers: TutorStreamHandlers,
 ): Promise<void> {
   const response = await fetch("/api/learn/messages", {
@@ -58,7 +66,6 @@ export async function streamLearnMessage(
       question: input.question,
       locale: input.locale,
       history: input.history.slice(-MAX_HISTORY_TURNS).map(({ role, text }) => ({ role, text })),
-      ...(input.unitIds.length === 0 ? {} : { unitIds: input.unitIds }),
     }),
   });
   // A static host answers unknown paths with 200 and an HTML page; only an event stream is an answer.

@@ -8,10 +8,10 @@ const admission = vi.hoisted(() => ({
   cancelLocalTicket: vi.fn(),
   waitForLocalAdmissionChange: vi.fn(),
 }));
-type StreamInput = { question: string; locale: string; history: unknown[]; unitIds: string[] };
+type StreamInput = { question: string; locale: string; history: unknown[] };
 type StreamHandlers = {
   onText: (text: string) => void;
-  onMeta: (meta: { unitIds: string[]; webSearch: boolean }) => void;
+  onMeta: (meta: { unitIds: string[]; webSearch: boolean; lessons: Array<{ id: string; title: string; publishers: string[] }> }) => void;
   onSources: (sources: Array<{ title: string; uri: string }>) => void;
 };
 const stream = vi.hoisted(() => ({ streamLearnMessage: vi.fn<(input: StreamInput, handlers: StreamHandlers) => Promise<void>>() }));
@@ -40,9 +40,10 @@ beforeEach(() => {
 });
 
 describe("askTutor", () => {
-  it("streams from the gateway with only question, locale, turns and unit ids", async () => {
+  it("streams from the gateway with only question, locale and turns, and keeps the lessons it names", async () => {
+    const lessons = [{ id: "spot-a-scam", title: "Spot a scam before you pay", publishers: ["AMF-UMOA"] }];
     stream.streamLearnMessage.mockImplementation((_input, handlers) => {
-      handlers.onMeta({ unitIds: ["betting"], webSearch: true });
+      handlers.onMeta({ unitIds: ["spot-a-scam"], webSearch: true, lessons });
       handlers.onText("Players lose.");
       handlers.onSources([{ title: "example.org", uri: "https://example.org" }]);
       return Promise.resolve();
@@ -51,39 +52,34 @@ describe("askTutor", () => {
 
     const answer = await askTutor({ question: "Is sports betting an income?", locale: "en", history: [], online: true }, { onText: (text) => chunks.push(text) });
 
-    expect(answer).toEqual({ path: "tutor", unitIds: ["betting"], webSearch: true, sources: [{ title: "example.org", uri: "https://example.org" }] });
+    expect(answer).toEqual({ unitIds: ["spot-a-scam"], lessons, webSearch: true, sources: [{ title: "example.org", uri: "https://example.org" }] });
     expect(chunks).toEqual(["Players lose."]);
-    expect(Object.keys(stream.streamLearnMessage.mock.calls[0]![0]).sort()).toEqual(["history", "locale", "question", "unitIds"]);
+    expect(Object.keys(stream.streamLearnMessage.mock.calls[0]![0]).sort()).toEqual(["history", "locale", "question"]);
     expect(admission.finishLocalTicket).toHaveBeenCalledWith("t1", true);
   });
 
-  it("answers from the lesson when offline, without touching the network or the allowance", async () => {
+  it("prints nothing of its own offline or when the gateway fails: the phone carries no lessons", async () => {
     const chunks: string[] = [];
-    const answer = await askTutor({ question: "comment marchent les intérêts composés", locale: "fr", history: [], online: false }, { onText: (text) => chunks.push(text) });
-    expect(answer.path).toBe("lesson");
-    expect(answer.unitIds).toEqual(["interest-and-time"]);
-    expect(chunks.join("")).toContain("Voir les intérêts grandir avec le temps");
+    await expect(askTutor({ question: "comment marchent les intérêts composés", locale: "fr", history: [], online: false }, { onText: (text) => chunks.push(text) }))
+      .rejects.toMatchObject({ reason: "offline" });
     expect(stream.streamLearnMessage).not.toHaveBeenCalled();
     expect(admission.requestLocalTicket).not.toHaveBeenCalled();
-  });
 
-  it("falls back to the lesson when the gateway fails before any text", async () => {
     stream.streamLearnMessage.mockRejectedValue(new Error("tutor-unavailable"));
-    const chunks: string[] = [];
-    const answer = await askTutor({ question: "explain", locale: "en", history: [], unitIds: ["rising-prices"], online: true }, { onText: (text) => chunks.push(text) });
-    expect(answer.path).toBe("lesson");
-    expect(chunks.join("")).toContain("Understand what rising prices do to savings");
+    await expect(askTutor({ question: "explain", locale: "en", history: [], online: true }, { onText: (text) => chunks.push(text) }))
+      .rejects.toMatchObject({ reason: "unavailable" });
+    expect(chunks).toEqual([]);
     expect(admission.finishLocalTicket).toHaveBeenCalledWith("t1", false);
   });
 
-  it("keeps a partial answer instead of overwriting it with the lesson", async () => {
+  it("keeps a partial answer when the stream breaks", async () => {
     stream.streamLearnMessage.mockImplementation((_input, handlers) => {
       handlers.onText("Partial");
       return Promise.reject(new Error("network"));
     });
     const chunks: string[] = [];
     const answer = await askTutor({ question: "how to budget", locale: "en", history: [], online: true }, { onText: (text) => chunks.push(text) });
-    expect(answer.path).toBe("tutor");
+    expect(answer.lessons).toEqual([]);
     expect(chunks).toEqual(["Partial"]);
   });
 

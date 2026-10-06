@@ -688,7 +688,7 @@
       "done": "Terminé"
     },
     "consentSettings": "Paramètres de consentement",
-    "openLessons": "Ouvrir les leçons"
+    "openLessons": "Éducation financière"
   },
   "budgets": {
     "title": "Budgets",
@@ -938,9 +938,7 @@
     "section": {
       "toggle_one": "{{count}} élément",
       "toggle_other": "{{count}} éléments",
-      "seeAll": "Voir les {{count}}",
-      "lesson": "Leçon",
-      "lessonAria": "Leçon sur {{section}}"
+      "seeAll": "Voir les {{count}}"
     }
   },
   "debts": {
@@ -1371,11 +1369,9 @@
     }
   },
   "learn": {
-    "title": "Apprendre",
-    "disclosure": "De l’éducation, pas du conseil.",
-    "draft": "Chaque leçon est rédigée à partir des sources indiquées à l’intérieur. Pas encore relue par un expert local.",
+    "title": "Éducation financière",
+    "disclosure": "De l’éducation, pas du conseil. Pas encore relu par un expert local.",
     "tutor": {
-      "title": "Par où voulez-vous commencer ?",
       "placeholder": "Posez une question d’argent",
       "send": "Demander au tuteur",
       "stop": "Arrêter la réponse",
@@ -1386,44 +1382,17 @@
       "consent": "Les réponses du tuteur passent par Google. Rien de votre coffre.",
       "ok": "OK",
       "personal": "Pour des questions sur vos propres chiffres :",
-      "path": {
-        "tutor": "Tuteur · Google Gemma",
-        "web": "Tuteur · avec recherche web",
-        "lesson": "Leçon sur cet appareil"
-      },
       "errors": {
-        "needConsent": "Aucune leçon ne couvre cette question. Acceptez la mention du tuteur pour lui demander.",
-        "offline": "Aucune leçon ne couvre cette question hors ligne. Réessayez avec une connexion.",
-        "unavailable": "Le tuteur est indisponible et aucune leçon ne couvre cette question."
+        "needConsent": "Acceptez d’abord la mention ci-dessous.",
+        "offline": "Il faut une connexion pour poser une question.",
+        "unavailable": "Le service ne répond pas. Réessayez dans un moment."
       },
       "webCaution": "Les chiffres trouvés sur le web peuvent être faux ou dépassés. Vérifiez la source avant d’agir.",
-      "startersNote": "Questions posées par des lecteurs au Burkina Faso (LeFaso.net)."
-    },
-    "lessons": {
-      "title": "Leçons, étape par étape",
-      "count_one": "{{count}} leçon",
-      "count_other": "{{count}} leçons"
-    },
-    "areas": {
-      "start": "Savoir où vous allez",
-      "manage": "Gérer votre argent",
-      "save": "Épargner sans effort",
-      "bank": "Banques, microfinance, mobile money",
-      "borrow": "Emprunter avec prudence",
-      "protect": "Vous protéger",
-      "invest": "Commencer à investir",
-      "grow": "Portefeuille et long terme"
-    },
-    "lesson": {
-      "example": "Exemple",
-      "watchOut": "Attention",
-      "basis": "Sources",
-      "ask": "Demander au tuteur sur ce sujet",
-      "open": "Ouvrir la leçon : {{title}}",
-      "action": "À faire cette semaine"
+      "startersNote": "Questions posées par des lecteurs au Burkina Faso (LeFaso.net).",
+      "source": "Source : {{title}} — {{publisher}}"
     }
   },
   "learnCard": {
-    "title": "Apprendre l’argent"
+    "title": "Éducation financière"
   }
 }

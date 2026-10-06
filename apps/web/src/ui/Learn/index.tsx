@@ -1,25 +1,14 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, ChevronRight, ExternalLink, GraduationCap, Send, ShieldCheck, Square, Trash2 } from "lucide-react";
+import { ExternalLink, Send, ShieldCheck, Square, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AI_CAPABILITY_QUERY_KEY } from "../../components/AssistantCard/index.tsx";
-import Logo from "../../components/Logo.tsx";
 import { Button } from "../../components/ui/button.tsx";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../components/ui/dialog.tsx";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
 import { getAICapability } from "../../lib/capabilities.ts";
-import {
-  LITERACY_AREAS,
-  LITERACY_SOURCES,
-  getLiteracyUnit,
-  getLiteracyUnits,
-  literacyLocale,
-  type LiteracyUnit,
-} from "../../literacy/corpus.ts";
 import { LITERACY_STARTERS } from "../../literacy/starters.ts";
-import { Route as LearnRoute, parseLearnSearch } from "../../routes/learn.tsx";
 import { TutorUnavailableError, askTutor, type TutorAnswer } from "../../pillars/literacy/index.ts";
 
 type TutorMessage = {
@@ -47,8 +36,7 @@ function useOnline(): boolean {
 
 export default function Learn() {
   const { t, i18n } = useTranslation();
-  const locale = literacyLocale(i18n.resolvedLanguage ?? i18n.language);
-  const units = getLiteracyUnits(locale);
+  const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith("fr") ? "fr" : "en";
   const online = useOnline();
   const capability = useQuery({ queryKey: AI_CAPABILITY_QUERY_KEY, queryFn: getAICapability });
 
@@ -57,20 +45,6 @@ export default function Learn() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [consent, setConsent] = useState(() => hasLearnProviderConsent());
-  const [openUnit, setOpenUnit] = useState<LiteracyUnit | null>(null);
-  // `?unit=<id>` (links from Plan) opens that lesson. The route's search type is circular through
-  // the lazy component, so it is re-parsed here as Settings and Activity do.
-  const rawSearch: unknown = LearnRoute.useSearch();
-  const { unit: linkedUnitId } = parseLearnSearch(typeof rawSearch === "object" && rawSearch != null ? rawSearch as Record<string, unknown> : {});
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (linkedUnitId != null) setOpenUnit(getLiteracyUnit(locale, linkedUnitId));
-  }, [linkedUnitId, locale]);
-  const closeLesson = () => {
-    setOpenUnit(null);
-    // Drop the link's parameter so closing is final and the same link can open the lesson again.
-    if (linkedUnitId != null) void navigate({ to: "/learn", search: {}, replace: true });
-  };
   const messageId = useRef(0);
   const controller = useRef<AbortController | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
@@ -81,9 +55,18 @@ export default function Learn() {
 
   useEffect(() => () => controller.current?.abort(), []);
 
-  const ask = (question: string, unitIds?: string[]) => {
+  const ask = (question: string) => {
     const text = question.trim();
     if (text.length === 0 || busy) return;
+    // The tutor needs its notice accepted and a connection; say so instead of sending anything.
+    if (!consent) {
+      setError(t("learn.tutor.errors.needConsent"));
+      return;
+    }
+    if (!online) {
+      setError(t("learn.tutor.errors.offline"));
+      return;
+    }
     const history = messages.filter((message) => message.text.length > 0).map(({ role, text: body }) => ({ role, text: body }));
     const userId = ++messageId.current;
     const answerId = ++messageId.current;
@@ -93,9 +76,7 @@ export default function Learn() {
     setBusy(true);
     const abort = new AbortController();
     controller.current = abort;
-    const useTutor = online && consent;
-
-    void askTutor({ question: text, locale, history, online: useTutor, signal: abort.signal, ...(unitIds == null ? {} : { unitIds }) }, {
+    void askTutor({ question: text, locale, history, online, signal: abort.signal }, {
       onText: (chunk) => setMessages((current) => current.map((message) => message.id === answerId ? { ...message, text: message.text + chunk } : message)),
     }).then((answer) => {
       setMessages((current) => current.map((message) => message.id === answerId ? { ...message, answer } : message));
@@ -104,11 +85,9 @@ export default function Learn() {
       if (abort.signal.aborted) return;
       setError(caught instanceof TutorUnavailableError && caught.reason === "quota"
         ? t("helpPage.chat.quotaReached")
-        : !consent
-          ? t("learn.tutor.errors.needConsent")
-          : !online
-            ? t("learn.tutor.errors.offline")
-            : t("learn.tutor.errors.unavailable"));
+        : caught instanceof TutorUnavailableError && caught.reason === "offline"
+          ? t("learn.tutor.errors.offline")
+          : t("learn.tutor.errors.unavailable"));
     }).finally(() => {
       if (controller.current === abort) controller.current = null;
       setBusy(false);
@@ -126,16 +105,12 @@ export default function Learn() {
     setError(null);
   };
 
-  const pathLabel = (answer: TutorAnswer) => answer.path === "lesson"
-    ? t("learn.tutor.path.lesson")
-    : answer.webSearch ? t("learn.tutor.path.web") : t("learn.tutor.path.tutor");
-
   return (
     <main aria-label={t("learn.title")} className="app-page">
       <div className="page-head">
         <div>
           <h1 className="page-title">{t("learn.title")}</h1>
-          <p className="text-xs text-muted-foreground">{t("learn.disclosure")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("learn.disclosure")}</p>
         </div>
         {messages.length > 0 && (
           <Button type="button" variant="outline" size="sm" onClick={reset}>
@@ -144,69 +119,31 @@ export default function Learn() {
         )}
       </div>
 
-      <section aria-label={t("learn.tutor.title")} className="rounded-lg border border-border bg-card">
+      <section aria-label={t("learn.title")} className="rounded-lg border border-border bg-card">
         <div className="space-y-3 p-3" aria-live="polite">
           {messages.length === 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ocean-wash" aria-hidden="true">
-                  <Logo variant="icon" className="h-6 w-6" />
-                </span>
-                <h2 className="text-sm font-semibold">{t("learn.tutor.title")}</h2>
-              </div>
-              <p className="text-xs text-muted-foreground">{t("learn.tutor.startersNote")}</p>
+            <div className="space-y-2">
               <ul className="flex flex-wrap gap-2" aria-label={t("learn.tutor.suggestions")}>
                 {LITERACY_STARTERS.map((starter) => (
                   <li key={starter.id}>
-                    <button type="button" onClick={() => ask(starter.question[locale], starter.unitIds)} disabled={busy} className="min-h-11 rounded-2xl border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
+                    <button type="button" onClick={() => ask(starter.question[locale])} disabled={busy} className="min-h-11 rounded-2xl border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
                       {starter.question[locale]}
                     </button>
                   </li>
                 ))}
               </ul>
+              <p className="text-xs text-muted-foreground">{t("learn.tutor.startersNote")}</p>
             </div>
           )}
           {messages.map((message) => (
-            <article key={message.id} className={message.role === "user" ? "flex justify-end" : "flex items-end gap-2"}>
-              {message.role === "assistant" && (
-                <span className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ocean-wash" aria-hidden="true">
-                  <Logo variant="icon" className="h-5 w-5" />
-                </span>
-              )}
+            <article key={message.id} className={message.role === "user" ? "flex justify-end" : "flex"}>
               <div className={message.role === "user"
                 ? "max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3.5 py-2.5 text-sm text-primary-foreground"
-                : "min-w-0 max-w-[88%] rounded-2xl rounded-bl-sm bg-muted px-3.5 py-2.5 text-sm"}>
+                : "min-w-0 max-w-[92%] rounded-2xl rounded-bl-sm bg-muted px-3.5 py-2.5 text-sm"}>
                 {message.role === "assistant" && message.text.length > 0
                   ? <HelpMessageMarkdown text={message.text} />
                   : <p className="whitespace-pre-wrap leading-relaxed">{message.text || t("learn.tutor.writing")}</p>}
-                {message.answer != null && (
-                  <div className="mt-2 space-y-2 border-t border-foreground/10 pt-2">
-                    <p className="text-xs text-muted-foreground">{pathLabel(message.answer)}</p>
-                    {message.answer.unitIds.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {message.answer.unitIds.flatMap((id) => units.find((unit) => unit.id === id) ?? []).map((unit) => (
-                          <button key={unit.id} type="button" onClick={() => setOpenUnit(unit)} className="inline-flex items-center gap-1 rounded-full bg-card px-2.5 py-1 text-left text-xs font-semibold text-ocean-primary hover:bg-ocean-wash" aria-label={t("learn.lesson.open", { title: unit.title })}>
-                            <BookOpen className="h-3.5 w-3.5 shrink-0" />{unit.title}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    {message.answer.sources.length > 0 && (
-                      <p className="text-xs leading-snug text-muted-foreground">{t("learn.tutor.webCaution")}</p>
-                    )}
-                    {message.answer.sources.length > 0 && (
-                      <ul className="space-y-1" aria-label={t("learn.tutor.sources")}>
-                        {message.answer.sources.map((source) => (
-                          <li key={source.uri}>
-                            <a href={source.uri} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-ocean-primary underline underline-offset-2">
-                              <ExternalLink className="h-3 w-3 shrink-0" />{source.title}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
+                {message.answer != null && <AnswerSource answer={message.answer} />}
               </div>
             </article>
           ))}
@@ -222,7 +159,7 @@ export default function Learn() {
               <Button type="button" size="sm" className="h-11 min-w-11" onClick={() => { grantLearnProviderConsent(); setConsent(true); }}>{t("learn.tutor.ok")}</Button>
             </div>
           )}
-          <form onSubmit={handleSubmit} className="grid grid-cols-[1fr_2.5rem] items-end gap-2">
+          <form onSubmit={handleSubmit} className="grid grid-cols-[1fr_2.75rem] items-end gap-2">
             <textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
@@ -245,77 +182,37 @@ export default function Learn() {
         </footer>
       </section>
 
-      <section aria-label={t("learn.lessons.title")} className="space-y-2">
-        <h2 className="flex items-center gap-2 px-1 text-sm font-semibold"><GraduationCap className="h-4 w-4 text-ocean-primary" />{t("learn.lessons.title")}</h2>
-        {LITERACY_AREAS.map((area, index) => {
-          const areaUnits = units.filter((unit) => unit.area === area);
-          return (
-            <details key={area} className="group rounded-lg border border-border bg-card" open={index === 0}>
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-semibold">
-                <span><span className="mr-2 tabular-nums text-ocean-primary">{index + 1}</span>{t(`learn.areas.${area}`)}</span>
-                <span className="flex items-center gap-2 text-xs font-normal text-muted-foreground">
-                  {t("learn.lessons.count", { count: areaUnits.length })}
-                  <ChevronRight className="h-4 w-4 transition-transform group-open:rotate-90" />
-                </span>
-              </summary>
-              <ul className="divide-y divide-border border-t border-border">
-                {areaUnits.map((unit) => (
-                  <li key={unit.id}>
-                    <button type="button" onClick={() => setOpenUnit(unit)} className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left text-sm hover:bg-muted">
-                      <span className="min-w-0">{unit.title}</span>
-                      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          );
-        })}
-        <p className="px-1 text-xs leading-relaxed text-muted-foreground">{t("learn.draft")}</p>
-      </section>
-
-      <Dialog open={openUnit != null} onOpenChange={(open) => { if (!open) closeLesson(); }}>
-        {openUnit != null && (
-          // A lesson is 200 to 260 words: on a phone it reads in a sheet from the bottom edge, at
-          // body size and left-aligned; wider screens keep a centred dialog.
-          <DialogContent className="inset-x-0 bottom-0 top-auto max-h-[92dvh] w-full max-w-none translate-x-0 translate-y-0 rounded-t-2xl rounded-b-none border-b-0 p-5 text-base leading-[1.55] data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:inset-x-auto sm:bottom-auto sm:left-[50%] sm:top-[50%] sm:w-[calc(100%-2rem)] sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-lg sm:border-b sm:p-6">
-            <DialogHeader className="text-left">
-              <DialogTitle className="pr-8 text-lg leading-snug">{openUnit.title}</DialogTitle>
-              <DialogDescription className="text-base text-foreground/80">{openUnit.summary}</DialogDescription>
-            </DialogHeader>
-            <ul className="list-disc space-y-2 pl-5">
-              {openUnit.points.map((point) => <li key={point}>{point}</li>)}
-            </ul>
-            <div className="rounded-lg bg-ocean-wash p-3">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-ocean-primary">{t("learn.lesson.example")}</p>
-              {openUnit.example}
-            </div>
-            <div className="rounded-lg border border-border p-3">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("learn.lesson.watchOut")}</p>
-              {openUnit.watchOut}
-            </div>
-            <div className="rounded-lg border border-ocean-primary/40 p-3">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-ocean-primary">{t("learn.lesson.action")}</p>
-              {openUnit.action}
-            </div>
-            <div className="text-sm leading-relaxed text-muted-foreground">
-              <p className="font-semibold">{t("learn.lesson.basis")}</p>
-              <ul className="mt-1 space-y-1">
-                {openUnit.sources.flatMap((id) => LITERACY_SOURCES[id] == null ? [] : [{ id, ...LITERACY_SOURCES[id] }]).map((source) => (
-                  <li key={source.id}>
-                    {source.url == null
-                      ? source.name
-                      : <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{source.name}</a>}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <Button type="button" className="h-11" onClick={() => { const unit = openUnit; closeLesson(); ask(unit.title, [unit.id]); }} disabled={busy}>
-              {t("learn.lesson.ask")}
-            </Button>
-          </DialogContent>
-        )}
-      </Dialog>
     </main>
+  );
+}
+
+/**
+ * Under an answer: the closest lesson and who it is drawn from, one line; and, when the tutor
+ * searched the web, its sources with the caution that web figures can be wrong.
+ */
+function AnswerSource({ answer }: { answer: TutorAnswer }) {
+  const { t } = useTranslation();
+  const lesson = answer.lessons[0];
+  if (lesson == null && answer.sources.length === 0) return null;
+  return (
+    <div className="mt-2 space-y-1 border-t border-foreground/10 pt-2 text-xs text-muted-foreground">
+      {lesson != null && (
+        <p>{t("learn.tutor.source", { title: lesson.title, publisher: lesson.publishers.slice(0, 2).join(", ") || "WiseMoney" })}</p>
+      )}
+      {answer.sources.length > 0 && (
+        <>
+          <p className="leading-snug">{t("learn.tutor.webCaution")}</p>
+          <ul className="space-y-1" aria-label={t("learn.tutor.sources")}>
+            {answer.sources.map((source) => (
+              <li key={source.uri}>
+                <a href={source.uri} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-ocean-primary underline underline-offset-2">
+                  <ExternalLink className="h-3 w-3 shrink-0" />{source.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
   );
 }

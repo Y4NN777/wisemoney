@@ -33,4 +33,4 @@ export async function sendConversationMessage(
   return submit(egressContext, "teaching", capability.mode, featureId, masterKey, message);
 }
 
-export { TutorUnavailableError, askTutor, type TutorAnswer, type TutorPath } from "./tutor.ts";
+export { TutorUnavailableError, askTutor, type TutorAnswer } from "./tutor.ts";

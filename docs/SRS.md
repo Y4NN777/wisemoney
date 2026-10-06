@@ -5,7 +5,7 @@
 | **Title** | WiseMoney — Software Requirements Specification |
 | **Date** | 2026-06-02 |
 | **Version** | SRS v0.1 (derived from PRD v0.1) |
-| **Revision** | Rev 2026-06-02 — Gate-2: FR-AUTH added; multi-tenant proxy; multi-provider MVP; CSV/XLSX/JSON export; consent in localStorage. Rev 2026-06-05 — OQ-06 resolved (client auth token storage; see §15). Rev 2026-09-26 — §5.5 managed literacy gateway (FR-LRN-08…11); FR-LRN-02 scoped to the BYO path (ADR-0013). |
+| **Revision** | Rev 2026-06-02 — Gate-2: FR-AUTH added; multi-tenant proxy; multi-provider MVP; CSV/XLSX/JSON export; consent in localStorage. Rev 2026-06-05 — OQ-06 resolved (client auth token storage; see §15). Rev 2026-09-26 — §5.5 managed literacy gateway (FR-LRN-08…11); FR-LRN-02 scoped to the BYO path (ADR-0013). Rev 2026-10-06 — FR-LRN-08, -09, -11: server-side retrieval, no lessons on the device. |
 | **Status** | Draft |
 | **Owner** | Nathan (software architecture) |
 | **Source** | `docs/PRD.md` v0.1; `docs/intake/intent-v0.1.md` v0.1 |
@@ -296,20 +296,22 @@ layer, transparent to the user.
 
 **FR-LRN-08** `[MVP]` When a managed literacy gateway is configured, general
 teaching questions are answered through it without a BYO key. Its request carries
-only the typed question, the locale, recent turns and grounding unit ids
-(`docs/api/learn.openapi.yaml`). Any vault-derived value, aggregate included, is rejected
+only the typed question, the locale and recent turns; the gateway retrieves the
+lessons itself (`docs/api/learn.openapi.yaml`; amended 2026-10-06). Any vault-derived value, aggregate included, is rejected
 by the gateway schema (CONTRACT INV-EGR-04).
 
 **FR-LRN-09** `[MVP]` Answers are grounded in a bilingual, versioned literacy
-course shipped with the app (`docs/literacy/course-v1.md`), whose lessons name their
-source, licence status, and "as of" date for any figure. Units are readable offline.
+course (`docs/literacy/course-v1.md`) whose lessons name their source, licence status,
+and "as of" date for any figure. Since 2026-10-06 the course is the tutor's knowledge
+base on the server, retrieved by embeddings (ADR-0013 amendment); it is not shown as
+pages and is not stored on the phone, so the tutor needs a connection.
 
 **FR-LRN-10** `[MVP]` The tutor carries its own per-feature consent (FR-CONSENT-02)
 and a permanent "education, not advice" disclosure; consent for help or for any
 other AI feature does not extend to it.
 
-**FR-LRN-11** `[MVP]` Every answer states what produced it: the managed tutor, the
-managed tutor with web search, or the lesson on the device. Questions about the
+**FR-LRN-11** `[MVP]` Every answer names the lesson it draws on and that lesson's
+publishers, and lists its web sources when web search was used. Questions about the
 user's own numbers are pointed to the Assistant (BYO path) when it is available.
 
 ---

@@ -300,33 +300,41 @@ try {
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Money available today", { exact: true }).first().waitFor();
   assert.equal(await coachTip.count(), 0, "coach tip came back after the user left its page");
-  // Literacy pillar: lessons are readable with no provider, and without the tutor notice accepted a
-  // question is answered from the lesson on this device (no request leaves the browser).
+  // Financial education: a conversation only. No lesson list on the phone; nothing leaves the
+  // browser before the tutor notice is accepted; an answer names its source lesson.
   const learnRequests = [];
   appPage.on("request", (request) => { if (request.url().includes("/api/learn/")) learnRequests.push(request.url()); });
-  await appPage.getByRole("link", { name: "Learn about money", exact: true }).click();
-  await appPage.getByRole("heading", { name: "Learn", exact: true }).waitFor();
-  await appPage.getByText("Education, not advice.", { exact: true }).waitFor();
+  await appPage.getByRole("link", { name: "Financial education", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Financial education", exact: true }).waitFor();
+  await appPage.getByText("Education, not advice. Not yet reviewed by a local expert.", { exact: true }).waitFor();
   assert.equal(await appPage.getByRole("button", { name: "Open WiseBot", exact: true }).count(), 1, "inside the app WiseBot has one entry, the header help button, and no floating launcher");
-  await appPage.getByText(/Portfolio and the long term/).waitFor();
-  await appPage.getByRole("button", { name: "Turn a wish into a goal", exact: true }).click();
-  const lessonDialog = appPage.getByRole("dialog", { name: "Turn a wish into a goal", exact: true });
-  await lessonDialog.getByText("Example", { exact: true }).waitFor();
-  await lessonDialog.getByText("Do this week", { exact: true }).waitFor();
-  await lessonDialog.getByText("Sources", { exact: true }).waitFor();
-  assert.ok(await lessonDialog.getByRole("link").count() >= 1, "a lesson shows no linked source");
-  await lessonDialog.getByRole("button", { name: "Close", exact: true }).click();
-  await appPage.getByText("Tutor answers go through Google. Nothing from your vault.", { exact: true }).waitFor();
+  assert.equal(await appPage.getByText(/Portfolio and the long term|Build your first budget/).count(), 0, "the page still lists lessons");
   await appPage.getByText("Questions asked by readers in Burkina Faso (LeFaso.net).", { exact: true }).waitFor();
   const starters = appPage.getByRole("list", { name: "Questions to start with", exact: true }).getByRole("button");
-  assert.equal(await starters.count(), 5, "learn page does not offer the five readers' questions");
+  assert.equal(await starters.count(), 5, "the page does not offer the five readers' questions");
   await starters.filter({ hasText: "Lending at 15%: is that allowed?" }).click();
-  await appPage.getByText(/14% for banks and 24% for other lenders/).first().waitFor();
-  await appPage.getByText("Lesson on this device", { exact: true }).waitFor();
+  await appPage.getByText("Accept the notice below first.", { exact: true }).waitFor();
   assert.deepEqual(learnRequests, [], "a question left the browser before the tutor notice was accepted");
-  await appPage.getByLabel("Ask a money question").fill("zzzz qqqq");
+  await appPage.getByText("Tutor answers go through Google. Nothing from your vault.", { exact: true }).waitFor();
+  await appPage.getByRole("button", { name: "OK", exact: true }).click();
+  // The preview has no server functions: the gateway is answered here with the event stream it sends.
+  await appPage.route("**/api/learn/messages", (route) => route.fulfill({
+    status: 200,
+    headers: { "content-type": "text/event-stream; charset=utf-8" },
+    body: 'event: meta\ndata: {"unitIds":["the-legal-ceiling"],"webSearch":false,"lessons":[{"id":"the-legal-ceiling","title":"Know the legal maximum interest rate","publishers":["BCEAO"]}],"retrieval":"embeddings"}\n\n'
+      + 'event: delta\ndata: {"text":"The legal ceiling is set by the central bank."}\n\nevent: done\ndata: {}\n\n',
+  }));
+  await starters.filter({ hasText: "Lending at 15%: is that allowed?" }).click();
+  await appPage.getByText("The legal ceiling is set by the central bank.", { exact: true }).waitFor();
+  await appPage.getByText("Source: Know the legal maximum interest rate — BCEAO", { exact: true }).waitFor();
+  await appPage.unroute("**/api/learn/messages");
+  // A host without the function answers with its HTML page; the tutor must say it is not answering.
+  // (A 5xx would also work but logs a console error, which this smoke treats as a failure.)
+  await appPage.route("**/api/learn/messages", (route) => route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><title>x</title>" }));
+  await appPage.getByLabel("Ask a money question").fill("What is a tontine?");
   await appPage.getByRole("button", { name: "Ask the tutor", exact: true }).click();
-  await appPage.getByText("No lesson covers this. Accept the tutor notice to ask the tutor.", { exact: true }).waitFor();
+  await appPage.getByText("The service is not answering. Try again in a moment.", { exact: true }).waitFor();
+  await appPage.unroute("**/api/learn/messages");
   assert.equal(await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "learn page has horizontal overflow");
   await appPage.screenshot({ path: `${outputDir}/learn.png`, fullPage: true });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
@@ -530,14 +538,6 @@ try {
   await appPage.getByRole("button", { name: "Save", exact: true }).click();
   await appPage.getByText("Transaction updated.", { exact: true }).waitFor();
   await appPage.getByText(/Edited from activity/).first().waitFor();
-  // Plan links each of Budgets, Goals and Debts to its lesson; closing the lesson clears the link.
-  await appPage.getByRole("link", { name: "Plan", exact: true }).click();
-  await appPage.getByRole("link", { name: "Lesson about Budgets", exact: true }).click();
-  const linkedLesson = appPage.getByRole("dialog", { name: "Build your first budget", exact: true });
-  await linkedLesson.getByText("Do this week", { exact: true }).waitFor();
-  await linkedLesson.getByRole("button", { name: "Close", exact: true }).click();
-  await linkedLesson.waitFor({ state: "detached" });
-  assert.doesNotMatch(appPage.url(), /unit=/, "closing a linked lesson left its parameter in the URL");
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
   // The full guide is one tap inside the WiseBot panel.
