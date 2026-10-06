@@ -182,10 +182,10 @@
     "viewAll": "Tout voir",
     "viewMonthlyActivity": "Voir l’activité du mois",
     "quickActions": "Actions rapides",
-    "addExpense": "Ajouter une dépense",
-    "addIncome": "Ajouter un revenu",
-    "makeTransfer": "Faire un transfert",
-    "planExpense": "Prévoir une dépense",
+    "addExpense": "Dépense",
+    "addIncome": "Revenu",
+    "makeTransfer": "Transfert",
+    "planExpense": "Dépense prévue",
     "missingFxTitle": "Certains totaux sont incomplets",
     "missingFxBody": "Ajoutez un taux de change de {{currencies}} vers {{baseCurrency}} dans les paramètres pour inclure ces montants.",
     "negativeCashFlow": "Dépenses supérieures aux revenus",
@@ -1099,10 +1099,8 @@
   "coach": {
     "card": {
       "label": "Conseil WiseBot",
-      "kicker": "Besoin d’aide ?",
       "dismiss": "Fermer ce conseil",
       "steps": "Voir les étapes",
-      "askBot": "Demander à WiseBot",
       "later": "Plus tard"
     },
     "settings": {

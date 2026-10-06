@@ -182,10 +182,10 @@
     "viewAll": "View All",
     "viewMonthlyActivity": "View this month’s activity",
     "quickActions": "Quick actions",
-    "addExpense": "Add an expense",
-    "addIncome": "Add income",
-    "makeTransfer": "Make a transfer",
-    "planExpense": "Plan an expense",
+    "addExpense": "Expense",
+    "addIncome": "Income",
+    "makeTransfer": "Transfer",
+    "planExpense": "Planned expense",
     "missingFxTitle": "Some totals are incomplete",
     "missingFxBody": "Add an exchange rate from {{currencies}} to {{baseCurrency}} in Settings to include those amounts.",
     "negativeCashFlow": "Spending above income",
@@ -1099,10 +1099,8 @@
   "coach": {
     "card": {
       "label": "WiseBot tip",
-      "kicker": "Need help?",
       "dismiss": "Dismiss this tip",
       "steps": "View steps",
-      "askBot": "Ask WiseBot",
       "later": "Later"
     },
     "settings": {

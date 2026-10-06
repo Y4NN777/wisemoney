@@ -59,24 +59,33 @@ import { type PeriodComparisonSummary, FinancialOverview } from "./HomeSummary.t
 
 // ── Main dashboard content ──────────────────────────────────────────────
 
+/**
+ * Four shortcuts into the capture sheet and the planned expenses, as separate tiles: an icon in its
+ * colour and one word, the same words the capture sheet uses (Dépense, Revenu, Transfert).
+ */
 function DashboardQuickActions() {
   const { t } = useTranslation();
   const openCapture = useOpenCaptureSheet();
-  const quickActionClass = "h-auto min-w-0 justify-start whitespace-normal bg-card px-3 py-3 text-left leading-tight hover:bg-accent sm:px-4";
+  const tile = "flex min-h-[4.5rem] min-w-0 flex-col items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-1 py-2 text-center text-xs font-medium leading-tight text-foreground transition-colors hover:bg-muted";
+  const icon = "flex h-9 w-9 items-center justify-center rounded-full";
   return (
-    <nav aria-label={t("dashboard.quickActions")} className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-4">
-      <Button type="button" variant="ghost" className={quickActionClass} onClick={() => openCapture("transaction", "expense")}>
-        <ArrowUp className="mr-2 h-4 w-4 text-negative" />{t("dashboard.addExpense")}
-      </Button>
-      <Button type="button" variant="ghost" className={quickActionClass} onClick={() => openCapture("transaction", "income")}>
-        <ArrowDown className="mr-2 h-4 w-4 text-positive" />{t("dashboard.addIncome")}
-      </Button>
-      <Button type="button" variant="ghost" className={quickActionClass} onClick={() => openCapture("transfer")}>
-        <ArrowRightLeft className="mr-2 h-4 w-4 text-ocean-primary" />{t("dashboard.makeTransfer")}
-      </Button>
-      <Button asChild variant="ghost" className={quickActionClass}>
-        <Link to="/planned-expenses"><CalendarDays className="mr-2 h-4 w-4 text-ocean-primary" />{t("dashboard.planExpense")}</Link>
-      </Button>
+    <nav aria-label={t("dashboard.quickActions")} className="grid grid-cols-4 gap-2">
+      <button type="button" className={tile} onClick={() => openCapture("transaction", "expense")}>
+        <span className={`${icon} bg-negative-wash text-negative`} aria-hidden="true"><ArrowUp className="h-4 w-4" /></span>
+        {t("dashboard.addExpense")}
+      </button>
+      <button type="button" className={tile} onClick={() => openCapture("transaction", "income")}>
+        <span className={`${icon} bg-positive-wash text-positive`} aria-hidden="true"><ArrowDown className="h-4 w-4" /></span>
+        {t("dashboard.addIncome")}
+      </button>
+      <button type="button" className={tile} onClick={() => openCapture("transfer")}>
+        <span className={`${icon} bg-ocean-wash text-ocean-primary`} aria-hidden="true"><ArrowRightLeft className="h-4 w-4" /></span>
+        {t("dashboard.makeTransfer")}
+      </button>
+      <Link to="/planned-expenses" className={tile}>
+        <span className={`${icon} bg-ocean-wash text-ocean-primary`} aria-hidden="true"><CalendarDays className="h-4 w-4" /></span>
+        {t("dashboard.planExpense")}
+      </Link>
     </nav>
   );
 }

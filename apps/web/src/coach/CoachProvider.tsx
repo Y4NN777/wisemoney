@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { Bot, BookOpen, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { db } from "../db/schema.ts";
 import { getProductTask } from "../help/corpus.ts";
@@ -52,12 +52,11 @@ function hasBackupMarker(): boolean {
   try { return localStorage.getItem(BACKUP_MARKER_KEY) != null; } catch { return false; }
 }
 
-function CoachCard({ nudge, onLater, onDismiss, onHelp, onBot }: {
+function CoachCard({ nudge, onLater, onDismiss, onHelp }: {
   nudge: CoachNudge;
   onLater: () => void;
   onDismiss: () => void;
   onHelp: () => void;
-  onBot: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const [closing, setClosing] = useState(false);
@@ -84,33 +83,24 @@ function CoachCard({ nudge, onLater, onDismiss, onHelp, onBot }: {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
   if (task == null) return null;
-  // No backdrop: the tip is a suggestion beside the page, never a layer over it.
+  // A plain card beside the page, like the app's other cards: the task's title, a link to its
+  // steps, and "Later". No backdrop, no robot, no second paragraph (Y4NN, 2026-10-06: "trop IA").
   return (
     <aside
       role="status"
       aria-label={t("coach.card.label")}
       data-closing={closing ? "true" : undefined}
-      className={`coach-card fixed inset-x-3 bottom-[calc(4.75rem+var(--safe-area-bottom))] z-[80] overflow-hidden rounded-2xl border border-ocean-primary bg-card shadow-[0_16px_44px_rgba(16,24,32,0.22)] sm:left-auto sm:right-5 sm:w-[min(390px,calc(100vw-2rem))] lg:bottom-5 ${closing ? "coach-card-closing" : ""}`}
+      className={`coach-card fixed inset-x-3 bottom-[calc(4.75rem+var(--safe-area-bottom))] z-[80] rounded-lg border border-border bg-card shadow-lg sm:left-auto sm:right-5 sm:w-[min(360px,calc(100vw-2rem))] lg:bottom-5 ${closing ? "coach-card-closing" : ""}`}
     >
-      <div className="grid grid-cols-[3.25rem_1fr_2.75rem] border-b border-border">
-        <span className="flex items-center justify-center border-r border-border bg-ocean-primary text-white"><Bot className="h-5 w-5" /></span>
-        <div className="min-w-0 px-3 py-2.5">
-          <p className="text-xs font-semibold text-ocean-primary">{t("coach.card.kicker")}</p>
-          <h2 className="mt-0.5 text-sm font-bold leading-tight">{task.title}</h2>
-        </div>
-        <button type="button" onClick={() => closeSmoothly(onDismiss)} className="flex items-center justify-center border-l border-border" aria-label={t("coach.card.dismiss")}>
+      <div className="flex items-start gap-2 pl-4 pt-3">
+        <p className="min-w-0 flex-1 pt-2.5 text-sm font-semibold leading-snug">{task.title}</p>
+        <button type="button" onClick={() => closeSmoothly(onDismiss)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground" aria-label={t("coach.card.dismiss")}>
           <X className="h-4 w-4" />
         </button>
       </div>
-      <div className="p-3">
-        <p className="text-sm leading-relaxed text-muted-foreground">{task.summary}</p>
-        <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          <Button type="button" variant="outline" className="justify-start" onClick={() => closeSmoothly(onHelp)}><BookOpen className="h-4 w-4" />{t("coach.card.steps")}</Button>
-          <Button type="button" className="justify-start" onClick={() => closeSmoothly(onBot)}><Bot className="h-4 w-4" />{t("coach.card.askBot")}</Button>
-        </div>
-        <button type="button" onClick={() => closeSmoothly(onLater)} className="mt-3 text-xs font-medium text-muted-foreground underline underline-offset-4">
-          {t("coach.card.later")}
-        </button>
+      <div className="flex items-center gap-1 px-2 pb-2">
+        <Button type="button" variant="ghost" className="text-ocean-primary" onClick={() => closeSmoothly(onHelp)}>{t("coach.card.steps")}</Button>
+        <Button type="button" variant="ghost" className="text-muted-foreground" onClick={() => closeSmoothly(onLater)}>{t("coach.card.later")}</Button>
       </div>
     </aside>
   );
@@ -287,10 +277,6 @@ export function CoachProvider({ children }: { children: ReactNode }) {
         onLater={() => recordAndClose("later")}
         onDismiss={() => recordAndClose("dismissed")}
         onHelp={() => { recordAndClose("help_opened"); openHelp(nudge.taskId); }}
-        onBot={() => {
-          recordAndClose("bot_opened");
-          wiseBot.openWiseBot({ entryPoint: "coach", surfaceId: surfaceFromPathname(pathname), taskId: nudge.taskId });
-        }}
       />}
     </CoachContext.Provider>
   );
