@@ -11,6 +11,7 @@ import {
   notificationFor,
   processDueReminders,
 } from "./pwa/reminderQueue.ts";
+import { cacheHoldsStuckBuild } from "./pwa/stuckBuilds.ts";
 
 declare const self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: Array<{ revision?: string; url: string }>;
@@ -56,6 +57,17 @@ self.addEventListener("message", (event) => {
     return;
   }
   if (isReminderWorkerMessage(event.data)) event.waitUntil(processReminderQueue());
+});
+
+// A device on a build that never activates a waiting version would stay on it: take over at once,
+// without reloading any page, so no unlock is cut off (Y4NN chose this on 2026-10-08). The old page
+// runs on until its next opening; every later version follows the opening rule in startupUpdate.ts.
+self.addEventListener("install", (event) => {
+  event.waitUntil((async () => {
+    const names = (await caches.keys()).filter((name) => name.startsWith("workbox-precache"));
+    const urls = (await Promise.all(names.map(async (name) => (await (await caches.open(name)).keys()).map((request) => request.url)))).flat();
+    if (cacheHoldsStuckBuild(urls)) await self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", (event) => {
