@@ -24,8 +24,8 @@ describe("WiseBot product retrieval evaluation", () => {
     ["en", "Plan an expense without changing my balance", "depenses-prevues"],
     ["fr", "Comment suivre ce qu'une personne me doit ?", "dettes"],
     ["en", "How do I track money someone owes me?", "dettes"],
-    ["fr", "WiseBot peut-il analyser mes comptes ?", "intelligence"],
-    ["en", "Can WiseBot analyze my accounts?", "intelligence"],
+    ["fr", "WiseHelp peut-il analyser mes comptes ?", "intelligence"],
+    ["en", "Can WiseHelp analyze my accounts?", "intelligence"],
   ] as const)("keeps essential journey %s/%s in the top three", (locale, question, taskId) => {
     expect(findRelevantHelpSections(getHelpSections(locale), question, 3).map(({ id }) => id)).toContain(taskId);
   });

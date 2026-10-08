@@ -685,7 +685,7 @@
       "done": "Terminé"
     },
     "consentSettings": "Paramètres de consentement",
-    "openLessons": "Éducation financière"
+    "openLessons": "WiseLearn"
   },
   "budgets": {
     "title": "Budgets",
@@ -1089,17 +1089,17 @@
     },
     "retry": "Réessayer",
     "reopen": "Rouvrir WiseMoney",
-    "askWiseBot": "Comprendre avec WiseBot",
+    "askWiseBot": "Comprendre avec WiseHelp",
     "diagnostic": "Diagnostic {{id}} — toucher pour copier",
     "copied": "Identifiant copié"
   },
   "coach": {
     "card": {
-      "label": "Conseil WiseBot",
+      "label": "Conseil WiseHelp",
       "dismiss": "Fermer ce conseil",
       "steps": "Voir les étapes",
       "later": "Plus tard",
-      "askBot": "Demander à WiseBot"
+      "askBot": "Demander à WiseHelp"
     },
     "settings": {
       "inApp": "Conseils dans l’application",
@@ -1108,7 +1108,7 @@
       "notificationsHelp": "Facultatives, silencieuses et limitées à une par semaine. Votre navigateur décide du moment exact.",
       "pause": "Mettre en pause 14 jours",
       "reset": "Réinitialiser les conseils vus",
-      "privacy": "Rien ne quitte cet appareil tant que vous ne touchez pas « Demander à WiseBot ».",
+      "privacy": "Rien ne quitte cet appareil tant que vous ne touchez pas « Demander à WiseHelp ».",
       "permission": {
         "default": "Autorisation non demandée",
         "granted": "Notifications autorisées",
@@ -1141,7 +1141,7 @@
     },
     "sections": {
       "coach": {
-        "title": "Aide WiseBot"
+        "title": "Aide WiseHelp"
       },
       "reminders": {
         "title": "Rappels et calendrier"
@@ -1244,7 +1244,7 @@
     "resultCount_one": "{{count}} parcours correspondant",
     "resultCount_other": "{{count}} parcours correspondants",
     "noResult": "Aucun parcours correspondant",
-    "noResultHint": "Essayez un mot plus court ou demandez à WiseBot.",
+    "noResultHint": "Essayez un mot plus court ou demandez à WiseHelp.",
     "install": {
       "prompt": "Installer WiseMoney",
       "instructions": "Voir les instructions d’installation",
@@ -1255,19 +1255,19 @@
       "installed": "WiseMoney est déjà installé sur cet appareil."
     },
     "chat": {
-      "open": "Ouvrir WiseBot",
-      "title": "WiseBot",
+      "open": "Ouvrir WiseHelp",
+      "title": "WiseHelp",
       "scope": "Questions sur l’utilisation de l’application",
-      "askWiseBot": "Demander à WiseBot",
+      "askWiseBot": "Demander à WiseHelp",
       "newConversation": "Nouvelle conversation",
       "stop": "Arrêter la réponse",
       "welcome": "Que souhaitez-vous faire dans WiseMoney ?",
-      "offline": "WiseBot nécessite Internet — toute l’aide écrite reste disponible hors ligne.",
-      "offlineFallback": "WiseBot attend la connexion. Ces parcours restent disponibles hors ligne.",
+      "offline": "WiseHelp nécessite Internet — toute l’aide écrite reste disponible hors ligne.",
+      "offlineFallback": "WiseHelp attend la connexion. Ces parcours restent disponibles hors ligne.",
       "placeholder": "Demandez comment utiliser WiseMoney",
       "send": "Envoyer la question",
       "writing": "Rédaction…",
-      "unavailable": "WiseBot est temporairement indisponible. Le guide écrit reste disponible.",
+      "unavailable": "WiseHelp est temporairement indisponible. Le guide écrit reste disponible.",
       "queuePosition": "Position {{position}} dans la file",
       "waitEstimate": "Attente estimée : environ {{seconds}} secondes",
       "quota": "{{count}} unités d’aide restantes aujourd’hui",
@@ -1280,14 +1280,14 @@
       "imageCost": "L’image est redimensionnée et nettoyée avant l’envoi. Cette demande utilise 2 unités.",
       "imageError": "Choisissez une image valide de moins de 10 Mo.",
       "consent": {
-        "title": "Avant d’utiliser WiseBot",
+        "title": "Avant d’utiliser WiseHelp",
         "google": "Votre question et l’image facultative sont envoyées à Google pour générer la réponse.",
-        "scope": "WiseBot explique WiseMoney et ne peut accéder ni au coffre, ni aux comptes, ni aux transactions, ni à l’écran.",
+        "scope": "WiseHelp explique WiseMoney et ne peut accéder ni au coffre, ni aux comptes, ni aux transactions, ni à l’écran.",
         "sensitive": "N’incluez aucune information personnelle ou financière dans un message ou une image.",
-        "review": "Relire les informations de WiseBot",
+        "review": "Relire les informations de WiseHelp",
         "line": "Les questions vont chez Google. Rien de votre coffre.",
         "ok": "OK",
-        "hide": "Masquer les informations de WiseBot"
+        "hide": "Masquer les informations de WiseHelp"
       },
       "status": {
         "ready": "Prêt",
@@ -1365,8 +1365,8 @@
     }
   },
   "learn": {
-    "title": "Éducation financière",
-    "disclosure": "De l’éducation, pas du conseil. Pas encore relu par un expert local.",
+    "title": "WiseLearn",
+    "disclosure": "De l’éducation, pas du conseil.",
     "tutor": {
       "placeholder": "Posez une question d’argent",
       "send": "Demander au tuteur",
@@ -1399,6 +1399,6 @@
     }
   },
   "learnCard": {
-    "title": "Éducation financière"
+    "title": "WiseLearn"
   }
 }

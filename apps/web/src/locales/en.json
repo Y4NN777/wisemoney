@@ -685,7 +685,7 @@
       "done": "Done"
     },
     "consentSettings": "Consent settings",
-    "openLessons": "Financial education"
+    "openLessons": "WiseLearn"
   },
   "budgets": {
     "title": "Budgets",
@@ -1089,17 +1089,17 @@
     },
     "retry": "Try again",
     "reopen": "Reopen WiseMoney",
-    "askWiseBot": "Understand with WiseBot",
+    "askWiseBot": "Understand with WiseHelp",
     "diagnostic": "Diagnostic {{id}} — tap to copy",
     "copied": "Identifier copied"
   },
   "coach": {
     "card": {
-      "label": "WiseBot tip",
+      "label": "WiseHelp tip",
       "dismiss": "Dismiss this tip",
       "steps": "View steps",
       "later": "Later",
-      "askBot": "Ask WiseBot"
+      "askBot": "Ask WiseHelp"
     },
     "settings": {
       "inApp": "In-app tips",
@@ -1108,7 +1108,7 @@
       "notificationsHelp": "Optional, silent, and limited to one per week. Your browser decides the exact delivery time.",
       "pause": "Pause for 14 days",
       "reset": "Reset seen tips",
-      "privacy": "Nothing leaves this device until you tap “Ask WiseBot”.",
+      "privacy": "Nothing leaves this device until you tap “Ask WiseHelp”.",
       "permission": {
         "default": "Permission not requested",
         "granted": "Notifications allowed",
@@ -1141,7 +1141,7 @@
     },
     "sections": {
       "coach": {
-        "title": "WiseBot help"
+        "title": "WiseHelp help"
       },
       "reminders": {
         "title": "Reminders and calendar"
@@ -1244,7 +1244,7 @@
     "resultCount_one": "{{count}} matching path",
     "resultCount_other": "{{count}} matching paths",
     "noResult": "No matching path",
-    "noResultHint": "Try a shorter word or ask WiseBot.",
+    "noResultHint": "Try a shorter word or ask WiseHelp.",
     "install": {
       "prompt": "Install WiseMoney",
       "instructions": "View installation instructions",
@@ -1255,19 +1255,19 @@
       "installed": "WiseMoney is already installed on this device."
     },
     "chat": {
-      "open": "Open WiseBot",
-      "title": "WiseBot",
+      "open": "Open WiseHelp",
+      "title": "WiseHelp",
       "scope": "Questions about using the app",
-      "askWiseBot": "Ask WiseBot",
+      "askWiseBot": "Ask WiseHelp",
       "newConversation": "New conversation",
       "stop": "Stop response",
       "welcome": "What would you like to do in WiseMoney?",
-      "offline": "WiseBot requires Internet — all written help remains available offline.",
-      "offlineFallback": "WiseBot is waiting for a connection. These guides remain available offline.",
+      "offline": "WiseHelp requires Internet — all written help remains available offline.",
+      "offlineFallback": "WiseHelp is waiting for a connection. These guides remain available offline.",
       "placeholder": "Ask how to use WiseMoney",
       "send": "Send question",
       "writing": "Writing…",
-      "unavailable": "WiseBot is temporarily unavailable. The written guide remains available.",
+      "unavailable": "WiseHelp is temporarily unavailable. The written guide remains available.",
       "queuePosition": "Position {{position}} in the queue",
       "waitEstimate": "Estimated wait: about {{seconds}} seconds",
       "quota": "{{count}} help units remaining today",
@@ -1280,14 +1280,14 @@
       "imageCost": "The image is resized and cleaned before sending. This request uses 2 units.",
       "imageError": "Choose a valid image smaller than 10 MB.",
       "consent": {
-        "title": "Before using WiseBot",
+        "title": "Before using WiseHelp",
         "google": "Your question and optional image are sent to Google to generate the answer.",
-        "scope": "WiseBot explains how to use WiseMoney and cannot access your vault, accounts, transactions, or screen.",
+        "scope": "WiseHelp explains how to use WiseMoney and cannot access your vault, accounts, transactions, or screen.",
         "sensitive": "Do not include personal or financial information in a message or image.",
-        "review": "Review WiseBot information",
+        "review": "Review WiseHelp information",
         "line": "Questions go to Google. Nothing from your vault.",
         "ok": "OK",
-        "hide": "Hide WiseBot information"
+        "hide": "Hide WiseHelp information"
       },
       "status": {
         "ready": "Ready",
@@ -1365,8 +1365,8 @@
     }
   },
   "learn": {
-    "title": "Financial education",
-    "disclosure": "Education, not advice. Not yet reviewed by a local expert.",
+    "title": "WiseLearn",
+    "disclosure": "Education, not advice.",
     "tutor": {
       "placeholder": "Ask a money question",
       "send": "Ask the tutor",
@@ -1399,6 +1399,6 @@
     }
   },
   "learnCard": {
-    "title": "Financial education"
+    "title": "WiseLearn"
   }
 }

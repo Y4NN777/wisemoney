@@ -64,7 +64,7 @@
   passphrase (show toggle, plain guidance) → three-step first session (currency and account
   accepted as they are, first movement, one plan or "Later"). The landing page loads
   without the vault, storage or app code; one locale per visit.
-- **Literacy:** `/learn` ("Éducation financière") is a conversation with a tutor on Gemma through
+- **Literacy:** `/learn` ("WiseLearn"; the in-app help is "WiseHelp") is a conversation with a tutor on Gemma through
   `api/learn` (closed schema, zero vault egress, own consent, optional web search). The 77 bilingual
   lessons (`apps/web/content/literacy/`, built by `tools/literacy/assemble.py`, written only from cited
   sources) are its knowledge base on the server, retrieved by `gemini-embedding-001` vectors
@@ -124,7 +124,7 @@
 - Implement BYO direct-provider orchestration.
 - Server functions run on Node 20 (root `engines`), which is past end of life; move to a
   current LTS as its own change. Add a post-deploy probe of `/api/help` and `/api/learn`.
-- Literacy course v1: local expert review before removing the "not yet reviewed" line; get the
+- Literacy course v1: local expert review (Y4NN, 2026-10-08: no "not yet reviewed" line in the app); get the
   two Burkinabè booklets from their official publishers; ask brokers for fee grids.
 - Landing page pass ("premium" look) — Phase 5 of the UX plan, design proposal first.
 - After the UX audit: a test with five real users and a run on a real low-end Android phone;

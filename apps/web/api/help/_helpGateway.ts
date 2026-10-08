@@ -112,15 +112,15 @@ function selectedContext(body: MessageBody, locale: "en" | "fr"): { text: string
     ...section.limitations.map((limitation) => `Limitation: ${limitation}`),
   ].join("\n")).join("\n\n");
   const manifest = locale === "fr"
-    ? "WiseMoney suit comptes, revenus, dépenses, transferts, budgets, objectifs, dépenses prévues, récurrents, dettes, créances, rappels, devises et sauvegardes. WiseBot explique le produit mais n’agit pas dans le coffre et n’analyse pas les finances."
-    : "WiseMoney tracks accounts, income, expenses, transfers, budgets, goals, planned expenses, recurring items, debts, receivables, reminders, currencies, and backups. WiseBot explains the product but never acts in the vault or analyzes finances.";
+    ? "WiseMoney suit comptes, revenus, dépenses, transferts, budgets, objectifs, dépenses prévues, récurrents, dettes, créances, rappels, devises et sauvegardes. WiseHelp explique le produit mais n’agit pas dans le coffre et n’analyse pas les finances."
+    : "WiseMoney tracks accounts, income, expenses, transfers, budgets, goals, planned expenses, recurring items, debts, receivables, reminders, currencies, and backups. WiseHelp explains the product but never acts in the vault or analyzes finances.";
   return { text: `${manifest}\n\n${documentation}`, taskIds: selected.map(({ id }) => id) };
 }
 
 function geminiBody(body: MessageBody, question: string, image: string | null, locale: "en" | "fr") {
   const language = locale === "fr" ? "French" : "English";
   const context = selectedContext(body, locale).text;
-  const systemInstruction = `You are WiseBot, the WiseMoney product help assistant. Answer only questions about using WiseMoney, in ${language}.
+  const systemInstruction = `You are WiseHelp, the WiseMoney product help assistant. Answer only questions about using WiseMoney, in ${language}.
 
 RESPONSE RULES
 - Answer the exact question first. Never replace a feature-specific answer with generic onboarding.

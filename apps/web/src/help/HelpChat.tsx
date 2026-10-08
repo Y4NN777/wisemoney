@@ -1,8 +1,9 @@
-import { ArrowLeft, BookOpen, ImagePlus, LoaderCircle, MoreVertical, Send, ShieldCheck, Trash2, WifiOff, X } from "lucide-react";
+import { ArrowLeft, ArrowUp, BookOpen, ImagePlus, LoaderCircle, MoreVertical, ShieldCheck, Square, Trash2, WifiOff, X } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent, type ClipboardEvent, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import Logo from "../components/Logo.tsx";
 import { Button } from "../components/ui/button.tsx";
+import { TypingDots } from "../components/ui/typing-dots.tsx";
 import { findRelevantHelpSections, localTaskAnswer, type HelpSection } from "./corpus.ts";
 import { openHelp } from "./navigation.ts";
 import { suggestedTasks } from "./suggestions.ts";
@@ -375,7 +376,7 @@ export default function HelpChat({
             </div>
           )}
 
-          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3" aria-live="polite">
+          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4" aria-live="polite">
             {showPrivacy && (
               <section className="rounded-lg border border-ocean-primary bg-ocean-wash p-3 text-left" aria-label={t("helpPage.chat.consent.title")}>
                 <div className="flex items-start gap-2">
@@ -408,15 +409,15 @@ export default function HelpChat({
               </div>
             )}
             {messages.length === 0 && online && (
-              <div className="grid min-h-full content-end gap-3 px-1 pb-2 text-left">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ocean-wash" aria-hidden="true">
-                  <Logo variant="icon" className="h-7 w-7" />
+              <div className="flex min-h-full flex-col items-center justify-center gap-5 px-1 py-6 text-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-ocean-wash" aria-hidden="true">
+                  <Logo variant="icon" className="h-8 w-8" />
                 </span>
-                <p className="text-sm font-semibold">{t("helpPage.chat.welcome")}</p>
-                <ul className="flex flex-wrap gap-2" aria-label={t("helpPage.chat.suggestions")}>
+                <p className="text-lg font-semibold tracking-tight">{t("helpPage.chat.welcome")}</p>
+                <ul className="grid w-full gap-2" aria-label={t("helpPage.chat.suggestions")}>
                   {suggestions.map((section) => (
                     <li key={section.id}>
-                      <button type="button" onClick={() => suggest(section.title)} disabled={busy} className="rounded-full border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
+                      <button type="button" onClick={() => suggest(section.title)} disabled={busy} className="min-h-11 w-full rounded-2xl border border-border bg-card px-4 py-3 text-left text-sm leading-snug text-foreground transition-colors hover:bg-muted disabled:opacity-50">
                         {section.title}
                       </button>
                     </li>
@@ -425,26 +426,23 @@ export default function HelpChat({
               </div>
             )}
             {messages.map((message) => (
-              <article key={message.id} className={message.role === "user" ? "flex justify-end" : "flex items-end gap-2"}>
-                {message.role === "assistant" && (
-                  <span className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ocean-wash" aria-hidden="true">
-                    <Logo variant="icon" className="h-5 w-5" />
-                  </span>
-                )}
+              <article key={message.id} className={message.role === "user" ? "flex justify-end" : "min-w-0"}>
                 <div className={message.role === "user"
-                  ? "max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3.5 py-2.5 text-sm text-primary-foreground"
-                  : "min-w-0 max-w-[88%] rounded-2xl rounded-bl-sm bg-muted px-3.5 py-2.5 text-sm"}>
+                  ? "max-w-[85%] rounded-3xl bg-muted px-4 py-2.5 text-[0.9375rem] text-foreground"
+                  : "text-[0.9375rem] leading-relaxed text-foreground"}>
                   {message.role === "assistant" && message.text.length > 0
                     ? <HelpMessageMarkdown text={message.text} />
-                    : <p className="whitespace-pre-wrap leading-relaxed">{message.text || (submitting ? t("helpPage.chat.writing") : t("helpPage.chat.unavailable"))}</p>}
-                  {message.imageAttached === true && <p className="mt-2 text-xs text-primary-foreground/75">{t("helpPage.chat.imageAttached")}</p>}
+                    : message.role === "assistant" && submitting
+                      ? <TypingDots label={t("helpPage.chat.writing")} />
+                      : <p className="whitespace-pre-wrap leading-relaxed">{message.text || t("helpPage.chat.unavailable")}</p>}
+                  {message.imageAttached === true && <p className="mt-1 text-xs text-muted-foreground">{t("helpPage.chat.imageAttached")}</p>}
                   {message.role === "assistant" && message.text.length > 0 && message.sectionIds != null && message.sectionIds.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1.5 border-t border-foreground/10 pt-2">
+                    <div className="mt-3 flex flex-wrap gap-1.5">
                       {message.sectionIds.map((id) => {
                         const section = sections.find((candidate) => candidate.id === id);
                         return section == null ? null : (
-                          <button key={id} type="button" onClick={() => openGuide(id)} className="inline-flex items-center gap-1 rounded-full bg-card px-2.5 py-1 text-xs font-semibold text-ocean-primary hover:bg-ocean-wash" aria-label={t("helpPage.chat.guideLink", { title: section.title })}>
-                            <BookOpen className="h-3.5 w-3.5" />{section.title}
+                          <button key={id} type="button" onClick={() => openGuide(id)} className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-muted px-3 text-xs text-muted-foreground hover:bg-ocean-wash hover:text-foreground" aria-label={t("helpPage.chat.guideLink", { title: section.title })}>
+                            <BookOpen className="h-3.5 w-3.5 shrink-0 text-ocean-primary" />{section.title}
                           </button>
                         );
                       })}
@@ -464,19 +462,16 @@ export default function HelpChat({
                 <Button type="button" variant="outline" size="sm" className="mt-2" onClick={cancelPending}>{t("common.cancel")}</Button>
               </div>
             )}
-            {submitting && ticket?.status !== "waiting" && (
-              <Button type="button" variant="outline" size="sm" onClick={cancelPending}>{t("helpPage.chat.stop")}</Button>
-            )}
             {error != null && <p className="rounded-lg border-l-2 border-destructive bg-muted p-3 text-xs" role="alert">{error}</p>}
             <div ref={endRef} />
           </div>
 
-          <footer className="border-t border-border bg-card p-3 pb-[calc(0.75rem+var(--safe-area-bottom))] sm:pb-3">
+          <footer className="bg-background px-3 pb-[calc(0.75rem+var(--safe-area-bottom))] pt-1 sm:pb-3">
             {!consentAccepted && (
-              <div className="mb-2 flex items-center gap-2 rounded-lg bg-ocean-wash px-3 py-2 text-xs" role="note">
+              <div className="mb-2 flex items-center gap-2 rounded-2xl bg-ocean-wash px-3 py-1.5 text-xs" role="note">
                 <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-primary" />
                 <span className="min-w-0 flex-1 leading-snug">{t("helpPage.chat.consent.line")}</span>
-                <Button type="button" size="sm" className="h-11" onClick={acceptConsent}>{t("helpPage.chat.consent.ok")}</Button>
+                <Button type="button" size="sm" className="h-11 min-w-11 rounded-full" onClick={acceptConsent}>{t("helpPage.chat.consent.ok")}</Button>
               </div>
             )}
             {ticket != null && (
@@ -486,33 +481,39 @@ export default function HelpChat({
               </p>
             )}
             {imageDataUrl != null && (
-              <div className="mb-2 flex items-center gap-2 rounded-md border border-border p-2">
-                <img src={imageDataUrl} alt={t("helpPage.chat.imagePreview")} className="h-12 w-12 rounded-md object-cover" />
+              <div className="mb-2 flex items-center gap-2 rounded-2xl border border-border p-2">
+                <img src={imageDataUrl} alt={t("helpPage.chat.imagePreview")} className="h-12 w-12 rounded-xl object-cover" />
                 <span className="min-w-0 flex-1 text-xs text-muted-foreground">{t("helpPage.chat.imageCost")}</span>
                 <Button type="button" size="icon" variant="ghost" className="h-11 w-11" onClick={() => setImageDataUrl(null)} aria-label={t("helpPage.chat.removeImage")}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             )}
-            <form onSubmit={handleSubmit} className="grid grid-cols-[2.5rem_1fr_2.5rem] items-end gap-2">
+            <form onSubmit={handleSubmit} className="flex items-end gap-1 rounded-[1.75rem] border border-border bg-card p-1.5 shadow-[0_4px_20px_rgba(16,24,32,0.08)] focus-within:border-ocean-primary/50">
               <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" onChange={handleFile} />
-              <Button type="button" variant="outline" size="icon" className="rounded-full" disabled={!online || busy} onClick={() => fileInputRef.current?.click()} aria-label={t("helpPage.chat.addImage")}>
+              <Button type="button" variant="ghost" size="icon" className="shrink-0 rounded-full text-muted-foreground" disabled={!online || busy} onClick={() => fileInputRef.current?.click()} aria-label={t("helpPage.chat.addImage")}>
                 {imageBusy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
               </Button>
               <textarea
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onPaste={handlePaste}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                    event.preventDefault();
+                    ask(input.trim());
+                  }
+                }}
                 maxLength={2000}
                 rows={1}
                 disabled={!online || submitting}
                 placeholder={t("helpPage.chat.placeholder")}
                 aria-label={t("helpPage.chat.placeholder")}
-                className="min-h-11 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-base text-foreground focus-visible:border-primary sm:text-sm"
+                className="max-h-32 min-h-11 flex-1 resize-none bg-transparent px-1 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none sm:text-sm"
               />
-              <Button type="submit" size="icon" className="rounded-full" disabled={!online || busy || !consentAccepted || input.trim().length === 0} aria-label={t("helpPage.chat.send")}>
-                <Send className="h-4 w-4" />
-              </Button>
+              {submitting && ticket?.status !== "waiting"
+                ? <Button type="button" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85" onClick={cancelPending} aria-label={t("helpPage.chat.stop")}><Square className="h-3.5 w-3.5 fill-current" /></Button>
+                : <Button type="submit" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100" disabled={!online || busy || !consentAccepted || input.trim().length === 0} aria-label={t("helpPage.chat.send")}><ArrowUp className="h-5 w-5" /></Button>}
             </form>
           </footer>
           </section>

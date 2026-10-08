@@ -142,8 +142,8 @@ try {
     await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     await page.getByRole("button", { name: "Open help", exact: true }).click();
     await page.getByRole("heading", { name: "WiseMoney guide", exact: true }).waitFor();
-    await page.getByRole("button", { name: device.name === "mobile" ? "Ask WiseBot" : "Open WiseBot", exact: true }).click();
-    const wiseBotDialog = page.getByRole("dialog", { name: "WiseBot", exact: true });
+    await page.getByRole("button", { name: device.name === "mobile" ? "Ask WiseHelp" : "Open WiseHelp", exact: true }).click();
+    const wiseBotDialog = page.getByRole("dialog", { name: "WiseHelp", exact: true });
     await wiseBotDialog.waitFor();
     const wiseBotOverlay = page.locator(".wisebot-overlay");
     await wiseBotOverlay.waitFor();
@@ -151,31 +151,31 @@ try {
       animation: getComputedStyle(element).animationName,
       overlayBlur: getComputedStyle(document.querySelector(".wisebot-overlay")).backdropFilter,
     }));
-    assert.equal(wiseBotMotion.animation, "wisebot-panel-in", `${device.name}: WiseBot panel has no entrance motion`);
-    assert.match(wiseBotMotion.overlayBlur, /blur\((?!0px\))/, `${device.name}: WiseBot overlay has no background blur`);
+    assert.equal(wiseBotMotion.animation, "wisebot-panel-in", `${device.name}: WiseHelp panel has no entrance motion`);
+    assert.match(wiseBotMotion.overlayBlur, /blur\((?!0px\))/, `${device.name}: WiseHelp overlay has no background blur`);
     await wiseBotDialog.evaluate(async (element) => {
       await Promise.all(element.getAnimations().map((animation) => animation.finished));
     });
     const wiseBotBox = await wiseBotDialog.boundingBox();
-    assert.ok(wiseBotBox != null, `${device.name}: WiseBot dialog has no layout box`);
+    assert.ok(wiseBotBox != null, `${device.name}: WiseHelp dialog has no layout box`);
     if (device.name === "mobile") {
-      assert.ok(Math.abs(wiseBotBox.width - device.viewport.width) <= 1, "mobile: WiseBot is not full width");
-      assert.ok(Math.abs(wiseBotBox.height - device.viewport.height) <= 1, "mobile: WiseBot is not full height");
+      assert.ok(Math.abs(wiseBotBox.width - device.viewport.width) <= 1, "mobile: WiseHelp is not full width");
+      assert.ok(Math.abs(wiseBotBox.height - device.viewport.height) <= 1, "mobile: WiseHelp is not full height");
     } else {
-      assert.ok(wiseBotBox.width <= 410, "desktop: WiseBot exceeded its floating-panel width");
+      assert.ok(wiseBotBox.width <= 410, "desktop: WiseHelp exceeded its floating-panel width");
     }
     await page.screenshot({ path: `${outputDir}/${device.name}-wisebot.png`, fullPage: true });
     await page.getByText("Questions go to Google. Nothing from your vault.", { exact: true }).waitFor();
     const suggestedQuestions = page.getByRole("list", { name: "Suggested questions", exact: true }).getByRole("button");
-    assert.equal(await suggestedQuestions.count(), 3, `${device.name}: WiseBot offers no suggested questions`);
+    assert.equal(await suggestedQuestions.count(), 3, `${device.name}: WiseHelp offers no suggested questions`);
     assert.equal(await page.getByRole("button", { name: "Send question", exact: true }).isDisabled(), true, `${device.name}: send is enabled before consent`);
     await page.getByRole("button", { name: "More", exact: true }).click();
-    await page.getByRole("menuitem", { name: "Review WiseBot information", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Review WiseHelp information", exact: true }).click();
     await page.getByText("Your question and optional image are sent to Google to generate the answer.", { exact: true }).waitFor();
-    await page.getByRole("button", { name: "Hide WiseBot information", exact: true }).click();
+    await page.getByRole("button", { name: "Hide WiseHelp information", exact: true }).click();
     await page.getByRole("button", { name: "OK", exact: true }).click();
     assert.equal(await page.getByRole("button", { name: "Send question", exact: true }).isDisabled(), true, `${device.name}: send is enabled with an empty question`);
-    await page.getByRole("dialog", { name: "WiseBot", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("dialog", { name: "WiseHelp", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Quick search").fill("backup");
     await page.getByText("Back up, export, and start a new cycle", { exact: true }).waitFor();
     await page.getByRole("button", { name: "See what’s new", exact: true }).click();
@@ -290,7 +290,7 @@ try {
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Money available today", { exact: true }).waitFor({ timeout: 90_000 });
   // The coach shows its single per-session tip about 20 s in. It is a card beside the page (no
   // backdrop), announced as a status, and it stays on the page it was chosen for.
-  const coachTip = appPage.getByLabel("WiseBot tip", { exact: true });
+  const coachTip = appPage.getByLabel("WiseHelp tip", { exact: true });
   await coachTip.waitFor({ timeout: 25_000 });
   assert.equal(await appPage.locator(".coach-overlay").count(), 0, "coach tip still covers the page with a backdrop");
   assert.equal(await coachTip.getAttribute("role"), "status", "coach tip is not announced as a status");
@@ -300,14 +300,14 @@ try {
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByText("Money available today", { exact: true }).first().waitFor();
   assert.equal(await coachTip.count(), 0, "coach tip came back after the user left its page");
-  // Financial education: a conversation only. No lesson list on the phone; nothing leaves the
+  // WiseLearn: a conversation only. No lesson list on the phone; nothing leaves the
   // browser before the tutor notice is accepted; an answer names its source lesson.
   const learnRequests = [];
   appPage.on("request", (request) => { if (request.url().includes("/api/learn/")) learnRequests.push(request.url()); });
-  await appPage.getByRole("link", { name: "Financial education", exact: true }).click();
-  await appPage.getByRole("heading", { name: "Financial education", exact: true }).waitFor();
-  await appPage.getByText("Education, not advice. Not yet reviewed by a local expert.", { exact: true }).waitFor();
-  assert.equal(await appPage.getByRole("button", { name: "Open WiseBot", exact: true }).count(), 1, "inside the app WiseBot has one entry, the header help button, and no floating launcher");
+  await appPage.getByRole("link", { name: "WiseLearn", exact: true }).click();
+  await appPage.getByRole("heading", { name: "WiseLearn", exact: true }).waitFor();
+  await appPage.getByText("Education, not advice.", { exact: true }).waitFor();
+  assert.equal(await appPage.getByRole("button", { name: "Open WiseHelp", exact: true }).count(), 1, "inside the app WiseHelp has one entry, the header help button, and no floating launcher");
   assert.equal(await appPage.getByText(/Portfolio and the long term|Build your first budget/).count(), 0, "the page still lists lessons");
   await appPage.getByText("Questions asked by readers in Burkina Faso (LeFaso.net).", { exact: true }).waitFor();
   const starters = appPage.getByRole("list", { name: "Questions to start with", exact: true }).getByRole("button");
@@ -339,13 +339,13 @@ try {
   await appPage.screenshot({ path: `${outputDir}/learn.png`, fullPage: true });
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
-  // The header's help button opens the WiseBot panel.
+  // The header's help button opens the WiseHelp panel.
   assert.equal(await appPage.getByRole("banner").getByRole("combobox").count(), 0, "the app header still carries a language picker");
   assert.equal(await appPage.getByRole("banner").getByRole("button", { name: /Install/ }).count(), 0, "the app header still carries an install button");
-  await appPage.getByRole("banner").getByRole("button", { name: "Open WiseBot", exact: true }).click();
-  await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).waitFor();
-  await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
-  await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).waitFor({ state: "detached" });
+  await appPage.getByRole("banner").getByRole("button", { name: "Open WiseHelp", exact: true }).click();
+  await appPage.getByRole("dialog", { name: "WiseHelp", exact: true }).waitFor();
+  await appPage.getByRole("dialog", { name: "WiseHelp", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
+  await appPage.getByRole("dialog", { name: "WiseHelp", exact: true }).waitFor({ state: "detached" });
 
   const syncPage = await appContext.newPage();
   syncPage.on("pageerror", (error) => appErrors.push(`sync pageerror: ${error.message}`));
@@ -540,9 +540,9 @@ try {
   await appPage.getByText(/Edited from activity/).first().waitFor();
   await appPage.getByRole("link", { name: "Dashboard", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).waitFor();
-  // The full guide is one tap inside the WiseBot panel.
-  await appPage.getByRole("banner").getByRole("button", { name: "Open WiseBot", exact: true }).click();
-  await appPage.getByRole("dialog", { name: "WiseBot", exact: true }).getByRole("button", { name: "Open the full guide", exact: true }).click();
+  // The full guide is one tap inside the WiseHelp panel.
+  await appPage.getByRole("banner").getByRole("button", { name: "Open WiseHelp", exact: true }).click();
+  await appPage.getByRole("dialog", { name: "WiseHelp", exact: true }).getByRole("button", { name: "Open the full guide", exact: true }).click();
   await appPage.getByRole("heading", { name: "WiseMoney guide", exact: true }).waitFor();
   await appPage.getByLabel("Quick search").fill("total balance");
   await appPage.getByText("Read the dashboard and activity", { exact: true }).waitFor();

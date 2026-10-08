@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AI_CAPABILITY_QUERY_KEY } from "../../components/AssistantCard/index.tsx";
 import { Button } from "../../components/ui/button.tsx";
+import { TypingDots } from "../../components/ui/typing-dots.tsx";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
 import { getAICapability } from "../../lib/capabilities.ts";
@@ -231,17 +232,6 @@ function AnswerBody({ text }: { text: string }) {
     <div className="text-[0.9375rem] leading-relaxed text-foreground">
       <HelpMessageMarkdown text={splitAnswer(text).body} />
     </div>
-  );
-}
-
-/** Three dots while the first words arrive; still under reduced motion. */
-function TypingDots({ label }: { label: string }) {
-  return (
-    <p className="flex h-6 items-center gap-1" role="status" aria-label={label}>
-      {[0, 1, 2].map((dot) => (
-        <span key={dot} className="h-2 w-2 rounded-full bg-muted-foreground/60 motion-safe:animate-bounce" style={{ animationDelay: `${dot * 150}ms` }} />
-      ))}
-    </p>
   );
 }
 
