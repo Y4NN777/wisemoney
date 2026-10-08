@@ -52,6 +52,21 @@ export default function Learn() {
   const controller = useRef<AbortController | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
+  const pageRef = useRef<HTMLElement | null>(null);
+  const dockRef = useRef<HTMLDivElement | null>(null);
+
+  // The composer is fixed above the tab bar; the page reserves its live height so nothing ends up
+  // behind it (consent line, error and the Assistant link come and go).
+  useEffect(() => {
+    const dock = dockRef.current;
+    const page = pageRef.current;
+    if (dock == null || page == null) return;
+    const reserve = () => page.style.setProperty("--learn-dock-h", `${Math.ceil(dock.getBoundingClientRect().height)}px`);
+    reserve();
+    const observer = new ResizeObserver(reserve);
+    observer.observe(dock);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (messages.length > 0) endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -123,9 +138,9 @@ export default function Learn() {
   // learner's questions in grey bubbles, answers as plain text across the page, one rounded composer
   // pinned above the tab bar with the send button inside it.
   return (
-    <main aria-label={t("learn.title")} className="mx-auto flex min-h-[calc(100dvh-9.5rem)] w-full max-w-2xl flex-col">
+    <main ref={pageRef} aria-label={t("learn.title")} className="mx-auto flex w-full max-w-2xl flex-col pb-[var(--learn-dock-h,0px)]">
       {empty ? (
-        <section aria-label={t("learn.title")} className="flex flex-1 flex-col items-center justify-center gap-6 py-6 text-center">
+        <section aria-label={t("learn.title")} className="flex min-h-[calc(100dvh-var(--learn-chrome-h)-var(--safe-area-bottom)-var(--learn-dock-h,0px))] flex-col items-center justify-center gap-6 py-6 text-center">
           <div className="flex flex-col items-center gap-3">
             <WiseLearnMark />
             <h1 className="text-2xl font-semibold tracking-tight">{t("learn.title")}</h1>
@@ -182,14 +197,15 @@ export default function Learn() {
                 )}
               </article>
             ))}
-            <div ref={endRef} />
+            <div ref={endRef} className="scroll-mb-[calc(var(--learn-dock-h,0px)+4rem+var(--safe-area-bottom))]" />
           </section>
         </>
       )}
 
-      {/* Pinned only in a conversation, where answers scroll under it. On the start screen it stays in
-          the flow, so a short screen scrolls instead of stacking the composer over the questions. */}
-      <div className={empty ? "space-y-2 pt-3" : "sticky bottom-[calc(4.75rem+var(--safe-area-bottom))] z-10 space-y-2 bg-gradient-to-t from-background from-70% to-transparent pt-3 lg:bottom-4"}>
+      {/* Fixed above the tab bar on every WiseLearn screen; only the content scrolls behind it
+          (Y4NN, 2026-10-08). Sticky left a gap under it at the end of the scroll. */}
+      <div ref={dockRef} className="fixed inset-x-0 bottom-[calc(4rem+var(--safe-area-bottom))] z-30 bg-gradient-to-t from-background from-70% to-transparent px-4 pb-3 pt-3 lg:bottom-0 lg:pb-4">
+        <div className="mx-auto max-w-2xl space-y-2">
         {error != null && <p className="rounded-xl bg-muted px-3 py-2 text-sm" role="alert">{error}</p>}
         {!consent && (
           <div className="flex items-center gap-2 rounded-2xl bg-ocean-wash px-3 py-1.5 text-xs" role="note">
@@ -225,6 +241,7 @@ export default function Learn() {
             {t("learn.tutor.personal")} <Link to="/assistant" className="font-semibold text-ocean-primary underline underline-offset-2">{t("assistant.title")}</Link>
           </p>
         )}
+        </div>
       </div>
     </main>
   );

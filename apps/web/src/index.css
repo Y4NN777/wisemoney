@@ -147,6 +147,19 @@
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-left: env(safe-area-inset-left, 0px);
   --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* App shell height above and below a page's content, without the safe area: the 61 px header plus
+     the content padding of vaultShell.tsx (top 1rem, bottom 5rem for the tab bar). WiseLearn's start
+     screen fills exactly the space left, so the page itself never scrolls past it. */
+  --learn-chrome-h: calc(3.8125rem + 6rem);
+}
+
+@media (min-width: 768px) {
+  :root { --learn-chrome-h: calc(3.8125rem + 6.5rem); }
+}
+
+@media (min-width: 1024px) {
+  :root { --learn-chrome-h: calc(3.8125rem + 3.5rem); }
 }
 
 /* ---------- DARK mode — same palette, inverted surfaces ---------- */
@@ -352,8 +365,10 @@
     animation: wisemoney-enter var(--dur-slow) var(--ease-standard) both;
   }
 
+  /* backwards, not both: a kept transform would make this box the containing block of any fixed
+     child (WiseLearn's composer sat 114 px too high, 2026-10-08). */
   .route-transition {
-    animation: route-transition-in 240ms var(--ease-standard) both;
+    animation: route-transition-in 240ms var(--ease-standard) backwards;
   }
 
   .wisebot-overlay {
