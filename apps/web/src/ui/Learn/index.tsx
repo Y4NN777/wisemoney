@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AI_CAPABILITY_QUERY_KEY } from "../../components/AssistantCard/index.tsx";
 import { Button } from "../../components/ui/button.tsx";
+import WiseLearnMark from "../../components/WiseLearnMark.tsx";
 import { TypingDots } from "../../components/ui/typing-dots.tsx";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
@@ -125,7 +126,8 @@ export default function Learn() {
     <main aria-label={t("learn.title")} className="mx-auto flex min-h-[calc(100dvh-9.5rem)] w-full max-w-2xl flex-col">
       {empty ? (
         <section aria-label={t("learn.title")} className="flex flex-1 flex-col items-center justify-center gap-6 py-6 text-center">
-          <div className="space-y-2">
+          <div className="flex flex-col items-center gap-3">
+            <WiseLearnMark />
             <h1 className="text-2xl font-semibold tracking-tight">{t("learn.title")}</h1>
             <p className="text-xs text-muted-foreground">{t("learn.disclosure")}</p>
           </div>
@@ -138,11 +140,28 @@ export default function Learn() {
               </li>
             ))}
           </ul>
+          {/* In the page, not in the pinned composer block: pinned, they covered the topics on short
+              screens (iPhone 12 mini in Safari, Y4NN 2026-10-08). */}
+          <div className="w-full space-y-1.5 text-left">
+            <ul className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" aria-label={t("learn.tutor.suggestions")}>
+              {LITERACY_STARTERS.map((starter) => (
+                <li key={starter.id} className="shrink-0 snap-start">
+                  <button type="button" onClick={() => ask(starter.question[locale])} disabled={busy} className="h-full w-60 rounded-2xl border border-border bg-card px-4 py-3 text-left text-sm leading-snug text-foreground transition-colors hover:bg-muted disabled:opacity-50">
+                    {starter.question[locale]}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="px-1 text-[0.75rem] text-muted-foreground">{t("learn.tutor.startersNote")}</p>
+          </div>
         </section>
       ) : (
         <>
           <div className="flex items-center justify-between gap-3 pb-2">
-            <h1 className="text-base font-semibold">{t("learn.title")}</h1>
+            <div className="flex items-center gap-2.5">
+              <WiseLearnMark size="sm" />
+              <h1 className="text-base font-semibold">{t("learn.title")}</h1>
+            </div>
             <Button type="button" variant="ghost" size="icon" className="shrink-0 text-muted-foreground" onClick={reset} aria-label={t("learn.tutor.clear")} title={t("learn.tutor.clear")}>
               <RotateCcw className="h-4 w-4" />
             </Button>
@@ -168,22 +187,10 @@ export default function Learn() {
         </>
       )}
 
-      <div className="sticky bottom-[calc(4.75rem+var(--safe-area-bottom))] z-10 space-y-2 bg-gradient-to-t from-background from-70% to-transparent pt-3 lg:bottom-4">
+      {/* Pinned only in a conversation, where answers scroll under it. On the start screen it stays in
+          the flow, so a short screen scrolls instead of stacking the composer over the questions. */}
+      <div className={empty ? "space-y-2 pt-3" : "sticky bottom-[calc(4.75rem+var(--safe-area-bottom))] z-10 space-y-2 bg-gradient-to-t from-background from-70% to-transparent pt-3 lg:bottom-4"}>
         {error != null && <p className="rounded-xl bg-muted px-3 py-2 text-sm" role="alert">{error}</p>}
-        {empty && (
-          <div className="space-y-1.5">
-            <ul className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" aria-label={t("learn.tutor.suggestions")}>
-              {LITERACY_STARTERS.map((starter) => (
-                <li key={starter.id} className="shrink-0 snap-start">
-                  <button type="button" onClick={() => ask(starter.question[locale])} disabled={busy} className="h-full w-60 rounded-2xl border border-border bg-card px-4 py-3 text-left text-sm leading-snug text-foreground transition-colors hover:bg-muted disabled:opacity-50">
-                    {starter.question[locale]}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <p className="px-1 text-[0.75rem] text-muted-foreground">{t("learn.tutor.startersNote")}</p>
-          </div>
-        )}
         {!consent && (
           <div className="flex items-center gap-2 rounded-2xl bg-ocean-wash px-3 py-1.5 text-xs" role="note">
             <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-primary" />
