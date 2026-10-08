@@ -1358,7 +1358,7 @@
     "title": "WiseLearn",
     "disclosure": "Education, not advice.",
     "tutor": {
-      "placeholder": "Ask a money question",
+      "placeholder": "A question about money?",
       "send": "Ask the tutor",
       "stop": "Stop the answer",
       "clear": "New conversation",

@@ -332,7 +332,7 @@ try {
   // A host without the function answers with its HTML page; the tutor must say it is not answering.
   // (A 5xx would also work but logs a console error, which this smoke treats as a failure.)
   await appPage.route("**/api/learn/messages", (route) => route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><title>x</title>" }));
-  await appPage.getByLabel("Ask a money question").fill("What is a tontine?");
+  await appPage.getByLabel("A question about money?").fill("What is a tontine?");
   await appPage.getByRole("button", { name: "Ask the tutor", exact: true }).click();
   await appPage.getByText("The service is not answering. Try again in a moment.", { exact: true }).waitFor();
   await appPage.unroute("**/api/learn/messages");
