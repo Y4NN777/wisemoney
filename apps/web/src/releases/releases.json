@@ -1,5 +1,70 @@
 [
   {
+    "version": "1.2.0",
+    "releasedAt": "2026-10-08",
+    "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.2.0",
+    "content": {
+      "fr": {
+        "title": "WiseLearn et WiseHelp",
+        "highlights": [
+          {
+            "id": "wiselearn",
+            "title": "WiseLearn : posez vos questions d’argent"
+          },
+          {
+            "id": "sources",
+            "title": "Chaque réponse cite sa leçon"
+          },
+          {
+            "id": "wisehelp",
+            "title": "WiseHelp : l’aide, en conversation"
+          },
+          {
+            "id": "updates",
+            "title": "Les mises à jour n’interrompent plus le déverrouillage"
+          },
+          {
+            "id": "updated",
+            "title": "Un message quand WiseMoney est à jour"
+          },
+          {
+            "id": "home",
+            "title": "Raccourcis et alertes plus clairs sur l’accueil"
+          }
+        ]
+      },
+      "en": {
+        "title": "WiseLearn and WiseHelp",
+        "highlights": [
+          {
+            "id": "wiselearn",
+            "title": "WiseLearn: ask your money questions"
+          },
+          {
+            "id": "sources",
+            "title": "Every answer names its lesson"
+          },
+          {
+            "id": "wisehelp",
+            "title": "WiseHelp: help as a conversation"
+          },
+          {
+            "id": "updates",
+            "title": "Updates no longer interrupt unlocking"
+          },
+          {
+            "id": "updated",
+            "title": "A message when WiseMoney is updated"
+          },
+          {
+            "id": "home",
+            "title": "Clearer shortcuts and alerts on Home"
+          }
+        ]
+      }
+    }
+  },
+  {
     "version": "1.1.0",
     "releasedAt": "2026-10-05",
     "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.1.0",

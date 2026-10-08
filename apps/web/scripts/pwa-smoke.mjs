@@ -180,7 +180,7 @@ try {
     await page.getByText("Back up, export, and start a new cycle", { exact: true }).waitFor();
     await page.getByRole("button", { name: "See what’s new", exact: true }).click();
     await page.getByRole("heading", { name: "What’s new", exact: true }).waitFor();
-    await page.getByText("1.1.0", { exact: true }).first().waitFor();
+    await page.getByText("1.2.0", { exact: true }).first().waitFor();
     await page.getByRole("combobox", { name: /^Choose language/ }).click();
     await page.getByRole("option", { name: "Français", exact: true }).click();
     await page.getByRole("heading", { name: "Nouveautés", exact: true }).waitFor();
@@ -225,7 +225,7 @@ try {
     await page.screenshot({ path: `${outputDir}/${device.name}-offline.png`, fullPage: true });
     await page.goto(`${baseURL}/updates`, { waitUntil: "domcontentloaded" });
     await page.getByRole("heading", { name: "What’s new", exact: true }).waitFor();
-    await page.getByText("1.1.0", { exact: true }).first().waitFor();
+    await page.getByText("1.2.0", { exact: true }).first().waitFor();
 
     assert.deepEqual(errors, [], `${device.name} runtime errors:\n${errors.join("\n")}`);
     await context.close();

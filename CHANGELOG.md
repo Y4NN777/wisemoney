@@ -5,6 +5,39 @@ All notable changes to WiseMoney are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-10-08
+
+### Added
+
+- **WiseLearn** — money questions answered by a tutor (Gemma) that uses the 77
+  lessons as its knowledge base: the server finds the relevant lessons by
+  embeddings (`gemini-embedding-001`, keyword search as fallback) and each
+  answer names its source lesson and publisher. About 100 words, two follow-up
+  questions, topics to start from.
+- **Update message** — after the first unlock on a new version, one toast says
+  WiseMoney is up to date, with a link to What's new.
+
+### Changed
+
+- **Names** — the help assistant WiseBot is now WiseHelp; the literacy page is
+  WiseLearn. Both share one chat layout: full-width answers, rounded composer.
+- **Updates** — a new version downloads in the background and runs at the next
+  full opening; WiseMoney never reloads itself, and no update prompt is shown.
+- **Home** — four separate quick-action tiles, a plain help tip with a WiseHelp
+  link, worded actions on alerts, toasts that follow the theme.
+
+### Removed
+
+- The lesson catalogue and lesson pages, and the lesson links in Plan: lessons
+  are no longer on the phone, so WiseLearn needs a connection.
+
+### Fixed
+
+- An update could reload the app while the passphrase was being typed and
+  lose it.
+- On short screens the WiseLearn suggestions covered the topics.
+- Numbered steps in answers restarted at 1 after a sub-list.
+
 ## [1.1.0] - 2026-10-05
 
 ### Added
