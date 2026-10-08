@@ -1,18 +1,4 @@
 {
-  "app": {
-    "updateLater": "Plus tard",
-    "updateInstalling": "Installation de l’amélioration…",
-    "updateInstallingDescription": "Gardez WiseMoney ouvert quelques secondes. L’application redémarrera automatiquement.",
-    "updateFinalizing": "Finalisation de l’installation…",
-    "updateFinalizingDescription": "Cela prend un peu plus de temps. Gardez WiseMoney ouvert pendant la fin de l’installation.",
-    "updateInstalled": "WiseMoney est à jour",
-    "updateInstalledDescription": "La dernière amélioration est installée. Vous pouvez continuer.",
-    "viewUpdates": "Voir les nouveautés",
-    "updateFailed": "Installation en pause",
-    "updateFailedDescription": "Vos données sont en sécurité. Vérifiez la connexion, puis réessayez.",
-    "updateRetry": "Réessayer",
-    "updateDismiss": "Fermer l’avis de mise à jour"
-  },
   "language": {
     "choose": "Choisir la langue",
     "english": "English",
