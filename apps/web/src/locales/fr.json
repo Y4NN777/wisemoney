@@ -1,8 +1,5 @@
 {
   "app": {
-    "updateAvailable": "Mise à jour disponible",
-    "updateDescription": "Son installation redémarre WiseMoney et verrouille votre espace en toute sécurité. Vos données restent sur cet appareil.",
-    "updateNow": "Mettre à jour",
     "updateLater": "Plus tard",
     "updateInstalling": "Installation de l’amélioration…",
     "updateInstallingDescription": "Gardez WiseMoney ouvert quelques secondes. L’application redémarrera automatiquement.",
@@ -1388,7 +1385,17 @@
       },
       "webCaution": "Les chiffres trouvés sur le web peuvent être faux ou dépassés. Vérifiez la source avant d’agir.",
       "startersNote": "Questions posées par des lecteurs au Burkina Faso (LeFaso.net).",
-      "source": "Source : {{title}} — {{publisher}}"
+      "source": "Source : {{title}} — {{publisher}}",
+      "followUps": "Questions pour continuer"
+    },
+    "topics": {
+      "label": "Thèmes",
+      "budget": "Budget",
+      "saving": "Épargne",
+      "bank": "Banque",
+      "credit": "Crédit",
+      "scams": "Arnaques",
+      "investing": "Investir"
     }
   },
   "learnCard": {

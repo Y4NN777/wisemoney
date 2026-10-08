@@ -21,4 +21,14 @@ describe("WiseBot Markdown", () => {
     expect(html).not.toContain("**Saisie**");
     expect(html).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
   });
+
+  it("keeps sub-bullets under their step and the numbering going after them", () => {
+    // Seen live on 2026-10-08: the tutor's "2." had indented bullets and the next step restarted at 1.
+    const text = "1. Listez vos revenus.\n2. Séparez vos dépenses :\n   * **Besoins** : nourriture.\n   * **Envies** : sorties.\n\n3. Priorisez.";
+    expect(parseHelpMarkdown(text)).toEqual([
+      { type: "ordered-list", items: ["Listez vos revenus.", "Séparez vos dépenses :", "Priorisez."], nested: { 1: ["**Besoins** : nourriture.", "**Envies** : sorties."] } },
+    ]);
+    const html = renderToStaticMarkup(<HelpMessageMarkdown text={"1. Un.\n\nTexte.\n\n2. Deux."} />);
+    expect(html).toContain('<ol start="2"');
+  });
 });

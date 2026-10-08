@@ -91,6 +91,8 @@ describe("literacy tutor gateway", () => {
     expect(instruction).toContain("Build your first budget");
     expect(instruction).toContain("Teach, do not advise");
     expect(instruction).toContain("Never ask about the learner's own money");
+    expect(instruction).toContain("about 100 words");
+    expect(instruction).toContain('starting with ">> "');
     expect(instruction).toContain("Never state current fees, rates, limits, or regulations");
     expect(sent.body.contents.map(({ role }) => role)).toEqual(["model", "user"]);
   });

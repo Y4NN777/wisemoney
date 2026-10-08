@@ -1,8 +1,5 @@
 {
   "app": {
-    "updateAvailable": "Update available",
-    "updateDescription": "Installing it restarts WiseMoney and safely locks your space. Your data stays on this device.",
-    "updateNow": "Update",
     "updateLater": "Later",
     "updateInstalling": "Installing the improvement…",
     "updateInstallingDescription": "Keep WiseMoney open for a few seconds. It will restart automatically.",
@@ -1388,7 +1385,17 @@
       },
       "webCaution": "Figures found on the web can be wrong or out of date. Check the source before acting.",
       "startersNote": "Questions asked by readers in Burkina Faso (LeFaso.net).",
-      "source": "Source: {{title}} — {{publisher}}"
+      "source": "Source: {{title}} — {{publisher}}",
+      "followUps": "Questions to continue"
+    },
+    "topics": {
+      "label": "Topics",
+      "budget": "Budget",
+      "saving": "Saving",
+      "bank": "Banking",
+      "credit": "Credit",
+      "scams": "Scams",
+      "investing": "Investing"
     }
   },
   "learnCard": {

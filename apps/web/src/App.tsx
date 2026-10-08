@@ -22,7 +22,7 @@ import { Check, Download, LoaderCircle, RotateCcw, X } from "lucide-react";
 // Toasts only fire from inside the app, so the toast library loads after the first paint.
 const Toaster = lazy(() => import("./components/ui/sonner.tsx").then((module) => ({ default: module.Toaster })));
 
-type UpdateStage = "hidden" | "available" | "installing" | "finalizing" | "installed" | "failed";
+type UpdateStage = "hidden" | "installing" | "finalizing" | "installed" | "failed";
 
 function PwaUpdateNotice({
   stage,
@@ -40,50 +40,20 @@ function PwaUpdateNotice({
   const { t } = useTranslation();
   const installing = stage === "installing" || stage === "finalizing";
   const Icon = stage === "installed" ? Check : stage === "failed" ? RotateCcw : installing ? LoaderCircle : Download;
-  const title = stage === "available"
-    ? t("app.updateAvailable")
-    : stage === "installing"
+  const title = stage === "installing"
       ? t("app.updateInstalling")
       : stage === "finalizing"
         ? t("app.updateFinalizing")
         : stage === "installed"
           ? t("app.updateInstalled")
           : t("app.updateFailed");
-  const description = stage === "available"
-    ? t("app.updateDescription")
-    : stage === "installing"
+  const description = stage === "installing"
       ? t("app.updateInstallingDescription")
       : stage === "finalizing"
         ? t("app.updateFinalizingDescription")
         : stage === "installed"
           ? t("app.updateInstalledDescription")
           : t("app.updateFailedDescription");
-
-  if (stage === "available") {
-    return (
-      <aside
-        role="status"
-        aria-live="polite"
-        className="motion-enter fixed inset-x-3 top-[calc(var(--safe-area-top)+0.75rem)] z-[90] mx-auto max-w-md rounded-lg border border-ocean-primary/30 bg-ocean-wash/95 text-ocean-dark shadow-[0_12px_32px_rgba(0,48,73,0.16)] backdrop-blur-xl"
-      >
-        <div className="flex min-h-14 items-center gap-2 p-2.5 sm:gap-3 sm:p-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ocean-primary text-white">
-            <Download className="h-4 w-4" />
-          </span>
-          <p className="min-w-0 flex-1 text-sm font-semibold leading-snug">{title}</p>
-          <Button type="button" size="sm" className="shrink-0" onClick={onInstall}>{t("app.updateNow")}</Button>
-          <button
-            type="button"
-            className="interactive-surface flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-ocean-dark"
-            onClick={onDismiss}
-            aria-label={t("app.updateDismiss")}
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      </aside>
-    );
-  }
 
   return (
     <aside
@@ -130,7 +100,6 @@ const UPDATE_CHECK_INTERVAL_MS = 60 * 1000;
 function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [stage, setStage] = useState<UpdateStage>(() => hasPwaUpdateReload() ? "installed" : "hidden");
-  const [deferred, setDeferred] = useState(false);
   const vaultUnlockedRef = useRef(vaultUnlocked);
   const updateApprovedRef = useRef(false);
   const installStartedRef = useRef(false);
@@ -188,7 +157,6 @@ function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
     installStartedRef.current = true;
     updateApprovedRef.current = approvedWhileUnlocked;
     markPwaUpdateReload();
-    setDeferred(false);
     setStage("installing");
     finalizingTimerRef.current = window.setTimeout(() => {
       setStage((current) => current === "installing" ? "finalizing" : current);
@@ -209,14 +177,17 @@ function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
       installUpdate(false);
       return;
     }
-    if (!deferred && !installStartedRef.current) setStage("available");
-  }, [deferred, installUpdate, needRefresh, vaultUnlocked]);
+    // While the vault is open the waiting version stays dormant and nothing is shown: reloading
+    // would lock the vault and ask for the passphrase. It installs the next time WiseMoney opens
+    // (vault locked), or as soon as the vault is locked (Y4NN, 2026-10-08: an update must not ask
+    // for the passphrase again; handing the key over a reload was rejected, INV-KEY-03).
+  }, [installUpdate, needRefresh, vaultUnlocked]);
 
   if (stage === "hidden") return null;
   return <PwaUpdateNotice
     stage={stage}
     onInstall={() => installUpdate(vaultUnlocked)}
-    onLater={() => { setDeferred(true); setStage("hidden"); }}
+    onLater={() => setStage("hidden")}
     onViewUpdates={() => {
       clearPwaUpdateReload();
       setStage("hidden");
@@ -224,7 +195,6 @@ function PwaUpdateHandler({ vaultUnlocked }: { vaultUnlocked: boolean }) {
     }}
     onDismiss={() => {
       if (stage === "installed") clearPwaUpdateReload();
-      else setDeferred(true);
       setStage("hidden");
     }}
   />;

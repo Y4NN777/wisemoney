@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ExternalLink, Send, ShieldCheck, Square, Trash2 } from "lucide-react";
+import { ArrowUp, BookOpen, ExternalLink, RotateCcw, ShieldCheck, Square } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AI_CAPABILITY_QUERY_KEY } from "../../components/AssistantCard/index.tsx";
@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/button.tsx";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
 import { getAICapability } from "../../lib/capabilities.ts";
+import { splitAnswer } from "../../literacy/answerText.ts";
 import { LITERACY_STARTERS } from "../../literacy/starters.ts";
 import { TutorUnavailableError, askTutor, type TutorAnswer } from "../../pillars/literacy/index.ts";
 
@@ -48,6 +49,7 @@ export default function Learn() {
   const messageId = useRef(0);
   const controller = useRef<AbortController | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
+  const composerRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (messages.length > 0) endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -67,7 +69,8 @@ export default function Learn() {
       setError(t("learn.tutor.errors.offline"));
       return;
     }
-    const history = messages.filter((message) => message.text.length > 0).map(({ role, text: body }) => ({ role, text: body }));
+    // The suggested follow-ups are buttons, not part of what the tutor said: they stay out of the history.
+    const history = messages.filter((message) => message.text.length > 0).map(({ role, text: body }) => ({ role, text: role === "assistant" ? splitAnswer(body).body : body }));
     const userId = ++messageId.current;
     const answerId = ++messageId.current;
     setMessages((current) => [...current, { id: userId, role: "user", text }, { id: answerId, role: "assistant", text: "" }]);
@@ -105,84 +108,156 @@ export default function Learn() {
     setError(null);
   };
 
+  const lastAnswerId = [...messages].reverse().find((message) => message.role === "assistant")?.id ?? null;
+
+  const startWithTopic = (topic: string) => {
+    setInput(`${topic} : `);
+    composerRef.current?.focus();
+  };
+
+  const empty = messages.length === 0;
+
+  // Laid out like current chat apps (Y4NN, 2026-10-08: "like ChatGPT"): a centred start screen, the
+  // learner's questions in grey bubbles, answers as plain text across the page, one rounded composer
+  // pinned above the tab bar with the send button inside it.
   return (
-    <main aria-label={t("learn.title")} className="app-page">
-      <div className="page-head">
-        <div>
-          <h1 className="page-title">{t("learn.title")}</h1>
-          <p className="mt-1 text-xs text-muted-foreground">{t("learn.disclosure")}</p>
-        </div>
-        {messages.length > 0 && (
-          <Button type="button" variant="outline" size="sm" onClick={reset}>
-            <Trash2 className="mr-1 h-4 w-4" />{t("learn.tutor.clear")}
-          </Button>
+    <main aria-label={t("learn.title")} className="mx-auto flex min-h-[calc(100dvh-9.5rem)] w-full max-w-2xl flex-col">
+      {empty ? (
+        <section aria-label={t("learn.title")} className="flex flex-1 flex-col items-center justify-center gap-6 py-6 text-center">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-semibold tracking-tight">{t("learn.title")}</h1>
+            <p className="text-xs text-muted-foreground">{t("learn.disclosure")}</p>
+          </div>
+          <ul className="flex flex-wrap justify-center gap-2" aria-label={t("learn.topics.label")}>
+            {TOPICS.map((topic) => (
+              <li key={topic}>
+                <button type="button" onClick={() => startWithTopic(t(`learn.topics.${topic}`))} className="inline-flex h-11 items-center rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+                  {t(`learn.topics.${topic}`)}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : (
+        <>
+          <div className="flex items-center justify-between gap-3 pb-2">
+            <h1 className="text-base font-semibold">{t("learn.title")}</h1>
+            <Button type="button" variant="ghost" size="icon" className="shrink-0 text-muted-foreground" onClick={reset} aria-label={t("learn.tutor.clear")} title={t("learn.tutor.clear")}>
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
+          <section aria-label={t("learn.title")} className="flex-1 space-y-6 pb-4" aria-live="polite">
+            {messages.map((message) => message.role === "user" ? (
+              <article key={message.id} className="flex justify-end">
+                <p className="max-w-[85%] whitespace-pre-wrap rounded-3xl bg-muted px-4 py-2.5 text-[0.9375rem] leading-relaxed text-foreground">{message.text}</p>
+              </article>
+            ) : (
+              <article key={message.id} className="space-y-3">
+                {message.text.length === 0
+                  ? <TypingDots label={t("learn.tutor.writing")} />
+                  : <AnswerBody text={message.text} />}
+                {message.answer != null && <AnswerSource answer={message.answer} />}
+                {message.answer != null && message.id === lastAnswerId && (
+                  <FollowUps questions={splitAnswer(message.text).followUps} disabled={busy} onAsk={ask} label={t("learn.tutor.followUps")} />
+                )}
+              </article>
+            ))}
+            <div ref={endRef} />
+          </section>
+        </>
+      )}
+
+      <div className="sticky bottom-[calc(4.75rem+var(--safe-area-bottom))] z-10 space-y-2 bg-gradient-to-t from-background from-70% to-transparent pt-3 lg:bottom-4">
+        {error != null && <p className="rounded-xl bg-muted px-3 py-2 text-sm" role="alert">{error}</p>}
+        {empty && (
+          <div className="space-y-1.5">
+            <ul className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" aria-label={t("learn.tutor.suggestions")}>
+              {LITERACY_STARTERS.map((starter) => (
+                <li key={starter.id} className="shrink-0 snap-start">
+                  <button type="button" onClick={() => ask(starter.question[locale])} disabled={busy} className="h-full w-60 rounded-2xl border border-border bg-card px-4 py-3 text-left text-sm leading-snug text-foreground transition-colors hover:bg-muted disabled:opacity-50">
+                    {starter.question[locale]}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="px-1 text-[0.75rem] text-muted-foreground">{t("learn.tutor.startersNote")}</p>
+          </div>
+        )}
+        {!consent && (
+          <div className="flex items-center gap-2 rounded-2xl bg-ocean-wash px-3 py-1.5 text-xs" role="note">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-primary" />
+            <span className="min-w-0 flex-1 leading-snug">{t("learn.tutor.consent")}</span>
+            <Button type="button" size="sm" className="min-w-11 rounded-full" onClick={() => { grantLearnProviderConsent(); setConsent(true); setError(null); }}>{t("learn.tutor.ok")}</Button>
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="flex items-end gap-2 rounded-[1.75rem] border border-border bg-card p-1.5 pl-4 shadow-[0_4px_20px_rgba(16,24,32,0.08)] focus-within:border-ocean-primary/50">
+          <textarea
+            ref={composerRef}
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                event.preventDefault();
+                ask(input);
+              }
+            }}
+            maxLength={MAX_QUESTION_LENGTH}
+            rows={1}
+            disabled={busy}
+            placeholder={t("learn.tutor.placeholder")}
+            aria-label={t("learn.tutor.placeholder")}
+            className="max-h-32 min-h-11 flex-1 resize-none bg-transparent py-2.5 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
+          />
+          {busy
+            ? <Button type="button" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85" onClick={() => controller.current?.abort()} aria-label={t("learn.tutor.stop")}><Square className="h-3.5 w-3.5 fill-current" /></Button>
+            : <Button type="submit" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100" disabled={input.trim().length === 0} aria-label={t("learn.tutor.send")}><ArrowUp className="h-5 w-5" /></Button>}
+        </form>
+        {capability.data?.available === true && (
+          <p className="px-3 text-center text-xs text-muted-foreground">
+            {t("learn.tutor.personal")} <Link to="/assistant" className="font-semibold text-ocean-primary underline underline-offset-2">{t("assistant.title")}</Link>
+          </p>
         )}
       </div>
-
-      <section aria-label={t("learn.title")} className="rounded-lg border border-border bg-card">
-        <div className="space-y-3 p-3" aria-live="polite">
-          {messages.length === 0 && (
-            <div className="space-y-2">
-              <ul className="flex flex-wrap gap-2" aria-label={t("learn.tutor.suggestions")}>
-                {LITERACY_STARTERS.map((starter) => (
-                  <li key={starter.id}>
-                    <button type="button" onClick={() => ask(starter.question[locale])} disabled={busy} className="min-h-11 rounded-2xl border border-ocean-primary/40 bg-card px-3 py-1.5 text-left text-sm text-ocean-primary hover:bg-ocean-wash disabled:opacity-50">
-                      {starter.question[locale]}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-xs text-muted-foreground">{t("learn.tutor.startersNote")}</p>
-            </div>
-          )}
-          {messages.map((message) => (
-            <article key={message.id} className={message.role === "user" ? "flex justify-end" : "flex"}>
-              <div className={message.role === "user"
-                ? "max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3.5 py-2.5 text-sm text-primary-foreground"
-                : "min-w-0 max-w-[92%] rounded-2xl rounded-bl-sm bg-muted px-3.5 py-2.5 text-sm"}>
-                {message.role === "assistant" && message.text.length > 0
-                  ? <HelpMessageMarkdown text={message.text} />
-                  : <p className="whitespace-pre-wrap leading-relaxed">{message.text || t("learn.tutor.writing")}</p>}
-                {message.answer != null && <AnswerSource answer={message.answer} />}
-              </div>
-            </article>
-          ))}
-          {error != null && <p className="rounded-lg border-l-2 border-destructive bg-muted p-3 text-xs" role="alert">{error}</p>}
-          <div ref={endRef} />
-        </div>
-
-        <footer className="border-t border-border p-3">
-          {!consent && (
-            <div className="mb-2 flex items-center gap-2 rounded-lg bg-ocean-wash px-3 py-2 text-xs" role="note">
-              <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-primary" />
-              <span className="min-w-0 flex-1 leading-snug">{t("learn.tutor.consent")}</span>
-              <Button type="button" size="sm" className="h-11 min-w-11" onClick={() => { grantLearnProviderConsent(); setConsent(true); }}>{t("learn.tutor.ok")}</Button>
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="grid grid-cols-[1fr_2.75rem] items-end gap-2">
-            <textarea
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              maxLength={MAX_QUESTION_LENGTH}
-              rows={1}
-              disabled={busy}
-              placeholder={t("learn.tutor.placeholder")}
-              aria-label={t("learn.tutor.placeholder")}
-              className="min-h-11 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-base text-foreground focus-visible:border-primary sm:text-sm"
-            />
-            {busy
-              ? <Button type="button" size="icon" variant="outline" className="rounded-full" onClick={() => controller.current?.abort()} aria-label={t("learn.tutor.stop")}><Square className="h-4 w-4" /></Button>
-              : <Button type="submit" size="icon" className="rounded-full" disabled={input.trim().length === 0} aria-label={t("learn.tutor.send")}><Send className="h-4 w-4" /></Button>}
-          </form>
-          {capability.data?.available === true && (
-            <p className="mt-2 text-xs text-muted-foreground">
-              {t("learn.tutor.personal")} <Link to="/assistant" className="font-semibold text-ocean-primary underline underline-offset-2">{t("assistant.title")}</Link>
-            </p>
-          )}
-        </footer>
-      </section>
-
     </main>
+  );
+}
+
+/** Plain topic words that open the composer with the topic typed in, for people who do not know what to ask. */
+const TOPICS = ["budget", "saving", "bank", "credit", "scams", "investing"] as const;
+
+/** The answer as text on the page (no bubble), without the follow-up lines. */
+function AnswerBody({ text }: { text: string }) {
+  return (
+    <div className="text-[0.9375rem] leading-relaxed text-foreground">
+      <HelpMessageMarkdown text={splitAnswer(text).body} />
+    </div>
+  );
+}
+
+/** Three dots while the first words arrive; still under reduced motion. */
+function TypingDots({ label }: { label: string }) {
+  return (
+    <p className="flex h-6 items-center gap-1" role="status" aria-label={label}>
+      {[0, 1, 2].map((dot) => (
+        <span key={dot} className="h-2 w-2 rounded-full bg-muted-foreground/60 motion-safe:animate-bounce" style={{ animationDelay: `${dot * 150}ms` }} />
+      ))}
+    </p>
+  );
+}
+
+/** Two questions the learner could ask next, as buttons under the latest answer. */
+function FollowUps({ questions, disabled, onAsk, label }: { questions: string[]; disabled: boolean; onAsk: (question: string) => void; label: string }) {
+  if (questions.length === 0) return null;
+  return (
+    <ul className="flex flex-col items-start gap-2" aria-label={label}>
+      {questions.map((question) => (
+        <li key={question}>
+          <button type="button" disabled={disabled} onClick={() => onAsk(question)} className="min-h-11 rounded-2xl border border-border bg-card px-4 py-2 text-left text-sm text-foreground transition-colors hover:bg-muted disabled:opacity-50">
+            {question}
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -195,9 +270,12 @@ function AnswerSource({ answer }: { answer: TutorAnswer }) {
   const lesson = answer.lessons[0];
   if (lesson == null && answer.sources.length === 0) return null;
   return (
-    <div className="mt-2 space-y-1 border-t border-foreground/10 pt-2 text-xs text-muted-foreground">
+    <div className="space-y-2 text-xs text-muted-foreground">
       {lesson != null && (
-        <p>{t("learn.tutor.source", { title: lesson.title, publisher: lesson.publishers.slice(0, 2).join(", ") || "WiseMoney" })}</p>
+        <p className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-muted px-3 py-1.5">
+          <BookOpen className="h-3.5 w-3.5 shrink-0 text-ocean-primary" aria-hidden="true" />
+          <span className="truncate">{t("learn.tutor.source", { title: lesson.title, publisher: lesson.publishers.slice(0, 2).join(", ") || "WiseMoney" })}</span>
+        </p>
       )}
       {answer.sources.length > 0 && (
         <>
