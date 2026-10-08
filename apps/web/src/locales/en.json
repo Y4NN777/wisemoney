@@ -1,4 +1,8 @@
 {
+  "app": {
+    "updated": "WiseMoney is up to date",
+    "viewUpdates": "See what’s new"
+  },
   "language": {
     "choose": "Choose language",
     "english": "English",

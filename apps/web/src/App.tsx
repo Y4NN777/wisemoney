@@ -1,8 +1,13 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { RouterProvider } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { useRegisterSW } from "virtual:pwa-register/react";
+import { currentBuildId, takeUpdateNotice } from "./pwa/buildIdentity.ts";
 import { PwaInstallProvider } from "./pwa/install.tsx";
 import { notifyReminderQueueUpdated, registerReminderPeriodicSync } from "./pwa/reminderQueue.ts";
+import { openUpdates } from "./releases/navigation.ts";
+import { PRODUCT_VERSION } from "./releases/releaseNotes.ts";
 import { WiseBotProvider } from "./help/WiseBotProvider.tsx";
 import { router } from "./router.ts";
 import { VaultUnlockedSetterContext } from "./lib/vaultUnlocked.ts";
@@ -66,6 +71,24 @@ function PwaUpdateChecker() {
   return null;
 }
 
+const UPDATED_NOTICE_MS = 8_000;
+
+/**
+ * Tells the user, once, that WiseMoney changed since their last visit (Y4NN, 2026-10-08: a
+ * silent update goes by "too fast"). It waits for the unlock so it never sits over the passphrase.
+ */
+function UpdatedNotice({ vaultUnlocked }: { vaultUnlocked: boolean }) {
+  const { t } = useTranslation();
+  useEffect(() => {
+    if (!vaultUnlocked || !takeUpdateNotice(currentBuildId())) return;
+    toast.success(t("app.updated"), {
+      duration: UPDATED_NOTICE_MS,
+      action: { label: t("app.viewUpdates"), onClick: () => openUpdates(PRODUCT_VERSION) },
+    });
+  }, [t, vaultUnlocked]);
+  return null;
+}
+
 export default function App() {
   const [vaultUnlocked, setVaultUnlocked] = useState(false);
 
@@ -75,6 +98,7 @@ export default function App() {
         <WiseBotProvider vaultUnlocked={vaultUnlocked}>
           <Suspense fallback={null}><Toaster /></Suspense>
           <PwaUpdateChecker />
+          <UpdatedNotice vaultUnlocked={vaultUnlocked} />
           <RouterProvider router={router} />
         </WiseBotProvider>
       </VaultUnlockedSetterContext.Provider>
