@@ -1,10 +1,11 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { RouterProvider } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { currentBuildId, takeUpdateNotice } from "./pwa/buildIdentity.ts";
 import { PwaInstallProvider } from "./pwa/install.tsx";
+import { hasInteracted, shouldActivateAtStartup, watchFirstInteraction } from "./pwa/startupUpdate.ts";
 import { notifyReminderQueueUpdated, registerReminderPeriodicSync } from "./pwa/reminderQueue.ts";
 import { openUpdates } from "./releases/navigation.ts";
 import { PRODUCT_VERSION } from "./releases/releaseNotes.ts";
@@ -21,16 +22,20 @@ const Toaster = lazy(() => import("./components/ui/sonner.tsx").then((module) =>
  */
 const UPDATE_CHECK_INTERVAL_MS = 60 * 1000;
 
+watchFirstInteraction();
+
 /**
- * Downloads new versions and leaves them waiting; WiseMoney never activates or reloads one
- * itself. A reload locks the vault, and on 2026-10-08 an update that installed while the vault
- * was locked reloaded the page in the middle of an unlock and threw the typed passphrase away
- * (reproduced with two builds: reload 3.4 s after opening). The browser activates the waiting
- * version once every WiseMoney window is closed, so the next opening runs it with nothing lost
- * (Y4NN chose "never reload"; INV-KEY-03 rules out carrying the key across a reload).
+ * Downloads new versions and leaves them waiting. A reload locks the vault, and on 2026-10-08 an
+ * update that installed mid-session reloaded the page during an unlock and threw the typed
+ * passphrase away (reproduced with two builds: reload 3.4 s after opening). So a version that
+ * arrives during a session is never installed then; one already waiting at the next opening is
+ * installed before the first touch (see startupUpdate.ts). INV-KEY-03 rules out carrying the key
+ * across a reload.
  */
-function PwaUpdateChecker() {
+function PwaUpdateChecker({ vaultUnlocked }: { vaultUnlocked: boolean }) {
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
+  const vaultUnlockedRef = useRef(vaultUnlocked);
+  vaultUnlockedRef.current = vaultUnlocked;
   useRegisterSW({
     immediate: true,
     onRegisteredSW(_swScriptUrl, registration) {
@@ -38,6 +43,13 @@ function PwaUpdateChecker() {
       if (registration != null) {
         notifyReminderQueueUpdated(registration);
         void registerReminderPeriodicSync(registration);
+        const waiting = registration.waiting;
+        if (waiting != null && shouldActivateAtStartup(true, hasInteracted(), vaultUnlockedRef.current)) {
+          // Reload even if a tap lands in the second this takes: the old page under the new worker
+          // would ask for code files the new deployment no longer serves.
+          navigator.serviceWorker.addEventListener("controllerchange", () => window.location.reload(), { once: true });
+          waiting.postMessage({ type: "SKIP_WAITING" });
+        }
       }
     },
     // Without this callback the plugin reloads the page when a new worker takes control.
@@ -97,7 +109,7 @@ export default function App() {
       <VaultUnlockedSetterContext.Provider value={setVaultUnlocked}>
         <WiseBotProvider vaultUnlocked={vaultUnlocked}>
           <Suspense fallback={null}><Toaster /></Suspense>
-          <PwaUpdateChecker />
+          <PwaUpdateChecker vaultUnlocked={vaultUnlocked} />
           <UpdatedNotice vaultUnlocked={vaultUnlocked} />
           <RouterProvider router={router} />
         </WiseBotProvider>

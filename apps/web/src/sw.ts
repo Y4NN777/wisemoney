@@ -50,7 +50,7 @@ async function processReminderQueue(): Promise<void> {
 }
 
 self.addEventListener("message", (event) => {
-  // Builds up to 2026-10-08 still ask the waiting worker to take over; this build never does.
+  // The page asks the waiting worker to take over only at opening, before the first touch.
   if ((event.data as { type?: unknown } | null)?.type === "SKIP_WAITING") {
     event.waitUntil(self.skipWaiting());
     return;

@@ -77,7 +77,7 @@
   password hashing, HS256 JWTs, refresh-token rotation/reuse detection, consent
   assertion endpoint, managed proxy gate, payload caps, middleware, provider router,
   and Postgres migrations.
-- **PWA/UI:** Updates download in the background and run at the next full opening (no prompt, never a reload: 2026-10-08), refreshed app icons, localized action
+- **PWA/UI:** Updates download in the background; one already waiting is installed at the next opening before the first touch, never mid-session (2026-10-08), refreshed app icons, localized action
   feedback, responsive account form fixes, and stabilized dropdowns in dialogs.
 - **CI:** `.github/workflows/verify.yml` runs web typecheck/lint/test and edge
   build/vet/test. `.github/workflows/security-scan.yml` runs pinned osv-scanner
