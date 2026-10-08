@@ -114,6 +114,11 @@ export type AuthSessionRecord = {
   refreshIv: Uint8Array;         // nonce for refreshCiphertext
 };
 
+/** learnConversations — WiseLearn conversations, one sealed record each; only the id is plaintext. */
+export type LearnConversationRecord = EncryptedRecord & {
+  id: string;
+};
+
 /** appSettings — encrypted financial preferences such as the base currency. */
 export type AppSettingRecord = EncryptedRecord & {
   id: string;
@@ -150,6 +155,7 @@ class WiseMoneyDB extends Dexie {
   byoProviderKeys!: Table<BYOProviderKeyRecord, string>;
   authSession!: Table<AuthSessionRecord, string>;
   appSettings!: Table<AppSettingRecord, string>;
+  learnConversations!: Table<LearnConversationRecord, string>;
 
   constructor() {
     super("WiseMoney");
@@ -373,6 +379,27 @@ class WiseMoneyDB extends Dexie {
       authSession:
         "id",
       appSettings:
+        "id",
+    });
+
+    // WiseLearn history (Y4NN, 2026-10-08). Its own store, so restoring a backup (which replaces
+    // appSettings) leaves conversations alone. No plaintext date: the list is sorted after decryption.
+    this.version(7).stores({
+      financialEvents:
+        "id, timestamp, type, entityId, [type+timestamp]",
+      financialStateSnapshot:
+        "id",
+      fxRates:
+        "id, baseCurrency, quoteCurrency, lastUpdated",
+      keyMeta:
+        "id",
+      byoProviderKeys:
+        "id, provider",
+      authSession:
+        "id",
+      appSettings:
+        "id",
+      learnConversations:
         "id",
     });
   }

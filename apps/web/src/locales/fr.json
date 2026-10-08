@@ -1378,6 +1378,16 @@
       "source": "Source : {{title}} — {{publisher}}",
       "followUps": "Questions pour continuer"
     },
+    "history": {
+      "open": "Historique",
+      "title": "Historique",
+      "private": "Gardé chiffré sur cet appareil.",
+      "empty": "Aucune conversation pour l’instant.",
+      "delete": "Supprimer « {{title}} »",
+      "deleteAll": "Tout supprimer",
+      "confirmAll": "Supprimer tout l’historique ?",
+      "confirm": "Supprimer"
+    },
     "topics": {
       "label": "Thèmes",
       "budget": "Budget",

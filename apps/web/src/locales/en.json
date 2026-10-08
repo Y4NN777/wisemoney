@@ -1378,6 +1378,16 @@
       "source": "Source: {{title}} — {{publisher}}",
       "followUps": "Questions to continue"
     },
+    "history": {
+      "open": "History",
+      "title": "History",
+      "private": "Kept encrypted on this device.",
+      "empty": "No conversations yet.",
+      "delete": "Delete “{{title}}”",
+      "deleteAll": "Delete all",
+      "confirmAll": "Delete the whole history?",
+      "confirm": "Delete"
+    },
     "topics": {
       "label": "Topics",
       "budget": "Budget",

@@ -63,9 +63,10 @@ try {
     });
   });
   // Dexie stores schema version N as native IndexedDB version N * 10.
-  assert.equal(migratedDatabase.version, 60);
+  assert.equal(migratedDatabase.version, 70);
   assert.equal(migratedDatabase.marker, "migration-marker");
   assert.ok(migratedDatabase.stores.includes("appSettings"), "appSettings missing after v6 migration");
+  assert.ok(migratedDatabase.stores.includes("learnConversations"), "learnConversations missing after v7 migration");
   for (const removedStore of [
     "accounts", "transactions", "categories", "budgets", "goals",
     "goalContributions", "recurringItems",

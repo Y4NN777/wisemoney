@@ -171,6 +171,23 @@ the previous `localStorage` value on the first unlocked read and removes that
 legacy value only after the encrypted write succeeds.
 ```
 
+#### `learnConversations` (WiseLearn history — added 2026-10-08, Dexie version 7)
+
+```
+learnConversations {
+  id          : string          // random UUID — the only plaintext field
+  ciphertext  : Uint8Array      // sealed JSON: title, createdAt, updatedAt, messages
+  iv          : Uint8Array      // AES-GCM nonce
+}
+
+Dexie indexes: "id"
+
+Invariant: no question, answer, title or date is stored in plaintext; the list is
+sorted after decryption, so the store adds no timing index. Kept until the learner
+deletes a conversation or all of them (Y4NN, 2026-10-08). Its own store, so restoring
+a backup (which replaces appSettings) leaves it untouched; not part of backups.
+```
+
 #### `keyMeta` (key-management artifacts — INV-KEY-02/03)
 
 ```

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUp, BookOpen, ExternalLink, RotateCcw, ShieldCheck, Square } from "lucide-react";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { ArrowUp, BookOpen, ExternalLink, ShieldCheck, Square, SquarePen } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AI_CAPABILITY_QUERY_KEY } from "../../components/AssistantCard/index.tsx";
 import { Button } from "../../components/ui/button.tsx";
@@ -10,7 +10,10 @@ import { TypingDots } from "../../components/ui/typing-dots.tsx";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
 import { getAICapability } from "../../lib/capabilities.ts";
+import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { splitAnswer } from "../../literacy/answerText.ts";
+import { conversationTitle, loadLearnConversation, saveLearnConversation, type StoredTutorMessage } from "../../literacy/conversationStore.ts";
+import LearnHistory from "./LearnHistory.tsx";
 import { LITERACY_STARTERS } from "../../literacy/starters.ts";
 import { TutorUnavailableError, askTutor, type TutorAnswer } from "../../pillars/literacy/index.ts";
 
@@ -53,6 +56,11 @@ export default function Learn() {
   const endRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const pageRef = useRef<HTMLElement | null>(null);
+  const masterKey = useMasterKey();
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const createdAt = useRef(0);
+  // Set when the learner asks something, so opening an old conversation does not move it to the top.
+  const unsaved = useRef(false);
   const dockRef = useRef<HTMLDivElement | null>(null);
 
   // The composer is fixed above the tab bar; the page reserves its live height so nothing ends up
@@ -74,6 +82,18 @@ export default function Learn() {
 
   useEffect(() => () => controller.current?.abort(), []);
 
+  // Saved once an answer is complete (or has failed), sealed in the vault.
+  useEffect(() => {
+    if (busy || conversationId == null || !unsaved.current) return;
+    const stored: StoredTutorMessage[] = messages
+      .filter((message) => message.text.length > 0)
+      .map(({ role, text, answer }) => (answer == null ? { role, text } : { role, text, answer }));
+    if (stored.length === 0) return;
+    unsaved.current = false;
+    void saveLearnConversation({ id: conversationId, title: conversationTitle(stored), createdAt: createdAt.current, updatedAt: Date.now(), messages: stored }, masterKey)
+      .catch(() => { unsaved.current = true; });
+  }, [busy, conversationId, masterKey, messages]);
+
   const ask = (question: string) => {
     const text = question.trim();
     if (text.length === 0 || busy) return;
@@ -88,6 +108,11 @@ export default function Learn() {
     }
     // The suggested follow-ups are buttons, not part of what the tutor said: they stay out of the history.
     const history = messages.filter((message) => message.text.length > 0).map(({ role, text: body }) => ({ role, text: role === "assistant" ? splitAnswer(body).body : body }));
+    if (conversationId == null) {
+      setConversationId(crypto.randomUUID());
+      createdAt.current = Date.now();
+    }
+    unsaved.current = true;
     const userId = ++messageId.current;
     const answerId = ++messageId.current;
     setMessages((current) => [...current, { id: userId, role: "user", text }, { id: answerId, role: "assistant", text: "" }]);
@@ -119,10 +144,23 @@ export default function Learn() {
     ask(input);
   };
 
-  const reset = () => {
+  const reset = useCallback(() => {
     controller.current?.abort();
     setMessages([]);
     setError(null);
+    setConversationId(null);
+    unsaved.current = false;
+  }, []);
+
+  const openFromHistory = async (id: string) => {
+    const conversation = await loadLearnConversation(id, masterKey).catch(() => null);
+    if (conversation == null) return;
+    controller.current?.abort();
+    unsaved.current = false;
+    createdAt.current = conversation.createdAt;
+    setConversationId(conversation.id);
+    setError(null);
+    setMessages(conversation.messages.map((message) => ({ ...message, id: ++messageId.current })));
   };
 
   const lastAnswerId = [...messages].reverse().find((message) => message.role === "assistant")?.id ?? null;
@@ -139,8 +177,22 @@ export default function Learn() {
   // pinned above the tab bar with the send button inside it.
   return (
     <main ref={pageRef} aria-label={t("learn.title")} className="mx-auto flex w-full max-w-2xl flex-col pb-[var(--learn-dock-h,0px)]">
+      <div className="flex h-11 items-center justify-between gap-2">
+        <LearnHistory currentId={conversationId} onOpen={(id) => void openFromHistory(id)} onCurrentDeleted={reset} />
+        {!empty && (
+          <>
+            <div className="flex min-w-0 items-center gap-2">
+              <WiseLearnMark size="sm" />
+              <h1 className="truncate text-base font-semibold">{t("learn.title")}</h1>
+            </div>
+            <Button type="button" variant="ghost" size="icon" className="h-11 w-11 shrink-0 text-muted-foreground" onClick={reset} aria-label={t("learn.tutor.clear")} title={t("learn.tutor.clear")}>
+              <SquarePen className="h-5 w-5" />
+            </Button>
+          </>
+        )}
+      </div>
       {empty ? (
-        <section aria-label={t("learn.title")} className="flex min-h-[calc(100dvh-var(--learn-chrome-h)-var(--safe-area-bottom)-var(--learn-dock-h,0px))] flex-col items-center justify-center gap-6 py-6 text-center">
+        <section aria-label={t("learn.title")} className="flex min-h-[calc(100dvh-var(--learn-chrome-h)-var(--safe-area-bottom)-var(--learn-dock-h,0px)-2.75rem)] flex-col items-center justify-center gap-6 py-6 text-center">
           <div className="flex flex-col items-center gap-3">
             <WiseLearnMark />
             <h1 className="text-2xl font-semibold tracking-tight">{t("learn.title")}</h1>
@@ -171,35 +223,24 @@ export default function Learn() {
           </div>
         </section>
       ) : (
-        <>
-          <div className="flex items-center justify-between gap-3 pb-2">
-            <div className="flex items-center gap-2.5">
-              <WiseLearnMark size="sm" />
-              <h1 className="text-base font-semibold">{t("learn.title")}</h1>
-            </div>
-            <Button type="button" variant="ghost" size="icon" className="shrink-0 text-muted-foreground" onClick={reset} aria-label={t("learn.tutor.clear")} title={t("learn.tutor.clear")}>
-              <RotateCcw className="h-4 w-4" />
-            </Button>
-          </div>
-          <section aria-label={t("learn.title")} className="flex-1 space-y-6 pb-4" aria-live="polite">
-            {messages.map((message) => message.role === "user" ? (
-              <article key={message.id} className="flex justify-end">
-                <p className="max-w-[85%] whitespace-pre-wrap rounded-3xl bg-muted px-4 py-2.5 text-[0.9375rem] leading-relaxed text-foreground">{message.text}</p>
-              </article>
-            ) : (
-              <article key={message.id} className="space-y-3">
-                {message.text.length === 0
-                  ? <TypingDots label={t("learn.tutor.writing")} />
-                  : <AnswerBody text={message.text} />}
-                {message.answer != null && <AnswerSource answer={message.answer} />}
-                {message.answer != null && message.id === lastAnswerId && (
-                  <FollowUps questions={splitAnswer(message.text).followUps} disabled={busy} onAsk={ask} label={t("learn.tutor.followUps")} />
-                )}
-              </article>
-            ))}
-            <div ref={endRef} className="scroll-mb-[calc(var(--learn-dock-h,0px)+4rem+var(--safe-area-bottom))]" />
-          </section>
-        </>
+        <section aria-label={t("learn.title")} className="flex-1 space-y-6 pb-4 pt-2" aria-live="polite">
+          {messages.map((message) => message.role === "user" ? (
+            <article key={message.id} className="flex justify-end">
+              <p className="max-w-[85%] whitespace-pre-wrap rounded-3xl bg-muted px-4 py-2.5 text-[0.9375rem] leading-relaxed text-foreground">{message.text}</p>
+            </article>
+          ) : (
+            <article key={message.id} className="space-y-3">
+              {message.text.length === 0
+                ? <TypingDots label={t("learn.tutor.writing")} />
+                : <AnswerBody text={message.text} />}
+              {message.answer != null && <AnswerSource answer={message.answer} />}
+              {message.answer != null && message.id === lastAnswerId && (
+                <FollowUps questions={splitAnswer(message.text).followUps} disabled={busy} onAsk={ask} label={t("learn.tutor.followUps")} />
+              )}
+            </article>
+          ))}
+          <div ref={endRef} className="scroll-mb-[calc(var(--learn-dock-h,0px)+4rem+var(--safe-area-bottom))]" />
+        </section>
       )}
 
       {/* Fixed above the tab bar on every WiseLearn screen; only the content scrolls behind it
