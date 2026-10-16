@@ -441,6 +441,22 @@ try {
     await appPage.getByRole("button", { name: "Create Account", exact: true }).click();
     await appPage.getByText(name, { exact: true }).first().waitFor();
   }
+  // An account set up with a wrong opening balance: correct it, then archive it (nothing moved on it).
+  await appPage.getByRole("button", { name: "New", exact: true }).last().click();
+  await appPage.getByLabel("Account name", { exact: true }).fill("Smoke Mistake");
+  await appPage.getByLabel("Opening balance", { exact: true }).fill("5000");
+  await appPage.getByRole("button", { name: "Create Account", exact: true }).click();
+  await appPage.getByText("Smoke Mistake", { exact: true }).first().waitFor();
+  await appPage.getByRole("button", { name: "Edit Smoke Mistake", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel(/^Opening balance/).fill("4000");
+  await appPage.getByRole("dialog").getByRole("button", { name: "Save Account", exact: true }).click();
+  await appPage.getByText(/^Opening balance corrected/).first().waitFor({ timeout: 30_000 });
+  const confirmed = [];
+  appPage.on("dialog", (dialog) => { confirmed.push(dialog.message()); void dialog.accept(); });
+  await appPage.getByRole("button", { name: "Archive Smoke Mistake", exact: true }).click();
+  await appPage.getByText("Account archived", { exact: true }).first().waitFor({ timeout: 30_000 });
+  assert.equal(confirmed.length, 1, "archiving a setup-only account should ask once");
+  appPage.removeAllListeners("dialog");
   await appPage.getByRole("tab", { name: "Categories", exact: true }).click();
   await appPage.getByPlaceholder("Search categories", { exact: true }).waitFor();
   await appPage.getByRole("link", { name: "Plan", exact: true }).click();
@@ -613,6 +629,14 @@ try {
     "dark management card header uses a hard-coded white surface",
   );
   await appPage.screenshot({ path: `${outputDir}/capture-management-dark.png`, fullPage: true });
+  // Smoke Cash now holds money from real movements: the archive is refused before any confirmation.
+  let refusedAfterConfirm = false;
+  appPage.on("dialog", (dialog) => { refusedAfterConfirm = true; void dialog.dismiss(); });
+  await appPage.getByRole("tab", { name: "Accounts", exact: true }).click();
+  await appPage.getByRole("button", { name: "Archive Smoke Cash", exact: true }).click();
+  await appPage.getByText(/can’t be archived yet/).first().waitFor({ timeout: 30_000 });
+  assert.equal(refusedAfterConfirm, false, "a refused archive asked for a confirmation first");
+  appPage.removeAllListeners("dialog");
   await appPage.setViewportSize({ width: 1280, height: 900 });
   await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();

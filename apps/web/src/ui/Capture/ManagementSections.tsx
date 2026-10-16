@@ -268,19 +268,28 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
     return null;
   };
 
+  // Money from real movements would vanish from the totals: say why and what to do.
+  const showArchiveBlocked = (account: ActiveAccount) => {
+    const key = account.balance.minorUnits > 0 ? "archiveBlockedPositive" : "archiveBlockedNegative";
+    toast.error(t("capture.manage.errorsAccount.archiveBlockedTitle"), {
+      description: t(`capture.manage.errorsAccount.${key}`, { name: account.name, amount: formatMoney(account.balance) }),
+      duration: ARCHIVE_BLOCKED_TOAST_MS,
+    });
+  };
+
   const archiveAccountItem = (account: ActiveAccount) => {
     const { id: accountId, name } = account;
+    // Known refusal: say so before asking to confirm something that cannot happen.
+    if (account.archivable === false) {
+      showArchiveBlocked(account);
+      return;
+    }
     if (!window.confirm(t("capture.manage.confirmArchiveAccount", { name }))) return;
     archiveAccount.mutate({ accountId }, {
       onSuccess: () => toast.success(t("capture.manage.accountArchived"), { description: t("capture.manage.accountArchivedBody", { name }) }),
       onError: (failure) => {
-        // Money from real movements would vanish from the totals: say why and what to do.
         if (failure instanceof AccountNotEmptyError) {
-          const key = account.balance.minorUnits > 0 ? "archiveBlockedPositive" : "archiveBlockedNegative";
-          toast.error(t("capture.manage.errorsAccount.archiveBlockedTitle"), {
-            description: t(`capture.manage.errorsAccount.${key}`, { name, amount: formatMoney(account.balance) }),
-            duration: ARCHIVE_BLOCKED_TOAST_MS,
-          });
+          showArchiveBlocked(account);
           return;
         }
         toast.error(failureMessage(failure, "capture.manage.errorsAccount.archiveFailed"));

@@ -42,6 +42,8 @@ type AccountState = {
   isActive: boolean;
   balance: MoneyDTO;
   initialBalance: MoneyDTO;
+  /** Whether archiving would be accepted now (accountArchive.ts); absent in snapshots cached before it existed. */
+  archivable?: boolean;
 };
 
 type CategoryState = {
@@ -321,17 +323,13 @@ function applyPayload(
       break;
     }
     case "account_opening_balance_corrected": {
-      // Corrects the opening balance given at creation; past events stay as they were, and the
-      // balance moves by the difference, so every movement since keeps its effect.
-      const p = payload as unknown as { accountId: string; openingBalance: { minorUnits: number; currency: string } };
+      const p = payload as unknown as OpeningBalanceCorrection;
       const account = required(acc.accounts.get(p.accountId), "account", p.accountId);
       if (!account.isActive) throw new Error(`event ${eventId}: account ${p.accountId} is archived`);
       if (p.openingBalance.currency !== account.currency) {
         throw new Error(`event ${eventId}: opening balance currency mismatch`);
       }
-      const corrected = { minorUnits: p.openingBalance.minorUnits, currency: p.openingBalance.currency };
-      account.balance = addMoney(subMoney(account.balance, account.initialBalance), corrected);
-      account.initialBalance = corrected;
+      correctOpeningBalance(account, p.openingBalance);
       break;
     }
     case "transaction_created": {
@@ -806,7 +804,7 @@ function computeSnapshot(
   let inferredCurrency: string | null = null;
 
   for (const a of acc.accounts.values()) {
-    accounts.push({ ...a });
+    accounts.push({ ...a, archivable: isAccountArchivable(a, acc.transactions.values(), acc.transfers) });
     if (inferredCurrency == null && a.isActive) inferredCurrency = a.currency;
   }
 
@@ -1038,28 +1036,48 @@ function advanceDueDate(
   return date.getTime();
 }
 
+type OpeningBalanceCorrection = { accountId: string; openingBalance: { minorUnits: number; currency: string } };
+
+/**
+ * Corrects the opening balance given at creation; past events stay as they were, and the balance
+ * moves by the difference, so every movement since keeps its effect.
+ */
+function correctOpeningBalance(account: { balance: MoneyDTO; initialBalance: MoneyDTO }, openingBalance: OpeningBalanceCorrection["openingBalance"]): void {
+  const corrected = { minorUnits: openingBalance.minorUnits, currency: openingBalance.currency };
+  account.balance = addMoney(subMoney(account.balance, account.initialBalance), corrected);
+  account.initialBalance = corrected;
+}
+
+async function decryptPayload(event: FinancialEventRecord, masterKey: MasterKey): Promise<FinancialEventPayload> {
+  const plaintext = await open({ ciphertext: event.ciphertext, iv: event.iv }, masterKey);
+  try {
+    return JSON.parse(new TextDecoder().decode(plaintext)) as FinancialEventPayload;
+  } finally {
+    plaintext.fill(0);
+  }
+}
+
 export async function replayFromInception(
   events: FinancialEventRecord[],
   masterKey: MasterKey,
   asOfTimestamp?: number,
-  currencyContext?: CurrencyContext
+  currencyContext?: CurrencyContext,
+  laterCorrections: FinancialEventRecord[] = []
 ): Promise<FinancialStateSnapshot> {
   const acc = createEmptyAccumulator();
   const sortedEvents = [...events].sort(compareFinancialEvents);
 
   for (const event of sortedEvents) {
-    const plaintext = await open(
-      { ciphertext: event.ciphertext, iv: event.iv },
-      masterKey
-    );
-    let payload: FinancialEventPayload;
-    try {
-      payload = JSON.parse(new TextDecoder().decode(plaintext)) as FinancialEventPayload;
-    } finally {
-      plaintext.fill(0);
-    }
+    applyPayload(acc, event.type as FinancialEventType, await decryptPayload(event, masterKey), event.id, event.timestamp);
+  }
 
-    applyPayload(acc, event.type as FinancialEventType, payload, event.id, event.timestamp);
+  // An opening-balance correction fixes a setup mistake, so it holds from the account's creation:
+  // a past month shows the corrected balance too. It applies only to accounts open at that date.
+  for (const event of [...laterCorrections].sort(compareFinancialEvents)) {
+    const correction = (await decryptPayload(event, masterKey)) as unknown as OpeningBalanceCorrection;
+    const account = acc.accounts.get(correction.accountId);
+    if (account == null || !account.isActive || account.currency !== correction.openingBalance.currency) continue;
+    correctOpeningBalance(account, correction.openingBalance);
   }
 
   const lastEvent = sortedEvents[sortedEvents.length - 1];
@@ -1080,8 +1098,12 @@ export async function replayUpTo(
     .where("timestamp")
     .belowOrEqual(targetTimestamp)
     .sortBy("timestamp");
+  const laterCorrections = await db.financialEvents
+    .where("[type+timestamp]")
+    .between(["account_opening_balance_corrected", targetTimestamp], ["account_opening_balance_corrected", Infinity], false, true)
+    .toArray();
   const currencyContext = await loadCurrencyContext(masterKey, "");
-  return replayFromInception(events, masterKey, targetTimestamp, currencyContext);
+  return replayFromInception(events, masterKey, targetTimestamp, currencyContext, laterCorrections);
 }
 
 export type TransactionDisplay = {

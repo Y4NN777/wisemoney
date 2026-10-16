@@ -212,6 +212,31 @@ describe("replayFromInception", () => {
     expect(snapshot.totalBalance.minorUnits).toBe(44300);
   });
 
+  it("applies a later opening balance correction to a past month, only for accounts open then", async () => {
+    const created = makeEvent({
+      id: "account", timestamp: 1000, type: "account_created",
+      payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 50000, currency: "XOF" } },
+    });
+    const category = makeEvent({ id: "category", timestamp: 1100, type: "category_created", payload: { name: "Food" } });
+    const expense = makeEvent({
+      id: "expense", timestamp: 1200, type: "transaction_created", entityId: "account",
+      payload: { accountId: "account", categoryId: "category", amount: { minorUnits: 700, currency: "XOF" }, direction: "expense" },
+    });
+    const laterCorrection = makeEvent({
+      id: "correction", timestamp: 9000, type: "account_opening_balance_corrected", entityId: "account",
+      payload: { accountId: "account", openingBalance: { minorUnits: 45000, currency: "XOF" } },
+    });
+    const correctionOfLaterAccount = makeEvent({
+      id: "correction-later", timestamp: 9500, type: "account_opening_balance_corrected", entityId: "later",
+      payload: { accountId: "later", openingBalance: { minorUnits: 1000, currency: "XOF" } },
+    });
+
+    const pastMonth = await replayFromInception([created, category, expense], mkKey, 2000, undefined, [correctionOfLaterAccount, laterCorrection]);
+
+    expect(pastMonth.accounts[0]?.balance).toEqual({ minorUnits: 44300, currency: "XOF" });
+    expect(pastMonth.accounts).toHaveLength(1);
+  });
+
   it("lets an account corrected to a zero opening balance, with no movement, be archived", async () => {
     const snapshot = await replayFromInception([
       makeEvent({
