@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseQuickEntry } from "./quickEntry.ts";
+import { parseQuickEntry, readQuickEntry } from "./quickEntry.ts";
 
 const amount = (text: string) => parseQuickEntry(text).amount;
 
@@ -52,5 +52,37 @@ describe("quick entry", () => {
   it("finds no amount when none was said", () => {
     expect(parseQuickEntry("taxi pour aller au marché")).toEqual({ amount: null, direction: null, note: "taxi pour aller au marché" });
     expect(parseQuickEntry("")).toEqual({ amount: null, direction: null, note: "" });
+  });
+
+  it("reads quantity times unit price and keeps the unit price as the other reading", () => {
+    const [item] = readQuickEntry("2 pains à 250");
+    expect(item).toMatchObject({ amount: "500", note: "2 pains", confidence: "sure", alternatives: ["250"] });
+    expect(item?.reading).toEqual({ how: "quantity", value: 500, quantity: 2, unitPrice: 250 });
+  });
+
+  it("splits several purchases and shares a direction said once", () => {
+    const items = readQuickEntry("j'ai payé taxi 500 et pain 250");
+    expect(items.map((item) => [item.amount, item.direction, item.note])).toEqual([["500", "expense", "taxi"], ["250", "expense", "pain"]]);
+  });
+
+  it("asks when the amount is implausible for CFA francs, not for other currencies", () => {
+    expect(readQuickEntry("2 taxis")[0]?.confidence).toBe("check");
+    expect(readQuickEntry("café 2,5", { currency: "EUR" })[0]?.confidence).toBe("sure");
+  });
+
+  it("asks when income and expense words are both said", () => {
+    const [item] = readQuickEntry("vendu riz payé transport 5000");
+    expect(item?.direction).toBeNull();
+    expect(item?.confidence).toBe("check");
+  });
+
+  it("names the word that decided the direction", () => {
+    expect(readQuickEntry("j'ai paye le taxi 2000")[0]?.directionWord).toBe("paye");
+    expect(readQuickEntry("Awa m'a remboursé 3000")[0]?.directionWord).toBe("remboursé");
+  });
+
+  it("gives the same reading every time", () => {
+    const line = "Taxi, deux mille. Pain, cinq cents.";
+    expect(readQuickEntry(line)).toEqual(readQuickEntry(line));
   });
 });

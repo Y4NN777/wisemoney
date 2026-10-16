@@ -1,0 +1,4159 @@
+{
+ "built": "2026-10-16",
+ "seed": "quick-entry-bank-2026-10-16",
+ "note": "Curated phrases are checked by hand; generated ones follow their template. Rebuild with node scripts/build-quick-entry-bank.mjs.",
+ "phrases": [
+  {
+   "text": "taxi 2000",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": null,
+     "note": "taxi"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "Taxi deux mille.",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": null,
+     "note": "Taxi"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "j'ai paye le taxi 2000",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": "expense",
+     "note": "taxi"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "Payé 1500 pour le pain",
+   "expected": [
+    {
+     "amount": "1500",
+     "direction": "expense",
+     "note": "pain"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "2 pains à 250",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": null,
+     "note": "2 pains"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "j'ai vendu 3 sacs à 12000",
+   "expected": [
+    {
+     "amount": "36000",
+     "direction": "income",
+     "note": "3 sacs"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "3 x 500 brochettes",
+   "expected": [
+    {
+     "amount": "1500",
+     "direction": null,
+     "note": "3 brochettes"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "taxi 500 et pain 250",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": null,
+     "note": "taxi"
+    },
+    {
+     "amount": "250",
+     "direction": null,
+     "note": "pain"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "taxi 500 pain 250",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": null,
+     "note": "taxi"
+    },
+    {
+     "amount": "250",
+     "direction": null,
+     "note": "pain"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "Taxi, deux mille. Pain, cinq cents.",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": null,
+     "note": "Taxi"
+    },
+    {
+     "amount": "500",
+     "direction": null,
+     "note": "Pain"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "j'ai payé taxi 500 et pain 250",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": "expense",
+     "note": "taxi"
+    },
+    {
+     "amount": "250",
+     "direction": "expense",
+     "note": "pain"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "deux mille cinq cents crédit orange",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": null,
+     "note": "crédit orange"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "reçu 25000 de tonton",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "income",
+     "note": "tonton"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "salaire 75k",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "la paye 200 000",
+   "expected": [
+    {
+     "amount": "200000",
+     "direction": "income",
+     "note": "paye"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "Paye du mois 150 000",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "income",
+     "note": "Paye du mois"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "riz gras sept cent cinquante",
+   "expected": [
+    {
+     "amount": "750",
+     "direction": null,
+     "note": "riz gras"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "facture d'eau 4500",
+   "expected": [
+    {
+     "amount": "4500",
+     "direction": "expense",
+     "note": "facture d'eau"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "J’ai payé 3000 F de crédit téléphone",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": "expense",
+     "note": "crédit téléphone"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "essence 1.500",
+   "expected": [
+    {
+     "amount": "1500",
+     "direction": null,
+     "note": "essence"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "loyer 35 000f",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": null,
+     "note": "loyer"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "Moto 2 500 FCFA",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": null,
+     "note": "Moto"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "moto 2 mille",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": null,
+     "note": "moto"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "J'ai donné 5000 à maman",
+   "expected": [
+    {
+     "amount": "5000",
+     "direction": "expense",
+     "note": "maman"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "remboursement de Awa 3000",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": "income",
+     "note": "remboursement de Awa"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "Awa m'a remboursé 3000",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": "income",
+     "note": "Awa"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "j'ai remboursé Awa 3000",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": "expense",
+     "note": "Awa"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "frais OM 250",
+   "expected": [
+    {
+     "amount": "250",
+     "direction": "expense",
+     "note": "frais OM"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "téléphone neuf 50 000",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": null,
+     "note": "téléphone neuf"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "un pain 250",
+   "expected": [
+    {
+     "amount": "250",
+     "direction": null,
+     "note": "pain"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "zoom-koom 200",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": null,
+     "note": "zoom-koom"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "taxi-moto 300",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": null,
+     "note": "taxi-moto"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "soixante-dix mille loyer",
+   "expected": [
+    {
+     "amount": "70000",
+     "direction": null,
+     "note": "loyer"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "quatre-vingt-quinze mille",
+   "expected": [
+    {
+     "amount": "95000",
+     "direction": null,
+     "note": ""
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "soixante et onze mille",
+   "expected": [
+    {
+     "amount": "71000",
+     "direction": null,
+     "note": ""
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "vingt et un mille cinq cents",
+   "expected": [
+    {
+     "amount": "21500",
+     "direction": null,
+     "note": ""
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "1,2 million terrain",
+   "expected": [
+    {
+     "amount": "1200000",
+     "direction": null,
+     "note": "terrain"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "cent",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": null,
+     "note": ""
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "Tô cinquante.",
+   "expected": [
+    {
+     "amount": "50",
+     "direction": null,
+     "note": "Tô"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "tô 200 et sauce 150",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": null,
+     "note": "tô"
+    },
+    {
+     "amount": "150",
+     "direction": null,
+     "note": "sauce"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "taxi pour aller au marché",
+   "expected": [
+    {
+     "amount": null,
+     "direction": null,
+     "note": "taxi pour aller au marché"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "salaire",
+   "expected": [
+    {
+     "amount": null,
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "curated"
+  },
+  {
+   "text": "vendu sauce gombo 300",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": "income",
+     "note": "sauce gombo"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "salaire 250000 F",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "Funérailles cent cinquante mille.",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": null,
+     "note": "Funérailles"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "reçu 10 mille de grotto",
+   "expected": [
+    {
+     "amount": "10000",
+     "direction": "income",
+     "note": "grotto"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "reçu 1 000 francs de Issa",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": "income",
+     "note": "Issa"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "j'ai payé 1k pour babenda",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": "expense",
+     "note": "babenda"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "reçu 10000 de tantie",
+   "expected": [
+    {
+     "amount": "10000",
+     "direction": "income",
+     "note": "tantie"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "gnamakoudji 2500 et consultation 50000",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": null,
+     "note": "gnamakoudji"
+    },
+    {
+     "amount": "50000",
+     "direction": null,
+     "note": "consultation"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "salaire 100 mille",
+   "expected": [
+    {
+     "amount": "100000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "vendu Castel 25",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "income",
+     "note": "Castel"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "j'ai paye assurance automobile 100",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": "expense",
+     "note": "assurance automobile"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "750f caution",
+   "expected": [
+    {
+     "amount": "750",
+     "direction": null,
+     "note": "caution"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "Beaufort 12500 et dattes 150",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": null,
+     "note": "Beaufort"
+    },
+    {
+     "amount": "150",
+     "direction": null,
+     "note": "dattes"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "salaire 250000",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "acheté Sobbra à 50000 F",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "expense",
+     "note": "Sobbra"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "riz gras 1000",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": null,
+     "note": "riz gras"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "4 Moov Africa à 200",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": null,
+     "note": "4 Moov Africa"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Go m'a remboursé 750",
+   "expected": [
+    {
+     "amount": "750",
+     "direction": "income",
+     "note": "Go"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "médicaments génériques 6000 et baptême 250",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": null,
+     "note": "médicaments génériques"
+    },
+    {
+     "amount": "250",
+     "direction": null,
+     "note": "baptême"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "4 cahiers à 600",
+   "expected": [
+    {
+     "amount": "2400",
+     "direction": null,
+     "note": "4 cahiers"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Dolotière m'a remboursé 150 000 FCFA",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "income",
+     "note": "Dolotière"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Grand frère m'a remboursé 250",
+   "expected": [
+    {
+     "amount": "250",
+     "direction": "income",
+     "note": "Grand frère"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "j'ai paye inscription 100k",
+   "expected": [
+    {
+     "amount": "100000",
+     "direction": "expense",
+     "note": "inscription"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "salaire 25 000 francs",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "reçu 700 de griot",
+   "expected": [
+    {
+     "amount": "700",
+     "direction": "income",
+     "note": "griot"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "reçu 15000 F de Issa",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": "income",
+     "note": "Issa"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "Aminata m'a remboursé 35 000 FCFA",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "Aminata"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "salaire 250 000",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "j'ai payé 25f pour cotisation APE",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "expense",
+     "note": "cotisation APE"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "tenue scolaire 250000f",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": null,
+     "note": "tenue scolaire"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "vendu assurance automobile 3 500 FCFA",
+   "expected": [
+    {
+     "amount": "3500",
+     "direction": "income",
+     "note": "assurance automobile"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "galettes 350 et Rakieta 75000",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": null,
+     "note": "galettes"
+    },
+    {
+     "amount": "75000",
+     "direction": null,
+     "note": "Rakieta"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "j'ai paye contrôle technique 2 000",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": "expense",
+     "note": "contrôle technique"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "reçu mille de Salif",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": "income",
+     "note": "Salif"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "j'ai paye SONAR 1000",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": "expense",
+     "note": "SONAR"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "j'ai paye cinéma 250000 F",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "expense",
+     "note": "cinéma"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "Dolotière m'a remboursé 5k",
+   "expected": [
+    {
+     "amount": "5000",
+     "direction": "income",
+     "note": "Dolotière"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "gingembre 50000 et funérailles 7500",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": null,
+     "note": "gingembre"
+    },
+    {
+     "amount": "7500",
+     "direction": null,
+     "note": "funérailles"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "4 dattes à 3000",
+   "expected": [
+    {
+     "amount": "12000",
+     "direction": null,
+     "note": "4 dattes"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Yougou yougou trois cent cinquante.",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": null,
+     "note": "Yougou yougou"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "reçu 800 de go",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": "income",
+     "note": "go"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "reçu soixante-quinze mille de petit frère",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "income",
+     "note": "petit frère"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "50000 TCV",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": null,
+     "note": "TCV"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "350 francs BAM",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": null,
+     "note": "BAM"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "j'ai paye Orange 350",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": "expense",
+     "note": "Orange"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "salaire cinquante mille",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "Coris Assurance 75000 et formule Accès 100000",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": null,
+     "note": "Coris Assurance"
+    },
+    {
+     "amount": "100000",
+     "direction": null,
+     "note": "formule Accès"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "acheté Dafani à 50k",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "expense",
+     "note": "Dafani"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "800 gnon",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": null,
+     "note": "gnon"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "vendu bassi sept cent cinquante",
+   "expected": [
+    {
+     "amount": "750",
+     "direction": "income",
+     "note": "bassi"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "j'ai payé 50.000 pour SONABEL",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "expense",
+     "note": "SONABEL"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "acheté Beaufort à 5000f",
+   "expected": [
+    {
+     "amount": "5000",
+     "direction": "expense",
+     "note": "Beaufort"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "taxi 600f",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": null,
+     "note": "taxi"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "attiéké 15000 et lait caillé 15000",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": null,
+     "note": "attiéké"
+    },
+    {
+     "amount": "15000",
+     "direction": null,
+     "note": "lait caillé"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "vendu Libs 750",
+   "expected": [
+    {
+     "amount": "750",
+     "direction": "income",
+     "note": "Libs"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "Go m'a remboursé 35.000",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "Go"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "3 unités à 1250",
+   "expected": [
+    {
+     "amount": "3750",
+     "direction": null,
+     "note": "3 unités"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "reçu 50.000 de tantie-bagages",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "income",
+     "note": "tantie-bagages"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "salaire 150k",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "acheté dolo à douze mille cinq cents",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": "expense",
+     "note": "dolo"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "vendu riz 600 FCFA",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": "income",
+     "note": "riz"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "j'ai paye cube Maggi 10000",
+   "expected": [
+    {
+     "amount": "10000",
+     "direction": "expense",
+     "note": "cube Maggi"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "babenda 20000 et réabonnement 10000",
+   "expected": [
+    {
+     "amount": "20000",
+     "direction": null,
+     "note": "babenda"
+    },
+    {
+     "amount": "10000",
+     "direction": null,
+     "note": "réabonnement"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "j'ai payé 25 F pour gingembre",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "expense",
+     "note": "gingembre"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "7 500 francs zoom-koom",
+   "expected": [
+    {
+     "amount": "7500",
+     "direction": null,
+     "note": "zoom-koom"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "Ciné Neerwaya 2500",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": null,
+     "note": "Ciné Neerwaya"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "médicaments génériques 400",
+   "expected": [
+    {
+     "amount": "400",
+     "direction": null,
+     "note": "médicaments génériques"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "4 Coris Assurance à 800",
+   "expected": [
+    {
+     "amount": "3200",
+     "direction": null,
+     "note": "4 Coris Assurance"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "acheté unités à 6 000 francs",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": "expense",
+     "note": "unités"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "Démarcheur m'a remboursé 200",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": "income",
+     "note": "Démarcheur"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "vendu Beaufort 100 francs",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": "income",
+     "note": "Beaufort"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "reçu 500 de garibou",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": "income",
+     "note": "garibou"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "4 hospitalisation à 400",
+   "expected": [
+    {
+     "amount": "1600",
+     "direction": null,
+     "note": "4 hospitalisation"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Dolotière m'a remboursé 500",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": "income",
+     "note": "Dolotière"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "2 STAF à 50",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": null,
+     "note": "2 STAF"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "toédo 150 et pharmacie 75000",
+   "expected": [
+    {
+     "amount": "150",
+     "direction": null,
+     "note": "toédo"
+    },
+    {
+     "amount": "75000",
+     "direction": null,
+     "note": "pharmacie"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "Koko Dunda cent cinquante.",
+   "expected": [
+    {
+     "amount": "150",
+     "direction": null,
+     "note": "Koko Dunda"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "5 babenda à 50",
+   "expected": [
+    {
+     "amount": "250",
+     "direction": null,
+     "note": "5 babenda"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "acheté célibatérium à 200f",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": "expense",
+     "note": "célibatérium"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "Poulet bicyclette sept cents.",
+   "expected": [
+    {
+     "amount": "700",
+     "direction": null,
+     "note": "Poulet bicyclette"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "acheté griot à 3000",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": "expense",
+     "note": "griot"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "Rakieta trois mille.",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": null,
+     "note": "Rakieta"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "trois cents médicaments génériques",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": null,
+     "note": "médicaments génériques"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "beignets 6000 et essence 3000",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": null,
+     "note": "beignets"
+    },
+    {
+     "amount": "3000",
+     "direction": null,
+     "note": "essence"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "j'ai payé 5k pour zamnin",
+   "expected": [
+    {
+     "amount": "5000",
+     "direction": "expense",
+     "note": "zamnin"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "salaire 250.000",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "réabonnement 25000",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": null,
+     "note": "réabonnement"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "pain 300 et ordonnance 35000",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": null,
+     "note": "pain"
+    },
+    {
+     "amount": "35000",
+     "direction": null,
+     "note": "ordonnance"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "j'ai paye contrôle technique 500",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": "expense",
+     "note": "contrôle technique"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "j'ai payé 2500f pour tissage",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": "expense",
+     "note": "tissage"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "acheté Youki à 50000f",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "expense",
+     "note": "Youki"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "vendu souma 150000 F",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "income",
+     "note": "souma"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "salaire 35 000 francs",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "2 500 moustiquaire",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": null,
+     "note": "moustiquaire"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "Canal Olympia Yennenga 800",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": null,
+     "note": "Canal Olympia Yennenga"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "vendu riz 15 000 francs",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": "income",
+     "note": "riz"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "Yougou yougou sept cent cinquante.",
+   "expected": [
+    {
+     "amount": "750",
+     "direction": null,
+     "note": "Yougou yougou"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "vendu babenda 2 mille",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": "income",
+     "note": "babenda"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "4 dattes à 200",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": null,
+     "note": "4 dattes"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "salaire deux cent cinquante mille",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "casque 12500 et Beaufort 50",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": null,
+     "note": "casque"
+    },
+    {
+     "amount": "50",
+     "direction": null,
+     "note": "Beaufort"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "salaire 75 mille",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "riz gras 1000 et dolo 3500",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": null,
+     "note": "riz gras"
+    },
+    {
+     "amount": "3500",
+     "direction": null,
+     "note": "dolo"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "acheté Ciné Neerwaya à 600",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": "expense",
+     "note": "Ciné Neerwaya"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "vendu niébé 15000",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": "income",
+     "note": "niébé"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "parking 1250",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": null,
+     "note": "parking"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "Abonnement bus trois cent cinquante.",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": null,
+     "note": "Abonnement bus"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "salaire 250k",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "5 niébé à 350",
+   "expected": [
+    {
+     "amount": "1750",
+     "direction": null,
+     "note": "5 niébé"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Tout Canal trois mille cinq cents.",
+   "expected": [
+    {
+     "amount": "3500",
+     "direction": null,
+     "note": "Tout Canal"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "2 arachide grillée à 500",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": null,
+     "note": "2 arachide grillée"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Grand frère m'a remboursé 3 500 francs",
+   "expected": [
+    {
+     "amount": "3500",
+     "direction": "income",
+     "note": "Grand frère"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Gasoil trois mille.",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": null,
+     "note": "Gasoil"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "Petit frère m'a remboursé 35 mille",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "Petit frère"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "ONEA 150000",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": null,
+     "note": "ONEA"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "j'ai payé 2000 pour taxi vert",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": "expense",
+     "note": "taxi vert"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "reçu 200 de bakoroman",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": "income",
+     "note": "bakoroman"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "j'ai paye huile 350",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": "expense",
+     "note": "huile"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "inscription 75000 et Libs 800",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": null,
+     "note": "inscription"
+    },
+    {
+     "amount": "800",
+     "direction": null,
+     "note": "Libs"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "acheté fibre optique à cinq cents",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": "expense",
+     "note": "fibre optique"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "cahiers 700",
+   "expected": [
+    {
+     "amount": "700",
+     "direction": null,
+     "note": "cahiers"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "Ciné Neerwaya 1 250 FCFA",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": null,
+     "note": "Ciné Neerwaya"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "tissage 800",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": null,
+     "note": "tissage"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "j'ai payé cent pour zoom-koom",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": "expense",
+     "note": "zoom-koom"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "salaire 100k",
+   "expected": [
+    {
+     "amount": "100000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "vendu tenue scolaire 100",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": "income",
+     "note": "tenue scolaire"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "2 Moov Africa à 4000",
+   "expected": [
+    {
+     "amount": "8000",
+     "direction": null,
+     "note": "2 Moov Africa"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "j'ai payé 25k pour tenue scolaire",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "expense",
+     "note": "tenue scolaire"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "acheté CNAMU à six mille",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": "expense",
+     "note": "CNAMU"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "salaire 50 000",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "j'ai payé 50000 pour dolo",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "expense",
+     "note": "dolo"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "j'ai paye yougou yougou 10 000",
+   "expected": [
+    {
+     "amount": "10000",
+     "direction": "expense",
+     "note": "yougou yougou"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "j'ai paye Faso Dan Fani 150000 F",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "expense",
+     "note": "Faso Dan Fani"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "acheté Festival Garba à 75 mille",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "expense",
+     "note": "Festival Garba"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "vendu ONEA 250000f",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "ONEA"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "1250 riz gras",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": null,
+     "note": "riz gras"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "Cash Power 20k",
+   "expected": [
+    {
+     "amount": "20000",
+     "direction": null,
+     "note": "Cash Power"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "Bakoroman m'a remboursé 400 FCFA",
+   "expected": [
+    {
+     "amount": "400",
+     "direction": "income",
+     "note": "Bakoroman"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "salaire 50 000 francs",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "j'ai payé 2 500 pour beignets",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": "expense",
+     "note": "beignets"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "salaire trente-cinq mille",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "j'ai payé 350 pour Orange",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": "expense",
+     "note": "Orange"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "pharmacie 20000 et zoom-koom 10000",
+   "expected": [
+    {
+     "amount": "20000",
+     "direction": null,
+     "note": "pharmacie"
+    },
+    {
+     "amount": "10000",
+     "direction": null,
+     "note": "zoom-koom"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "reçu trois cents de Salif",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": "income",
+     "note": "Salif"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "salaire 150 mille",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "j'ai paye Flag 20000 F",
+   "expected": [
+    {
+     "amount": "20000",
+     "direction": "expense",
+     "note": "Flag"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "reçu trois mille de grand frère",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": "income",
+     "note": "grand frère"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "acheté yougou yougou à 300f",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": "expense",
+     "note": "yougou yougou"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "souma 50f",
+   "expected": [
+    {
+     "amount": "50",
+     "direction": null,
+     "note": "souma"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "j'ai payé huit cents pour commission agent immobilier",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": "expense",
+     "note": "commission agent immobilier"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "vendu crédit téléphonique 3 500",
+   "expected": [
+    {
+     "amount": "3500",
+     "direction": "income",
+     "note": "crédit téléphonique"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "Go m'a remboursé 1000 F",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": "income",
+     "note": "Go"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "3 coiffure à 2000",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": null,
+     "note": "3 coiffure"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "reçu 12.500 de Aminata",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": "income",
+     "note": "Aminata"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "j'ai paye taxi 800",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": "expense",
+     "note": "taxi"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "Dolotière m'a remboursé 4.000",
+   "expected": [
+    {
+     "amount": "4000",
+     "direction": "income",
+     "note": "Dolotière"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "ordonnance 4000",
+   "expected": [
+    {
+     "amount": "4000",
+     "direction": null,
+     "note": "ordonnance"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "j'ai paye soumbala 15000",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": "expense",
+     "note": "soumbala"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "acheté tenue scolaire à 25 000",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "expense",
+     "note": "tenue scolaire"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "j'ai paye FESPACO deux mille",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": "expense",
+     "note": "FESPACO"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "salaire 35 mille",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "garba 4 000 francs",
+   "expected": [
+    {
+     "amount": "4000",
+     "direction": null,
+     "note": "garba"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "vendu Super U ZAD vingt-cinq",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "income",
+     "note": "Super U ZAD"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "Soumbala mille deux cent cinquante.",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": null,
+     "note": "Soumbala"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "acheté Brakina à 600 F",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": "expense",
+     "note": "Brakina"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "3 moto à 1250",
+   "expected": [
+    {
+     "amount": "3750",
+     "direction": null,
+     "note": "3 moto"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Garba sept cents.",
+   "expected": [
+    {
+     "amount": "700",
+     "direction": null,
+     "note": "Garba"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "50 000 FCFA maternelle",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": null,
+     "note": "maternelle"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "j'ai paye souma 15 000",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": "expense",
+     "note": "souma"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "ordonnance 400 et SONAR 400",
+   "expected": [
+    {
+     "amount": "400",
+     "direction": null,
+     "note": "ordonnance"
+    },
+    {
+     "amount": "400",
+     "direction": null,
+     "note": "SONAR"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "reçu trente-cinq mille de Aminata",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "Aminata"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "j'ai paye Rakieta 25 FCFA",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "expense",
+     "note": "Rakieta"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "reçu quatre cents de garibou",
+   "expected": [
+    {
+     "amount": "400",
+     "direction": "income",
+     "note": "garibou"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "acheté mèches à 25",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "expense",
+     "note": "mèches"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "reçu soixante-quinze mille de Salif",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "income",
+     "note": "Salif"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "Ordonnance cinquante.",
+   "expected": [
+    {
+     "amount": "50",
+     "direction": null,
+     "note": "Ordonnance"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "babenda 35 000 francs",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": null,
+     "note": "babenda"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "acheté dégué à 1250",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": "expense",
+     "note": "dégué"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "j'ai paye cour commune 75 000 francs",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "expense",
+     "note": "cour commune"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "acheté moustiquaire à 600",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": "expense",
+     "note": "moustiquaire"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "vendu gnamakoudji 250000",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "gnamakoudji"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "Super U ZAD quinze mille",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": null,
+     "note": "Super U ZAD"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "Garba six cents.",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": null,
+     "note": "Garba"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "Gaou m'a remboursé 200",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": "income",
+     "note": "Gaou"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "2 gasoil à 2500",
+   "expected": [
+    {
+     "amount": "5000",
+     "direction": null,
+     "note": "2 gasoil"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Inscription cinquante.",
+   "expected": [
+    {
+     "amount": "50",
+     "direction": null,
+     "note": "Inscription"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "4 babenda à 250",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": null,
+     "note": "4 babenda"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "cube Maggi 12 500",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": null,
+     "note": "cube Maggi"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "Mogo puissant m'a remboursé six mille",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": "income",
+     "note": "Mogo puissant"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "dattes 3000 et marché Rood-Woko 600",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": null,
+     "note": "dattes"
+    },
+    {
+     "amount": "600",
+     "direction": null,
+     "note": "marché Rood-Woko"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "koumvando 35000 et gonré 2500",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": null,
+     "note": "koumvando"
+    },
+    {
+     "amount": "2500",
+     "direction": null,
+     "note": "gonré"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "Grotto m'a remboursé mille cinq cents",
+   "expected": [
+    {
+     "amount": "1500",
+     "direction": "income",
+     "note": "Grotto"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Fatim m'a remboursé 12 500 francs",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": "income",
+     "note": "Fatim"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Moussa m'a remboursé 1250f",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": "income",
+     "note": "Moussa"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "vendu Marina Market cinquante",
+   "expected": [
+    {
+     "amount": "50",
+     "direction": "income",
+     "note": "Marina Market"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "Dégué deux mille.",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": null,
+     "note": "Dégué"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "salaire cent mille",
+   "expected": [
+    {
+     "amount": "100000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "j'ai payé deux cent cinquante pour toédo",
+   "expected": [
+    {
+     "amount": "250",
+     "direction": "expense",
+     "note": "toédo"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "Awa m'a remboursé 500",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": "income",
+     "note": "Awa"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "vendu caution 3.500",
+   "expected": [
+    {
+     "amount": "3500",
+     "direction": "income",
+     "note": "caution"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "2 Dafani à 600",
+   "expected": [
+    {
+     "amount": "1200",
+     "direction": null,
+     "note": "2 Dafani"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "j'ai paye fournitures scolaires quatre mille",
+   "expected": [
+    {
+     "amount": "4000",
+     "direction": "expense",
+     "note": "fournitures scolaires"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "j'ai paye lait caillé 10k",
+   "expected": [
+    {
+     "amount": "10000",
+     "direction": "expense",
+     "note": "lait caillé"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "acheté essence à 250 000 FCFA",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "expense",
+     "note": "essence"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "j'ai paye médicaments génériques 150",
+   "expected": [
+    {
+     "amount": "150",
+     "direction": "expense",
+     "note": "médicaments génériques"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "BAM 12500 et toédo 3000",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": null,
+     "note": "BAM"
+    },
+    {
+     "amount": "3000",
+     "direction": null,
+     "note": "toédo"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "acheté babenda à 6 000 francs",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": "expense",
+     "note": "babenda"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "salaire 100000",
+   "expected": [
+    {
+     "amount": "100000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "Grotto m'a remboursé 750 francs",
+   "expected": [
+    {
+     "amount": "750",
+     "direction": "income",
+     "note": "Grotto"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Fatim m'a remboursé vingt mille",
+   "expected": [
+    {
+     "amount": "20000",
+     "direction": "income",
+     "note": "Fatim"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "j'ai paye sucre 2500",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": "expense",
+     "note": "sucre"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "Tantie-bagages m'a remboursé 15k",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": "income",
+     "note": "Tantie-bagages"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Chambre-salon vingt-cinq.",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": null,
+     "note": "Chambre-salon"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "acheté Super U ZAD à 200",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": "expense",
+     "note": "Super U ZAD"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "salaire 50k",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "coiffure 6000",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": null,
+     "note": "coiffure"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "5 BAM à 500",
+   "expected": [
+    {
+     "amount": "2500",
+     "direction": null,
+     "note": "5 BAM"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "reçu 1 000 francs de bakoroman",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": "income",
+     "note": "bakoroman"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "sauce gombo 6000 et huile 7500",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": null,
+     "note": "sauce gombo"
+    },
+    {
+     "amount": "7500",
+     "direction": null,
+     "note": "huile"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "reçu 50 000 francs de Fatim",
+   "expected": [
+    {
+     "amount": "50000",
+     "direction": "income",
+     "note": "Fatim"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "3 dégué à 350",
+   "expected": [
+    {
+     "amount": "1050",
+     "direction": null,
+     "note": "3 dégué"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "vendu maternelle 50",
+   "expected": [
+    {
+     "amount": "50",
+     "direction": "income",
+     "note": "maternelle"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "tô 200 et école privée 600",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": null,
+     "note": "tô"
+    },
+    {
+     "amount": "600",
+     "direction": null,
+     "note": "école privée"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "salaire 35.000",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "vendu gnamakoudji 150 000",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "income",
+     "note": "gnamakoudji"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "Aminata m'a remboursé deux cent cinquante mille",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "income",
+     "note": "Aminata"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "j'ai payé 200 pour Youki",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": "expense",
+     "note": "Youki"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "7500 F médicaments génériques",
+   "expected": [
+    {
+     "amount": "7500",
+     "direction": null,
+     "note": "médicaments génériques"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "3 Ciné Neerwaya à 800",
+   "expected": [
+    {
+     "amount": "2400",
+     "direction": null,
+     "note": "3 Ciné Neerwaya"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "Fibre optique mille cinq cents.",
+   "expected": [
+    {
+     "amount": "1500",
+     "direction": null,
+     "note": "Fibre optique"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "j'ai paye forfait internet 3000",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": "expense",
+     "note": "forfait internet"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "Cash Power sept cents.",
+   "expected": [
+    {
+     "amount": "700",
+     "direction": null,
+     "note": "Cash Power"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "attiéké 1 250 FCFA",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": null,
+     "note": "attiéké"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "yaar 50",
+   "expected": [
+    {
+     "amount": "50",
+     "direction": null,
+     "note": "yaar"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "Beaufort 15000 et Youki 250000",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": null,
+     "note": "Beaufort"
+    },
+    {
+     "amount": "250000",
+     "direction": null,
+     "note": "Youki"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "acheté toédo à cent mille",
+   "expected": [
+    {
+     "amount": "100000",
+     "direction": "expense",
+     "note": "toédo"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "j'ai payé 25k pour soumbala",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "expense",
+     "note": "soumbala"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "j'ai payé 75 000 pour Youki",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "expense",
+     "note": "Youki"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "j'ai payé 250000f pour gaz",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": "expense",
+     "note": "gaz"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "j'ai paye Orange 2.000",
+   "expected": [
+    {
+     "amount": "2000",
+     "direction": "expense",
+     "note": "Orange"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "gapal 25 et commission agent immobilier 20000",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": null,
+     "note": "gapal"
+    },
+    {
+     "amount": "20000",
+     "direction": null,
+     "note": "commission agent immobilier"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "Salif m'a remboursé 12 500 FCFA",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": "income",
+     "note": "Salif"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "char 400 et TCV 200",
+   "expected": [
+    {
+     "amount": "400",
+     "direction": null,
+     "note": "char"
+    },
+    {
+     "amount": "200",
+     "direction": null,
+     "note": "TCV"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "reçu 3 500 de go",
+   "expected": [
+    {
+     "amount": "3500",
+     "direction": "income",
+     "note": "go"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "reçu 25 francs de Fatim",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "income",
+     "note": "Fatim"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "célibatérium 6000 et Brakina 25",
+   "expected": [
+    {
+     "amount": "6000",
+     "direction": null,
+     "note": "célibatérium"
+    },
+    {
+     "amount": "25",
+     "direction": null,
+     "note": "Brakina"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "350 char",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": null,
+     "note": "char"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "reçu 200 francs de tantie-bagages",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": "income",
+     "note": "tantie-bagages"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "j'ai payé 1k pour hospitalisation",
+   "expected": [
+    {
+     "amount": "1000",
+     "direction": "expense",
+     "note": "hospitalisation"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "3 Air Burkina à 50",
+   "expected": [
+    {
+     "amount": "150",
+     "direction": null,
+     "note": "3 Air Burkina"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "reçu 35 000 de Fatim",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "Fatim"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "vendu banane frite 100 francs",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": "income",
+     "note": "banane frite"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "j'ai paye Castel 15000",
+   "expected": [
+    {
+     "amount": "15000",
+     "direction": "expense",
+     "note": "Castel"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "Awa m'a remboursé trois cents",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": "income",
+     "note": "Awa"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "vendu lait caillé 35000",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "lait caillé"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "j'ai payé 100 pour BAM",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": "expense",
+     "note": "BAM"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "Mèches soixante-quinze mille.",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": null,
+     "note": "Mèches"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "j'ai paye Cash Power 250",
+   "expected": [
+    {
+     "amount": "250",
+     "direction": "expense",
+     "note": "Cash Power"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "Zoom-koom trois mille.",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": null,
+     "note": "Zoom-koom"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "Dolo huit cents.",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": null,
+     "note": "Dolo"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "salaire 35000f",
+   "expected": [
+    {
+     "amount": "35000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "reçu 750 F de mogo puissant",
+   "expected": [
+    {
+     "amount": "750",
+     "direction": "income",
+     "note": "mogo puissant"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "acheté maternelle à 50 F",
+   "expected": [
+    {
+     "amount": "50",
+     "direction": "expense",
+     "note": "maternelle"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "acheté tenue scolaire à 350f",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": "expense",
+     "note": "tenue scolaire"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "salaire 25000",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "école privée sept mille cinq cents",
+   "expected": [
+    {
+     "amount": "7500",
+     "direction": null,
+     "note": "école privée"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "trois cent cinquante Faso Mêbo",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": null,
+     "note": "Faso Mêbo"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "acheté Faso Mêbo à 150000 F",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "expense",
+     "note": "Faso Mêbo"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "25 école privée",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": null,
+     "note": "école privée"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "j'ai paye chambre-salon vingt-cinq mille",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "expense",
+     "note": "chambre-salon"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "salaire 25000 F",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "BAM deux cents",
+   "expected": [
+    {
+     "amount": "200",
+     "direction": null,
+     "note": "BAM"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "Gonré cinq mille.",
+   "expected": [
+    {
+     "amount": "5000",
+     "direction": null,
+     "note": "Gonré"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "Pain trois mille.",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": null,
+     "note": "Pain"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "BAM cinq cents.",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": null,
+     "note": "BAM"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "j'ai paye cahiers cinq cents",
+   "expected": [
+    {
+     "amount": "500",
+     "direction": "expense",
+     "note": "cahiers"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "Issa m'a remboursé vingt-cinq",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "income",
+     "note": "Issa"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Gaou m'a remboursé 25000",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "income",
+     "note": "Gaou"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "vendu LetsGo 25",
+   "expected": [
+    {
+     "amount": "25",
+     "direction": "income",
+     "note": "LetsGo"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "salaire 100 000 francs",
+   "expected": [
+    {
+     "amount": "100000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "1250f arachide grillée",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": null,
+     "note": "arachide grillée"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "2 Brakina à 200",
+   "expected": [
+    {
+     "amount": "400",
+     "direction": null,
+     "note": "2 Brakina"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "gasoil 800 et crédit téléphonique 600",
+   "expected": [
+    {
+     "amount": "800",
+     "direction": null,
+     "note": "gasoil"
+    },
+    {
+     "amount": "600",
+     "direction": null,
+     "note": "crédit téléphonique"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "tissage 5 mille",
+   "expected": [
+    {
+     "amount": "5000",
+     "direction": null,
+     "note": "tissage"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "foura 250000 et Canal Olympia Yennenga 3000",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": null,
+     "note": "foura"
+    },
+    {
+     "amount": "3000",
+     "direction": null,
+     "note": "Canal Olympia Yennenga"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "Salif m'a remboursé 75000f",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "income",
+     "note": "Salif"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "j'ai paye contrôle technique 300",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": "expense",
+     "note": "contrôle technique"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "j'ai paye médicaments génériques 600 F",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": "expense",
+     "note": "médicaments génériques"
+    }
+   ],
+   "source": "template:paid-unaccented"
+  },
+  {
+   "text": "Gaou m'a remboursé 3000f",
+   "expected": [
+    {
+     "amount": "3000",
+     "direction": "income",
+     "note": "Gaou"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "3 huile à 500",
+   "expected": [
+    {
+     "amount": "1500",
+     "direction": null,
+     "note": "3 huile"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "vendu souma 150 francs",
+   "expected": [
+    {
+     "amount": "150",
+     "direction": "income",
+     "note": "souma"
+    }
+   ],
+   "source": "template:sold"
+  },
+  {
+   "text": "reçu 12500f de tantie",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": "income",
+     "note": "tantie"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "350 médicaments génériques",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": null,
+     "note": "médicaments génériques"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "100 francs Canal Olympia Yennenga",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": null,
+     "note": "Canal Olympia Yennenga"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "Tonton m'a remboursé 10 000 FCFA",
+   "expected": [
+    {
+     "amount": "10000",
+     "direction": "income",
+     "note": "Tonton"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "3 arachide grillée à 100",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": null,
+     "note": "3 arachide grillée"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "j'ai payé 10 000 FCFA pour riz gras",
+   "expected": [
+    {
+     "amount": "10000",
+     "direction": "expense",
+     "note": "riz gras"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "2 huile à 700",
+   "expected": [
+    {
+     "amount": "1400",
+     "direction": null,
+     "note": "2 huile"
+    }
+   ],
+   "source": "template:quantity"
+  },
+  {
+   "text": "reçu 700 francs de petit frère",
+   "expected": [
+    {
+     "amount": "700",
+     "direction": "income",
+     "note": "petit frère"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "salaire soixante-quinze mille",
+   "expected": [
+    {
+     "amount": "75000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "acheté char à trois cents",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": "expense",
+     "note": "char"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "Aminata m'a remboursé 600",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": "income",
+     "note": "Aminata"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "reçu 150k de gaou",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": "income",
+     "note": "gaou"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "salaire 25.000",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": "income",
+     "note": "salaire"
+    }
+   ],
+   "source": "template:salary"
+  },
+  {
+   "text": "acheté Castel à mille deux cent cinquante",
+   "expected": [
+    {
+     "amount": "1250",
+     "direction": "expense",
+     "note": "Castel"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "acheté zoom-koom à trois cents",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": "expense",
+     "note": "zoom-koom"
+    }
+   ],
+   "source": "template:bought-at"
+  },
+  {
+   "text": "mèches 600",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": null,
+     "note": "mèches"
+    }
+   ],
+   "source": "template:note-amount"
+  },
+  {
+   "text": "Issa m'a remboursé 300",
+   "expected": [
+    {
+     "amount": "300",
+     "direction": "income",
+     "note": "Issa"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Assurance moto cent cinquante mille.",
+   "expected": [
+    {
+     "amount": "150000",
+     "direction": null,
+     "note": "Assurance moto"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "yaar 600 et mèches 150",
+   "expected": [
+    {
+     "amount": "600",
+     "direction": null,
+     "note": "yaar"
+    },
+    {
+     "amount": "150",
+     "direction": null,
+     "note": "mèches"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "Beaufort sept cents.",
+   "expected": [
+    {
+     "amount": "700",
+     "direction": null,
+     "note": "Beaufort"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "j'ai payé trois cent cinquante pour assurance maladie universelle",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": "expense",
+     "note": "assurance maladie universelle"
+    }
+   ],
+   "source": "template:paid-for"
+  },
+  {
+   "text": "deux cent cinquante mille cahiers",
+   "expected": [
+    {
+     "amount": "250000",
+     "direction": null,
+     "note": "cahiers"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "100 F dattes",
+   "expected": [
+    {
+     "amount": "100",
+     "direction": null,
+     "note": "dattes"
+    }
+   ],
+   "source": "template:amount-note"
+  },
+  {
+   "text": "Issa m'a remboursé douze mille cinq cents",
+   "expected": [
+    {
+     "amount": "12500",
+     "direction": "income",
+     "note": "Issa"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Hospitalisation vingt-cinq mille.",
+   "expected": [
+    {
+     "amount": "25000",
+     "direction": null,
+     "note": "Hospitalisation"
+    }
+   ],
+   "source": "template:dictated"
+  },
+  {
+   "text": "Petit frère m'a remboursé 4 000",
+   "expected": [
+    {
+     "amount": "4000",
+     "direction": "income",
+     "note": "Petit frère"
+    }
+   ],
+   "source": "template:repaid-me"
+  },
+  {
+   "text": "Flag 20000 et ONEA 75000",
+   "expected": [
+    {
+     "amount": "20000",
+     "direction": null,
+     "note": "Flag"
+    },
+    {
+     "amount": "75000",
+     "direction": null,
+     "note": "ONEA"
+    }
+   ],
+   "source": "template:two-purchases"
+  },
+  {
+   "text": "reçu trois cent cinquante de grotto",
+   "expected": [
+    {
+     "amount": "350",
+     "direction": "income",
+     "note": "grotto"
+    }
+   ],
+   "source": "template:received-from"
+  },
+  {
+   "text": "5 ONEA à 3500",
+   "expected": [
+    {
+     "amount": "17500",
+     "direction": null,
+     "note": "5 ONEA"
+    }
+   ],
+   "source": "template:quantity"
+  }
+ ]
+}
