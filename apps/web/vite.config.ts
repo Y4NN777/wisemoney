@@ -1,13 +1,49 @@
-import { defineConfig } from "vite";
+import { defaultClientConditions, defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { createReadStream, readFileSync, realpathSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import type { Plugin } from "vite";
+
+// The ONNX runtime files transformers.js loads for the voice lab (ADR-0014 follow-up), served from
+// our own origin under /ort/ instead of the library's default CDN. Never precached: about 27 MB.
+const ORT_FILES = [
+  "ort-wasm-simd-threaded.asyncify.mjs",
+  "ort-wasm-simd-threaded.asyncify.wasm",
+  "ort-wasm-simd-threaded.mjs",
+  "ort-wasm-simd-threaded.wasm",
+];
+
+function onnxRuntimeAssets(): Plugin {
+  // pnpm keeps onnxruntime-web next to transformers.js, not in this package's node_modules.
+  const transformersDir = realpathSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "node_modules/@huggingface/transformers"));
+  const ortDist = path.resolve(transformersDir, "../../onnxruntime-web/dist");
+  return {
+    name: "wisemoney-onnx-runtime-assets",
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const file = req.url?.startsWith("/ort/") ? req.url.slice("/ort/".length).split("?")[0] : undefined;
+        if (file == null || !ORT_FILES.includes(file)) return next();
+        res.setHeader("Content-Type", file.endsWith(".wasm") ? "application/wasm" : "text/javascript");
+        createReadStream(path.join(ortDist, file)).pipe(res);
+      });
+    },
+    generateBundle() {
+      for (const file of ORT_FILES) {
+        this.emitFile({ type: "asset", fileName: `ort/${file}`, source: readFileSync(path.join(ortDist, file)) });
+      }
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
+    onnxRuntimeAssets(),
     VitePWA({
       strategies: "injectManifest",
       srcDir: "src",
@@ -62,17 +98,22 @@ export default defineConfig({
       },
       injectManifest: {
         globPatterns: ["**/*.{js,css,html,wasm}"],
+        // The voice lab's runtime and library are downloaded only by whoever opens /lab/voice.
+        globIgnores: ["ort/**", "**/voice-lab-*.js"],
       },
     }),
   ],
   resolve: {
     alias: { "@": "/src" },
+    // onnxruntime-web's build without an embedded WASM: the runtime comes from /ort/ only, not a second copy.
+    conditions: [...defaultClientConditions, "onnxruntime-web-use-extern-wasm"],
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (!id.includes("node_modules")) return undefined;
+          if (id.includes("/@huggingface/") || id.includes("/onnxruntime-")) return "voice-lab";
           if (id.includes("/write-excel-file/") || id.includes("/fflate/")) return "excel-export";
           if (id.includes("/@tanstack/")) return "data-router-vendor";
           if (id.includes("/hash-wasm/") || id.includes("/@simplewebauthn/") || id.includes("/dexie/")) {
