@@ -7,6 +7,7 @@ import { AI_CAPABILITY_QUERY_KEY } from "../../components/AssistantCard/index.ts
 import { Button } from "../../components/ui/button.tsx";
 import WiseLearnMark from "../../components/WiseLearnMark.tsx";
 import { TypingDots } from "../../components/ui/typing-dots.tsx";
+import { useAutoGrow } from "../../components/ui/useAutoGrow.ts";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
 import { getAICapability } from "../../lib/capabilities.ts";
@@ -56,6 +57,7 @@ export default function Learn() {
   const endRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const pageRef = useRef<HTMLElement | null>(null);
+  useAutoGrow(composerRef, input);
   const masterKey = useMasterKey();
   const [conversationId, setConversationId] = useState<string | null>(null);
   const createdAt = useRef(0);
@@ -271,7 +273,7 @@ export default function Learn() {
             disabled={busy}
             placeholder={t("learn.tutor.placeholder")}
             aria-label={t("learn.tutor.placeholder")}
-            className="max-h-32 min-h-11 flex-1 resize-none bg-transparent py-2.5 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
+            className="min-h-11 flex-1 resize-none overflow-y-hidden bg-transparent py-2.5 text-base text-foreground [scrollbar-width:thin] placeholder:text-muted-foreground focus-visible:outline-none"
           />
           {busy
             ? <Button type="button" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85" onClick={() => controller.current?.abort()} aria-label={t("learn.tutor.stop")}><Square className="h-3.5 w-3.5 fill-current" /></Button>

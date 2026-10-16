@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import Logo from "../components/Logo.tsx";
 import { Button } from "../components/ui/button.tsx";
 import { TypingDots } from "../components/ui/typing-dots.tsx";
+import { useAutoGrow } from "../components/ui/useAutoGrow.ts";
 import { findRelevantHelpSections, localTaskAnswer, type HelpSection } from "./corpus.ts";
 import { openHelp } from "./navigation.ts";
 import { suggestedTasks } from "./suggestions.ts";
@@ -72,7 +73,23 @@ export default function HelpChat({
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const composerRef = useRef<HTMLTextAreaElement | null>(null);
+  useAutoGrow(composerRef, input);
   const panelRef = useRef<HTMLElement | null>(null);
+
+  // While the panel is open the page behind it must not move: on iPhone a scroll that reached the
+  // end of the conversation, or the keyboard opening, scrolled Home underneath (Y4NN, 2026-10-16).
+  useEffect(() => {
+    if (!open) return;
+    const root = document.documentElement;
+    const previous = { overflow: root.style.overflow, overscroll: root.style.overscrollBehavior };
+    root.style.overflow = "hidden";
+    root.style.overscrollBehavior = "none";
+    return () => {
+      root.style.overflow = previous.overflow;
+      root.style.overscrollBehavior = previous.overscroll;
+    };
+  }, [open]);
   const endRef = useRef<HTMLDivElement | null>(null);
   const pendingRef = useRef<PendingRequest | null>(null);
   const messageIdRef = useRef(0);
@@ -376,7 +393,7 @@ export default function HelpChat({
             </div>
           )}
 
-          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4" aria-live="polite">
+          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-4 py-4" aria-live="polite">
             {showPrivacy && (
               <section className="rounded-lg border border-ocean-primary bg-ocean-wash p-3 text-left" aria-label={t("helpPage.chat.consent.title")}>
                 <div className="flex items-start gap-2">
@@ -495,6 +512,7 @@ export default function HelpChat({
                 {imageBusy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
               </Button>
               <textarea
+                ref={composerRef}
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onPaste={handlePaste}
@@ -509,7 +527,7 @@ export default function HelpChat({
                 disabled={!online || submitting}
                 placeholder={t("helpPage.chat.placeholder")}
                 aria-label={t("helpPage.chat.placeholder")}
-                className="max-h-32 min-h-11 flex-1 resize-none bg-transparent px-1 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none sm:text-sm"
+                className="min-h-11 flex-1 resize-none overflow-y-hidden bg-transparent px-1 py-2.5 text-base text-foreground [scrollbar-width:thin] placeholder:text-muted-foreground focus-visible:outline-none sm:text-sm"
               />
               {submitting && ticket?.status !== "waiting"
                 ? <Button type="button" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85" onClick={cancelPending} aria-label={t("helpPage.chat.stop")}><Square className="h-3.5 w-3.5 fill-current" /></Button>

@@ -1254,7 +1254,7 @@
       "welcome": "What would you like to do in WiseMoney?",
       "offline": "WiseHelp requires Internet — all written help remains available offline.",
       "offlineFallback": "WiseHelp is waiting for a connection. These guides remain available offline.",
-      "placeholder": "Ask how to use WiseMoney",
+      "placeholder": "A question about the app?",
       "send": "Send question",
       "writing": "Writing…",
       "unavailable": "WiseHelp is temporarily unavailable. The written guide remains available.",
