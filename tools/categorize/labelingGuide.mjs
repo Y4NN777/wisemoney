@@ -78,7 +78,16 @@ export const PERSONAS = [
   "a young graduate looking for work and doing side gigs",
 ];
 
-export const TOWNS = ["Ouagadougou", "Bobo-Dioulasso", "Koudougou", "Ouahigouya", "Banfora", "Fada N'Gourma"];
+/** Where the writer lives: Burkina Faso first (the main audience), then francophone West Africa. */
+export const COUNTRIES = [
+  { code: "BF", name: "Burkina Faso", weight: 0.5, towns: ["Ouagadougou", "Bobo-Dioulasso", "Koudougou", "Ouahigouya", "Banfora", "Fada N'Gourma"] },
+  { code: "CI", name: "Côte d'Ivoire", weight: 0.15, towns: ["Abidjan", "Bouaké", "Yamoussoukro"] },
+  { code: "ML", name: "Mali", weight: 0.08, towns: ["Bamako", "Sikasso"] },
+  { code: "SN", name: "Senegal", weight: 0.08, towns: ["Dakar", "Thiès"] },
+  { code: "BJ", name: "Benin", weight: 0.07, towns: ["Cotonou", "Parakou"] },
+  { code: "TG", name: "Togo", weight: 0.06, towns: ["Lomé", "Kara"] },
+  { code: "NE", name: "Niger", weight: 0.06, towns: ["Niamey", "Zinder"] },
+];
 
 export const KEYS = [...CATEGORIES.map((category) => category.key), NONE.key];
 

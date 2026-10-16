@@ -152,3 +152,34 @@ export function stats(rows, keys) {
   for (const row of rows) table[row.key][row.split] += 1;
   return table;
 }
+
+/** Draws one item by weight (items carry a numeric `weight`). */
+export function pickWeighted(random, items) {
+  const total = items.reduce((sum, item) => sum + item.weight, 0);
+  let threshold = random() * total;
+  for (const item of items) {
+    threshold -= item.weight;
+    if (threshold <= 0) return item;
+  }
+  return items[items.length - 1];
+}
+
+/**
+ * The real-world words one request should draw on: sourced lexicon terms for that country and class,
+ * a matching scenario, people and payment channels. Empty parts are left out; no lexicon, no block.
+ */
+export function contextFor(lexicon, random, { country, key, terms = 12 }) {
+  if (lexicon == null) return { block: "", used: [] };
+  const own = (lexicon.countries?.[country] ?? []).filter((entry) => entry.category === key);
+  const chosen = shuffled(random, own).slice(0, terms);
+  const scenarios = (lexicon.scenarios ?? []).filter((entry) => entry.categories?.includes(key));
+  const scenario = scenarios.length > 0 ? pick(random, scenarios) : null;
+  const people = shuffled(random, lexicon.people ?? []).slice(0, 4);
+  const channels = (lexicon.paymentChannels ?? []).filter((entry) => entry.country === country);
+  const lines = [];
+  if (chosen.length > 0) lines.push(`Real local words for this class (use several, spelled as locals do): ${chosen.map((entry) => `${entry.term} (${entry.meaning})`).join("; ")}.`);
+  if (scenario != null) lines.push(`A moment of life to set some notes in: ${scenario.scenario}${scenario.note ? ` (${scenario.note})` : ""}.`);
+  if (people.length > 0) lines.push(`People often named in notes: ${people.map((entry) => `${entry.term} (${entry.meaning})`).join("; ")}.`);
+  if (channels.length > 0) lines.push(`How money moves there: ${channels.map((entry) => entry.term).join(", ")}.`);
+  return { block: lines.join("\n"), used: chosen.map((entry) => entry.term) };
+}

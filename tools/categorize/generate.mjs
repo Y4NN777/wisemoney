@@ -3,32 +3,43 @@
 //
 //   CATEGORIZE_GEMINI_API_KEY=<key> node tools/categorize/generate.mjs [options]
 //
+// Teachers, all on the Gemini API free tier (ai.google.dev pricing page, updated 2026-10-15):
+//   the generator writes phrases; two labellers from different model families judge them blind, so a
+//   phrase survives only when three models agree. Each is a flag; defaults below.
+// Context: context/west-africa-lexicon.json (sourced local words, scenarios, people, payment channels)
+//   is injected per request for the drawn country and class; without the file, prompts run without it.
+//
 // Stages, each resumable (raw replies are appended to data/raw/, never rewritten):
-//   generate  every class × style × round, with a persona and a town drawn per request
+//   generate  every class × style × round, with a persona, a country (Burkina Faso first) and a town
 //   contrast  phrases on both sides of each confusable pair (labelingGuide.mjs CONFUSABLE_PAIRS)
 //   label     two blind labelling passes at temperature 0, in two different orders
 //   build     offline: keep phrases where intent and both passes agree, drop near duplicates, split
 //             by hash (train / validation / test), augment train only, write data/dataset.jsonl,
 //             data/review.jsonl (disagreements) and data/manifest.json
 //
-// Options: --rounds N (default 3)  --per-request N (default 30)  --only key1,key2
+// Options: --generator ID  --labeler-a ID  --labeler-b ID  --rounds N (default 4)  --per-request N (default 30)  --only key1,key2
 //          --stage generate|contrast|label|build (default: all)  --dry-run (print one prompt, no call)
 //          --pause-ms N (default 4000)  --seed S (default the guide version)
 // The key is read from the environment and never written. Rebuilding with "--stage build" needs no key.
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { CATEGORIES, CONFUSABLE_PAIRS, GUIDE_VERSION, KEYS, NONE, PERSONAS, TOWNS, guideText } from "./labelingGuide.mjs";
-import { augment, dropNearDuplicates, firstJsonArray, normalizeText, pick, seededRandom, sha256, shuffled, splitOf, stats } from "./lib.mjs";
+import { CATEGORIES, CONFUSABLE_PAIRS, COUNTRIES, GUIDE_VERSION, KEYS, NONE, PERSONAS, guideText } from "./labelingGuide.mjs";
+import { augment, contextFor, dropNearDuplicates, firstJsonArray, normalizeText, pick, pickWeighted, seededRandom, sha256, shuffled, splitOf, stats } from "./lib.mjs";
 import { geminiClient } from "./gemini.mjs";
 
-const MODEL = "gemma-4-26b-a4b-it";
+const DEFAULT_GENERATOR = "gemini-3.8-flash";
+const DEFAULT_LABELER_A = "gemma-4-26b-a4b-it";
+const DEFAULT_LABELER_B = "gemini-3.6-flash";
 const LABEL_BATCH = 40;
 const MAX_PHRASE_LENGTH = 120;
 const AUGMENTATIONS_PER_PHRASE = 2;
 
 const { values: options } = parseArgs({
   options: {
-    rounds: { type: "string", default: "3" },
+    generator: { type: "string", default: DEFAULT_GENERATOR },
+    "labeler-a": { type: "string", default: DEFAULT_LABELER_A },
+    "labeler-b": { type: "string", default: DEFAULT_LABELER_B },
+    rounds: { type: "string", default: "4" },
     "per-request": { type: "string", default: "30" },
     only: { type: "string" },
     stage: { type: "string" },
@@ -37,6 +48,8 @@ const { values: options } = parseArgs({
     seed: { type: "string", default: GUIDE_VERSION },
   },
 });
+const GENERATOR = options.generator;
+const LABELERS = { a: options["labeler-a"], b: options["labeler-b"] };
 const ROUNDS = Number(options.rounds);
 const PER_REQUEST = Number(options["per-request"]);
 const SEED = options.seed;
@@ -50,7 +63,12 @@ const STYLES = {
   local: "notes using everyday words of Burkina Faso and West Africa: local French, Mooré or Dioula words written in Latin letters, local brands, operators, places and dishes",
   english: "short notes in English, some mixing French words, as typed by a young francophone",
   noAmount: "notes with no amount at all, only what the money was for, 1 to 5 words",
+  people: "notes that name who the money went to or came from (a relative, a neighbour, a client, a boss), as people really write them",
 };
+
+const lexiconUrl = new URL("./context/west-africa-lexicon.json", import.meta.url);
+const LEXICON = existsSync(lexiconUrl) ? JSON.parse(readFileSync(lexiconUrl, "utf8")) : null;
+const LEXICON_HASH = LEXICON == null ? null : sha256(readFileSync(lexiconUrl, "utf8")).slice(0, 12);
 
 const dataDir = new URL("./data/", import.meta.url);
 const rawDir = new URL("./raw/", dataDir);
@@ -67,30 +85,32 @@ const describe = (key) => {
   return key === NONE.key ? `the class "none": ${NONE.covers}` : `the category "${key}" (${category.direction}): ${category.covers}`;
 };
 
-function generationPrompt({ key, style, persona, town, count }) {
-  return `You write training data for WiseMoney, a personal-finance app used by young people in Burkina Faso.
+function generationPrompt({ key, style, persona, country, town, context, count }) {
+  return `You write training data for WiseMoney, a personal-finance app used by young people in francophone West Africa.
 The app sorts each money movement into one of these classes:
 ${GUIDE}
 
-Write ${count} different notes that ${persona} in ${town} would write for movements belonging to ${describe(key)}.
+Write ${count} different notes that ${persona} in ${town}, ${country.name}, would write for movements belonging to ${describe(key)}.
 Style: ${STYLES[style]}.
+${context.block}
+Write as people there really write: their French, their words, their brands and places, amounts in CFA francs that are realistic there today for that person.
 Cover many different items, places, people and amounts; no two notes alike; nothing that clearly belongs to another class.
 Answer with a JSON array of strings only.`;
 }
 
-function contrastPrompt({ left, right, border, persona, count }) {
-  return `You write training data for WiseMoney, a personal-finance app used by young people in Burkina Faso.
+function contrastPrompt({ left, right, border, persona, country, count }) {
+  return `You write training data for WiseMoney, a personal-finance app used by young people in francophone West Africa.
 Classes:
 ${GUIDE}
 
 The border between "${left}" and "${right}" is: ${border}.
-Write ${count} notes, as ${persona} would type them, that sit close to that border but clearly belong to one side.
+Write ${count} notes, as ${persona} in ${country.name} would type them, with local words, that sit close to that border but clearly belong to one side.
 Half for "${left}", half for "${right}".
 Answer with a JSON array of objects {"text": "...", "key": "${left}" or "${right}"} only.`;
 }
 
 function labelPrompt(texts) {
-  return `Sort each money movement note from WiseMoney, a personal-finance app in Burkina Faso, into exactly one class:
+  return `Sort each money movement note from WiseMoney, a personal-finance app in francophone West Africa, into exactly one class:
 ${GUIDE}
 
 Notes:
@@ -108,7 +128,12 @@ if (needsKey && apiKey.length === 0) {
   console.error("CATEGORIZE_GEMINI_API_KEY is not set (only --stage build or --dry-run work without it).");
   process.exit(1);
 }
-const gemini = geminiClient({ apiKey, model: MODEL, pauseMs: Number(options["pause-ms"]) });
+const gemini = geminiClient({ apiKey, pauseMs: Number(options["pause-ms"]) });
+if (needsKey) {
+  const models = [...new Set([...(runs("generate") || runs("contrast") ? [GENERATOR] : []), ...(runs("label") ? Object.values(LABELERS) : [])])];
+  for (const model of models) await gemini.check(model);
+  console.log(`models ok: ${models.join(", ")}; lexicon: ${LEXICON_HASH ?? "none (prompts run without local context)"}`);
+}
 
 // Generate: one request per class × style × round. The request id makes the run resumable.
 if (runs("generate")) {
@@ -116,10 +141,12 @@ if (runs("generate")) {
   for (let round = 0; round < ROUNDS; round += 1) {
     for (const category of classes) {
       for (const style of Object.keys(STYLES)) {
-        const request = `${GUIDE_VERSION}|${category.key}|${style}|${round}`;
+        const request = `${GUIDE_VERSION}|${GENERATOR}|${LEXICON_HASH}|${category.key}|${style}|${round}`;
         if (done.has(request)) continue;
         const random = seededRandom(`${SEED}|${request}`);
-        const spec = { key: category.key, style, persona: pick(random, PERSONAS), town: pick(random, TOWNS), count: PER_REQUEST };
+        const country = pickWeighted(random, COUNTRIES);
+        const context = contextFor(LEXICON, random, { country: country.code, key: category.key });
+        const spec = { key: category.key, style, persona: pick(random, PERSONAS), country, town: pick(random, country.towns), context, count: PER_REQUEST };
         const prompt = generationPrompt(spec);
         if (options["dry-run"]) {
           console.log(prompt);
@@ -127,12 +154,12 @@ if (runs("generate")) {
         }
         let phrases;
         try {
-          phrases = firstJsonArray(await gemini.ask(prompt, 1)).map(cleanText).filter(usable);
+          phrases = firstJsonArray(await gemini.ask(GENERATOR, prompt, 1)).map(cleanText).filter(usable);
         } catch (error) {
           console.warn(`skipped ${request}: ${error.message}`);
           continue;
         }
-        appendJsonl(raw("generated.jsonl"), phrases.map((text) => ({ text, key: category.key, style, persona: spec.persona, town: spec.town, request, model: MODEL, promptHash: sha256(prompt) })));
+        appendJsonl(raw("generated.jsonl"), phrases.map((text) => ({ text, key: category.key, style, persona: spec.persona, country: country.code, town: spec.town, contextTerms: context.used, request, model: GENERATOR, promptHash: sha256(prompt) })));
         console.log(`generate ${request}: ${phrases.length}`);
       }
     }
@@ -145,24 +172,25 @@ if (runs("contrast")) {
   for (let round = 0; round < ROUNDS; round += 1) {
     for (const [left, right, border] of CONFUSABLE_PAIRS) {
       if (ONLY != null && !ONLY.includes(left) && !ONLY.includes(right)) continue;
-      const request = `${GUIDE_VERSION}|${left}~${right}|${round}`;
+      const request = `${GUIDE_VERSION}|${GENERATOR}|${left}~${right}|${round}`;
       if (done.has(request)) continue;
       const random = seededRandom(`${SEED}|${request}`);
-      const prompt = contrastPrompt({ left, right, border, persona: pick(random, PERSONAS), count: PER_REQUEST });
+      const country = pickWeighted(random, COUNTRIES);
+      const prompt = contrastPrompt({ left, right, border, persona: pick(random, PERSONAS), country, count: PER_REQUEST });
       if (options["dry-run"]) {
         console.log(prompt);
         process.exit(0);
       }
       let rows;
       try {
-        rows = firstJsonArray(await gemini.ask(prompt, 1))
+        rows = firstJsonArray(await gemini.ask(GENERATOR, prompt, 1))
           .map((item) => ({ text: cleanText(item?.text), key: item?.key }))
           .filter((item) => usable(item.text) && (item.key === left || item.key === right));
       } catch (error) {
         console.warn(`skipped ${request}: ${error.message}`);
         continue;
       }
-      appendJsonl(raw("contrast.jsonl"), rows.map((row) => ({ ...row, style: "contrast", request, model: MODEL, promptHash: sha256(prompt) })));
+      appendJsonl(raw("contrast.jsonl"), rows.map((row) => ({ ...row, style: "contrast", country: country.code, request, model: GENERATOR, promptHash: sha256(prompt) })));
       console.log(`contrast ${request}: ${rows.length}`);
     }
   }
@@ -170,8 +198,8 @@ if (runs("contrast")) {
 
 const allGenerated = () => [...readJsonl(raw("generated.jsonl")), ...readJsonl(raw("contrast.jsonl"))];
 
-// Label: two blind passes over every distinct phrase, the second in a shuffled order so position
-// in the batch cannot decide the label.
+// Label: two blind passes over every distinct phrase by two different models, the second in a
+// shuffled order so neither one model's bias nor a position in the batch decides the label.
 if (runs("label")) {
   const distinct = [...new Map(allGenerated().map((row) => [normalizeText(row.text), row.text])).entries()];
   for (const pass of ["a", "b"]) {
@@ -182,7 +210,7 @@ if (runs("label")) {
       const batch = pending.slice(index, index + LABEL_BATCH);
       let labels;
       try {
-        labels = firstJsonArray(await gemini.ask(labelPrompt(batch.map(([, text]) => text)), 0));
+        labels = firstJsonArray(await gemini.ask(LABELERS[pass], labelPrompt(batch.map(([, text]) => text)), 0));
       } catch (error) {
         console.warn(`label ${pass} at ${index}: ${error.message}, rerun to retry`);
         continue;
@@ -191,7 +219,7 @@ if (runs("label")) {
         console.warn(`label ${pass} at ${index}: ${labels.length} labels for ${batch.length} notes, rerun to retry`);
         continue;
       }
-      appendJsonl(raw(`labels-${pass}.jsonl`), batch.map(([, text], position) => ({ text, label: KEYS.includes(labels[position]) ? labels[position] : "invalid", model: MODEL })));
+      appendJsonl(raw(`labels-${pass}.jsonl`), batch.map(([, text], position) => ({ text, label: KEYS.includes(labels[position]) ? labels[position] : "invalid", model: LABELERS[pass] })));
       console.log(`label ${pass}: ${Math.min(index + LABEL_BATCH, pending.length)} / ${pending.length}`);
     }
   }
@@ -204,7 +232,7 @@ if (runs("build")) {
   const intents = new Map();
   for (const row of allGenerated()) {
     const norm = normalizeText(row.text);
-    const entry = intents.get(norm) ?? { text: row.text, keys: new Set(), styles: new Set() };
+    const entry = intents.get(norm) ?? { text: row.text, keys: new Set(), styles: new Set(), country: row.country ?? null };
     entry.keys.add(row.key);
     entry.styles.add(row.style);
     intents.set(norm, entry);
@@ -216,7 +244,7 @@ if (runs("build")) {
     const a = labelsA.get(norm) ?? null;
     const b = labelsB.get(norm) ?? null;
     if (a == null || b == null) continue;
-    const row = { text: entry.text, key: intended, style: [...entry.styles][0] };
+    const row = { text: entry.text, key: intended, style: [...entry.styles][0], country: entry.country };
     if (intended != null && a === intended && b === intended) agreed.push(row);
     else review.push({ text: entry.text, intended: [...entry.keys], blindA: a, blindB: b });
   }
@@ -228,7 +256,9 @@ if (runs("build")) {
   writeJsonl(new URL("review.jsonl", dataDir), review);
   const manifest = {
     guide: GUIDE_VERSION,
-    teacher: MODEL,
+    generator: GENERATOR,
+    labelers: LABELERS,
+    lexicon: LEXICON_HASH,
     seed: SEED,
     built: new Date().toISOString().slice(0, 10),
     distinctGenerated: intents.size,
@@ -238,6 +268,7 @@ if (runs("build")) {
     augmented: augmented.length,
     toReview: review.length,
     perClass: stats(split, KEYS),
+    perCountry: Object.fromEntries(COUNTRIES.map((country) => [country.code, split.filter((row) => row.country === country.code).length])),
     datasetHash: sha256(readFileSync(new URL("dataset.jsonl", dataDir), "utf8")),
   };
   writeFileSync(new URL("manifest.json", dataDir), `${JSON.stringify(manifest, null, 2)}\n`);
@@ -245,4 +276,4 @@ if (runs("build")) {
   console.table(manifest.perClass);
 }
 
-if (needsKey) console.log(`${gemini.requestCount()} request(s) sent to ${MODEL}`);
+if (needsKey) console.log(`${gemini.requestCount()} request(s) sent`);

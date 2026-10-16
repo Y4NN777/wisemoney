@@ -65,3 +65,27 @@ test("augment is deterministic and never returns the original", () => {
   assert.deepEqual(first, augment(row, "seed"));
   assert.ok(first.length > 0 && first.every((variant) => variant.text !== row.text && variant.augmented && variant.key === "utilities"));
 });
+
+test("pickWeighted follows the weights", async () => {
+  const { pickWeighted } = await import("./lib.mjs");
+  const random = seededRandom("weights");
+  const counts = { a: 0, b: 0 };
+  for (let index = 0; index < 4000; index += 1) counts[pickWeighted(random, [{ id: "a", weight: 3 }, { id: "b", weight: 1 }]).id] += 1;
+  assert.ok(counts.a > 2700 && counts.a < 3300, `a drawn ${counts.a} times`);
+});
+
+test("contextFor uses only the country's terms for the class and is empty without a lexicon", async () => {
+  const { contextFor } = await import("./lib.mjs");
+  const lexicon = {
+    countries: { BF: [{ term: "zoom-koom", category: "foodDining", meaning: "millet drink" }, { term: "SONABEL", category: "utilities", meaning: "electricity company" }], CI: [{ term: "garba", category: "foodDining", meaning: "attiéké with fish" }] },
+    scenarios: [{ scenario: "rentrée scolaire", categories: ["education"] }],
+    people: [{ term: "tantie", meaning: "older woman" }],
+    paymentChannels: [{ term: "Orange Money", country: "BF" }],
+  };
+  const context = contextFor(lexicon, seededRandom("ctx"), { country: "BF", key: "foodDining" });
+  assert.deepEqual(context.used, ["zoom-koom"]);
+  assert.match(context.block, /zoom-koom/);
+  assert.doesNotMatch(context.block, /SONABEL|garba|rentrée/);
+  assert.match(context.block, /Orange Money/);
+  assert.deepEqual(contextFor(null, seededRandom("ctx"), { country: "BF", key: "foodDining" }), { block: "", used: [] });
+});
