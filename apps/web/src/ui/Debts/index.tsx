@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Skeleton } from "../../components/ui/skeleton.tsx";
 import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits, currencyLabel } from "../../types/money.ts";
 import { formatLocalDateInput, parseLocalDateInput } from "../../lib/localDate.ts";
+import { actionFailureMessage } from "../../lib/actionFailure.ts";
 import { createReminderCalendar, downloadCalendarExport, type CalendarExport, type CalendarLocale } from "../../calendar/ics.ts";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
 
@@ -364,8 +365,8 @@ export default function Debts() {
           resetForm();
           toast.success(kind === "debt" ? t("debts.toasts.debtCreated") : t("debts.toasts.receivableCreated"), { description: label });
         },
-        onError: () => {
-          const message = t("debts.errors.createFailed");
+        onError: (failure) => {
+          const message = actionFailureMessage(t, failure, "debts.errors.createFailed");
           setCreateError(message);
           toast.error(message);
         },
@@ -377,9 +378,9 @@ export default function Debts() {
     updateStatus.mutate(
       { debtCreditId: id, status: nextStatus },
       {
-        onSuccess: () => toast.success(t("debts.toasts.statusUpdated"), { description: label }),
-        onError: () => {
-          const message = t("debts.errors.statusUpdateFailed");
+        onSuccess: () => toast.success(t("debts.toasts.statusUpdated"), { description: t("debts.toasts.statusUpdatedBody", { name: label, status: statusLabels[nextStatus] }) }),
+        onError: (failure) => {
+          const message = actionFailureMessage(t, failure, "debts.errors.statusUpdateFailed");
           toast.error(message);
         },
       },
@@ -391,7 +392,7 @@ export default function Debts() {
       { debtCreditId: id, dueDate },
       {
         onSuccess: () => toast.success(t("debts.toasts.dueDateUpdated"), { description: label }),
-        onError: () => toast.error(t("debts.errors.dueDateUpdateFailed")),
+        onError: (failure) => toast.error(actionFailureMessage(t, failure, "debts.errors.dueDateUpdateFailed")),
       },
     );
   };

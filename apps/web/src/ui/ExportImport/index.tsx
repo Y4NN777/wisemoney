@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, type FormEvent } from "react";
 import { useMasterKey } from "../../lib/masterKeyContext.ts";
 import { exportJSON, exportCSV, exportXLSX, importJSON } from "../../exportImport/index.ts";
+import { cyclePrepareFailureKey, cycleResetFailureKey, exportFailureKey, importFailureKey } from "../../exportImport/failure.ts";
 import { closeFinancialCycle, getCycleOverview, prepareCycleArchive, readCycleHistory, type CycleArchiveReceipt, type CycleOverview, type PreparedCycleArchive } from "../../exportImport/cycle.ts";
 import { Button } from "../../components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
@@ -111,8 +112,8 @@ export default function ExportImportSection() {
       setCyclePassphrase("");
       setCyclePassphraseConfirmation("");
       toast.success(t("exportImport.cycle.prepared"));
-    } catch {
-      const message = t("exportImport.cycle.errors.prepareFailed");
+    } catch (error) {
+      const message = t(cyclePrepareFailureKey(error));
       setCycleError(message);
       toast.error(message);
     } finally {
@@ -136,8 +137,10 @@ export default function ExportImportSection() {
         !savedFilesConfirmed || resetConfirmation !== "RESET") return;
     setCycleError(null);
     setResettingCycle(true);
+    let closed = false;
     try {
       await closeFinancialCycle(masterKey, preparedCycle);
+      closed = true;
       await seedDefaultCategories(masterKey);
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["financialState"] }),
@@ -149,8 +152,7 @@ export default function ExportImportSection() {
       resetCycleDialog();
       toast.success(t("exportImport.cycle.resetSuccess"));
     } catch (error) {
-      const changed = error instanceof Error && error.message.includes("data changed");
-      const message = t(changed ? "exportImport.cycle.errors.dataChanged" : "exportImport.cycle.errors.resetFailed");
+      const message = t(cycleResetFailureKey(error, closed));
       setCycleError(message);
       toast.error(message);
     } finally {
@@ -184,8 +186,8 @@ export default function ExportImportSection() {
       downloadBlob(blob, filename);
       markCoachBackupCreated();
       toast.success(t("exportImport.export.success"), { description: filename });
-    } catch {
-      const message = t("exportImport.export.errors.failed");
+    } catch (error) {
+      const message = t(exportFailureKey(error, false));
       setExportError(message);
       toast.error(message);
     } finally {
@@ -207,8 +209,8 @@ export default function ExportImportSection() {
       setShowPassphraseDialog(null);
       setPassphrase("");
       toast.success(t("exportImport.export.encryptedSuccess"));
-    } catch {
-      const message = t("exportImport.export.errors.encryptedFailed");
+    } catch (error) {
+      const message = t(exportFailureKey(error, true));
       setExportError(message);
       toast.error(message);
     } finally {
@@ -284,8 +286,8 @@ export default function ExportImportSection() {
         toast.success(message);
       }
       return true;
-    } catch {
-      const message = t("exportImport.import.errors.failed");
+    } catch (error) {
+      const message = t(importFailureKey(error));
       setImportError(message);
       toast.error(message);
       return false;

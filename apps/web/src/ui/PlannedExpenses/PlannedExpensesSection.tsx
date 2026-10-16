@@ -19,6 +19,8 @@ import {
   useUpdatePlannedExpense,
 } from "@/hooks/useFinancialState.ts";
 import { categoryDisplayName } from "@/lib/categoryName.ts";
+import { actionFailureMessage, hasValidationMessage } from "@/lib/actionFailure.ts";
+import { REFUSAL } from "@/pillars/state/index.ts";
 import { formatLocalDateInput, parseLocalDateInput } from "@/lib/localDate.ts";
 import { currencyFractionDigits, formatMoney, parseMajorUnits, amountPlaceholder } from "@/types/money.ts";
 import { createReminderCalendar, downloadCalendarExport } from "@/calendar/ics.ts";
@@ -230,6 +232,12 @@ export function PlannedExpensesSection({
     ? t("capture.plannedExpenses.unknownAccount")
     : snapshot.accounts.find((account) => account.id === id)?.name ?? t("capture.plannedExpenses.unknownAccount");
 
+  /** A planned expense completed or cancelled meanwhile gets its own message; other failures the shared mapping. */
+  const plannedFailure = (failure: unknown, action: keyof typeof REFUSAL.plannedExpenseNotPending, fallbackKey: string): string =>
+    hasValidationMessage(failure, REFUSAL.plannedExpenseNotPending[action])
+      ? t("capture.plannedExpenses.errors.notPending")
+      : actionFailureMessage(t, failure, fallbackKey);
+
   const openEdit = (item: PlannedExpenseState) => {
     setEditing(item);
     setEditState(editDraft(item));
@@ -265,7 +273,7 @@ export function PlannedExpensesSection({
         setCreateOpen(false);
         toast.success(t("capture.plannedExpenses.success.created"));
       },
-      onError: () => setDraftErrors({ form: t("capture.plannedExpenses.errors.createFailed") }),
+      onError: (failure) => setDraftErrors({ form: actionFailureMessage(t, failure, "capture.plannedExpenses.errors.createFailed") }),
     });
   };
 
@@ -288,7 +296,7 @@ export function PlannedExpensesSection({
         setEditing(null);
         toast.success(t("capture.plannedExpenses.success.updated"));
       },
-      onError: () => setEditErrors({ form: t("capture.plannedExpenses.errors.updateFailed") }),
+      onError: (failure) => setEditErrors({ form: plannedFailure(failure, "update", "capture.plannedExpenses.errors.updateFailed") }),
     });
   };
 
@@ -304,15 +312,15 @@ export function PlannedExpensesSection({
       note: item.note,
     }, {
       onSuccess: () => toast.success(t("capture.plannedExpenses.success.priorityUpdated")),
-      onError: () => toast.error(t("capture.plannedExpenses.errors.updateFailed")),
+      onError: (failure) => toast.error(plannedFailure(failure, "update", "capture.plannedExpenses.errors.updateFailed")),
     });
   };
 
   const cancel = (item: PlannedExpenseState) => {
     if (isWriting || !window.confirm(t("capture.plannedExpenses.confirmCancel", { label: item.label }))) return;
     cancelMutation.mutate({ plannedExpenseId: item.id }, {
-      onSuccess: () => toast.success(t("capture.plannedExpenses.success.cancelled")),
-      onError: () => toast.error(t("capture.plannedExpenses.errors.cancelFailed")),
+      onSuccess: () => toast.success(t("capture.plannedExpenses.success.cancelled"), { description: t("capture.plannedExpenses.success.cancelledBody", { label: item.label }) }),
+      onError: (failure) => toast.error(plannedFailure(failure, "cancel", "capture.plannedExpenses.errors.cancelFailed")),
     });
   };
 
@@ -334,17 +342,21 @@ export function PlannedExpensesSection({
       setCompleteError(t("capture.plannedExpenses.errors.invalidDate"));
       return;
     }
+    const { label } = completing;
+    const paid = { minorUnits: amount, currency: completing.estimatedAmount.currency };
     completeMutation.mutate({
       plannedExpenseId: completing.id,
       accountId,
-      actualAmount: { minorUnits: amount, currency: completing.estimatedAmount.currency },
+      actualAmount: paid,
       occurredAt,
     }, {
       onSuccess: () => {
         setCompleting(null);
-        toast.success(t("capture.plannedExpenses.success.completed"));
+        toast.success(t("capture.plannedExpenses.success.completed"), {
+          description: t("capture.plannedExpenses.success.completedBody", { label, amount: formatMoney(paid), account: accountName(accountId) }),
+        });
       },
-      onError: () => setCompleteError(t("capture.plannedExpenses.errors.completeFailed")),
+      onError: (failure) => setCompleteError(plannedFailure(failure, "complete", "capture.plannedExpenses.errors.completeFailed")),
     });
   };
 

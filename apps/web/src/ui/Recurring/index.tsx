@@ -13,6 +13,8 @@ import { currencyInputStep, currencyLabel, formatMoney as formatMoneyValue, pars
 import { formatLocalDateInput, parseLocalDateInput } from "../../lib/localDate.ts";
 import { useTranslation } from "react-i18next";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
+import { actionFailureMessage, hasValidationMessage } from "../../lib/actionFailure.ts";
+import { REFUSAL } from "../../pillars/state/index.ts";
 import { computeProjectedOccurrences } from "../../domain/financialState.ts";
 import { createReminderCalendar, downloadCalendarExport } from "../../calendar/ics.ts";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
@@ -94,8 +96,8 @@ export default function Recurring() {
           setCreateError(null);
           toast.success(t("recurring.created"), { description: itemLabel });
         },
-        onError: () => {
-          const message = t("recurring.errors.failed");
+        onError: (failure) => {
+          const message = actionFailureMessage(t, failure, "recurring.errors.failed");
           setCreateError(message);
           toast.error(message);
         },
@@ -106,6 +108,8 @@ export default function Recurring() {
   const handleRealise = (fallbackCategoryId: string) => {
     if (realiseDialog == null) return;
     if (!realiseAccountId) return;
+    const { label, amount } = realiseDialog;
+    const accountName = snapshot?.accounts.find((account) => account.id === realiseAccountId)?.name ?? "";
 
     realise.mutate(
       {
@@ -120,10 +124,15 @@ export default function Recurring() {
         onSuccess: () => {
           setRealiseDialog(null);
           setRealiseAccountId("");
-          toast.success(t("recurring.recorded"), { description: realiseDialog.label });
+          toast.success(t("recurring.recorded"), {
+            description: t("recurring.recordedBody", { label, amount: formatMoney(amount.minorUnits, amount.currency), account: accountName }),
+          });
         },
-        onError: () => {
-          const message = t("recurring.errors.recordFailed");
+        onError: (failure) => {
+          // One occurrence per day: say so, and when the next one can be recorded.
+          const message = hasValidationMessage(failure, REFUSAL.recurringAlreadyRealisedToday)
+            ? t("recurring.errors.alreadyRecordedToday", { label })
+            : actionFailureMessage(t, failure, "recurring.errors.recordFailed");
           toast.error(message);
         },
       }
@@ -331,7 +340,7 @@ export default function Recurring() {
                         { itemId: item.id },
                         {
                           onSuccess: () => toast.success(t("recurring.archivedSuccess"), { description: item.label }),
-                          onError: () => toast.error(t("recurring.errors.archiveFailed")),
+                          onError: (failure) => toast.error(actionFailureMessage(t, failure, "recurring.errors.archiveFailed")),
                         }
                       )}
                     >

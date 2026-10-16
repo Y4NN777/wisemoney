@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits, currencyLabel } from "../../types/money.ts";
 import { useTranslation } from "react-i18next";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
+import { actionFailureMessage } from "../../lib/actionFailure.ts";
 
 function formatMoney(minorUnits: number, currency: string): string {
   return formatMoneyValue({ minorUnits, currency });
@@ -55,6 +56,7 @@ export default function Budgets() {
       return;
     }
     const name = budgetName.trim();
+    const category = snapshot?.categories.find((candidate) => candidate.id === categoryId);
     createBudget.mutate(
       {
         name,
@@ -69,10 +71,16 @@ export default function Budgets() {
           setCategoryId("");
           setLimitStr("");
           setCreateError(null);
-          toast.success(t("budgets.created"), { description: name });
+          toast.success(t("budgets.created"), {
+            description: t("budgets.createdBody", {
+              name,
+              amount: formatMoney(minorUnits, currency),
+              category: category == null ? t("budgets.unknown") : categoryDisplayName(category, t),
+            }),
+          });
         },
-        onError: () => {
-          const message = t("budgets.errors.failed");
+        onError: (failure) => {
+          const message = actionFailureMessage(t, failure, "budgets.errors.failed");
           setCreateError(message);
           toast.error(message);
         },
@@ -220,9 +228,9 @@ export default function Budgets() {
                       onClick={() => archiveBudget.mutate(
                         { budgetId: budget.id },
                         {
-                          onSuccess: () => toast.success(t("budgets.archivedSuccess"), { description: budget.name }),
-                          onError: () => {
-                            const message = t("budgets.errors.archiveFailed");
+                          onSuccess: () => toast.success(t("budgets.archivedSuccess"), { description: t("budgets.archivedBody", { name: budget.name }) }),
+                          onError: (failure) => {
+                            const message = actionFailureMessage(t, failure, "budgets.errors.archiveFailed");
                             toast.error(message);
                           },
                         },

@@ -12,6 +12,7 @@ import { Plus, Archive, Target } from "lucide-react";
 import { toast } from "sonner";
 import { currencyInputStep, formatMoney as formatMoneyValue, parseMajorUnits, currencyLabel } from "../../types/money.ts";
 import { parseLocalDateInput } from "../../lib/localDate.ts";
+import { actionFailureMessage } from "../../lib/actionFailure.ts";
 import { useTranslation } from "react-i18next";
 
 function formatMoney(minorUnits: number, currency: string): string {
@@ -63,10 +64,10 @@ export default function Goals() {
           setTargetStr("");
           setTargetDate("");
           setCreateError(null);
-          toast.success(t("goals.created"), { description: goalName });
+          toast.success(t("goals.created"), { description: t("goals.createdBody", { name: goalName, amount: formatMoney(minorUnits, currency) }) });
         },
-        onError: () => {
-          const message = t("goals.errors.failed");
+        onError: (failure) => {
+          const message = actionFailureMessage(t, failure, "goals.errors.failed");
           setCreateError(message);
           toast.error(message);
         },
@@ -170,9 +171,9 @@ export default function Goals() {
                       onClick={() => archiveGoal.mutate(
                         { goalId: goal.id },
                         {
-                          onSuccess: () => toast.success(t("goals.archivedSuccess"), { description: goal.name }),
-                          onError: () => {
-                            const message = t("goals.errors.archiveFailed");
+                          onSuccess: () => toast.success(t("goals.archivedSuccess"), { description: t("goals.archivedBody", { name: goal.name }) }),
+                          onError: (failure) => {
+                            const message = actionFailureMessage(t, failure, "goals.errors.archiveFailed");
                             toast.error(message);
                           },
                         },

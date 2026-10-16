@@ -468,9 +468,18 @@
       "archiveCategoryAria": "Archive {{name}}",
       "errors": {
         "nameRequired": "Category name is required",
-        "failed": "Failed to create category",
-        "renameCategoryFailed": "Failed to rename category",
-        "archiveCategoryFailed": "Failed to archive category"
+        "failed": "The category wasn’t created. Try again; if it keeps happening, reload the app.",
+        "renameCategoryFailed": "The new name wasn’t saved. Try again; if it keeps happening, reload the app.",
+        "archiveCategoryFailed": "The category wasn’t archived. Try again; if it keeps happening, reload the app.",
+        "archiveBlockedTitle": "“{{name}}” can’t be archived yet",
+        "archiveBlockedBudget_one": "The budget “{{names}}” uses it. Archive that budget first in Plan, then Budgets, and try again.",
+        "archiveBlockedBudget_other": "The budgets “{{names}}” use it. Archive those budgets first in Plan, then Budgets, and try again.",
+        "archiveBlockedChildren_one": "The subcategory “{{names}}” depends on it. Archive it first, then try again.",
+        "archiveBlockedChildren_other": "The subcategories “{{names}}” depend on it. Archive them first, then try again.",
+        "archiveBlockedRecurring_one": "The recurring transaction “{{names}}” uses it. Archive it first in Plan, then Recurring Transactions, and try again.",
+        "archiveBlockedRecurring_other": "The recurring transactions “{{names}}” use it. Archive them first in Plan, then Recurring Transactions, and try again.",
+        "archiveBlockedPlanned_one": "The planned expense “{{names}}” uses it. In Plan, then Planned expenses, choose Cancel or Mark as completed, then try again.",
+        "archiveBlockedPlanned_other": "The planned expenses “{{names}}” use it. In Plan, then Planned expenses, choose Cancel or Mark as completed for each, then try again."
       },
       "createAccount": "Create Account",
       "accountName": "Account name",
@@ -523,7 +532,6 @@
         "failed": "The account wasn’t created. Check its name and opening balance, then try again.",
         "updateFailed": "The account changes weren’t saved. Try again; if it keeps happening, reload the app.",
         "archiveFailed": "The account wasn’t archived. Try again; if it keeps happening, reload the app.",
-        "changedMeanwhile": "Your data changed during the action, for example in another tab. Nothing was modified: try again.",
         "archiveBlockedTitle": "This account can’t be archived yet",
         "archiveBlockedPositive": "“{{name}}” still holds {{amount}} and has movements. First transfer the money to another account (+ (Capture) button, Transfer tab), then archive it.",
         "archiveBlockedNegative": "“{{name}}” is at {{amount}} and has movements. First bring its balance back to 0, for example with a transfer from another account (+ (Capture) button, Transfer tab), then archive it."
@@ -590,7 +598,9 @@
         "updated": "Planned expense updated",
         "priorityUpdated": "Priority updated",
         "cancelled": "Planned expense cancelled",
-        "completed": "Transaction created and planned expense completed"
+        "completed": "Transaction created and planned expense completed",
+        "cancelledBody": "“{{label}}” moved to History. No transaction was created.",
+        "completedBody": "“{{label}}”: {{amount}} paid from “{{account}}”."
       },
       "errors": {
         "labelRequired": "Enter a label.",
@@ -598,10 +608,11 @@
         "categoryRequired": "Select an active category.",
         "accountRequired": "Select a compatible active account.",
         "invalidDate": "Enter a valid date.",
-        "createFailed": "Could not add the planned expense.",
-        "updateFailed": "Could not update the planned expense.",
-        "cancelFailed": "Could not cancel the planned expense.",
-        "completeFailed": "Payment was not recorded. No transaction was created."
+        "createFailed": "The planned expense wasn’t added. Try again; if it keeps happening, reload the app.",
+        "updateFailed": "The planned expense changes weren’t saved. Try again; if it keeps happening, reload the app.",
+        "cancelFailed": "The planned expense wasn’t cancelled. Try again; if it keeps happening, reload the app.",
+        "completeFailed": "The payment wasn’t recorded and no transaction was created. Try again; if it keeps happening, reload the app.",
+        "notPending": "This planned expense was already completed or cancelled, perhaps in another tab. Nothing was modified: find it under History."
       },
       "history": {
         "title": "History",
@@ -733,9 +744,11 @@
       "nameRequired": "Enter a budget name",
       "validAmount": "Enter a valid amount",
       "selectCategory": "Select a category",
-      "failed": "Failed to create budget",
-      "archiveFailed": "Failed to archive budget"
-    }
+      "failed": "The budget wasn’t created. Try again; if it keeps happening, reload the app.",
+      "archiveFailed": "The budget wasn’t archived. Try again; if it keeps happening, reload the app."
+    },
+    "createdBody": "“{{name}}”: {{amount}} a month for {{category}}.",
+    "archivedBody": "“{{name}}” moved to Archived."
   },
   "goals": {
     "title": "Savings Goals",
@@ -759,9 +772,11 @@
       "nameRequired": "Goal name is required",
       "validAmount": "Enter a valid target amount",
       "validDate": "Enter a valid target date",
-      "failed": "Failed to create goal",
-      "archiveFailed": "Failed to archive goal"
-    }
+      "failed": "The goal wasn’t created. Try again; if it keeps happening, reload the app.",
+      "archiveFailed": "The goal wasn’t archived. Try again; if it keeps happening, reload the app."
+    },
+    "createdBody": "“{{name}}”: a target of {{amount}}.",
+    "archivedBody": "“{{name}}” moved to Archived."
   },
   "recurring": {
     "title": "Recurring",
@@ -802,10 +817,12 @@
       "selectCategory": "Select a category",
       "validAmount": "Enter a valid amount",
       "validStartDate": "Enter a valid start date",
-      "failed": "Failed to create recurring item",
-      "recordFailed": "Failed to record occurrence",
-      "archiveFailed": "Failed to archive recurring item"
-    }
+      "failed": "The recurring item wasn’t created. Try again; if it keeps happening, reload the app.",
+      "recordFailed": "The occurrence wasn’t recorded. Try again; if it keeps happening, reload the app.",
+      "archiveFailed": "The recurring item wasn’t archived. Try again; if it keeps happening, reload the app.",
+      "alreadyRecordedToday": "“{{label}}” was already recorded today. Nothing was added: the next occurrence can be recorded from tomorrow."
+    },
+    "recordedBody": "“{{label}}”: {{amount}} recorded on “{{account}}”."
   },
   "exportImport": {
     "cycle": {
@@ -849,13 +866,17 @@
       "resetting": "Closing cycle…",
       "resetSuccess": "Cycle closed. A new financial space is ready.",
       "errors": {
-        "loadFailed": "Could not load cycle information",
+        "loadFailed": "The cycle information couldn’t be read. Reload the app.",
         "labelRequired": "Give this cycle a name",
         "passphraseTooShort": "The passphrase must contain at least 8 characters",
         "passphraseMismatch": "The passphrases do not match",
-        "prepareFailed": "Could not generate a complete archive. No data was removed.",
+        "prepareFailed": "The archive couldn’t be generated. No data was removed. Try again; if it keeps happening, reload the app.",
         "dataChanged": "The data changed after the files were generated. Generate a new archive before starting again.",
-        "resetFailed": "Cycle closure failed. The current cycle data is still available."
+        "resetFailed": "Closing the cycle failed. The current cycle data is kept. Try again; if it keeps happening, reload the app.",
+        "prepareUnreadable": "Some data on this device couldn’t be read, so the archive wasn’t generated. No data was removed: reload the app, then try again.",
+        "nothingToArchive": "This cycle has no actions yet: there is nothing to archive.",
+        "resetStorage": "Closing the cycle failed: this device’s storage may be full. The current cycle data is kept: free up some space, then try again.",
+        "closedNotReady": "The cycle is closed, but the new cycle couldn’t be prepared. Reload the app to start it."
       }
     },
     "export": {
@@ -868,8 +889,9 @@
       "success": "Export downloaded",
       "encryptedSuccess": "Encrypted export downloaded",
       "errors": {
-        "failed": "Export failed",
-        "encryptedFailed": "Encrypted export failed"
+        "failed": "The export didn’t complete and nothing was downloaded. Try again; if it keeps happening, reload the app.",
+        "encryptedFailed": "The encrypted export didn’t complete and nothing was downloaded. Try again; if it keeps happening, reload the app.",
+        "unreadable": "Some data on this device couldn’t be read, so nothing was downloaded. Reload the app, then try again."
       },
       "warning": "Plaintext exports contain your decrypted data. Store them securely."
     },
@@ -879,9 +901,13 @@
       "importing": "Importing data…",
       "success": "Import successful! All data has been restored.",
       "errors": {
-        "invalidFile": "Invalid file — unable to parse.",
+        "invalidFile": "This file isn’t a WiseMoney backup. Nothing was imported: choose a .json or .wmexport file exported from WiseMoney.",
         "noFile": "No file selected",
-        "failed": "Import failed"
+        "failed": "The import didn’t complete. Try again; if it keeps happening, reload the app.",
+        "damaged": "This backup file is incomplete or damaged. Nothing was imported: try another copy of the backup.",
+        "tooLarge": "This file is over 100 MB, the largest a backup can be. Nothing was imported: choose a file exported from WiseMoney.",
+        "wrongPassphrase": "This passphrase doesn’t decrypt this file. Nothing was imported: enter the passphrase chosen when the file was created.",
+        "storage": "This device couldn’t save the imported data: its storage may be full. Free up some space, then import the file again."
       }
     },
     "passphrase": {
@@ -1005,7 +1031,8 @@
       "receivableCreated": "Receivable added",
       "debtCreated": "Debt added",
       "statusUpdated": "Status updated",
-      "dueDateUpdated": "Due date updated"
+      "dueDateUpdated": "Due date updated",
+      "statusUpdatedBody": "“{{name}}”: {{status}}."
     },
     "errors": {
       "debtorRequired": "Debtor name is required",
@@ -1014,9 +1041,9 @@
       "invalidAmount": "Invalid amount",
       "invalidDate": "Invalid date",
       "invalidDueDate": "Invalid due date",
-      "createFailed": "Failed to add",
-      "statusUpdateFailed": "Failed to update status",
-      "dueDateUpdateFailed": "Failed to update due date"
+      "createFailed": "The item wasn’t added. Try again; if it keeps happening, reload the app.",
+      "statusUpdateFailed": "The status wasn’t changed. Try again; if it keeps happening, reload the app.",
+      "dueDateUpdateFailed": "The due date wasn’t changed. Try again; if it keeps happening, reload the app."
     }
   },
   "reminders": {
@@ -1426,5 +1453,10 @@
   },
   "learnCard": {
     "title": "WiseLearn"
+  },
+  "actionFailure": {
+    "changedMeanwhile": "Your data changed during the action, for example in another tab. Nothing was modified: try again.",
+    "gone": "Something this action uses no longer exists or was archived, perhaps in another tab. Nothing was modified: check the updated list, then try again.",
+    "storage": "This device could not save: its storage may be full. Nothing was modified: free up some space, then try again."
   }
 }

@@ -84,6 +84,23 @@ export class ValidationError extends Error {
   }
 }
 
+/**
+ * Refusals the UI explains with their own next step. The messages stay the domain text; the UI
+ * matches on these constants, never on copied strings.
+ */
+export const REFUSAL = {
+  categoryUsedByBudget: "Archive active budgets for this category first",
+  categoryHasChildren: "Archive active child categories first",
+  categoryUsedByRecurringItem: "This category is used by a recurring item and cannot be archived",
+  categoryUsedByPlannedExpense: "This category is used by a pending planned expense and cannot be archived",
+  recurringAlreadyRealisedToday: "This recurring item was already realised today",
+  plannedExpenseNotPending: {
+    update: "Only pending planned expenses can be updated",
+    cancel: "Only pending planned expenses can be cancelled",
+    complete: "Only pending planned expenses can be completed",
+  },
+} as const;
+
 // ---------------------------------------------------------------------------
 // createAccount
 // ---------------------------------------------------------------------------
@@ -454,7 +471,7 @@ export async function updatePlannedExpense(
   } else if (plannedExpense == null) {
     errors.push({ field: "plannedExpenseId", message: "Planned expense not found (INV-EVT-03)" });
   } else if (plannedExpense.status !== "pending") {
-    errors.push({ field: "plannedExpenseId", message: "Only pending planned expenses can be updated" });
+    errors.push({ field: "plannedExpenseId", message: REFUSAL.plannedExpenseNotPending.update });
   }
   if (errors.length > 0) {
     throw new ValidationError(errors);
@@ -507,7 +524,7 @@ export async function cancelPlannedExpense(
   if (plannedExpense.status !== "pending") {
     throw new ValidationError([{
       field: "plannedExpenseId",
-      message: "Only pending planned expenses can be cancelled",
+      message: REFUSAL.plannedExpenseNotPending.cancel,
     }]);
   }
 
@@ -547,7 +564,7 @@ export async function completePlannedExpense(
   } else if (plannedExpense == null) {
     errors.push({ field: "plannedExpenseId", message: "Planned expense not found (INV-EVT-03)" });
   } else if (plannedExpense.status !== "pending") {
-    errors.push({ field: "plannedExpenseId", message: "Only pending planned expenses can be completed" });
+    errors.push({ field: "plannedExpenseId", message: REFUSAL.plannedExpenseNotPending.complete });
   }
   if (!params.accountId || account == null) {
     errors.push({ field: "accountId", message: "Account not found (INV-EVT-03)" });
@@ -733,19 +750,19 @@ export async function archiveCategory(params: ArchiveCategoryParams): Promise<vo
   if (snapshot.budgets.some((budget) => budget.categoryId === params.categoryId && !budget.isArchived)) {
     throw new ValidationError([{
       field: "categoryId",
-      message: "Archive active budgets for this category first",
+      message: REFUSAL.categoryUsedByBudget,
     }]);
   }
   if (snapshot.categories.some((category) => category.parentId === params.categoryId && !category.isArchived)) {
     throw new ValidationError([{
       field: "categoryId",
-      message: "Archive active child categories first",
+      message: REFUSAL.categoryHasChildren,
     }]);
   }
   if (snapshot.recurringItems.some((item) => item.categoryId === params.categoryId && !item.isArchived)) {
     throw new ValidationError([{
       field: "categoryId",
-      message: "This category is used by a recurring item and cannot be archived",
+      message: REFUSAL.categoryUsedByRecurringItem,
     }]);
   }
   if (snapshot.plannedExpenses.some(
@@ -753,7 +770,7 @@ export async function archiveCategory(params: ArchiveCategoryParams): Promise<vo
   )) {
     throw new ValidationError([{
       field: "categoryId",
-      message: "This category is used by a pending planned expense and cannot be archived",
+      message: REFUSAL.categoryUsedByPlannedExpense,
     }]);
   }
 
@@ -1130,7 +1147,7 @@ export async function realiseRecurringOccurrence(
   }
   const realisationDate = params.date ?? nowMs();
   if (item?.lastRealised != null && isSameLocalDay(item.lastRealised, realisationDate)) {
-    errors.push({ field: "date", message: "This recurring item was already realised today" });
+    errors.push({ field: "date", message: REFUSAL.recurringAlreadyRealisedToday });
   }
   if (params.direction !== "income" && params.direction !== "expense") {
     errors.push({ field: "direction", message: "Must be 'income' or 'expense'" });

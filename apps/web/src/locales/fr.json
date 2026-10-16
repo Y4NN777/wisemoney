@@ -468,9 +468,18 @@
       "archiveCategoryAria": "Archiver {{name}}",
       "errors": {
         "nameRequired": "Le nom de la catégorie est requis",
-        "failed": "Échec de la création de la catégorie",
-        "renameCategoryFailed": "Échec du renommage de la catégorie",
-        "archiveCategoryFailed": "Échec de l’archivage de la catégorie"
+        "failed": "La catégorie n’a pas été créée. Réessayez ; si cela continue, rechargez l’application.",
+        "renameCategoryFailed": "Le nouveau nom n’a pas été enregistré. Réessayez ; si cela continue, rechargez l’application.",
+        "archiveCategoryFailed": "La catégorie n’a pas été archivée. Réessayez ; si cela continue, rechargez l’application.",
+        "archiveBlockedTitle": "« {{name}} » ne peut pas encore être archivée",
+        "archiveBlockedBudget_one": "Le budget « {{names}} » l’utilise. Archivez-le d’abord dans Plan, puis Budgets, et réessayez.",
+        "archiveBlockedBudget_other": "Les budgets « {{names}} » l’utilisent. Archivez-les d’abord dans Plan, puis Budgets, et réessayez.",
+        "archiveBlockedChildren_one": "La sous-catégorie « {{names}} » en dépend. Archivez-la d’abord, puis réessayez.",
+        "archiveBlockedChildren_other": "Les sous-catégories « {{names}} » en dépendent. Archivez-les d’abord, puis réessayez.",
+        "archiveBlockedRecurring_one": "La transaction récurrente « {{names}} » l’utilise. Archivez-la d’abord dans Plan, puis Transactions récurrentes, et réessayez.",
+        "archiveBlockedRecurring_other": "Les transactions récurrentes « {{names}} » l’utilisent. Archivez-les d’abord dans Plan, puis Transactions récurrentes, et réessayez.",
+        "archiveBlockedPlanned_one": "La dépense prévue « {{names}} » l’utilise. Dans Plan, puis Dépenses prévues, choisissez Annuler ou Marquer comme faite, puis réessayez.",
+        "archiveBlockedPlanned_other": "Les dépenses prévues « {{names}} » l’utilisent. Dans Plan, puis Dépenses prévues, choisissez Annuler ou Marquer comme faite pour chacune, puis réessayez."
       },
       "createAccount": "Créer un compte",
       "accountName": "Nom du compte",
@@ -523,7 +532,6 @@
         "failed": "Le compte n’a pas été créé. Vérifiez son nom et son solde initial, puis réessayez.",
         "updateFailed": "Les modifications du compte n’ont pas été enregistrées. Réessayez ; si cela continue, rechargez l’application.",
         "archiveFailed": "Le compte n’a pas été archivé. Réessayez ; si cela continue, rechargez l’application.",
-        "changedMeanwhile": "Vos données ont changé pendant l’opération, par exemple dans un autre onglet. Rien n’a été modifié : réessayez.",
         "archiveBlockedTitle": "Ce compte ne peut pas encore être archivé",
         "archiveBlockedPositive": "« {{name}} » a encore {{amount}} et des mouvements. Transférez d’abord l’argent vers un autre compte (bouton + (Saisie), onglet Transfert), puis archivez-le.",
         "archiveBlockedNegative": "« {{name}} » est à {{amount}} et a des mouvements. Ramenez d’abord son solde à 0, par exemple avec un transfert depuis un autre compte (bouton + (Saisie), onglet Transfert), puis archivez-le."
@@ -590,7 +598,9 @@
         "updated": "Dépense prévue modifiée",
         "priorityUpdated": "Priorité modifiée",
         "cancelled": "Dépense prévue annulée",
-        "completed": "Transaction créée et dépense prévue réalisée"
+        "completed": "Transaction créée et dépense prévue réalisée",
+        "cancelledBody": "« {{label}} » passe dans l’Historique. Aucune transaction n’a été créée.",
+        "completedBody": "« {{label}} » : {{amount}} payé depuis « {{account}} »."
       },
       "errors": {
         "labelRequired": "Saisissez un libellé.",
@@ -598,10 +608,11 @@
         "categoryRequired": "Sélectionnez une catégorie active.",
         "accountRequired": "Sélectionnez un compte actif compatible.",
         "invalidDate": "Saisissez une date valide.",
-        "createFailed": "Impossible d’ajouter la dépense prévue.",
-        "updateFailed": "Impossible de modifier la dépense prévue.",
-        "cancelFailed": "Impossible d’annuler la dépense prévue.",
-        "completeFailed": "Le paiement n’a pas été enregistré. Aucune transaction n’a été créée."
+        "createFailed": "La dépense prévue n’a pas été ajoutée. Réessayez ; si cela continue, rechargez l’application.",
+        "updateFailed": "Les modifications de la dépense prévue n’ont pas été enregistrées. Réessayez ; si cela continue, rechargez l’application.",
+        "cancelFailed": "La dépense prévue n’a pas été annulée. Réessayez ; si cela continue, rechargez l’application.",
+        "completeFailed": "Le paiement n’a pas été enregistré et aucune transaction n’a été créée. Réessayez ; si cela continue, rechargez l’application.",
+        "notPending": "Cette dépense prévue est déjà réalisée ou annulée, peut-être dans un autre onglet. Rien n’a été modifié : retrouvez-la dans l’Historique."
       },
       "history": {
         "title": "Historique",
@@ -733,9 +744,11 @@
       "nameRequired": "Entrez un nom de budget",
       "validAmount": "Entrez un montant valide",
       "selectCategory": "Sélectionnez une catégorie",
-      "failed": "Échec de la création du budget",
-      "archiveFailed": "Échec de l’archivage du budget"
-    }
+      "failed": "Le budget n’a pas été créé. Réessayez ; si cela continue, rechargez l’application.",
+      "archiveFailed": "Le budget n’a pas été archivé. Réessayez ; si cela continue, rechargez l’application."
+    },
+    "createdBody": "« {{name}} » : {{amount}} par mois pour {{category}}.",
+    "archivedBody": "« {{name}} » passe dans Archivés."
   },
   "goals": {
     "title": "Objectifs d'épargne",
@@ -759,9 +772,11 @@
       "nameRequired": "Le nom de l'objectif est requis",
       "validAmount": "Entrez un montant cible valide",
       "validDate": "Entrez une date cible valide",
-      "failed": "Échec de la création de l'objectif",
-      "archiveFailed": "Échec de l’archivage de l’objectif"
-    }
+      "failed": "L’objectif n’a pas été créé. Réessayez ; si cela continue, rechargez l’application.",
+      "archiveFailed": "L’objectif n’a pas été archivé. Réessayez ; si cela continue, rechargez l’application."
+    },
+    "createdBody": "« {{name}} » : objectif de {{amount}}.",
+    "archivedBody": "« {{name}} » passe dans Archivés."
   },
   "recurring": {
     "title": "Récurrents",
@@ -802,10 +817,12 @@
       "selectCategory": "Sélectionnez une catégorie",
       "validAmount": "Entrez un montant valide",
       "validStartDate": "Entrez une date de début valide",
-      "failed": "Échec de la création de l'élément récurrent",
-      "recordFailed": "Échec de l’enregistrement de l’occurrence",
-      "archiveFailed": "Échec de l’archivage de l’élément récurrent"
-    }
+      "failed": "L’élément récurrent n’a pas été créé. Réessayez ; si cela continue, rechargez l’application.",
+      "recordFailed": "L’occurrence n’a pas été enregistrée. Réessayez ; si cela continue, rechargez l’application.",
+      "archiveFailed": "L’élément récurrent n’a pas été archivé. Réessayez ; si cela continue, rechargez l’application.",
+      "alreadyRecordedToday": "« {{label}} » est déjà enregistré aujourd’hui. Rien n’a été ajouté : la prochaine occurrence pourra être enregistrée à partir de demain."
+    },
+    "recordedBody": "« {{label}} » : {{amount}} enregistré sur « {{account}} »."
   },
   "exportImport": {
     "cycle": {
@@ -849,13 +866,17 @@
       "resetting": "Clôture du cycle…",
       "resetSuccess": "Cycle clôturé. Un nouvel espace financier est prêt.",
       "errors": {
-        "loadFailed": "Impossible de charger les informations des cycles",
+        "loadFailed": "Les informations des cycles n’ont pas pu être lues. Rechargez l’application.",
         "labelRequired": "Donnez un nom à ce cycle",
         "passphraseTooShort": "La phrase secrète doit contenir au moins 8 caractères",
         "passphraseMismatch": "Les phrases secrètes ne correspondent pas",
-        "prepareFailed": "Impossible de générer une archive complète. Aucune donnée n’a été effacée.",
+        "prepareFailed": "L’archive n’a pas pu être générée. Aucune donnée n’a été effacée. Réessayez ; si cela continue, rechargez l’application.",
         "dataChanged": "Les données ont changé depuis la génération des fichiers. Générez une nouvelle archive avant de recommencer.",
-        "resetFailed": "La clôture a échoué. Les données du cycle actuel sont conservées."
+        "resetFailed": "La clôture a échoué. Les données du cycle actuel sont conservées. Réessayez ; si cela continue, rechargez l’application.",
+        "prepareUnreadable": "Des données de cet appareil n’ont pas pu être lues, donc l’archive n’a pas été générée. Aucune donnée n’a été effacée : rechargez l’application, puis réessayez.",
+        "nothingToArchive": "Ce cycle ne contient encore aucune action : il n’y a rien à archiver.",
+        "resetStorage": "La clôture a échoué : l’espace de stockage de l’appareil est peut-être plein. Les données du cycle actuel sont conservées : libérez de l’espace, puis réessayez.",
+        "closedNotReady": "Le cycle est bien clôturé, mais le nouveau cycle n’a pas pu se préparer. Rechargez l’application pour le commencer."
       }
     },
     "export": {
@@ -868,8 +889,9 @@
       "success": "Exportation téléchargée",
       "encryptedSuccess": "Exportation chiffrée téléchargée",
       "errors": {
-        "failed": "Échec de l'exportation",
-        "encryptedFailed": "Échec de l'exportation chiffrée"
+        "failed": "L’exportation n’a pas abouti et rien n’a été téléchargé. Réessayez ; si cela continue, rechargez l’application.",
+        "encryptedFailed": "L’exportation chiffrée n’a pas abouti et rien n’a été téléchargé. Réessayez ; si cela continue, rechargez l’application.",
+        "unreadable": "Des données de cet appareil n’ont pas pu être lues, donc rien n’a été téléchargé. Rechargez l’application, puis réessayez."
       },
       "warning": "Les exports en clair contiennent vos données déchiffrées. Conservez-les en lieu sûr."
     },
@@ -879,9 +901,13 @@
       "importing": "Importation des données…",
       "success": "Importation réussie ! Toutes les données ont été restaurées.",
       "errors": {
-        "invalidFile": "Fichier invalide — impossible d'analyser.",
+        "invalidFile": "Ce fichier n’est pas une sauvegarde WiseMoney. Rien n’a été importé : choisissez un fichier .json ou .wmexport exporté depuis WiseMoney.",
         "noFile": "Aucun fichier sélectionné",
-        "failed": "Échec de l'importation"
+        "failed": "L’importation n’a pas abouti. Réessayez ; si cela continue, rechargez l’application.",
+        "damaged": "Ce fichier de sauvegarde est incomplet ou endommagé. Rien n’a été importé : essayez une autre copie de la sauvegarde.",
+        "tooLarge": "Ce fichier dépasse 100 Mo, la taille maximale d’une sauvegarde. Rien n’a été importé : choisissez un fichier exporté depuis WiseMoney.",
+        "wrongPassphrase": "Cette phrase de passe ne déchiffre pas ce fichier. Rien n’a été importé : saisissez la phrase choisie quand le fichier a été créé.",
+        "storage": "L’appareil n’a pas pu enregistrer les données importées : son espace de stockage est peut-être plein. Libérez de l’espace, puis importez à nouveau le fichier."
       }
     },
     "passphrase": {
@@ -1005,7 +1031,8 @@
       "receivableCreated": "Créance ajoutée",
       "debtCreated": "Dette ajoutée",
       "statusUpdated": "Statut mis à jour",
-      "dueDateUpdated": "Échéance mise à jour"
+      "dueDateUpdated": "Échéance mise à jour",
+      "statusUpdatedBody": "« {{name}} » : {{status}}."
     },
     "errors": {
       "debtorRequired": "Nom du débiteur requis",
@@ -1014,9 +1041,9 @@
       "invalidAmount": "Montant invalide",
       "invalidDate": "Date invalide",
       "invalidDueDate": "Échéance invalide",
-      "createFailed": "Échec de l'ajout",
-      "statusUpdateFailed": "Échec de la mise à jour du statut",
-      "dueDateUpdateFailed": "Échec de la mise à jour de l’échéance"
+      "createFailed": "L’élément n’a pas été ajouté. Réessayez ; si cela continue, rechargez l’application.",
+      "statusUpdateFailed": "Le statut n’a pas été modifié. Réessayez ; si cela continue, rechargez l’application.",
+      "dueDateUpdateFailed": "L’échéance n’a pas été modifiée. Réessayez ; si cela continue, rechargez l’application."
     }
   },
   "reminders": {
@@ -1426,5 +1453,10 @@
   },
   "learnCard": {
     "title": "WiseLearn"
+  },
+  "actionFailure": {
+    "changedMeanwhile": "Vos données ont changé pendant l’opération, par exemple dans un autre onglet. Rien n’a été modifié : réessayez.",
+    "gone": "Un élément utilisé ici n’existe plus ou a été archivé, peut-être dans un autre onglet. Rien n’a été modifié : vérifiez la liste à jour, puis réessayez.",
+    "storage": "L’appareil n’a pas pu enregistrer : son espace de stockage est peut-être plein. Rien n’a été modifié : libérez de l’espace, puis réessayez."
   }
 }

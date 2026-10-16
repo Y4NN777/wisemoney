@@ -17,8 +17,8 @@ import {
 import { categoryDisplayName } from "@/lib/categoryName.ts";
 import type { ManageSection } from "@/routes/capture.tsx";
 import { formatMoney, majorUnitsInput, parseMajorUnits } from "@/types/money.ts";
-import { AppendEventError } from "@/domain/eventStore.ts";
-import { AccountNotEmptyError } from "@/pillars/state/index.ts";
+import { actionFailureMessage, hasValidationMessage } from "@/lib/actionFailure.ts";
+import { AccountNotEmptyError, REFUSAL } from "@/pillars/state/index.ts";
 
 type ActiveAccount = FinancialStateSnapshot["accounts"][number];
 
@@ -162,11 +162,8 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
   const [editingAccount, setEditingAccount] = useState<ActiveAccount | null>(null);
   const [editOpeningBalance, setEditOpeningBalance] = useState("");
 
-  /** A failed account action: a concurrent change gets its own message, anything else the action's one. */
-  const accountFailure = (failure: unknown, fallbackKey: string): string =>
-    failure instanceof AppendEventError && failure.code === "STALE_SNAPSHOT"
-      ? t("capture.manage.errorsAccount.changedMeanwhile")
-      : t(fallbackKey);
+  /** A failed action: a known cause (concurrent change, gone, storage) gets its message, anything else the action's one. */
+  const failureMessage = (failure: unknown, fallbackKey: string): string => actionFailureMessage(t, failure, fallbackKey);
 
   useEffect(() => { setSearch(""); setError(null); setCreateOpen(false); }, [section]);
 
@@ -176,7 +173,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
     if (name === "") return;
     createCategory.mutate({ name }, {
       onSuccess: () => { setCategoryName(""); setCreateOpen(false); toast.success(t("capture.manage.categoryCreated"), { description: name }); },
-      onError: () => setError(t("capture.manage.errors.failed")),
+      onError: (failure) => setError(failureMessage(failure, "capture.manage.errors.failed")),
     });
   };
 
@@ -185,7 +182,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
     if (renaming == null || categoryName.trim() === "") return;
     renameCategory.mutate({ categoryId: renaming.id, newName: categoryName.trim() }, {
       onSuccess: () => { setRenaming(null); setCategoryName(""); toast.success(t("capture.manage.categoryRenamed")); },
-      onError: () => setError(t("capture.manage.errors.renameCategoryFailed")),
+      onError: (failure) => setError(failureMessage(failure, "capture.manage.errors.renameCategoryFailed")),
     });
   };
 
@@ -196,7 +193,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
     if (name === "" || balance == null) { setError(t("capture.manage.errorsAccount.validBalance")); return; }
     createAccount.mutate({ name, type: accountType, initialBalance: { minorUnits: balance, currency: accountCurrency } }, {
       onSuccess: () => { setAccountName(""); setOpeningBalance(""); setCreateOpen(false); toast.success(t("capture.manage.accountCreated"), { description: name }); },
-      onError: (failure) => setError(accountFailure(failure, "capture.manage.errorsAccount.failed")),
+      onError: (failure) => setError(failureMessage(failure, "capture.manage.errorsAccount.failed")),
     });
   };
 
@@ -231,7 +228,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
           toast(t("capture.manage.accountUnchanged"));
         }
       },
-      onError: (failure) => setError(accountFailure(failure, "capture.manage.errorsAccount.updateFailed")),
+      onError: (failure) => setError(failureMessage(failure, "capture.manage.errorsAccount.updateFailed")),
     });
   };
 
@@ -239,8 +236,36 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
     if (!window.confirm(t("capture.manage.confirmArchiveCategory", { name }))) return;
     archiveCategory.mutate({ categoryId }, {
       onSuccess: () => toast.success(t("capture.manage.categoryArchived"), { description: name }),
-      onError: () => toast.error(t("capture.manage.errors.archiveCategoryFailed")),
+      onError: (failure) => {
+        // Something still uses the category: name it and say where to release it.
+        const blocked = categoryArchiveBlocker(failure, categoryId);
+        if (blocked != null && blocked.names.length > 0) {
+          toast.error(t("capture.manage.errors.archiveBlockedTitle", { name }), {
+            description: t(`capture.manage.errors.${blocked.key}`, { count: blocked.names.length, names: blocked.names.join(", ") }),
+            duration: ARCHIVE_BLOCKED_TOAST_MS,
+          });
+          return;
+        }
+        toast.error(failureMessage(failure, "capture.manage.errors.archiveCategoryFailed"));
+      },
     });
+  };
+
+  /** Which active items keep a category from being archived, from the domain refusal and this snapshot. */
+  const categoryArchiveBlocker = (failure: unknown, categoryId: string): { key: string; names: string[] } | null => {
+    if (hasValidationMessage(failure, REFUSAL.categoryUsedByBudget)) {
+      return { key: "archiveBlockedBudget", names: snapshot.budgets.filter((budget) => budget.categoryId === categoryId && !budget.isArchived).map((budget) => budget.name) };
+    }
+    if (hasValidationMessage(failure, REFUSAL.categoryHasChildren)) {
+      return { key: "archiveBlockedChildren", names: snapshot.categories.filter((category) => category.parentId === categoryId && !category.isArchived).map((category) => categoryDisplayName(category, t)) };
+    }
+    if (hasValidationMessage(failure, REFUSAL.categoryUsedByRecurringItem)) {
+      return { key: "archiveBlockedRecurring", names: snapshot.recurringItems.filter((item) => item.categoryId === categoryId && !item.isArchived).map((item) => item.label) };
+    }
+    if (hasValidationMessage(failure, REFUSAL.categoryUsedByPlannedExpense)) {
+      return { key: "archiveBlockedPlanned", names: snapshot.plannedExpenses.filter((item) => item.categoryId === categoryId && item.status === "pending").map((item) => item.label) };
+    }
+    return null;
   };
 
   const archiveAccountItem = (account: ActiveAccount) => {
@@ -258,7 +283,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
           });
           return;
         }
-        toast.error(accountFailure(failure, "capture.manage.errorsAccount.archiveFailed"));
+        toast.error(failureMessage(failure, "capture.manage.errorsAccount.archiveFailed"));
       },
     });
   };
