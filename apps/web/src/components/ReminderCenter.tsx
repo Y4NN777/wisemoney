@@ -31,7 +31,7 @@ type ReminderCenterProps = {
 
 function urgencyClass(urgency: ReminderViewModel["urgency"]): string {
   if (urgency === "overdue") return "border-destructive/35 bg-destructive/5 text-destructive";
-  if (urgency === "today") return "border-amber/45 bg-amber/10 text-foreground";
+  if (urgency === "today") return "border-attention/45 bg-attention-wash text-foreground";
   if (urgency === "upcoming") return "border-ocean-primary/25 bg-ocean-wash/65 text-ocean-dark";
   return "border-border bg-accent/45 text-foreground";
 }

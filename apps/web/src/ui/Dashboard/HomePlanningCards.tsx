@@ -52,7 +52,7 @@ export function HealthPill({ label, value, progress, tone, footer }: { label: st
   const toneClass = tone === "risk"
     ? "text-destructive [&>div>div]:bg-destructive"
     : tone === "good"
-      ? "text-sage [&>div>div]:bg-sage"
+      ? "text-positive [&>div>div]:bg-positive"
       : tone === "neutral"
         ? "text-muted-foreground"
         : "text-ocean-dark";

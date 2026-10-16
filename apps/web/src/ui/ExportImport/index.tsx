@@ -417,9 +417,9 @@ export default function ExportImportSection() {
             </Button>
           </div>
 
-          <div className="flex items-start gap-2 rounded-md border border-amber bg-amber-wash p-3">
-            <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-700 dark:text-amber-400">{t("exportImport.export.warning")}</p>
+          <div className="flex items-start gap-2 rounded-md border border-attention/40 bg-attention-wash p-3">
+            <AlertTriangle className="h-4 w-4 text-attention shrink-0 mt-0.5" />
+            <p className="text-xs text-attention">{t("exportImport.export.warning")}</p>
           </div>
         </CardContent>
       </Card>
@@ -439,7 +439,7 @@ export default function ExportImportSection() {
             <p role="alert" className="text-destructive text-sm">{importError}</p>
           )}
           {importResult != null && (
-            <p role="alert" className={importResult.ok ? "text-green-600 text-sm" : "text-destructive text-sm"}>
+            <p role="alert" className={importResult.ok ? "text-positive text-sm" : "text-destructive text-sm"}>
               {importResult.message}
             </p>
           )}

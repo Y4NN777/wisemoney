@@ -274,7 +274,7 @@ export default function Recurring() {
                       {cat?.name ?? t("recurring.unknown")} &middot; {t(`recurring.${item.frequency}`)}
                     </p>
                   </div>
-                  <span className={`text-sm font-medium ${item.direction === "income" ? "text-green-600" : "text-red-500"}`}>
+                  <span className={`text-sm font-medium ${item.direction === "income" ? "text-positive" : "text-negative"}`}>
                     {item.direction === "income" ? "+" : "\u2212"}
                     {formatMoney(item.amount.minorUnits, item.amount.currency)}
                   </span>

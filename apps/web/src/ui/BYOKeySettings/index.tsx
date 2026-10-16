@@ -136,7 +136,7 @@ export default function BYOKeySettings() {
                   </div>
                   {status?.configured === true && (
                     <Badge variant="outline" className="text-xs gap-1">
-                      <Check className="h-3 w-3 text-green-500" />
+                      <Check className="h-3 w-3 text-positive" />
                       {t("byoKey.configuredBadge")}
                     </Badge>
                   )}

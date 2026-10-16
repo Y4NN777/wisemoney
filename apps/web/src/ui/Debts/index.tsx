@@ -18,9 +18,9 @@ import { createReminderCalendar, downloadCalendarExport, type CalendarExport, ty
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
 
 const STATUS_BADGE_CLASS: Record<DebtCreditStatus, string> = {
-  pending: "border-amber bg-amber-wash text-amber",
+  pending: "border-attention/40 bg-attention-wash text-attention",
   partial: "border-ocean-primary bg-ocean-wash text-ocean-dark",
-  settled: "border-sage bg-sage-wash text-sage",
+  settled: "border-positive/40 bg-positive-wash text-positive",
 };
 
 function formatMoney(minorUnits: number, currency: string): string {
@@ -128,9 +128,9 @@ function DueDateEditor({ item, label, noDueDate, saveLabel, invalidDate, addToCa
 }
 
 function statusIcon(status: DebtCreditStatus) {
-  if (status === "settled") return <CheckCircle2 className="h-4 w-4 text-sage" />;
+  if (status === "settled") return <CheckCircle2 className="h-4 w-4 text-positive" />;
   if (status === "partial") return <RefreshCw className="h-4 w-4 text-ocean-primary" />;
-  return <Clock3 className="h-4 w-4 text-amber" />;
+  return <Clock3 className="h-4 w-4 text-attention" />;
 }
 
 function totalsByCurrency(items: DebtCreditState[]): Array<{ minorUnits: number; currency: string }> {
@@ -543,10 +543,10 @@ export default function Debts() {
             ))}
           </CardContent>
         </Card>
-        <Card className={unsettledReceivables.length > 0 ? "border-amber bg-amber-wash" : ""}>
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm">
-              <Bell className="h-4 w-4 text-amber" />
+              <Bell className="h-4 w-4 text-attention" />
               {t("debts.metrics.reminders")}
             </CardTitle>
           </CardHeader>
@@ -558,14 +558,14 @@ export default function Debts() {
       </div>
 
       {unsettledReceivables.length > 0 && (
-        <section className="rounded-lg border border-amber bg-amber-wash p-3">
+        <section className="rounded-lg border border-attention/40 bg-attention-wash p-3">
           <div className="mb-3 flex items-center gap-2">
-            <Bell className="h-4 w-4 text-amber" />
+            <Bell className="h-4 w-4 text-attention" />
             <h2 className="text-sm font-semibold">{t("debts.reminders.title")}</h2>
           </div>
           <div className="grid gap-2 md:grid-cols-2">
             {unsettledReceivables.map((item) => (
-              <div key={item.id} className="rounded-md border border-amber/40 bg-card p-3">
+              <div key={item.id} className="rounded-md border border-border bg-card p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{item.partyName}</p>

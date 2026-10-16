@@ -16,10 +16,6 @@
   --ocean-dark:       #005f91;
   --ocean-light:      #00b4d8;
   --ocean-wash:       #e6f5fa;
-  --sage:             #2f7d57;
-  --sage-wash:        #e7f4ec;
-  --amber:            #b76b16;
-  --amber-wash:       #fff3d8;
 
   /* ---------- Neutral ink (black-at-opacity, no invented grays) ---------- */
   --ink-90: rgba(0, 0, 0, 0.90);
@@ -256,10 +252,6 @@
   --color-ocean-dark: var(--ocean-dark);
   --color-ocean-light: var(--ocean-light);
   --color-ocean-wash: var(--ocean-wash);
-  --color-sage: var(--sage);
-  --color-sage-wash: var(--sage-wash);
-  --color-amber: var(--amber);
-  --color-amber-wash: var(--amber-wash);
 
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
