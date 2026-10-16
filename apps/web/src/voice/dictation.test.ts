@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { appendDictated, canRunLocally, failureFor, finalTranscript, findRecognition, speechLang, type RecognitionCtor } from "./dictation.ts";
+import { appendDictated, canRunLocally, failureFor, finalTranscript, findRecognition, isIosHomeScreenApp, speechLang, type RecognitionCtor } from "./dictation.ts";
 
 describe("dictation", () => {
   it("finds the standard or the prefixed API, and nothing otherwise", () => {
@@ -38,5 +38,16 @@ describe("dictation", () => {
   it("adds dictated words after the typed text", () => {
     expect(appendDictated("", "comment épargner")).toBe("comment épargner");
     expect(appendDictated("Crédit : ", "taux maximum")).toBe("Crédit : taux maximum");
+  });
+
+  it("does not offer dictation in an iPhone or iPad home-screen app, where it never transcribes", () => {
+    const iphone = "Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X) AppleWebKit/605.1.15";
+    const ipad = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15";
+    const android = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/141.0 Mobile Safari/537.36";
+    expect(isIosHomeScreenApp({ userAgent: iphone, maxTouchPoints: 5, standalone: true, displayStandalone: true })).toBe(true);
+    expect(isIosHomeScreenApp({ userAgent: ipad, maxTouchPoints: 5, displayStandalone: true })).toBe(true);
+    expect(isIosHomeScreenApp({ userAgent: iphone, maxTouchPoints: 5, standalone: false, displayStandalone: false })).toBe(false);
+    expect(isIosHomeScreenApp({ userAgent: android, maxTouchPoints: 5, displayStandalone: true })).toBe(false);
+    expect(isIosHomeScreenApp({ userAgent: ipad, maxTouchPoints: 0, displayStandalone: true })).toBe(false);
   });
 });

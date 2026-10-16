@@ -6,6 +6,7 @@
     "onDevice": "Your voice stays on this phone.",
     "service": "Your voice goes through your browser’s speech service.",
     "offline": "Dictation needs a connection.",
+    "silent": "Dictation doesn’t work here. Use your keyboard’s microphone.",
     "denied": "Microphone access denied.",
     "failed": "Dictation didn’t work. Try again."
   },

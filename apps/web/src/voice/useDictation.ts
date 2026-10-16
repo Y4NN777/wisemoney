@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { canRunLocally, failureFor, finalTranscript, findRecognition, speechLang, type DictationFailure, type RecognitionLike } from "./dictation.ts";
+import { SILENT_START_TIMEOUT_MS, canRunLocally, failureFor, finalTranscript, findRecognition, isIosHomeScreenApp, speechLang, type DictationFailure, type RecognitionLike } from "./dictation.ts";
 
 export type Dictation = {
   supported: boolean;
@@ -11,7 +11,13 @@ export type Dictation = {
 };
 
 export function useDictation({ locale, onText, onFailure }: { locale: string; onText: (text: string) => void; onFailure: (failure: DictationFailure) => void }): Dictation {
-  const ctor = findRecognition();
+  const iosHomeScreen = isIosHomeScreenApp({
+    userAgent: navigator.userAgent,
+    maxTouchPoints: navigator.maxTouchPoints,
+    standalone: (navigator as Navigator & { standalone?: boolean }).standalone,
+    displayStandalone: typeof window.matchMedia === "function" && window.matchMedia("(display-mode: standalone)").matches,
+  });
+  const ctor = iosHomeScreen ? null : findRecognition();
   const lang = speechLang(locale);
   const [listening, setListening] = useState(false);
   const [onDevice, setOnDevice] = useState(false);
@@ -43,7 +49,15 @@ export function useDictation({ locale, onText, onFailure }: { locale: string; on
       const failure = failureFor(event.error);
       if (failure != null) callbacks.current.onFailure(failure);
     };
+    // A browser can accept start() and never capture audio; stop and say so instead of waiting.
+    const silent = window.setTimeout(() => {
+      if (recognition.current !== session) return;
+      session.abort();
+      callbacks.current.onFailure("silent");
+    }, SILENT_START_TIMEOUT_MS);
+    session.onaudiostart = () => window.clearTimeout(silent);
     session.onend = () => {
+      window.clearTimeout(silent);
       recognition.current = null;
       setListening(false);
     };

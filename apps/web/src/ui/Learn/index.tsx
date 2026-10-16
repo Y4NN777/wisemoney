@@ -61,7 +61,7 @@ export default function Learn() {
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const pageRef = useRef<HTMLElement | null>(null);
   useAutoGrow(composerRef, input);
-  const dictation = useDictation({ locale, onText: (spoken) => setInput((current) => appendDictated(current, spoken)), onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "offline" ? "voice.offline" : "voice.failed")) });
+  const dictation = useDictation({ locale, onText: (spoken) => setInput((current) => appendDictated(current, spoken)), onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "offline" ? "voice.offline" : failure === "silent" ? "voice.silent" : "voice.failed")) });
   const masterKey = useMasterKey();
   const [conversationId, setConversationId] = useState<string | null>(null);
   const createdAt = useRef(0);

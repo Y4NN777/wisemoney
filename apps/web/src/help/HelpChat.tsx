@@ -78,7 +78,7 @@ export default function HelpChat({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   useAutoGrow(composerRef, input);
-  const dictation = useDictation({ locale: i18n.resolvedLanguage ?? i18n.language, onText: (spoken) => setInput((current) => appendDictated(current, spoken)), onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "offline" ? "voice.offline" : "voice.failed")) });
+  const dictation = useDictation({ locale: i18n.resolvedLanguage ?? i18n.language, onText: (spoken) => setInput((current) => appendDictated(current, spoken)), onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "offline" ? "voice.offline" : failure === "silent" ? "voice.silent" : "voice.failed")) });
   const panelRef = useRef<HTMLElement | null>(null);
 
   // While the panel is open the page behind it must not move: on iPhone a scroll that reached the

@@ -18,6 +18,7 @@ export type RecognitionLike = {
   onresult: ((event: RecognitionResultEvent) => void) | null;
   onerror: ((event: { error: string }) => void) | null;
   onend: (() => void) | null;
+  onaudiostart?: (() => void) | null;
   start: () => void;
   stop: () => void;
   abort: () => void;
@@ -31,6 +32,16 @@ export function findRecognition(scope: object = globalThis): RecognitionCtor | n
   const candidate = (scope as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown });
   const ctor = candidate.SpeechRecognition ?? candidate.webkitSpeechRecognition;
   return typeof ctor === "function" ? ctor as RecognitionCtor : null;
+}
+
+/**
+ * iPhone and iPad home-screen apps expose the API but never transcribe, with no error (WebKit bug
+ * 225298; reported again in October 2026). Since iOS 26 every site added to the Home Screen opens
+ * this way, so the button is not offered there.
+ */
+export function isIosHomeScreenApp(env: { userAgent: string; maxTouchPoints: number; standalone?: boolean | undefined; displayStandalone: boolean }): boolean {
+  const ios = /iP(hone|ad|od)/.test(env.userAgent) || (/Macintosh/.test(env.userAgent) && env.maxTouchPoints > 1);
+  return ios && (env.standalone === true || env.displayStandalone);
 }
 
 export function speechLang(locale: string): "fr-FR" | "en-US" {
@@ -57,7 +68,10 @@ export function finalTranscript(event: RecognitionResultEvent): string {
   return parts.filter((part) => part.length > 0).join(" ");
 }
 
-export type DictationFailure = "denied" | "offline" | "failed";
+export type DictationFailure = "denied" | "offline" | "failed" | "silent";
+
+/** No audio capture this long after start means the browser is not really listening. */
+export const SILENT_START_TIMEOUT_MS = 5_000;
 
 /** Errors worth telling the user about; a pause with no speech or a user stop are not. */
 export function failureFor(code: string): DictationFailure | null {
