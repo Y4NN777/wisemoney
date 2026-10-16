@@ -8,6 +8,9 @@ import { Button } from "../../components/ui/button.tsx";
 import WiseLearnMark from "../../components/WiseLearnMark.tsx";
 import { TypingDots } from "../../components/ui/typing-dots.tsx";
 import { useAutoGrow } from "../../components/ui/useAutoGrow.ts";
+import { appendDictated } from "../../voice/dictation.ts";
+import DictationButton, { DictationNote } from "../../voice/DictationButton.tsx";
+import { useDictation } from "../../voice/useDictation.ts";
 import { grantLearnProviderConsent, hasLearnProviderConsent } from "../../consent/consentStore.ts";
 import HelpMessageMarkdown from "../../help/HelpMessageMarkdown.tsx";
 import { getAICapability } from "../../lib/capabilities.ts";
@@ -58,6 +61,7 @@ export default function Learn() {
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const pageRef = useRef<HTMLElement | null>(null);
   useAutoGrow(composerRef, input);
+  const dictation = useDictation({ locale, onText: (spoken) => setInput((current) => appendDictated(current, spoken)), onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "offline" ? "voice.offline" : "voice.failed")) });
   const masterKey = useMasterKey();
   const [conversationId, setConversationId] = useState<string | null>(null);
   const createdAt = useRef(0);
@@ -257,6 +261,7 @@ export default function Learn() {
             <Button type="button" size="sm" className="min-w-11 rounded-full" onClick={() => { grantLearnProviderConsent(); setConsent(true); setError(null); }}>{t("learn.tutor.ok")}</Button>
           </div>
         )}
+        <DictationNote dictation={dictation} />
         <form onSubmit={handleSubmit} className="flex items-end gap-2 rounded-[1.75rem] border border-border bg-card p-1.5 pl-4 shadow-[0_4px_20px_rgba(16,24,32,0.08)] focus-within:border-ocean-primary/50">
           <textarea
             ref={composerRef}
@@ -277,7 +282,9 @@ export default function Learn() {
           />
           {busy
             ? <Button type="button" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85" onClick={() => controller.current?.abort()} aria-label={t("learn.tutor.stop")}><Square className="h-3.5 w-3.5 fill-current" /></Button>
-            : <Button type="submit" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100" disabled={input.trim().length === 0} aria-label={t("learn.tutor.send")}><ArrowUp className="h-5 w-5" /></Button>}
+            : dictation.listening || (dictation.supported && input.trim().length === 0)
+              ? <DictationButton dictation={dictation} />
+              : <Button type="submit" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100" disabled={input.trim().length === 0} aria-label={t("learn.tutor.send")}><ArrowUp className="h-5 w-5" /></Button>}
         </form>
         {capability.data?.available === true && (
           <p className="px-3 text-center text-xs text-muted-foreground">

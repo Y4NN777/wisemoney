@@ -5,6 +5,9 @@ import Logo from "../components/Logo.tsx";
 import { Button } from "../components/ui/button.tsx";
 import { TypingDots } from "../components/ui/typing-dots.tsx";
 import { useAutoGrow } from "../components/ui/useAutoGrow.ts";
+import { appendDictated } from "../voice/dictation.ts";
+import DictationButton, { DictationNote } from "../voice/DictationButton.tsx";
+import { useDictation } from "../voice/useDictation.ts";
 import { findRelevantHelpSections, localTaskAnswer, type HelpSection } from "./corpus.ts";
 import { openHelp } from "./navigation.ts";
 import { suggestedTasks } from "./suggestions.ts";
@@ -75,6 +78,7 @@ export default function HelpChat({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   useAutoGrow(composerRef, input);
+  const dictation = useDictation({ locale: i18n.resolvedLanguage ?? i18n.language, onText: (spoken) => setInput((current) => appendDictated(current, spoken)), onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "offline" ? "voice.offline" : "voice.failed")) });
   const panelRef = useRef<HTMLElement | null>(null);
 
   // While the panel is open the page behind it must not move: on iPhone a scroll that reached the
@@ -506,6 +510,7 @@ export default function HelpChat({
                 </Button>
               </div>
             )}
+            <DictationNote dictation={dictation} />
             <form onSubmit={handleSubmit} className="flex items-end gap-1 rounded-[1.75rem] border border-border bg-card p-1.5 shadow-[0_4px_20px_rgba(16,24,32,0.08)] focus-within:border-ocean-primary/50">
               <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" onChange={handleFile} />
               <Button type="button" variant="ghost" size="icon" className="shrink-0 rounded-full text-muted-foreground" disabled={!online || busy} onClick={() => fileInputRef.current?.click()} aria-label={t("helpPage.chat.addImage")}>
@@ -531,7 +536,9 @@ export default function HelpChat({
               />
               {submitting && ticket?.status !== "waiting"
                 ? <Button type="button" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85" onClick={cancelPending} aria-label={t("helpPage.chat.stop")}><Square className="h-3.5 w-3.5 fill-current" /></Button>
-                : <Button type="submit" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100" disabled={!online || busy || !consentAccepted || input.trim().length === 0} aria-label={t("helpPage.chat.send")}><ArrowUp className="h-5 w-5" /></Button>}
+                : dictation.listening || (dictation.supported && input.trim().length === 0)
+                  ? <DictationButton dictation={dictation} disabled={submitting} />
+                  : <Button type="submit" size="icon" className="shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/85 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100" disabled={!online || busy || !consentAccepted || input.trim().length === 0} aria-label={t("helpPage.chat.send")}><ArrowUp className="h-5 w-5" /></Button>}
             </form>
           </footer>
           </section>

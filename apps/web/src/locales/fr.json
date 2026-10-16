@@ -1,4 +1,14 @@
 {
+  "voice": {
+    "start": "Dicter",
+    "stop": "Arrêter la dictée",
+    "listening": "Je vous écoute…",
+    "onDevice": "Votre voix reste sur ce téléphone.",
+    "service": "Votre voix passe par le service de votre navigateur.",
+    "offline": "La dictée a besoin d’une connexion.",
+    "denied": "Accès au micro refusé.",
+    "failed": "La dictée n’a pas marché. Réessayez."
+  },
   "app": {
     "updated": "WiseMoney est à jour",
     "viewUpdates": "Voir les nouveautés"

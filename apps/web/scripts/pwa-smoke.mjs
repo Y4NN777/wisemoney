@@ -169,13 +169,19 @@ try {
     await page.getByText("Questions go to Google. Nothing from your vault.", { exact: true }).waitFor();
     const suggestedQuestions = page.getByRole("list", { name: "Suggested questions", exact: true }).getByRole("button");
     assert.equal(await suggestedQuestions.count(), 3, `${device.name}: WiseHelp offers no suggested questions`);
+    const helpBox = page.getByRole("dialog", { name: "WiseHelp", exact: true }).locator("textarea");
+    await helpBox.fill("How do I add an expense?");
     assert.equal(await page.getByRole("button", { name: "Send question", exact: true }).isDisabled(), true, `${device.name}: send is enabled before consent`);
+    await helpBox.fill("");
     await page.getByRole("button", { name: "More", exact: true }).click();
     await page.getByRole("menuitem", { name: "Review WiseHelp information", exact: true }).click();
     await page.getByText("Your question and optional image are sent to Google to generate the answer.", { exact: true }).waitFor();
     await page.getByRole("button", { name: "Hide WiseHelp information", exact: true }).click();
     await page.getByRole("button", { name: "OK", exact: true }).click();
-    assert.equal(await page.getByRole("button", { name: "Send question", exact: true }).isDisabled(), true, `${device.name}: send is enabled with an empty question`);
+    // An empty box shows the dictation button where send sits (Chrome has the speech API), never an active send.
+    const emptySend = page.getByRole("button", { name: "Send question", exact: true });
+    assert.ok(await emptySend.count() === 0 || await emptySend.isDisabled(), `${device.name}: send is enabled with an empty question`);
+    assert.equal(await page.getByRole("dialog", { name: "WiseHelp", exact: true }).getByRole("button", { name: "Dictate", exact: true }).count(), 1, `${device.name}: no dictation button on an empty WiseHelp box`);
     await page.getByRole("dialog", { name: "WiseHelp", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Quick search").fill("backup");
     await page.getByText("Back up, export, and start a new cycle", { exact: true }).waitFor();

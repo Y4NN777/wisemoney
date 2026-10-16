@@ -1,4 +1,14 @@
 {
+  "voice": {
+    "start": "Dictate",
+    "stop": "Stop dictation",
+    "listening": "Listening…",
+    "onDevice": "Your voice stays on this phone.",
+    "service": "Your voice goes through your browser’s speech service.",
+    "offline": "Dictation needs a connection.",
+    "denied": "Microphone access denied.",
+    "failed": "Dictation didn’t work. Try again."
+  },
   "app": {
     "updated": "WiseMoney is up to date",
     "viewUpdates": "See what’s new"
