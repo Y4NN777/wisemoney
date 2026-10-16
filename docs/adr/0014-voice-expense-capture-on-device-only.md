@@ -2,7 +2,7 @@
 
 | Field    | Value |
 | -------- | ----- |
-| Status   | Proposed (2026-10-16, revised the same day after research), awaiting Y4NN |
+| Status   | Accepted (2026-10-16, Y4NN) |
 | Date     | 2026-10-16 |
 | Diátaxis | Explanation |
 | Source   | Y4NN 2026-10-16 ("mettre voice capture pour éviter d'écrire à chaque fois"; "search to design better this feature"); research below; CONTRACT INV-EGR-01/02; ADR-0003 |
@@ -36,7 +36,7 @@ Research, 2026-10-16:
 So an in-app microphone with on-device recognition would reach almost no phone
 today, while every phone keyboard already has its own dictation microphone.
 
-## Decision (proposed)
+## Decision
 
 1. **A quick line at the top of the capture sheet:** "Ex. : taxi 2000". What is
    typed or dictated there is parsed on the device: an amount (digits, "2 000",

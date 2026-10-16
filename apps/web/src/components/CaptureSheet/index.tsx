@@ -23,6 +23,10 @@ import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { amountPlaceholder, currencyLabel, formatMoney, parseMajorUnits } from "../../types/money.ts";
 import { orderCategoriesForDirection, recentAccountIds, recentCategoryIds } from "../../domain/captureOrdering.ts";
 import { recordCoachFormFault } from "../../coach/index.ts";
+import { parseQuickEntry } from "../../capture/quickEntry.ts";
+import { appendDictated } from "../../voice/dictation.ts";
+import DictationButton from "../../voice/DictationButton.tsx";
+import { useDictation } from "../../voice/useDictation.ts";
 
 export type CaptureMode = "transaction" | "transfer" | "goal";
 const CAPTURE_MODES: readonly CaptureMode[] = ["transaction", "transfer", "goal"];
@@ -168,7 +172,7 @@ type TransactionFormProps = {
 };
 
 function TransactionForm({ direction, onDone }: TransactionFormProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { accounts } = useActiveAccounts();
   // False only before the very first movement: that save gets the explanatory message.
   const hadMovement = useHasAnyMoneyMovement().data;
@@ -186,6 +190,28 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
   const [dateStr, setDateStr] = useState(todayIsoDate());
   const [error, setError] = useState<string | null>(null);
   const [creatingAccount, setCreatingAccount] = useState(false);
+  const [quick, setQuick] = useState("");
+  // The amount the quick line last filled, so erasing its number clears it but not one typed by hand.
+  const quickAmount = useRef<string | null>(null);
+
+  // One line typed or dictated ("taxi 2000") fills the fields below; nothing is saved before Add (ADR-0014).
+  const applyQuick = (text: string) => {
+    setQuick(text);
+    const entry = parseQuickEntry(text);
+    const previous = quickAmount.current;
+    if (entry.amount != null) setAmountStr(entry.amount);
+    else if (previous != null) setAmountStr((current) => (current === previous ? "" : current));
+    quickAmount.current = entry.amount;
+    if (entry.direction != null) setSelectedDirection(entry.direction);
+    setNote(entry.note);
+  };
+  const dictation = useDictation({
+    locale: i18n.resolvedLanguage ?? i18n.language,
+    onDeviceOnly: true,
+    onText: (spoken) => applyQuick(appendDictated(quick, spoken)),
+    onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "silent" ? "voice.silent" : "voice.failed")),
+  });
+  const quickHasNoAmount = quick.trim().length > 0 && parseQuickEntry(quick).amount == null;
 
   const orderedCategories = useOrderedCategories(selectedDirection);
   const recentAccountId = useRecentAccountId();
@@ -251,6 +277,8 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
       });
       setAmountStr("");
       setNote("");
+      setQuick("");
+      quickAmount.current = null;
       onDone();
     } catch {
       setCreatingAccount(false);
@@ -263,6 +291,38 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
 
   return (
     <form onSubmit={(event) => { void handleSubmit(event); }} className="space-y-4">
+      <div className="space-y-1.5">
+        <div className="relative">
+          <Input
+            id="capture-sheet-quick"
+            type="text"
+            value={quick}
+            onChange={(event) => applyQuick(event.target.value)}
+            onKeyDown={(event) => {
+              // Enter shows the amount understood instead of saving a half-filled movement.
+              if (event.key === "Enter") {
+                event.preventDefault();
+                amountRef.current?.focus();
+              }
+            }}
+            placeholder={t("capture.quick.placeholder")}
+            aria-label={t("capture.quick.label")}
+            aria-describedby="capture-sheet-quick-hint"
+            autoComplete="off"
+            enterKeyHint="next"
+            className={dictation.supported ? "h-12 pr-14" : "h-12"}
+          />
+          {dictation.supported && (
+            <div className="absolute right-1 top-1/2 -translate-y-1/2">
+              <DictationButton dictation={dictation} />
+            </div>
+          )}
+        </div>
+        <p id="capture-sheet-quick-hint" className="text-xs text-muted-foreground" aria-live="polite">
+          {dictation.listening ? `${t("voice.listening")} ${t("voice.onDevice")}` : quickHasNoAmount ? t("capture.quick.noAmount") : t("capture.quick.hint")}
+        </p>
+      </div>
+
       <div className="grid grid-cols-2 gap-2">
         <Button type="button" variant={selectedDirection === "expense" ? "default" : "outline"} className="w-full" onClick={() => setSelectedDirection("expense")}>
           <ArrowUp className="mr-1 h-4 w-4" />

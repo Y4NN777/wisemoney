@@ -10,7 +10,8 @@ export type Dictation = {
   stop: () => void;
 };
 
-export function useDictation({ locale, onText, onFailure }: { locale: string; onText: (text: string) => void; onFailure: (failure: DictationFailure) => void }): Dictation {
+/** With onDeviceOnly the button exists only where the browser recognises speech on the phone (ADR-0014). */
+export function useDictation({ locale, onText, onFailure, onDeviceOnly = false }: { locale: string; onText: (text: string) => void; onFailure: (failure: DictationFailure) => void; onDeviceOnly?: boolean }): Dictation {
   const iosHomeScreen = isIosHomeScreenApp({
     userAgent: navigator.userAgent,
     maxTouchPoints: navigator.maxTouchPoints,
@@ -40,7 +41,7 @@ export function useDictation({ locale, onText, onFailure }: { locale: string; on
     session.lang = lang;
     session.interimResults = false;
     session.continuous = false;
-    if (onDevice) session.processLocally = true;
+    if (onDevice || onDeviceOnly) session.processLocally = true;
     session.onresult = (event) => {
       const text = finalTranscript(event);
       if (text.length > 0) callbacks.current.onText(text);
@@ -70,9 +71,9 @@ export function useDictation({ locale, onText, onFailure }: { locale: string; on
       setListening(false);
       callbacks.current.onFailure("failed");
     }
-  }, [ctor, lang, onDevice]);
+  }, [ctor, lang, onDevice, onDeviceOnly]);
 
   const stop = useCallback(() => recognition.current?.stop(), []);
 
-  return { supported: ctor != null, listening, onDevice, start, stop };
+  return { supported: ctor != null && (!onDeviceOnly || onDevice), listening, onDevice, start, stop };
 }

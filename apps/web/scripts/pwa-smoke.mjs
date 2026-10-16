@@ -283,7 +283,13 @@ try {
   // Step 2: the first movement, recorded through the sheet from the step's own button.
   await appPage.getByRole("heading", { name: "Your first movement", exact: true }).waitFor();
   await appPage.getByRole("button", { name: "Record a movement", exact: true }).click();
-  await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("700");
+  // The quick line fills amount and note; erasing its number clears the amount it filled (ADR-0014).
+  const quickLine = appPage.getByRole("dialog").getByLabel("Quick entry", { exact: true });
+  await quickLine.fill("lunch 700");
+  assert.equal(await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).inputValue(), "700", "the quick line did not fill the amount");
+  await quickLine.fill("lunch");
+  assert.equal(await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).inputValue(), "", "erasing the number left the amount the quick line filled");
+  await quickLine.fill("lunch 700");
   await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
   await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
   await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();

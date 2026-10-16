@@ -358,6 +358,12 @@
     "presetsLabel": "Period"
   },
   "capture": {
+    "quick": {
+      "label": "Quick entry",
+      "placeholder": "E.g. taxi 2000",
+      "hint": "Type, or dictate with your keyboard’s microphone.",
+      "noAmount": "No amount found: add a number."
+    },
     "heading": "Record money movement",
     "ariaLabel": "Capture transaction",
     "empty": {
