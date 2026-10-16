@@ -189,6 +189,12 @@ export function amountPlaceholder(currency: string, locale?: string): string {
   return new Intl.NumberFormat(displayLocale(locale), { minimumFractionDigits: digits, maximumFractionDigits: digits, useGrouping: false }).format(0);
 }
 
+/** An amount as the user would type it back into an input: no grouping, no decimals for a currency without them. */
+export function majorUnitsInput(amount: Money): string {
+  const digits = currencyFractionDigits(amount.currency);
+  return digits === 0 ? String(amount.minorUnits) : (amount.minorUnits / 10 ** digits).toFixed(digits);
+}
+
 export function parseMajorUnits(input: string, currency: string): number | null {
   const digits = currencyFractionDigits(currency);
   const normalized = input.trim().replace(/\s/g, "").replace(",", ".");

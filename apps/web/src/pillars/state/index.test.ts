@@ -140,24 +140,57 @@ describe("createAccount", () => {
 });
 
 describe("updateAccount", () => {
-  it("emits account_updated event when account exists", async () => {
-    fakeGetSnapshot.mockResolvedValue(snapshot({
-      accounts: [{ id: "acct-1", currency: "USD", isActive: true, balance: { minorUnits: 0, currency: "USD" } }],
-    }));
+  const cash = {
+    id: "acct-1", name: "Cash", type: "cash", currency: "XOF", isActive: true,
+    balance: { minorUnits: 49_300, currency: "XOF" },
+    initialBalance: { minorUnits: 50_000, currency: "XOF" },
+  };
 
-    await updateAccount({
-      accountId: "acct-1",
-      name: "Orange Money",
-      type: "mobile_money",
-      masterKey: mkKey,
+  it("emits account_updated event when the name or type changes", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({ accounts: [cash] }));
+
+    const result = await updateAccount({ accountId: "acct-1", name: "Orange Money", type: "mobile_money", masterKey: mkKey });
+
+    const events = fakeAppendEvents.mock.calls[0]![0];
+    expect(events.map((event) => event.type)).toEqual(["account_updated"]);
+    expect(events[0]!.payload).toMatchObject({ accountId: "acct-1", name: "Orange Money", type: "mobile_money" });
+    expect(result).toEqual({ detailsChanged: true, openingBalance: null });
+  });
+
+  it("appends an opening balance correction, alone when nothing else changes", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({ accounts: [cash] }));
+
+    const result = await updateAccount({
+      accountId: "acct-1", name: "Cash", type: "cash",
+      openingBalance: { minorUnits: 45_000, currency: "XOF" }, masterKey: mkKey,
     });
 
-    expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("account_updated");
-    expect(fakeAppendEvent.mock.calls[0]![0].payload).toMatchObject({
-      accountId: "acct-1",
-      name: "Orange Money",
-      type: "mobile_money",
+    const events = fakeAppendEvents.mock.calls[0]![0];
+    expect(events.map((event) => event.type)).toEqual(["account_opening_balance_corrected"]);
+    expect(events[0]!.payload).toEqual({ accountId: "acct-1", openingBalance: { minorUnits: 45_000, currency: "XOF" } });
+    expect(result).toEqual({ detailsChanged: false, openingBalance: { minorUnits: 45_000, currency: "XOF" } });
+  });
+
+  it("appends nothing when the opening balance and details are unchanged", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({ accounts: [cash] }));
+
+    const result = await updateAccount({
+      accountId: "acct-1", name: "Cash", type: "cash",
+      openingBalance: { minorUnits: 50_000, currency: "XOF" }, masterKey: mkKey,
     });
+
+    expect(fakeAppendEvents.mock.calls[0]![0]).toEqual([]);
+    expect(result).toEqual({ detailsChanged: false, openingBalance: null });
+  });
+
+  it("refuses an opening balance in another currency", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({ accounts: [cash] }));
+
+    await expect(updateAccount({
+      accountId: "acct-1", name: "Cash", type: "cash",
+      openingBalance: { minorUnits: 100, currency: "USD" }, masterKey: mkKey,
+    })).rejects.toThrow(/Must match account currency/);
+    expect(fakeAppendEvents).not.toHaveBeenCalled();
   });
 });
 

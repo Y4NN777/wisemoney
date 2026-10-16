@@ -190,6 +190,63 @@ describe("replayFromInception", () => {
     expect(snapshot.totalBalance.minorUnits).toBe(1000);
   });
 
+  it("corrects an opening balance and keeps the movements recorded since", async () => {
+    const created = makeEvent({
+      id: "account", timestamp: 1000, type: "account_created",
+      payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 50000, currency: "XOF" } },
+    });
+    const category = makeEvent({ id: "category", timestamp: 1100, type: "category_created", payload: { name: "Food" } });
+    const expense = makeEvent({
+      id: "expense", timestamp: 1200, type: "transaction_created", entityId: "account",
+      payload: { accountId: "account", categoryId: "category", amount: { minorUnits: 700, currency: "XOF" }, direction: "expense" },
+    });
+    const corrected = makeEvent({
+      id: "correction", timestamp: 2000, type: "account_opening_balance_corrected", entityId: "account",
+      payload: { accountId: "account", openingBalance: { minorUnits: 45000, currency: "XOF" } },
+    });
+
+    const snapshot = await replayFromInception([created, category, expense, corrected], mkKey, 3000);
+
+    expect(snapshot.accounts[0]?.initialBalance).toEqual({ minorUnits: 45000, currency: "XOF" });
+    expect(snapshot.accounts[0]?.balance).toEqual({ minorUnits: 44300, currency: "XOF" });
+    expect(snapshot.totalBalance.minorUnits).toBe(44300);
+  });
+
+  it("lets an account corrected to a zero opening balance, with no movement, be archived", async () => {
+    const snapshot = await replayFromInception([
+      makeEvent({
+        id: "account", timestamp: 1000, type: "account_created",
+        payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 5000, currency: "XOF" } },
+      }),
+      makeEvent({
+        id: "correction", timestamp: 1500, type: "account_opening_balance_corrected", entityId: "account",
+        payload: { accountId: "account", openingBalance: { minorUnits: 0, currency: "XOF" } },
+      }),
+      makeEvent({ id: "archive", timestamp: 2000, type: "account_archived", entityId: "account", payload: { accountId: "account" } }),
+    ], mkKey, 3000);
+
+    expect(snapshot.accounts[0]?.isActive).toBe(false);
+  });
+
+  it("rejects an opening balance correction in another currency or on an archived account", async () => {
+    const created = makeEvent({
+      id: "account", timestamp: 1000, type: "account_created",
+      payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 0, currency: "XOF" } },
+    });
+    await expect(replayFromInception([created, makeEvent({
+      id: "correction", timestamp: 2000, type: "account_opening_balance_corrected", entityId: "account",
+      payload: { accountId: "account", openingBalance: { minorUnits: 100, currency: "USD" } },
+    })], mkKey)).rejects.toThrow(/currency mismatch/);
+    await expect(replayFromInception([
+      created,
+      makeEvent({ id: "archive", timestamp: 1500, type: "account_archived", entityId: "account", payload: { accountId: "account" } }),
+      makeEvent({
+        id: "correction", timestamp: 2000, type: "account_opening_balance_corrected", entityId: "account",
+        payload: { accountId: "account", openingBalance: { minorUnits: 100, currency: "XOF" } },
+      }),
+    ], mkKey)).rejects.toThrow(/is archived/);
+  });
+
   it("keeps a non-zero account active when a transfer touched it", async () => {
     const snapshot = await replayFromInception([
       makeEvent({

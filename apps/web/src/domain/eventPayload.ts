@@ -64,6 +64,10 @@ export function validateFinancialEventPayload(type: FinancialEventType, payload:
       return;
     case "account_archived":
       shape(payload, ["accountId"]); text(payload.accountId, "accountId"); return;
+    case "account_opening_balance_corrected":
+      shape(payload, ["accountId", "openingBalance"]);
+      text(payload.accountId, "accountId"); money(payload.openingBalance, "openingBalance", false);
+      return;
     case "transaction_created":
     case "transaction_updated": {
       const required = type === "transaction_updated"

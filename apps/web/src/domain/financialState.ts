@@ -320,6 +320,20 @@ function applyPayload(
       account.isActive = false;
       break;
     }
+    case "account_opening_balance_corrected": {
+      // Corrects the opening balance given at creation; past events stay as they were, and the
+      // balance moves by the difference, so every movement since keeps its effect.
+      const p = payload as unknown as { accountId: string; openingBalance: { minorUnits: number; currency: string } };
+      const account = required(acc.accounts.get(p.accountId), "account", p.accountId);
+      if (!account.isActive) throw new Error(`event ${eventId}: account ${p.accountId} is archived`);
+      if (p.openingBalance.currency !== account.currency) {
+        throw new Error(`event ${eventId}: opening balance currency mismatch`);
+      }
+      const corrected = { minorUnits: p.openingBalance.minorUnits, currency: p.openingBalance.currency };
+      account.balance = addMoney(subMoney(account.balance, account.initialBalance), corrected);
+      account.initialBalance = corrected;
+      break;
+    }
     case "transaction_created": {
       const p = payload as unknown as {
         accountId: string;

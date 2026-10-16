@@ -16,7 +16,8 @@ import {
 } from "@/hooks/useFinancialState.ts";
 import { categoryDisplayName } from "@/lib/categoryName.ts";
 import type { ManageSection } from "@/routes/capture.tsx";
-import { formatMoney, parseMajorUnits } from "@/types/money.ts";
+import { formatMoney, majorUnitsInput, parseMajorUnits } from "@/types/money.ts";
+import { AppendEventError } from "@/domain/eventStore.ts";
 import { AccountNotEmptyError } from "@/pillars/state/index.ts";
 
 type ActiveAccount = FinancialStateSnapshot["accounts"][number];
@@ -158,7 +159,14 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
   const [accountType, setAccountType] = useState<string>("checking");
   const [accountCurrency, setAccountCurrency] = useState(snapshot.baseCurrency);
   const [openingBalance, setOpeningBalance] = useState("");
-  const [editingAccount, setEditingAccount] = useState<{ id: string; name: string; type: string } | null>(null);
+  const [editingAccount, setEditingAccount] = useState<ActiveAccount | null>(null);
+  const [editOpeningBalance, setEditOpeningBalance] = useState("");
+
+  /** A failed account action: a concurrent change gets its own message, anything else the action's one. */
+  const accountFailure = (failure: unknown, fallbackKey: string): string =>
+    failure instanceof AppendEventError && failure.code === "STALE_SNAPSHOT"
+      ? t("capture.manage.errorsAccount.changedMeanwhile")
+      : t(fallbackKey);
 
   useEffect(() => { setSearch(""); setError(null); setCreateOpen(false); }, [section]);
 
@@ -188,16 +196,42 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
     if (name === "" || balance == null) { setError(t("capture.manage.errorsAccount.validBalance")); return; }
     createAccount.mutate({ name, type: accountType, initialBalance: { minorUnits: balance, currency: accountCurrency } }, {
       onSuccess: () => { setAccountName(""); setOpeningBalance(""); setCreateOpen(false); toast.success(t("capture.manage.accountCreated"), { description: name }); },
-      onError: () => setError(t("capture.manage.errorsAccount.failed")),
+      onError: (failure) => setError(accountFailure(failure, "capture.manage.errorsAccount.failed")),
     });
+  };
+
+  const startEditingAccount = (account: ActiveAccount) => {
+    setError(null);
+    setEditingAccount(account);
+    setAccountName(account.name);
+    setAccountType(account.type);
+    setEditOpeningBalance(majorUnitsInput(account.initialBalance));
   };
 
   const updateAccountSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (editingAccount == null || accountName.trim() === "") return;
-    updateAccount.mutate({ accountId: editingAccount.id, name: accountName.trim(), type: accountType }, {
-      onSuccess: () => { setEditingAccount(null); setAccountName(""); toast.success(t("capture.manage.accountUpdated")); },
-      onError: () => setError(t("capture.manage.errorsAccount.updateFailed")),
+    const account = editingAccount;
+    const name = accountName.trim();
+    const opening = parseMajorUnits(editOpeningBalance, account.currency);
+    if (opening == null) { setError(t("capture.manage.errorsAccount.validBalance")); return; }
+    updateAccount.mutate({ accountId: account.id, name, type: accountType, openingBalance: { minorUnits: opening, currency: account.currency } }, {
+      onSuccess: (result) => {
+        setEditingAccount(null);
+        setAccountName("");
+        if (result.openingBalance != null) {
+          // Every movement keeps its effect: the balance moves by the difference.
+          const balance = { minorUnits: account.balance.minorUnits - account.initialBalance.minorUnits + result.openingBalance.minorUnits, currency: account.currency };
+          toast.success(t("capture.manage.openingBalanceCorrected", { amount: formatMoney(result.openingBalance) }), {
+            description: t("capture.manage.openingBalanceCorrectedBody", { name, balance: formatMoney(balance) }),
+          });
+        } else if (result.detailsChanged) {
+          toast.success(t("capture.manage.accountUpdated"), { description: name });
+        } else {
+          toast(t("capture.manage.accountUnchanged"));
+        }
+      },
+      onError: (failure) => setError(accountFailure(failure, "capture.manage.errorsAccount.updateFailed")),
     });
   };
 
@@ -213,10 +247,10 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
     const { id: accountId, name } = account;
     if (!window.confirm(t("capture.manage.confirmArchiveAccount", { name }))) return;
     archiveAccount.mutate({ accountId }, {
-      onSuccess: () => toast.success(t("capture.manage.accountArchived"), { description: name }),
-      onError: (error) => {
+      onSuccess: () => toast.success(t("capture.manage.accountArchived"), { description: t("capture.manage.accountArchivedBody", { name }) }),
+      onError: (failure) => {
         // Money from real movements would vanish from the totals: say why and what to do.
-        if (error instanceof AccountNotEmptyError) {
+        if (failure instanceof AccountNotEmptyError) {
           const key = account.balance.minorUnits > 0 ? "archiveBlockedPositive" : "archiveBlockedNegative";
           toast.error(t("capture.manage.errorsAccount.archiveBlockedTitle"), {
             description: t(`capture.manage.errorsAccount.${key}`, { name, amount: formatMoney(account.balance) }),
@@ -224,7 +258,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
           });
           return;
         }
-        toast.error(t("capture.manage.errorsAccount.archiveFailed"));
+        toast.error(accountFailure(failure, "capture.manage.errorsAccount.archiveFailed"));
       },
     });
   };
@@ -277,14 +311,14 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
               })}</ul>
           ) : (
             visibleAccounts.length === 0 ? <p className="empty-state">{t(accounts.length === 0 ? "capture.manage.noAccounts" : "capture.manage.noAccountMatch")}</p> :
-              <ul className="divide-y divide-border border-y border-border">{visibleAccounts.map((account) => <li key={account.id} className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center"><div className="min-w-0"><p className="truncate text-sm font-semibold">{account.name}</p><p className="text-xs text-muted-foreground">{t(`capture.manage.accountTypes.${account.type}`, { defaultValue: account.type.replace(/_/g, " ") })} · {account.currency}</p></div><div className="flex items-center justify-between gap-2"><strong className="text-sm tabular-nums">{formatMoney(account.balance)}</strong><div className="flex"><Button variant="ghost" size="icon" aria-label={t("capture.manage.editAccountAria", { name: account.name })} onClick={() => { setError(null); setEditingAccount({ id: account.id, name: account.name, type: account.type }); setAccountName(account.name); setAccountType(account.type); }}><Pencil /></Button><Button variant="ghost" size="icon" className="text-destructive" aria-label={t("capture.manage.archiveAccountAria", { name: account.name })} disabled={archiveAccount.isPending} onClick={() => archiveAccountItem(account)}><Trash2 /></Button></div></div></li>)}</ul>
+              <ul className="divide-y divide-border border-y border-border">{visibleAccounts.map((account) => <li key={account.id} className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center"><div className="min-w-0"><p className="truncate text-sm font-semibold">{account.name}</p><p className="text-xs text-muted-foreground">{t(`capture.manage.accountTypes.${account.type}`, { defaultValue: account.type.replace(/_/g, " ") })} · {account.currency}</p></div><div className="flex items-center justify-between gap-2"><strong className="text-sm tabular-nums">{formatMoney(account.balance)}</strong><div className="flex"><Button variant="ghost" size="icon" aria-label={t("capture.manage.editAccountAria", { name: account.name })} onClick={() => startEditingAccount(account)}><Pencil /></Button><Button variant="ghost" size="icon" className="text-destructive" aria-label={t("capture.manage.archiveAccountAria", { name: account.name })} disabled={archiveAccount.isPending} onClick={() => archiveAccountItem(account)}><Trash2 /></Button></div></div></li>)}</ul>
           )}
         </CardContent>
       </Card>
 
       <Dialog open={renaming != null} onOpenChange={(open) => { if (!open) { setRenaming(null); setCategoryName(""); } }}><DialogContent><DialogHeader><DialogTitle>{t("capture.manage.renameCategory")}</DialogTitle></DialogHeader><form onSubmit={renameCategorySubmit} className="space-y-4 pt-4">{error != null && <p role="alert" className="text-sm text-destructive">{error}</p>}<Label htmlFor="renameCategoryName">{t("capture.manage.categoryName")}</Label><Input id="renameCategoryName" value={categoryName} onChange={(event) => setCategoryName(event.target.value)} autoFocus required /><Button type="submit" disabled={renameCategory.isPending}>{t("capture.manage.saveRename")}</Button></form></DialogContent></Dialog>
 
-      <Dialog open={editingAccount != null} onOpenChange={(open) => { if (!open) { setEditingAccount(null); setAccountName(""); } }}><DialogContent><DialogHeader><DialogTitle>{t("capture.manage.editAccount")}</DialogTitle></DialogHeader><form onSubmit={updateAccountSubmit} className="space-y-4 pt-4">{error != null && <p role="alert" className="text-sm text-destructive">{error}</p>}<div className="space-y-2"><Label htmlFor="editAccountName">{t("capture.manage.accountName")}</Label><Input id="editAccountName" value={accountName} onChange={(event) => setAccountName(event.target.value)} autoFocus required /></div><div className="space-y-2"><Label htmlFor="editAccountType">{t("capture.manage.accountType")}</Label><Select value={accountType} onValueChange={setAccountType}><SelectTrigger id="editAccountType"><SelectValue /></SelectTrigger><SelectContent>{ACCOUNT_TYPES.map((type) => <SelectItem key={type} value={type}>{t(`capture.manage.accountTypes.${type}`)}</SelectItem>)}</SelectContent></Select></div><Button type="submit" disabled={updateAccount.isPending}>{t("capture.manage.saveAccount")}</Button></form></DialogContent></Dialog>
+      <Dialog open={editingAccount != null} onOpenChange={(open) => { if (!open) { setEditingAccount(null); setAccountName(""); } }}><DialogContent><DialogHeader><DialogTitle>{t("capture.manage.editAccount")}</DialogTitle></DialogHeader><form onSubmit={updateAccountSubmit} className="space-y-4 pt-4">{error != null && <p role="alert" className="text-sm text-destructive">{error}</p>}<div className="space-y-2"><Label htmlFor="editAccountName">{t("capture.manage.accountName")}</Label><Input id="editAccountName" value={accountName} onChange={(event) => setAccountName(event.target.value)} autoFocus required /></div><div className="space-y-2"><Label htmlFor="editAccountType">{t("capture.manage.accountType")}</Label><Select value={accountType} onValueChange={setAccountType}><SelectTrigger id="editAccountType"><SelectValue /></SelectTrigger><SelectContent>{ACCOUNT_TYPES.map((type) => <SelectItem key={type} value={type}>{t(`capture.manage.accountTypes.${type}`)}</SelectItem>)}</SelectContent></Select></div><div className="space-y-2"><Label htmlFor="editOpeningBalance">{t("capture.manage.accountBalance")} ({editingAccount?.currency})</Label><Input id="editOpeningBalance" inputMode="decimal" value={editOpeningBalance} onChange={(event) => setEditOpeningBalance(event.target.value)} aria-describedby="editOpeningBalanceHint" /><p id="editOpeningBalanceHint" className="text-xs text-muted-foreground">{t("capture.manage.openingBalanceHint")}</p></div><Button type="submit" disabled={updateAccount.isPending}>{t("capture.manage.saveAccount")}</Button></form></DialogContent></Dialog>
     </>
   );
 }

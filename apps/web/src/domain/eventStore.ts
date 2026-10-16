@@ -9,6 +9,7 @@ const FINANCIAL_EVENT_TYPES = [
   "account_created",
   "account_updated",
   "account_archived",
+  "account_opening_balance_corrected",
   "transaction_created",
   "transaction_updated",
   "transaction_deleted",

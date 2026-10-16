@@ -8,6 +8,7 @@ const validPayloads: Record<FinancialEventType, FinancialEventPayload> = {
   account_created: { name: "Cash", type: "cash", initialBalance: { minorUnits: 0, currency: "XOF" } },
   account_updated: { accountId: "a", name: "Cash", type: "cash" },
   account_archived: { accountId: "a" },
+  account_opening_balance_corrected: { accountId: "a", openingBalance: { minorUnits: -2500, currency: "XOF" } },
   transaction_created: { accountId: "a", categoryId: "c", amount: money, direction: "expense", note: null, tags: [], merchant: null },
   transaction_updated: { originalEventId: "t", accountId: "a", categoryId: "c", amount: money, direction: "expense", note: null, tags: [], merchant: null },
   transaction_deleted: { originalEventId: "t" },
@@ -44,6 +45,19 @@ describe("financial event payload schemas", () => {
     expect(() => validateFinancialEventPayload("goal_contribution", { goalId: "g", amount: { minorUnits: 1.5, currency: "XOF" } })).toThrow();
     expect(() => validateFinancialEventPayload("transfer_created", {
       fromAccountId: "a", toAccountId: "a", externalDestination: null, amount: money, note: null,
+    })).toThrow();
+  });
+
+  it("accepts a zero opening balance correction and rejects a malformed one", () => {
+    expect(() => validateFinancialEventPayload("account_opening_balance_corrected", {
+      accountId: "a", openingBalance: { minorUnits: 0, currency: "XOF" },
+    })).not.toThrow();
+    expect(() => validateFinancialEventPayload("account_opening_balance_corrected", { accountId: "a" })).toThrow();
+    expect(() => validateFinancialEventPayload("account_opening_balance_corrected", {
+      accountId: "a", openingBalance: { minorUnits: 1.5, currency: "XOF" },
+    })).toThrow();
+    expect(() => validateFinancialEventPayload("account_opening_balance_corrected", {
+      accountId: "a", openingBalance: money, name: "Cash",
     })).toThrow();
   });
 

@@ -8,6 +8,7 @@ import {
   formatMoney,
   formatMoneyPlain,
   formatSignedMoney,
+  majorUnitsInput,
   parseMajorUnits,
 } from "./money.ts";
 
@@ -25,6 +26,13 @@ describe("currency minor units", () => {
     expect(parseMajorUnits("1.23", "XOF")).toBeNull();
     expect(currencyInputStep("XOF")).toBe("1");
     expect(formatMoney({ minorUnits: 1500, currency: "XOF" }, "fr-FR")).toContain("1\u202f500");
+  });
+
+  it("writes an amount back the way it is typed, and it parses back unchanged", () => {
+    expect(majorUnitsInput({ minorUnits: 50000, currency: "XOF" })).toBe("50000");
+    expect(majorUnitsInput({ minorUnits: 4930000, currency: "USD" })).toBe("49300.00");
+    expect(majorUnitsInput({ minorUnits: 1234, currency: "KWD" })).toBe("1.234");
+    expect(parseMajorUnits(majorUnitsInput({ minorUnits: 4930000, currency: "USD" }), "USD")).toBe(4930000);
   });
 });
 

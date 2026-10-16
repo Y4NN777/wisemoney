@@ -138,10 +138,23 @@ export type UpdateAccountParams = {
   accountId: string;
   name: string;
   type: string;
+  /**
+   * The corrected opening balance, in the account's currency. A different value appends an
+   * account_opening_balance_corrected event: past events stay as they are, and the balance moves
+   * by the difference.
+   */
+  openingBalance?: MoneyDTO;
   masterKey: MasterKey;
 };
 
-export async function updateAccount(params: UpdateAccountParams): Promise<void> {
+/** What an update changed, so the UI can say it. */
+export type UpdateAccountResult = {
+  detailsChanged: boolean;
+  /** The new opening balance when it was corrected, otherwise null. */
+  openingBalance: MoneyDTO | null;
+};
+
+export async function updateAccount(params: UpdateAccountParams): Promise<UpdateAccountResult> {
   const errors: ValidationErrorDetail[] = [];
   const snapshot = await getSnapshot(params.masterKey);
   const account = snapshot.accounts.find((a) => a.id === params.accountId);
@@ -157,23 +170,54 @@ export async function updateAccount(params: UpdateAccountParams): Promise<void> 
   if (!params.type || params.type.trim().length === 0) {
     errors.push({ field: "type", message: "Account type is required" });
   }
-  if (errors.length > 0) {
+  if (params.openingBalance != null) {
+    validateMoney("openingBalance", params.openingBalance, errors);
+    if (account != null && params.openingBalance.currency !== account.currency) {
+      errors.push({ field: "openingBalance.currency", message: "Must match account currency" });
+    }
+    if (account != null && Number.isSafeInteger(params.openingBalance.minorUnits)) {
+      validateSafeResult(
+        "openingBalance",
+        account.balance.minorUnits - account.initialBalance.minorUnits + params.openingBalance.minorUnits,
+        errors,
+      );
+    }
+  }
+  if (errors.length > 0 || account == null) {
     throw new ValidationError(errors);
   }
 
-  await appendEvent({
-    id: uuid(),
-    timestamp: nowMs(),
-    type: "account_updated",
-    entityId: params.accountId,
-    payload: {
-      accountId: params.accountId,
-      name: params.name.trim(),
-      type: params.type.trim(),
-    },
-    masterKey: params.masterKey,
-    expectedLastEventId: snapshot.asOfEventId,
-  });
+  const name = params.name.trim();
+  const type = params.type.trim();
+  const detailsChanged = name !== account.name || type !== account.type;
+  const openingBalance = params.openingBalance != null &&
+    params.openingBalance.minorUnits !== account.initialBalance.minorUnits
+    ? { minorUnits: params.openingBalance.minorUnits, currency: params.openingBalance.currency }
+    : null;
+
+  const now = nowMs();
+  await appendEvents([
+    ...(detailsChanged ? [{
+      id: uuid(),
+      timestamp: now,
+      type: "account_updated" as const,
+      entityId: params.accountId,
+      payload: { accountId: params.accountId, name, type },
+      masterKey: params.masterKey,
+      expectedLastEventId: snapshot.asOfEventId,
+    }] : []),
+    ...(openingBalance != null ? [{
+      id: uuid(),
+      timestamp: now,
+      type: "account_opening_balance_corrected" as const,
+      entityId: params.accountId,
+      payload: { accountId: params.accountId, openingBalance },
+      masterKey: params.masterKey,
+      expectedLastEventId: snapshot.asOfEventId,
+    }] : []),
+  ]);
+
+  return { detailsChanged, openingBalance };
 }
 
 // ---------------------------------------------------------------------------
