@@ -638,6 +638,21 @@ try {
   assert.equal(refusedAfterConfirm, false, "a refused archive asked for a confirmation first");
   appPage.removeAllListeners("dialog");
   await appPage.setViewportSize({ width: 1280, height: 900 });
+  // Two purchases on one quick line are saved one after the other; the sheet stays open between them.
+  await appPage.getByRole("button", { name: "Capture", exact: true }).click();
+  const chainLine = appPage.getByRole("dialog").getByLabel("Quick entry", { exact: true });
+  await chainLine.fill("bread 250 and taxi 300");
+  await appPage.getByRole("dialog").getByText(/Then: taxi/).waitFor();
+  await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
+  await appPage.getByRole("option", { name: "Food & Dining", exact: true }).click();
+  await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
+  await appPage.getByRole("dialog").getByText(/1 purchase from this line already saved/).waitFor({ timeout: 30_000 });
+  assert.equal(await chainLine.inputValue(), "taxi 300", "the next purchase of the line is not ready");
+  assert.equal(await appPage.getByRole("dialog").getByLabel("Amount", { exact: true }).inputValue(), "300", "the next purchase's amount is not filled");
+  await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).click();
+  await appPage.getByRole("option", { name: "Transport", exact: true }).click();
+  await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
+  await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();

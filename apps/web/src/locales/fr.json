@@ -362,7 +362,14 @@
       "label": "Saisie rapide",
       "placeholder": "Ex. : taxi 2000",
       "hint": "Tapez ou dictez avec le micro du clavier.",
-      "noAmount": "Aucun montant trouvé : ajoutez un nombre."
+      "noAmount": "Aucun montant trouvé : ajoutez un nombre.",
+      "check": "À vérifier :",
+      "quantity": "{{quantity}} × {{unitPrice}} = {{total}}",
+      "noteQuoted": "« {{note}} »",
+      "useUnitPrice": "Compter {{amount}}",
+      "next": "Ensuite : {{list}}. Prêt après Ajouter.",
+      "savedFromLine_one": "{{count}} achat de cette ligne déjà enregistré.",
+      "savedFromLine_other": "{{count}} achats de cette ligne déjà enregistrés."
     },
     "heading": "Enregistrer un mouvement d’argent",
     "ariaLabel": "Saisie d’une transaction",

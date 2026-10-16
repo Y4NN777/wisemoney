@@ -27,6 +27,8 @@ export type QuickItem = {
   directionWord: string | null;
   note: string;
   confidence: Confidence;
+  /** Where this purchase starts in the line, so the rest can be read after it is saved. */
+  from: number;
 };
 
 /** The first item, for callers that fill a single movement. */
@@ -366,12 +368,19 @@ function isSalaryPaye(tokens: readonly Token[], token: Token): boolean {
   return DETERMINERS.has(tokens[index - 1]?.key ?? "") || (tokens[index + 1]?.key === "du" && tokens[index + 2]?.key === "mois");
 }
 
+/** Where a purchase starts once its joining word is skipped ("et pain 250" → "pain 250"). */
+function startOf(tokens: readonly Token[], item: Item): number {
+  let index = item.start;
+  while (index < item.end - 1 && ITEM_JOINERS.has(tokens[index]!.key)) index += 1;
+  return tokens[index]?.from ?? 0;
+}
+
 function readItem(tokens: readonly Token[], item: Item, text: string, options: QuickEntryOptions): QuickItem {
   const indices = Array.from({ length: item.end - item.start }, (_, offset) => item.start + offset);
   const { direction, word, conflict } = directionOf(tokens, item.start, item.end);
   const [first, second] = item.numbers;
   if (first == null) {
-    return { amount: null, reading: null, alternatives: [], direction, directionWord: word, note: noteOf(tokens, indices, text), confidence: "none" };
+    return { amount: null, reading: null, alternatives: [], direction, directionWord: word, note: noteOf(tokens, indices, text), confidence: "none", from: startOf(tokens, item) };
   }
   let reading: AmountReading;
   let noteIndices: number[];
@@ -397,6 +406,7 @@ function readItem(tokens: readonly Token[], item: Item, text: string, options: Q
     directionWord: word,
     note: noteOf(tokens, noteIndices, text),
     confidence,
+    from: startOf(tokens, item),
   };
 }
 

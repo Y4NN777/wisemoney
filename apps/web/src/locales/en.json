@@ -362,7 +362,14 @@
       "label": "Quick entry",
       "placeholder": "E.g. taxi 2000",
       "hint": "Type, or dictate with your keyboard’s microphone.",
-      "noAmount": "No amount found: add a number."
+      "noAmount": "No amount found: add a number.",
+      "check": "Check:",
+      "quantity": "{{quantity}} × {{unitPrice}} = {{total}}",
+      "noteQuoted": "“{{note}}”",
+      "useUnitPrice": "Count {{amount}}",
+      "next": "Then: {{list}}. Ready after Add.",
+      "savedFromLine_one": "{{count}} purchase from this line already saved.",
+      "savedFromLine_other": "{{count}} purchases from this line already saved."
     },
     "heading": "Record money movement",
     "ariaLabel": "Capture transaction",

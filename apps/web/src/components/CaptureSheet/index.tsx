@@ -23,7 +23,7 @@ import { categoryDisplayName } from "../../lib/categoryName.ts";
 import { amountPlaceholder, currencyLabel, formatMoney, parseMajorUnits } from "../../types/money.ts";
 import { orderCategoriesForDirection, recentAccountIds, recentCategoryIds } from "../../domain/captureOrdering.ts";
 import { recordCoachFormFault } from "../../coach/index.ts";
-import { parseQuickEntry } from "../../capture/quickEntry.ts";
+import { readQuickEntry, type QuickItem } from "../../capture/quickEntry.ts";
 import { appendDictated } from "../../voice/dictation.ts";
 import DictationButton from "../../voice/DictationButton.tsx";
 import { useDictation } from "../../voice/useDictation.ts";
@@ -166,6 +166,62 @@ function useRecentAccountId(): string | null {
   return useMemo(() => recentAccountIds(recentTransactions.data ?? [], 1)[0] ?? null, [recentTransactions.data]);
 }
 
+type QuickUnderstoodProps = {
+  id: string;
+  listening: boolean;
+  items: readonly QuickItem[];
+  /** The direction that will be recorded: said in the line, or chosen with the buttons. */
+  direction: Direction;
+  savedFromLine: number;
+  formatAmount: (major: string) => string;
+  onUseUnitPrice: (unitPrice: string) => void;
+};
+
+/**
+ * What the quick line understood, before anything is saved: "2 000 F CFA · Dépense · « taxi »".
+ * A doubtful reading says so; a unit price can be counted instead of the total; further purchases
+ * of the same line are listed and come next (W1 plan, step 2).
+ */
+function QuickUnderstood({ id, listening, items, direction, savedFromLine, formatAmount, onUseUnitPrice }: QuickUnderstoodProps) {
+  const { t } = useTranslation();
+  const [first, ...rest] = items;
+  let body: React.ReactNode;
+  if (listening) {
+    body = `${t("voice.listening")} ${t("voice.onDevice")}`;
+  } else if (first == null) {
+    body = t("capture.quick.hint");
+  } else if (first.amount == null) {
+    body = t("capture.quick.noAmount");
+  } else {
+    const amount = first.reading?.how === "quantity"
+      ? t("capture.quick.quantity", { quantity: first.reading.quantity, unitPrice: formatAmount(String(first.reading.unitPrice)), total: formatAmount(first.amount) })
+      : formatAmount(first.amount);
+    const parts = [amount];
+    parts.push(t(`capture.transaction.${direction}`));
+    if (first.note.length > 0) parts.push(t("capture.quick.noteQuoted", { note: first.note }));
+    const unitPrice = first.reading?.how === "quantity" ? first.alternatives[0] : undefined;
+    body = (
+      <>
+        <span className={first.confidence === "check" ? "font-medium text-attention" : "font-medium text-foreground"}>
+          {first.confidence === "check" ? `${t("capture.quick.check")} ` : ""}{parts.join(" · ")}
+        </span>
+        {unitPrice != null && (
+          <button type="button" className="ml-2 font-medium text-primary underline underline-offset-2" onClick={() => onUseUnitPrice(unitPrice)}>
+            {t("capture.quick.useUnitPrice", { amount: formatAmount(unitPrice) })}
+          </button>
+        )}
+        {rest.length > 0 && (
+          <span className="mt-0.5 block">
+            {t("capture.quick.next", { list: rest.map((item) => [item.note, item.amount == null ? "" : formatAmount(item.amount)].filter(Boolean).join(" ")).join(", ") })}
+          </span>
+        )}
+        {savedFromLine > 0 && <span className="mt-0.5 block">{t("capture.quick.savedFromLine", { count: savedFromLine })}</span>}
+      </>
+    );
+  }
+  return <p id={id} className="text-xs text-muted-foreground" aria-live="polite">{body}</p>;
+}
+
 type TransactionFormProps = {
   direction: Direction;
   onDone: () => void;
@@ -193,11 +249,13 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
   const [quick, setQuick] = useState("");
   // The amount the quick line last filled, so erasing its number clears it but not one typed by hand.
   const quickAmount = useRef<string | null>(null);
+  // Purchases of the same line already saved ("taxi 500 et pain 250": one after the other, W1 D2a).
+  const [savedFromLine, setSavedFromLine] = useState(0);
 
   // One line typed or dictated ("taxi 2000") fills the fields below; nothing is saved before Add (ADR-0014).
   const applyQuick = (text: string) => {
     setQuick(text);
-    const entry = parseQuickEntry(text);
+    const [entry = { amount: null, direction: null, note: "" }] = readQuickEntry(text, { currency });
     const previous = quickAmount.current;
     if (entry.amount != null) setAmountStr(entry.amount);
     else if (previous != null) setAmountStr((current) => (current === previous ? "" : current));
@@ -208,10 +266,9 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
   const dictation = useDictation({
     locale: i18n.resolvedLanguage ?? i18n.language,
     onDeviceOnly: true,
-    onText: (spoken) => applyQuick(appendDictated(quick, spoken)),
+    onText: (spoken) => { setSavedFromLine(0); applyQuick(appendDictated(quick, spoken)); },
     onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "silent" ? "voice.silent" : "voice.failed")),
   });
-  const quickHasNoAmount = quick.trim().length > 0 && parseQuickEntry(quick).amount == null;
 
   const orderedCategories = useOrderedCategories(selectedDirection);
   const recentAccountId = useRecentAccountId();
@@ -232,6 +289,8 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
   const currency = selectedAccount?.currency ?? baseCurrency;
   const amount = parseMajorUnits(amountStr, currency);
   const dateIsToday = dateStr === todayIsoDate();
+  const quickItems = useMemo(() => (quick.trim().length > 0 ? readQuickEntry(quick, { currency }) : []), [quick, currency]);
+  const majorToMoney = (major: string) => formatMoney({ minorUnits: parseMajorUnits(major, currency) ?? 0, currency });
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -277,8 +336,17 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
       });
       setAmountStr("");
       setNote("");
-      setQuick("");
       quickAmount.current = null;
+      const next = quickItems[1];
+      if (next != null) {
+        // The next purchase of the same line is ready; the sheet stays open (W1 D2a).
+        setSavedFromLine((count) => count + 1);
+        setCategoryId("");
+        applyQuick(quick.slice(next.from));
+        return;
+      }
+      setQuick("");
+      setSavedFromLine(0);
       onDone();
     } catch {
       setCreatingAccount(false);
@@ -297,7 +365,7 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
             id="capture-sheet-quick"
             type="text"
             value={quick}
-            onChange={(event) => applyQuick(event.target.value)}
+            onChange={(event) => { setSavedFromLine(0); applyQuick(event.target.value); }}
             onKeyDown={(event) => {
               // Enter shows the amount understood instead of saving a half-filled movement.
               if (event.key === "Enter") {
@@ -318,9 +386,15 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
             </div>
           )}
         </div>
-        <p id="capture-sheet-quick-hint" className="text-xs text-muted-foreground" aria-live="polite">
-          {dictation.listening ? `${t("voice.listening")} ${t("voice.onDevice")}` : quickHasNoAmount ? t("capture.quick.noAmount") : t("capture.quick.hint")}
-        </p>
+        <QuickUnderstood
+          id="capture-sheet-quick-hint"
+          listening={dictation.listening}
+          items={quickItems}
+          direction={selectedDirection}
+          savedFromLine={savedFromLine}
+          formatAmount={majorToMoney}
+          onUseUnitPrice={(unitPrice) => { setAmountStr(unitPrice); quickAmount.current = unitPrice; }}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-2">

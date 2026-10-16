@@ -63,6 +63,8 @@ describe("quick entry", () => {
   it("splits several purchases and shares a direction said once", () => {
     const items = readQuickEntry("j'ai payé taxi 500 et pain 250");
     expect(items.map((item) => [item.amount, item.direction, item.note])).toEqual([["500", "expense", "taxi"], ["250", "expense", "pain"]]);
+    // The rest of the line, read after the first purchase is saved, starts at "pain".
+    expect("j'ai payé taxi 500 et pain 250".slice(items[1]!.from)).toBe("pain 250");
   });
 
   it("asks when the amount is implausible for CFA francs, not for other currencies", () => {
