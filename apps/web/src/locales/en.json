@@ -517,7 +517,10 @@
         "validBalance": "Enter a valid balance",
         "failed": "Failed to create account",
         "updateFailed": "Failed to update account",
-        "archiveFailed": "Failed to archive account"
+        "archiveFailed": "Failed to archive account",
+        "archiveBlockedTitle": "This account can’t be archived yet",
+        "archiveBlockedPositive": "“{{name}}” still holds {{amount}} and has movements. First transfer the money to another account (+ (Capture) button, Transfer tab), then archive it.",
+        "archiveBlockedNegative": "“{{name}}” is at {{amount}} and has movements. First bring its balance back to 0, for example with a transfer from another account (+ (Capture) button, Transfer tab), then archive it."
       }
     },
     "plannedExpenses": {

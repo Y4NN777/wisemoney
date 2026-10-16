@@ -6,6 +6,7 @@ import { compareFinancialEvents } from "./eventStore.ts";
 import type { FinancialEventPayload, FinancialEventType } from "./eventStore.ts";
 import type { CurrencyContext } from "./currencyStore.ts";
 import { convertUsingContext, loadCurrencyContext } from "./currencyStore.ts";
+import { isAccountArchivable } from "./accountArchive.ts";
 
 export type MoneyDTO = {
   readonly minorUnits: number;
@@ -312,9 +313,10 @@ function applyPayload(
     case "account_archived": {
       const p = payload as unknown as { accountId: string };
       const account = required(acc.accounts.get(p.accountId), "account", p.accountId);
-      // Older clients allowed this event for non-zero accounts. Keep those
-      // accounts visible so their balance can be corrected and archived again.
-      if (account.balance.minorUnits !== 0) break;
+      // Older clients allowed this event for any account. One that holds money from real movements
+      // stays visible, so its balance can be corrected and archived again; one that only holds its
+      // opening balance (a setup mistake) is archived and leaves the totals.
+      if (!isAccountArchivable(account, acc.transactions.values(), acc.transfers)) break;
       account.isActive = false;
       break;
     }

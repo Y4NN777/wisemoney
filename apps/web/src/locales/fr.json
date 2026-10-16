@@ -517,7 +517,10 @@
         "validBalance": "Entrez un solde valide",
         "failed": "Échec de la création du compte",
         "updateFailed": "Échec de la mise à jour du compte",
-        "archiveFailed": "Échec de l’archivage du compte"
+        "archiveFailed": "Échec de l’archivage du compte",
+        "archiveBlockedTitle": "Ce compte ne peut pas encore être archivé",
+        "archiveBlockedPositive": "« {{name}} » a encore {{amount}} et des mouvements. Transférez d’abord l’argent vers un autre compte (bouton + (Saisie), onglet Transfert), puis archivez-le.",
+        "archiveBlockedNegative": "« {{name}} » est à {{amount}} et a des mouvements. Ramenez d’abord son solde à 0, par exemple avec un transfert depuis un autre compte (bouton + (Saisie), onglet Transfert), puis archivez-le."
       }
     },
     "plannedExpenses": {

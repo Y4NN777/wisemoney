@@ -48,6 +48,7 @@ import {
   createAccount,
   updateAccount,
   archiveAccount,
+  AccountNotEmptyError,
   recordTransaction,
   createCategory,
   archiveCategory,
@@ -172,14 +173,53 @@ describe("archiveAccount", () => {
     expect(fakeAppendEvent.mock.calls[0]![0].payload).toMatchObject({ accountId: "acct-1" });
   });
 
-  it("rejects archiving an account while it still has a balance", async () => {
+  const openingOnly = {
+    id: "acct-1", currency: "XOF", isActive: true,
+    balance: { minorUnits: 5_000_000, currency: "XOF" },
+    initialBalance: { minorUnits: 5_000_000, currency: "XOF" },
+  };
+
+  it("archives an account that only holds its opening balance", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({ accounts: [openingOnly], transfers: [] }));
+    fakeReadTransactions.mockResolvedValue([{ id: "tx-1", accountId: "acct-other" }]);
+
+    await archiveAccount({ accountId: "acct-1", masterKey: mkKey });
+
+    expect(fakeAppendEvent.mock.calls[0]![0].type).toBe("account_archived");
+  });
+
+  it("refuses a non-zero account that has a transaction", async () => {
     fakeGetSnapshot.mockResolvedValue(snapshot({
-      accounts: [{ id: "acct-1", currency: "USD", isActive: true, balance: { minorUnits: 100, currency: "USD" } }],
+      accounts: [{ ...openingOnly, balance: { minorUnits: 4_930_000, currency: "XOF" } }],
+      transfers: [],
     }));
+    fakeReadTransactions.mockResolvedValue([{ id: "tx-1", accountId: "acct-1" }]);
+
+    await expect(archiveAccount({ accountId: "acct-1", masterKey: mkKey }))
+      .rejects.toBeInstanceOf(AccountNotEmptyError);
+    expect(fakeAppendEvent).not.toHaveBeenCalled();
+  });
+
+  it("refuses a non-zero account whose movements cancel out to its opening balance", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({ accounts: [openingOnly], transfers: [] }));
+    fakeReadTransactions.mockResolvedValue([
+      { id: "tx-in", accountId: "acct-1" },
+      { id: "tx-out", accountId: "acct-1" },
+    ]);
+
+    await expect(archiveAccount({ accountId: "acct-1", masterKey: mkKey }))
+      .rejects.toBeInstanceOf(AccountNotEmptyError);
+  });
+
+  it("refuses a non-zero account that received a transfer", async () => {
+    fakeGetSnapshot.mockResolvedValue(snapshot({
+      accounts: [{ ...openingOnly, balance: { minorUnits: 5_100_000, currency: "XOF" } }],
+      transfers: [{ id: "tr-1", fromAccountId: "acct-other", toAccountId: "acct-1" }],
+    }));
+    fakeReadTransactions.mockResolvedValue([]);
 
     await expect(archiveAccount({ accountId: "acct-1", masterKey: mkKey }))
       .rejects.toThrow(/balance must be zero/);
-    expect(fakeAppendEvent).not.toHaveBeenCalled();
   });
 });
 

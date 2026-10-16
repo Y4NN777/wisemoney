@@ -3,6 +3,7 @@ import { appendEvent, appendEvents } from "@/domain/eventStore.ts";
 import { DEFAULT_INCOME_CATEGORY_NAMES } from "@/domain/categoryHints.ts";
 import type { MoneyDTO, PlannedExpensePriority } from "@/domain/financialState.ts";
 import { getSnapshot, readTransactionsInRange } from "@/domain/financialState.ts";
+import { isAccountArchivable } from "@/domain/accountArchive.ts";
 import { convertUsingContext, loadCurrencyContext } from "@/domain/currencyStore.ts";
 
 import type { DebtCreditKind, DebtCreditStatus } from "@/domain/financialState.ts";
@@ -184,6 +185,18 @@ export type ArchiveAccountParams = {
   masterKey: MasterKey;
 };
 
+/**
+ * Refusal to archive an account that holds money from real movements: archiving it would make that
+ * money vanish from the totals, so it must be moved out (or brought back to zero) first. The UI
+ * tells this case apart from other failures to say what to do.
+ */
+export class AccountNotEmptyError extends ValidationError {
+  constructor() {
+    super([{ field: "accountId", message: "Account balance must be zero before archiving" }]);
+    this.name = "AccountNotEmptyError";
+  }
+}
+
 export async function archiveAccount(params: ArchiveAccountParams): Promise<void> {
   const snapshot = await getSnapshot(params.masterKey);
   const account = snapshot.accounts.find((a) => a.id === params.accountId);
@@ -194,11 +207,13 @@ export async function archiveAccount(params: ArchiveAccountParams): Promise<void
   if (account == null || !account.isActive) {
     throw new ValidationError([{ field: "accountId", message: "Account not found (INV-EVT-03)" }]);
   }
+  // A zero balance needs no history check; otherwise only an account nothing has moved on (its
+  // opening balance was a setup mistake) may go. Same rule as the projection, so the event applies.
   if (account.balance.minorUnits !== 0) {
-    throw new ValidationError([{
-      field: "accountId",
-      message: "Account balance must be zero before archiving",
-    }]);
+    const transactions = await readTransactionsInRange(0, Number.MAX_SAFE_INTEGER, params.masterKey);
+    if (!isAccountArchivable(account, transactions, snapshot.transfers)) {
+      throw new AccountNotEmptyError();
+    }
   }
 
   await appendEvent({

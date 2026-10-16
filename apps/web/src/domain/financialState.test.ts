@@ -149,11 +149,16 @@ describe("replayFromInception", () => {
     expect(snapshot.totalBalance).toEqual({ minorUnits: 0, currency: "XOF" });
   });
 
-  it("keeps legacy non-zero archived accounts active so their balance remains recoverable", async () => {
+  it("keeps legacy non-zero archived accounts with movements active so their balance remains recoverable", async () => {
     const snapshot = await replayFromInception([
       makeEvent({
         id: "account", timestamp: 1000, type: "account_created",
         payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 5000, currency: "XOF" } },
+      }),
+      makeEvent({ id: "category", timestamp: 1100, type: "category_created", payload: { name: "Food" } }),
+      makeEvent({
+        id: "expense", timestamp: 1200, type: "transaction_created", entityId: "account",
+        payload: { accountId: "account", categoryId: "category", amount: { minorUnits: 700, currency: "XOF" }, direction: "expense" },
       }),
       makeEvent({
         id: "legacy-archive", timestamp: 2000, type: "account_archived", entityId: "account",
@@ -162,7 +167,51 @@ describe("replayFromInception", () => {
     ], mkKey, 3000);
 
     expect(snapshot.accounts[0]?.isActive).toBe(true);
-    expect(snapshot.totalBalance.minorUnits).toBe(5000);
+    expect(snapshot.totalBalance.minorUnits).toBe(4300);
+  });
+
+  it("archives an account that only holds its opening balance and drops it from the total", async () => {
+    const snapshot = await replayFromInception([
+      makeEvent({
+        id: "kept", timestamp: 900, type: "account_created",
+        payload: { name: "Wallet", type: "cash", initialBalance: { minorUnits: 1000, currency: "XOF" } },
+      }),
+      makeEvent({
+        id: "account", timestamp: 1000, type: "account_created",
+        payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 5000, currency: "XOF" } },
+      }),
+      makeEvent({
+        id: "archive", timestamp: 2000, type: "account_archived", entityId: "account",
+        payload: { accountId: "account" },
+      }),
+    ], mkKey, 3000);
+
+    expect(snapshot.accounts.find((account) => account.id === "account")?.isActive).toBe(false);
+    expect(snapshot.totalBalance.minorUnits).toBe(1000);
+  });
+
+  it("keeps a non-zero account active when a transfer touched it", async () => {
+    const snapshot = await replayFromInception([
+      makeEvent({
+        id: "from", timestamp: 900, type: "account_created",
+        payload: { name: "Wallet", type: "cash", initialBalance: { minorUnits: 1000, currency: "XOF" } },
+      }),
+      makeEvent({
+        id: "to", timestamp: 1000, type: "account_created",
+        payload: { name: "Cash", type: "cash", initialBalance: { minorUnits: 0, currency: "XOF" } },
+      }),
+      makeEvent({
+        id: "transfer", timestamp: 1500, type: "transfer_created", entityId: "from",
+        payload: { fromAccountId: "from", toAccountId: "to", externalDestination: null, amount: { minorUnits: 400, currency: "XOF" } },
+      }),
+      makeEvent({
+        id: "archive", timestamp: 2000, type: "account_archived", entityId: "to",
+        payload: { accountId: "to" },
+      }),
+    ], mkKey, 3000);
+
+    expect(snapshot.accounts.find((account) => account.id === "to")?.isActive).toBe(true);
+    expect(snapshot.totalBalance.minorUnits).toBe(1000);
   });
 
   it("keeps legacy archived categories active while active dependencies remain", async () => {

@@ -17,6 +17,12 @@ import {
 import { categoryDisplayName } from "@/lib/categoryName.ts";
 import type { ManageSection } from "@/routes/capture.tsx";
 import { formatMoney, parseMajorUnits } from "@/types/money.ts";
+import { AccountNotEmptyError } from "@/pillars/state/index.ts";
+
+type ActiveAccount = FinancialStateSnapshot["accounts"][number];
+
+/** The archive refusal carries an instruction to follow, so it stays up longer than a plain toast. */
+const ARCHIVE_BLOCKED_TOAST_MS = 10_000;
 
 type AccountCurrencyOption = {
   code: string;
@@ -203,11 +209,23 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
     });
   };
 
-  const archiveAccountItem = (accountId: string, name: string) => {
+  const archiveAccountItem = (account: ActiveAccount) => {
+    const { id: accountId, name } = account;
     if (!window.confirm(t("capture.manage.confirmArchiveAccount", { name }))) return;
     archiveAccount.mutate({ accountId }, {
       onSuccess: () => toast.success(t("capture.manage.accountArchived"), { description: name }),
-      onError: () => toast.error(t("capture.manage.errorsAccount.archiveFailed")),
+      onError: (error) => {
+        // Money from real movements would vanish from the totals: say why and what to do.
+        if (error instanceof AccountNotEmptyError) {
+          const key = account.balance.minorUnits > 0 ? "archiveBlockedPositive" : "archiveBlockedNegative";
+          toast.error(t("capture.manage.errorsAccount.archiveBlockedTitle"), {
+            description: t(`capture.manage.errorsAccount.${key}`, { name, amount: formatMoney(account.balance) }),
+            duration: ARCHIVE_BLOCKED_TOAST_MS,
+          });
+          return;
+        }
+        toast.error(t("capture.manage.errorsAccount.archiveFailed"));
+      },
     });
   };
 
@@ -259,7 +277,7 @@ export function ManagementSections({ snapshot, section }: { snapshot: FinancialS
               })}</ul>
           ) : (
             visibleAccounts.length === 0 ? <p className="empty-state">{t(accounts.length === 0 ? "capture.manage.noAccounts" : "capture.manage.noAccountMatch")}</p> :
-              <ul className="divide-y divide-border border-y border-border">{visibleAccounts.map((account) => <li key={account.id} className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center"><div className="min-w-0"><p className="truncate text-sm font-semibold">{account.name}</p><p className="text-xs text-muted-foreground">{t(`capture.manage.accountTypes.${account.type}`, { defaultValue: account.type.replace(/_/g, " ") })} · {account.currency}</p></div><div className="flex items-center justify-between gap-2"><strong className="text-sm tabular-nums">{formatMoney(account.balance)}</strong><div className="flex"><Button variant="ghost" size="icon" aria-label={t("capture.manage.editAccountAria", { name: account.name })} onClick={() => { setError(null); setEditingAccount({ id: account.id, name: account.name, type: account.type }); setAccountName(account.name); setAccountType(account.type); }}><Pencil /></Button><Button variant="ghost" size="icon" className="text-destructive" aria-label={t("capture.manage.archiveAccountAria", { name: account.name })} disabled={archiveAccount.isPending} onClick={() => archiveAccountItem(account.id, account.name)}><Trash2 /></Button></div></div></li>)}</ul>
+              <ul className="divide-y divide-border border-y border-border">{visibleAccounts.map((account) => <li key={account.id} className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center"><div className="min-w-0"><p className="truncate text-sm font-semibold">{account.name}</p><p className="text-xs text-muted-foreground">{t(`capture.manage.accountTypes.${account.type}`, { defaultValue: account.type.replace(/_/g, " ") })} · {account.currency}</p></div><div className="flex items-center justify-between gap-2"><strong className="text-sm tabular-nums">{formatMoney(account.balance)}</strong><div className="flex"><Button variant="ghost" size="icon" aria-label={t("capture.manage.editAccountAria", { name: account.name })} onClick={() => { setError(null); setEditingAccount({ id: account.id, name: account.name, type: account.type }); setAccountName(account.name); setAccountType(account.type); }}><Pencil /></Button><Button variant="ghost" size="icon" className="text-destructive" aria-label={t("capture.manage.archiveAccountAria", { name: account.name })} disabled={archiveAccount.isPending} onClick={() => archiveAccountItem(account)}><Trash2 /></Button></div></div></li>)}</ul>
           )}
         </CardContent>
       </Card>
