@@ -40,3 +40,6 @@ rem.md
 
 # Local research material (copyrighted source PDFs and verbatim extraction notes): never published.
 research-sources/
+
+# Agent worktrees (local only)
+.claude/worktrees/
