@@ -1,0 +1,2934 @@
+{
+  "researched": "2026-10-16",
+  "countries": {
+    "BF": [
+      {
+        "term": "tô",
+        "category": "foodDining",
+        "meaning": "stiff millet/maize/sorghum dough eaten with sauce; national dish (saghbo in Mooré)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "riz gras",
+        "category": "foodDining",
+        "meaning": "rice cooked in tomato sauce with meat; common maquis plate",
+        "source": "https://www.travelwithhello.com/blog/burkina-faso-food-dining-guide"
+      },
+      {
+        "term": "babenda",
+        "category": "foodDining",
+        "meaning": "local dish of greens with grain",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "gonré",
+        "category": "foodDining",
+        "meaning": "local bean dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "zamnin",
+        "category": "foodDining",
+        "meaning": "local dish (pictured on the cuisine page)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "gnon",
+        "category": "foodDining",
+        "meaning": "local bean-based dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "souma",
+        "category": "foodDining",
+        "meaning": "Bambara groundnut (pois de terre) dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "koumvando",
+        "category": "foodDining",
+        "meaning": "local dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "foura",
+        "category": "foodDining",
+        "meaning": "small-millet dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "bassi",
+        "category": "foodDining",
+        "meaning": "small-millet dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "dégué",
+        "category": "foodDining",
+        "meaning": "dessert of steamed millet with curdled milk or yogurt",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "gapal",
+        "category": "foodDining",
+        "meaning": "millet flour and yogurt dessert/drink",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "poulet bicyclette",
+        "category": "foodDining",
+        "meaning": "free-range village chicken, usually grilled at a maquis",
+        "source": "https://www.travelwithhello.com/blog/burkina-faso-food-dining-guide"
+      },
+      {
+        "term": "soupe de tête de mouton",
+        "category": "foodDining",
+        "meaning": "sheep's head soup",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "galettes",
+        "category": "foodDining",
+        "meaning": "small fried millet cakes, sold at roadside and at Ramadan iftar",
+        "source": "https://afrique.le360.ma/societe/ramadan-au-burkina-faso-les-indispensables-de-la-rupture-du-jeune_I7V3Q6RMUNGEZOAKCALANGWU6M/"
+      },
+      {
+        "term": "sauce gombo",
+        "category": "foodDining",
+        "meaning": "okra sauce eaten with tô",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "sauce d'oseille",
+        "category": "foodDining",
+        "meaning": "sorrel-leaf sauce eaten with tô",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "soumbala",
+        "category": "foodDining",
+        "meaning": "fermented néré-seed seasoning bought at the market",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "brochettes",
+        "category": "foodDining",
+        "meaning": "meat skewers (beef, goat, liver) sold in the evening",
+        "source": "https://www.travelwithhello.com/blog/burkina-faso-food-dining-guide"
+      },
+      {
+        "term": "porc au four",
+        "category": "foodDining",
+        "meaning": "pork baked in a mud-brick oven, a maquis lunchtime specialty",
+        "source": "https://www.bradtguides.com/destinations/africa/burkina-faso/"
+      },
+      {
+        "term": "garba",
+        "category": "foodDining",
+        "meaning": "attiéké with fried fish; garba eateries in Ouagadougou from 500 FCFA",
+        "source": "https://www.sidwaya.info/commerce-de-garba-a-ouagadougou-les-hommes-en-font-desormais-leur-chose/"
+      },
+      {
+        "term": "attiéké",
+        "category": "foodDining",
+        "meaning": "cassava semolina, an item in the national household survey food list",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "beignets",
+        "category": "foodDining",
+        "meaning": "fried dough snack, 200-300 FCFA",
+        "source": "https://www.travelwithhello.com/blog/burkina-faso-food-dining-guide"
+      },
+      {
+        "term": "banane frite",
+        "category": "foodDining",
+        "meaning": "fried plantain/banana snack",
+        "source": "https://www.travelwithhello.com/blog/burkina-faso-food-dining-guide"
+      },
+      {
+        "term": "bouillie",
+        "category": "foodDining",
+        "meaning": "millet/rice porridge, sold especially at Ramadan",
+        "source": "https://afrique.le360.ma/societe/ramadan-au-burkina-faso-les-indispensables-de-la-rupture-du-jeune_I7V3Q6RMUNGEZOAKCALANGWU6M/"
+      },
+      {
+        "term": "dattes",
+        "category": "foodDining",
+        "meaning": "dates bought to break the Ramadan fast",
+        "source": "https://afrique.le360.ma/societe/ramadan-au-burkina-faso-les-indispensables-de-la-rupture-du-jeune_I7V3Q6RMUNGEZOAKCALANGWU6M/"
+      },
+      {
+        "term": "pain",
+        "category": "foodDining",
+        "meaning": "bread (pain moderne / pain traditionnel in the survey list)",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "lait caillé",
+        "category": "foodDining",
+        "meaning": "curdled milk / yogurt",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "niébé",
+        "category": "foodDining",
+        "meaning": "cowpeas / dried beans",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "arachide grillée",
+        "category": "foodDining",
+        "meaning": "roasted groundnuts",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "riz",
+        "category": "foodDining",
+        "meaning": "rice by the kilo (400-600 FCFA/kg)",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "huile",
+        "category": "foodDining",
+        "meaning": "cooking oil by the litre",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "sucre",
+        "category": "foodDining",
+        "meaning": "sugar by the kilo",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "cube Maggi",
+        "category": "foodDining",
+        "meaning": "stock cube (Maggi, Jumbo, Adja) bought for cooking",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "noix de cola",
+        "category": "foodDining",
+        "meaning": "kola nut",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "maquis",
+        "category": "foodDining",
+        "meaning": "popular open-air restaurant-bar for grilled meat and drinks",
+        "source": "https://fr.wiktionary.org/wiki/maquis"
+      },
+      {
+        "term": "dolo",
+        "category": "foodDining",
+        "meaning": "millet beer served in a calabash",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "bissap",
+        "category": "foodDining",
+        "meaning": "hibiscus juice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "zoom-koom",
+        "category": "foodDining",
+        "meaning": "millet and ginger drink",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "gingembre",
+        "category": "foodDining",
+        "meaning": "ginger juice sold by street drink vendors",
+        "source": "https://afrique.le360.ma/societe/ramadan-au-burkina-faso-les-indispensables-de-la-rupture-du-jeune_I7V3Q6RMUNGEZOAKCALANGWU6M/"
+      },
+      {
+        "term": "toédo",
+        "category": "foodDining",
+        "meaning": "baobab-fruit drink",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "gnamakoudji",
+        "category": "foodDining",
+        "meaning": "ginger drink sold by street vendors",
+        "source": "https://www.sidwaya.info/blog/boissons-locales-du-poison-dans-nos-zoom-koom-bissap"
+      },
+      {
+        "term": "Brakina",
+        "category": "foodDining",
+        "meaning": "Brasseries du Burkina beer brand",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "Sobbra",
+        "category": "foodDining",
+        "meaning": "Brakina beer",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "Flag",
+        "category": "foodDining",
+        "meaning": "Flag spéciale beer",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "Castel",
+        "category": "foodDining",
+        "meaning": "Castel beer",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "Beaufort",
+        "category": "foodDining",
+        "meaning": "Beaufort lager",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "Libs",
+        "category": "foodDining",
+        "meaning": "LIBS Brasserie beer (Gampéla)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_burkinab%C3%A8"
+      },
+      {
+        "term": "Dafani",
+        "category": "foodDining",
+        "meaning": "Burkinabè mango juice brand from Orodara",
+        "source": "https://burkina24.com/?p=337437"
+      },
+      {
+        "term": "eau minérale",
+        "category": "foodDining",
+        "meaning": "bottled/filtered water",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "Youki",
+        "category": "foodDining",
+        "meaning": "soft drink brand listed among sodas",
+        "source": "https://microdata.worldbank.org/catalog/6277/variable/F55/V2182?name=codpr"
+      },
+      {
+        "term": "moto",
+        "category": "transport",
+        "meaning": "motorbike, the dominant way to get around Ouagadougou",
+        "source": "https://guidebus.codatu.org/wp-content/uploads/2020/02/ODUO_plaquette_version19.12.2016_VF-1.pdf"
+      },
+      {
+        "term": "char",
+        "category": "transport",
+        "meaning": "Ouagadougou slang for a moped/motorbike",
+        "source": "https://panodyssey.com/fr/article/education-et-formation/petit-lexique-franco-africain-en-usage-en-afrique-la-censure-attendra-pmcgcngsgg24"
+      },
+      {
+        "term": "taxi vert",
+        "category": "transport",
+        "meaning": "green shared taxi in Ouagadougou, 200-500 FCFA a ride",
+        "source": "https://www.memoireonline.com/07/22/13059/m_Les-transports-collectifs--Ouagadougou-Le-cas-des-taxis18.html"
+      },
+      {
+        "term": "taxi",
+        "category": "transport",
+        "meaning": "urban taxi ride, 500-3,000 FCFA",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "SOTRACO",
+        "category": "transport",
+        "meaning": "Ouagadougou public bus company, 200 FCFA a trip",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "abonnement bus",
+        "category": "transport",
+        "meaning": "monthly SOTRACO bus pass (student rate)",
+        "source": "https://burkina24.com/?p=173895"
+      },
+      {
+        "term": "essence",
+        "category": "transport",
+        "meaning": "petrol by the litre",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "super 91",
+        "category": "transport",
+        "meaning": "the petrol grade sold at the pump",
+        "source": "https://www.sidwaya.info/hausse-des-prix-du-carburant-une-hausse-de-13-f-cfa-sur-le-super-91-et-de-9-f-cfa-sur-le-gasoil/"
+      },
+      {
+        "term": "gasoil",
+        "category": "transport",
+        "meaning": "diesel by the litre",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "parking",
+        "category": "transport",
+        "meaning": "paid guarded motorbike parking, 50-200 FCFA",
+        "source": "https://www.wakatsera.com/?p=92365"
+      },
+      {
+        "term": "réparateur deux-roues",
+        "category": "transport",
+        "meaning": "motorbike repairer; busy at the school start",
+        "source": "https://afrique.le360.ma/societe/rentree-scolaire-a-ouagadougou-une-aubaine-pour-les-reparateurs-des-deux-roues_PXEJZENCLZEUZIDJKEYYDPNNYM/"
+      },
+      {
+        "term": "pièces de rechange",
+        "category": "transport",
+        "meaning": "spare parts for a motorbike",
+        "source": "https://afrique.le360.ma/societe/rentree-scolaire-a-ouagadougou-une-aubaine-pour-les-reparateurs-des-deux-roues_PXEJZENCLZEUZIDJKEYYDPNNYM/"
+      },
+      {
+        "term": "casque",
+        "category": "transport",
+        "meaning": "motorbike helmet, compulsory and checked by police",
+        "source": "https://afrique.le360.ma/societe/burkina-faso-port-obligatoire-du-casque-la-mesure-fait-son-chemin_XVZX4SAUCVFCXESX7D3NR3R7FE/"
+      },
+      {
+        "term": "contrôle technique",
+        "category": "transport",
+        "meaning": "vehicle roadworthiness test, 15,000-25,000 FCFA",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "LetsGo",
+        "category": "transport",
+        "meaning": "Burkinabè ride-hailing (VTC) app in Ouagadougou",
+        "source": "https://www.wearetech.africa/fr/fils/solutions/au-burkina-faso-letsgo-propose-des-vehicules-electriques-pour-la-mobilite-urbaine"
+      },
+      {
+        "term": "loyer",
+        "category": "housing",
+        "meaning": "monthly rent",
+        "source": "https://burkina24.com/?p=99319"
+      },
+      {
+        "term": "chambre-salon",
+        "category": "housing",
+        "meaning": "one-bedroom-plus-living-room rental unit",
+        "source": "https://burkina24.com/?p=99319"
+      },
+      {
+        "term": "célibatérium",
+        "category": "housing",
+        "meaning": "single-room rental in a shared compound",
+        "source": "https://horizon.documentation.ird.fr/exl-doc/pleins_textes/divers10-05/010046850.pdf"
+      },
+      {
+        "term": "cour commune",
+        "category": "housing",
+        "meaning": "shared courtyard of rented rooms",
+        "source": "https://horizon.documentation.ird.fr/exl-doc/pleins_textes/divers10-05/010046850.pdf"
+      },
+      {
+        "term": "caution",
+        "category": "housing",
+        "meaning": "rental deposit of 2-3 months' rent paid up front",
+        "source": "https://leconomistedufaso.com/?p=13007"
+      },
+      {
+        "term": "commission agent immobilier",
+        "category": "housing",
+        "meaning": "one month's rent paid to the estate agent when renting",
+        "source": "https://leconomistedufaso.com/?p=13007"
+      },
+      {
+        "term": "SONABEL",
+        "category": "utilities",
+        "meaning": "national electricity company; bills and prepaid units",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "Cash Power",
+        "category": "utilities",
+        "meaning": "SONABEL prepaid electricity meter",
+        "source": "https://burkina24.com/?p=375992"
+      },
+      {
+        "term": "unités",
+        "category": "utilities",
+        "meaning": "prepaid electricity units bought for a Cash Power meter",
+        "source": "https://www.wakatsera.com/sonabel-payez-desormais-vos-unites-prepayees-delectricite-par-orange-money/"
+      },
+      {
+        "term": "ONEA",
+        "category": "utilities",
+        "meaning": "national water company; monthly water bill",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "facture d'eau",
+        "category": "utilities",
+        "meaning": "ONEA water bill, payable by mobile money",
+        "source": "https://burkina24.com/?p=149426"
+      },
+      {
+        "term": "Orange",
+        "category": "utilities",
+        "meaning": "Orange Burkina Faso, largest mobile operator",
+        "source": "https://www.digitalbusiness.africa/burkina-faso-moov-africa-orange-et-telecel-offrent-10-du-volume-data-de-plus-sur-les-forfaits-classiques-de-connexion-internet-mobile/"
+      },
+      {
+        "term": "Moov Africa",
+        "category": "utilities",
+        "meaning": "mobile operator (ex-Onatel mobile)",
+        "source": "https://www.digitalbusiness.africa/burkina-faso-moov-africa-orange-et-telecel-offrent-10-du-volume-data-de-plus-sur-les-forfaits-classiques-de-connexion-internet-mobile/"
+      },
+      {
+        "term": "Telecel Faso",
+        "category": "utilities",
+        "meaning": "third mobile operator",
+        "source": "https://burkina24.com/?p=431808"
+      },
+      {
+        "term": "forfait internet",
+        "category": "utilities",
+        "meaning": "mobile data bundle (e.g. 1 Go for 7 days)",
+        "source": "https://burkina24.com/?p=406674"
+      },
+      {
+        "term": "BAM",
+        "category": "utilities",
+        "meaning": "Orange Burkina data/call bundle range (*105#)",
+        "source": "https://burkina24.com/?p=406674"
+      },
+      {
+        "term": "crédit téléphonique",
+        "category": "utilities",
+        "meaning": "phone airtime top-up",
+        "source": "https://www.osiris.sn/burkina-faso-telecel-se-lance-enfin-sur-le-segment-du-mobile-money.html"
+      },
+      {
+        "term": "fibre optique",
+        "category": "utilities",
+        "meaning": "home fibre internet from Orange",
+        "source": "https://burkina24.com/?p=250208"
+      },
+      {
+        "term": "gaz",
+        "category": "housing",
+        "meaning": "butane cooking-gas refill, 6 kg bottle",
+        "source": "https://burkina24.com/?p=147750"
+      },
+      {
+        "term": "frais Orange Money",
+        "category": "utilities",
+        "meaning": "fee charged on a bill payment by mobile money (e.g. 250 FCFA)",
+        "source": "https://burkina24.com/?p=152886"
+      },
+      {
+        "term": "FESPACO",
+        "category": "entertainment",
+        "meaning": "Ouagadougou pan-African film festival; screening tickets",
+        "source": "https://www.sidwaya.info/fespaco-2025-les-cinephiles-qui-nont-pas-accede-la-salle-pour-le-film-katanga-peuvent-le-suivre-ce-soir-avec-les-meme-tickets/"
+      },
+      {
+        "term": "Ciné Neerwaya",
+        "category": "entertainment",
+        "meaning": "Ouagadougou cinema; tickets sold at the box office",
+        "source": "https://burkina24.com/?p=317173"
+      },
+      {
+        "term": "Canal Olympia Yennenga",
+        "category": "entertainment",
+        "meaning": "Ouagadougou cinema",
+        "source": "https://www.sidwaya.info/fespaco-2025-les-cinephiles-qui-nont-pas-accede-la-salle-pour-le-film-katanga-peuvent-le-suivre-ce-soir-avec-les-meme-tickets/"
+      },
+      {
+        "term": "cinéma",
+        "category": "entertainment",
+        "meaning": "cinema ticket, 2,000-3,500 FCFA",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "stade du 4-Août",
+        "category": "entertainment",
+        "meaning": "national stadium; match tickets",
+        "source": "https://fr.allafrica.com/stories/202508080094.html"
+      },
+      {
+        "term": "Festival Garba",
+        "category": "entertainment",
+        "meaning": "street-food festival in Ouagadougou",
+        "source": "https://burkina24.com/?p=202457"
+      },
+      {
+        "term": "concert",
+        "category": "entertainment",
+        "meaning": "concerts and leisure events (200 FCFA moto parking)",
+        "source": "https://burkina24.com/?p=334956"
+      },
+      {
+        "term": "CSPS",
+        "category": "healthcare",
+        "meaning": "local public health centre (Centre de santé et de promotion sociale)",
+        "source": "https://www.sidwaya.info/gratuite-des-soins-au-burkina-faso-le-vol-cette-gangrene-qui-ronge-une-mesure-salutaire/"
+      },
+      {
+        "term": "pharmacie",
+        "category": "healthcare",
+        "meaning": "pharmacy; prescriptions bought outside when the CSPS is out of stock",
+        "source": "https://www.sidwaya.info/gratuite-des-soins-au-burkina-faso-le-vol-cette-gangrene-qui-ronge-une-mesure-salutaire/"
+      },
+      {
+        "term": "ordonnance",
+        "category": "healthcare",
+        "meaning": "doctor's prescription",
+        "source": "https://fr.allafrica.com/stories/202602060319.html"
+      },
+      {
+        "term": "médicaments génériques",
+        "category": "healthcare",
+        "meaning": "essential generic medicines distributed by CAMEG",
+        "source": "https://burkina24.com/?p=405039"
+      },
+      {
+        "term": "CHU Yalgado Ouédraogo",
+        "category": "healthcare",
+        "meaning": "main teaching hospital in Ouagadougou",
+        "source": "https://burkina24.com/2024/04/05/burkina-faso-le-chu-yalgado-ouedraogo-passe-en-revue-ses-actions-de-prise-en-charge-des-patients-en-2023/"
+      },
+      {
+        "term": "consultation",
+        "category": "healthcare",
+        "meaning": "doctor's visit, 1,000-15,000 FCFA public/private",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "hospitalisation",
+        "category": "healthcare",
+        "meaning": "hospital stay, per day",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "moustiquaire",
+        "category": "healthcare",
+        "meaning": "mosquito net bought for the rainy-season malaria peak",
+        "source": "https://www.afrik.com/paludisme-pluie-de-moustiquaires-sur-le-burkina-faso"
+      },
+      {
+        "term": "frais de scolarité",
+        "category": "education",
+        "meaning": "school tuition fees",
+        "source": "https://afrique.le360.ma/societe/burkina-faso-ce-nest-pas-encore-la-ruee-vers-les-fournitures-scolaires_B5D53WSEUFE4LABESM5A6JU3VA/"
+      },
+      {
+        "term": "inscription",
+        "category": "education",
+        "meaning": "school enrolment fee",
+        "source": "https://afrique.le360.ma/societe/burkina-faso-ce-nest-pas-encore-la-ruee-vers-les-fournitures-scolaires_B5D53WSEUFE4LABESM5A6JU3VA/"
+      },
+      {
+        "term": "fournitures scolaires",
+        "category": "education",
+        "meaning": "school supplies (notebooks, bags), 60,000-75,000 FCFA per child",
+        "source": "https://afrique.le360.ma/societe/burkina-faso-ce-nest-pas-encore-la-ruee-vers-les-fournitures-scolaires_B5D53WSEUFE4LABESM5A6JU3VA/"
+      },
+      {
+        "term": "tenue scolaire",
+        "category": "education",
+        "meaning": "school uniform",
+        "source": "https://afrique.le360.ma/societe/burkina-faso-ce-nest-pas-encore-la-ruee-vers-les-fournitures-scolaires_B5D53WSEUFE4LABESM5A6JU3VA/"
+      },
+      {
+        "term": "cahiers",
+        "category": "education",
+        "meaning": "exercise books",
+        "source": "https://afrique.le360.ma/societe/burkina-faso-ce-nest-pas-encore-la-ruee-vers-les-fournitures-scolaires_B5D53WSEUFE4LABESM5A6JU3VA/"
+      },
+      {
+        "term": "cotisation APE",
+        "category": "education",
+        "meaning": "parents' association fee, 3,000-5,000 FCFA",
+        "source": "https://burkina24.com/?p=295594"
+      },
+      {
+        "term": "frais d'examen",
+        "category": "education",
+        "meaning": "exam registration fee (e.g. BAC 15,000 FCFA)",
+        "source": "https://burkina24.com/?p=166466"
+      },
+      {
+        "term": "école privée",
+        "category": "education",
+        "meaning": "private school fees per year",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "maternelle",
+        "category": "education",
+        "meaning": "nursery school fee",
+        "source": "https://afrique.le360.ma/societe/burkina-faso-ce-nest-pas-encore-la-ruee-vers-les-fournitures-scolaires_B5D53WSEUFE4LABESM5A6JU3VA/"
+      },
+      {
+        "term": "yaar",
+        "category": "shopping",
+        "meaning": "neighbourhood market",
+        "source": "https://www.sidwaya.info/?p=146810"
+      },
+      {
+        "term": "marché Rood-Woko",
+        "category": "shopping",
+        "meaning": "Ouagadougou central market",
+        "source": "https://fr.allafrica.com/stories/202512240278.html"
+      },
+      {
+        "term": "Faso Dan Fani",
+        "category": "shopping",
+        "meaning": "Burkinabè hand-woven cotton cloth",
+        "source": "https://burkina24.com/?p=241097"
+      },
+      {
+        "term": "Koko Dunda",
+        "category": "shopping",
+        "meaning": "Burkinabè dyed cloth label",
+        "source": "https://www.sidwaya.info/contrefacon-du-faso-dan-fani-koko-dunda-des-labels-menaces/"
+      },
+      {
+        "term": "pagne",
+        "category": "shopping",
+        "meaning": "wax print cloth length (classic pagne about 6,000 FCFA)",
+        "source": "https://burkina24.com/?p=377543"
+      },
+      {
+        "term": "friperie",
+        "category": "shopping",
+        "meaning": "second-hand clothes and shoes trade",
+        "source": "https://leconomistedufaso.com/2022/05/09/marche-de-la-friperie-commerce-des-chaussures-de-friperie-un-business-rentable/"
+      },
+      {
+        "term": "yougou yougou",
+        "category": "shopping",
+        "meaning": "second-hand clothes",
+        "source": "https://leconomistedufaso.com/2022/05/09/marche-de-la-friperie-commerce-des-chaussures-de-friperie-un-business-rentable/"
+      },
+      {
+        "term": "France au revoir",
+        "category": "shopping",
+        "meaning": "second-hand objects/goods",
+        "source": "https://leconomistedufaso.com/2022/05/09/marche-de-la-friperie-commerce-des-chaussures-de-friperie-un-business-rentable/"
+      },
+      {
+        "term": "Marina Market",
+        "category": "shopping",
+        "meaning": "Burkinabè supermarket chain",
+        "source": "https://burkina24.com/?p=83365"
+      },
+      {
+        "term": "Super U ZAD",
+        "category": "shopping",
+        "meaning": "supermarket/mall in Ouagadougou",
+        "source": "https://burkina24.com/?p=399586"
+      },
+      {
+        "term": "salon de coiffure",
+        "category": "personalCare",
+        "meaning": "hair salon",
+        "source": "https://burkina24.com/?p=240768"
+      },
+      {
+        "term": "dreadlocks",
+        "category": "personalCare",
+        "meaning": "dreadlock hairstyling at specialised salons",
+        "source": "https://burkina24.com/?p=240768"
+      },
+      {
+        "term": "mèches",
+        "category": "personalCare",
+        "meaning": "hair extensions bought for braiding",
+        "source": "https://burkina24.com/?p=34794"
+      },
+      {
+        "term": "tissage",
+        "category": "personalCare",
+        "meaning": "weave hairstyle",
+        "source": "https://burkina24.com/?p=34794"
+      },
+      {
+        "term": "coiffure",
+        "category": "personalCare",
+        "meaning": "haircut/hairdo, men 500-2,000, women 1,000-5,000 FCFA",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "assurance maladie universelle",
+        "category": "insurance",
+        "meaning": "universal health insurance (RAMU), 5% of salary for employees",
+        "source": "https://www.sidwaya.info/sante-des-travailleurs-lassurance-maladie-universelle-desormais-operationnelle/"
+      },
+      {
+        "term": "CNAMU",
+        "category": "insurance",
+        "meaning": "national universal health-insurance fund",
+        "source": "https://www.sidwaya.info/regime-assurance-maladie-universelle-le-debut-des-prestations-prevu-pour-le-1er-fevrier-2026/"
+      },
+      {
+        "term": "assurance moto",
+        "category": "insurance",
+        "meaning": "motorbike insurance",
+        "source": "https://www.sidwaya.info/accidents-de-circulation-lassurance-moto-un-instrument-de-couverture-meconnu-des-usagers/"
+      },
+      {
+        "term": "SONAR",
+        "category": "insurance",
+        "meaning": "national insurer; cover for two-wheeler riders",
+        "source": "https://burkina24.com/?p=253102"
+      },
+      {
+        "term": "Coris Assurance",
+        "category": "insurance",
+        "meaning": "insurer offering two-wheeler cover",
+        "source": "https://atlas-mag.net/fr/articles/coris-assurance-se-lance-sur-le-marche-de-lassurance-deux-roues"
+      },
+      {
+        "term": "assurance automobile",
+        "category": "insurance",
+        "meaning": "annual car insurance",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "Canal+",
+        "category": "subscriptions",
+        "meaning": "pay-TV subscription",
+        "source": "https://burkina24.com/2022/04/15/canal-burkina-le-decodeur-a-1000-francs-a-partir-de-la-formule-evasion/"
+      },
+      {
+        "term": "formule Accès",
+        "category": "subscriptions",
+        "meaning": "Canal+ entry bouquet (5,000 FCFA/month in 2022)",
+        "source": "https://burkina24.com/2022/04/15/canal-burkina-le-decodeur-a-1000-francs-a-partir-de-la-formule-evasion/"
+      },
+      {
+        "term": "formule Évasion",
+        "category": "subscriptions",
+        "meaning": "Canal+ mid bouquet",
+        "source": "https://burkina24.com/2022/04/15/canal-burkina-le-decodeur-a-1000-francs-a-partir-de-la-formule-evasion/"
+      },
+      {
+        "term": "Tout Canal",
+        "category": "subscriptions",
+        "meaning": "Canal+ full bouquet",
+        "source": "https://burkina24.com/2022/04/15/canal-burkina-le-decodeur-a-1000-francs-a-partir-de-la-formule-evasion/"
+      },
+      {
+        "term": "réabonnement",
+        "category": "subscriptions",
+        "meaning": "Canal+ renewal, payable via Coris Money",
+        "source": "https://www.wakatsera.com/?p=27258"
+      },
+      {
+        "term": "mouton de Tabaski",
+        "category": "giftsDonations",
+        "meaning": "ram for Tabaski, 85,000-350,000 FCFA",
+        "source": "https://burkina24.com/?p=370620"
+      },
+      {
+        "term": "funérailles",
+        "category": "giftsDonations",
+        "meaning": "funeral ceremonies and their contributions",
+        "source": "https://burkina24.com/?p=19998"
+      },
+      {
+        "term": "baptême",
+        "category": "giftsDonations",
+        "meaning": "naming ceremony (drinks like zoom-koom prepared for guests)",
+        "source": "https://www.sidwaya.info/blog/boissons-locales-du-poison-dans-nos-zoom-koom-bissap"
+      },
+      {
+        "term": "caisse de solidarité",
+        "category": "giftsDonations",
+        "meaning": "group solidarity fund contribution",
+        "source": "https://burkina24.com/2020/11/01/systemes-de-micro-finance-la-tontine-du-groupe-relwende-fete-son-premier-anniversaire/"
+      },
+      {
+        "term": "Faso Mêbo",
+        "category": "giftsDonations",
+        "meaning": "national public-works initiative receiving citizen donations",
+        "source": "https://burkina24.com/?p=408645"
+      },
+      {
+        "term": "griot",
+        "category": "giftsDonations",
+        "meaning": "praise-singer paid at ceremonies",
+        "source": "https://burkina24.com/?p=19606"
+      },
+      {
+        "term": "STAF",
+        "category": "travel",
+        "meaning": "intercity coach company",
+        "source": "https://burkina24.com/?p=434700"
+      },
+      {
+        "term": "TSR",
+        "category": "travel",
+        "meaning": "intercity coach company",
+        "source": "https://www.bus-planet.com/?p=399"
+      },
+      {
+        "term": "Rakieta",
+        "category": "travel",
+        "meaning": "intercity coach company",
+        "source": "https://www.bus-planet.com/?p=399"
+      },
+      {
+        "term": "TCV",
+        "category": "travel",
+        "meaning": "intercity coach company (air-conditioned)",
+        "source": "https://www.bus-planet.com/?p=399"
+      },
+      {
+        "term": "Rahimo",
+        "category": "travel",
+        "meaning": "intercity coach company",
+        "source": "https://www.bus-planet.com/?p=399"
+      },
+      {
+        "term": "car Ouaga-Bobo",
+        "category": "travel",
+        "meaning": "coach ticket Ouagadougou-Bobo-Dioulasso, 3,500-5,000 FCFA",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "Sitarail",
+        "category": "travel",
+        "meaning": "passenger train Ouagadougou-Bobo-Niangoloko (6,000 FCFA)",
+        "source": "https://burkina24.com/?p=349656"
+      },
+      {
+        "term": "Air Burkina",
+        "category": "travel",
+        "meaning": "national airline; Ouaga-Bobo flight",
+        "source": "https://www.wakatsera.com/air-burkina-ouaga-bobo-a-partir-de-40-000-f-cfa/"
+      },
+      {
+        "term": "salaire",
+        "category": "salary",
+        "meaning": "monthly wage, paid into a bank account for civil servants",
+        "source": "https://www.memoireonline.com/01/20/11530/m_Enjeux-et-perspectives-de-la-bancarisation-des-agents-de-la-fonction-publique-du-Burkina-Faso20.html"
+      },
+      {
+        "term": "SMIG",
+        "category": "salary",
+        "meaning": "guaranteed minimum wage (45,000 FCFA/month since 2024 per source)",
+        "source": "https://africarrieres.com/burkina-faso/fr/guide/decouvrir/cout-de-la-vie"
+      },
+      {
+        "term": "fin du mois",
+        "category": "salary",
+        "meaning": "payday at month end",
+        "source": "https://www.memoireonline.com/01/20/11530/m_Enjeux-et-perspectives-de-la-bancarisation-des-agents-de-la-fonction-publique-du-Burkina-Faso20.html"
+      },
+      {
+        "term": "livraison",
+        "category": "freelance",
+        "meaning": "delivery job on own motorbike, paid per run (students)",
+        "source": "https://fr.allafrica.com/stories/202601080202.html"
+      },
+      {
+        "term": "chiffre d'affaires",
+        "category": "freelance",
+        "meaning": "takings of a small trader (e.g. 100,000-200,000 FCFA/month)",
+        "source": "https://leconomistedufaso.com/2022/05/09/marche-de-la-friperie-commerce-des-chaussures-de-friperie-un-business-rentable/"
+      },
+      {
+        "term": "dolotière",
+        "category": "freelance",
+        "meaning": "woman brewing and selling dolo",
+        "source": "https://burkina24.com/?p=177396"
+      },
+      {
+        "term": "vente de fruits",
+        "category": "freelance",
+        "meaning": "fruit selling at Ramadan iftar",
+        "source": "https://afrique.le360.ma/autres-pays/societe/2022/04/24/37775-burkina-faso-la-rupture-du-jeune-moment-de-bonnes-affaires-pour-les-vendeuses-de-fruits-37775"
+      },
+      {
+        "term": "emprunt obligataire",
+        "category": "investments",
+        "meaning": "Treasury bond issue open to the public",
+        "source": "https://www.sidwaya.info/1re-cotation-de-lemprunt-obligataire-du-tresor-public/"
+      },
+      {
+        "term": "BRVM",
+        "category": "investments",
+        "meaning": "regional stock exchange",
+        "source": "https://www.financialafrik.com/2024/05/18/brvm-lappel-public-a-lepargne-du-burkina-faso-recolte-130-milliards-de-fcfa"
+      },
+      {
+        "term": "diaspora bonds",
+        "category": "investments",
+        "meaning": "Treasury bonds at 10,000 FCFA each (2026)",
+        "source": "https://droitmediasfinance.com/index.php/actualites/droit-des-marches-financiers/1373-brvm-les-diaspora-bonds-du-tresor-burkinabe-entrent-en-bourse-le-3-septembre-apres-une-sursouscription-de-121-2"
+      },
+      {
+        "term": "parcelle",
+        "category": "investments",
+        "meaning": "building plot bought as a long-term asset",
+        "source": "https://burkina24.com/?p=137121"
+      },
+      {
+        "term": "aide FONER",
+        "category": "otherIncome",
+        "meaning": "state grant to university students",
+        "source": "https://burkina24.com/?p=283190"
+      },
+      {
+        "term": "bourse",
+        "category": "otherIncome",
+        "meaning": "student scholarship",
+        "source": "https://burkina24.com/?p=267783"
+      },
+      {
+        "term": "transfert de la diaspora",
+        "category": "otherIncome",
+        "meaning": "money sent home by relatives abroad",
+        "source": "https://burkina24.com/?p=423937"
+      },
+      {
+        "term": "tour de tontine",
+        "category": "otherIncome",
+        "meaning": "the pot received when one's turn comes in a tontine",
+        "source": "https://ethnologie.philhist.unibas.ch/en/event/details/i-ll-see-you-at-the-salon-the-social-spaces-of-women-in-urban-burkina-faso-ma-project/"
+      },
+      {
+        "term": "tontine",
+        "category": "none",
+        "meaning": "rotating savings group contribution",
+        "source": "https://burkina24.com/2020/11/01/systemes-de-micro-finance-la-tontine-du-groupe-relwende-fete-son-premier-anniversaire/"
+      },
+      {
+        "term": "parts",
+        "category": "none",
+        "meaning": "savings-group shares (e.g. 250 FCFA each)",
+        "source": "https://burkina24.com/2020/11/01/systemes-de-micro-finance-la-tontine-du-groupe-relwende-fete-son-premier-anniversaire/"
+      },
+      {
+        "term": "cauris d'or",
+        "category": "none",
+        "meaning": "community savings box (another name for tontine)",
+        "source": "https://burkina24.com/2020/11/01/systemes-de-micro-finance-la-tontine-du-groupe-relwende-fete-son-premier-anniversaire/"
+      },
+      {
+        "term": "prêt FONER",
+        "category": "none",
+        "meaning": "student loan, 175,000 FCFA a year",
+        "source": "https://burkina24.com/?p=267783"
+      },
+      {
+        "term": "Wallet to Bank",
+        "category": "none",
+        "meaning": "move money between a mobile wallet and own bank account",
+        "source": "https://burkina24.com/2026/07/15/burkina-faso-largent-circule-desormais-plus-facilement-entre-wave-et-orabank/"
+      }
+    ],
+    "CI": [
+      {
+        "term": "attiéké",
+        "category": "foodDining",
+        "meaning": "steamed cassava semolina, eaten with fish, chicken or egg",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "garba",
+        "category": "foodDining",
+        "meaning": "attiéké with fried tuna, onion and chili; cheap street dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "alloco",
+        "category": "foodDining",
+        "meaning": "fried ripe plantain, street food",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "foutou",
+        "category": "foodDining",
+        "meaning": "pounded plantain or yam ball eaten with sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "placali",
+        "category": "foodDining",
+        "meaning": "fermented cassava paste eaten with sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "kédjénou",
+        "category": "foodDining",
+        "meaning": "slow-stewed chicken dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "sauce graine",
+        "category": "foodDining",
+        "meaning": "palm-nut sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "poulet braisé",
+        "category": "foodDining",
+        "meaning": "grilled chicken",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "choukouya",
+        "category": "foodDining",
+        "meaning": "barbecued mutton or beef with suya spice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "aller-retour",
+        "category": "foodDining",
+        "meaning": "fish fritter served with macaroni (street food)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "pain-brochettes",
+        "category": "foodDining",
+        "meaning": "kebab sandwich",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "spaghetti au kiosque",
+        "category": "foodDining",
+        "meaning": "spaghetti sold at a street kiosk",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "bissap",
+        "category": "foodDining",
+        "meaning": "hibiscus drink",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "gnamankoudji",
+        "category": "foodDining",
+        "meaning": "ginger juice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "dêguê",
+        "category": "foodDining",
+        "meaning": "fermented milk with millet grains",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "tchapalo",
+        "category": "foodDining",
+        "meaning": "spiced maize/sorghum beer from the north",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "bandji",
+        "category": "foodDining",
+        "meaning": "palm wine",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "koutoukou",
+        "category": "foodDining",
+        "meaning": "palm liquor",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_ivoirienne"
+      },
+      {
+        "term": "maquis",
+        "category": "foodDining",
+        "meaning": "popular open-air eatery serving grilled fish and braised chicken",
+        "source": "https://annuaireci.com/blog/les-meilleurs-endroits-ou-manger-a-abidjan-un-guide-culinaire/"
+      },
+      {
+        "term": "Flag",
+        "category": "foodDining",
+        "meaning": "Solibra lager beer sold in every maquis and bar",
+        "source": "https://blog.iambeezy.app/fr/bieres-solibra-cote-ivoire-gamme-ci-2026/"
+      },
+      {
+        "term": "wôrô-wôrô",
+        "category": "transport",
+        "meaning": "shared communal taxi with a flat fare per route (100-500 FCFA)",
+        "source": "https://afrique.le360.ma/cote-divoire/economie/2021/12/27/36497-cote-divoire-les-woro-woro-ces-taxis-communaux-populaires-dabidjan-36497/"
+      },
+      {
+        "term": "taxi compteur",
+        "category": "transport",
+        "meaning": "metered taxi, pricier than a wôrô-wôrô",
+        "source": "https://afrique.le360.ma/cote-divoire/economie/2021/12/27/36497-cote-divoire-les-woro-woro-ces-taxis-communaux-populaires-dabidjan-36497/"
+      },
+      {
+        "term": "gbaka",
+        "category": "transport",
+        "meaning": "Abidjan minibus with flat fares and an apprentice collecting fares",
+        "source": "https://fr.wikipedia.org/wiki/Gbaka"
+      },
+      {
+        "term": "SOTRA",
+        "category": "transport",
+        "meaning": "Abidjan public bus company; tickets 200-500 FCFA",
+        "source": "https://connectionivoirienne.net/2024/07/26/les-tickets-dautobus-passes-de-200-a-500-fcfa-tout-sur-la-supercherie-du-dg-meite-bouake-de-la-sotra/"
+      },
+      {
+        "term": "UTB",
+        "category": "travel",
+        "meaning": "intercity bus company leaving from Adjamé station",
+        "source": "https://news.abidjan.net/articles/329139/transport-routier-utb-fait-un-abattement-de-1000-fcfa-sur-ses-lignes"
+      },
+      {
+        "term": "gare d'Adjamé",
+        "category": "travel",
+        "meaning": "Abidjan coach station for intercity departures",
+        "source": "https://www.fratmat.info/article/238607/societe/paquinou-2024-sous-un-soleil-ardent-des-passagers-a-adjame-attendent-patiemment-les-cars"
+      },
+      {
+        "term": "Pâquinou",
+        "category": "travel",
+        "meaning": "Easter return to home villages in Baoulé country; coaches packed",
+        "source": "https://www.fratmat.info/article/2633239/culture/paquinou-en-pays-baoule-temps-daffluence-record-dans-les-gares-routieres"
+      },
+      {
+        "term": "CIE",
+        "category": "utilities",
+        "meaning": "national electricity company; bills and prepaid recharges",
+        "source": "https://digitalmag.ci/wave-cote-divoire-integre-la-possibilite-de-payer-vos-factures-cie-et-sodeci/"
+      },
+      {
+        "term": "SODECI",
+        "category": "utilities",
+        "meaning": "water distribution company; water bills",
+        "source": "https://digitalmag.ci/wave-cote-divoire-integre-la-possibilite-de-payer-vos-factures-cie-et-sodeci/"
+      },
+      {
+        "term": "forfait internet",
+        "category": "utilities",
+        "meaning": "mobile data bundle (e.g. 1 Go at 1000 FCFA)",
+        "source": "https://www.afrique-sur7.fr/492557-orange-1go-1000fcfa-en-cote-divoire-et-1go-111fcfa-en-france"
+      },
+      {
+        "term": "MTN",
+        "category": "utilities",
+        "meaning": "mobile operator (airtime, data)",
+        "source": "https://www.bossrevolution.com/fr-ca/country/cote-d-ivoire/international-mobile-topup"
+      },
+      {
+        "term": "Moov Africa",
+        "category": "utilities",
+        "meaning": "mobile operator (airtime, data, bonus on bundles)",
+        "source": "https://digitalmag.ci/internet-mobile-en-cote-divoire-orange-appelle-a-la-fin-des-promotions-incessantes/?amp=1"
+      },
+      {
+        "term": "Orange",
+        "category": "utilities",
+        "meaning": "mobile operator (airtime, data)",
+        "source": "https://www.afrique-sur7.fr/492557-orange-1go-1000fcfa-en-cote-divoire-et-1go-111fcfa-en-france"
+      },
+      {
+        "term": "frais d'inscription",
+        "category": "education",
+        "meaning": "school registration fees at the rentrée",
+        "source": "https://afrique.le360.ma/societe/la-rentree-scolaire-en-cote-divoire-cahiers-stylos-frais-dinscription-le-fardeau-financier-des_ENQAZ2UTQNFQ5NBKB35AE4KZUY/"
+      },
+      {
+        "term": "COGES",
+        "category": "education",
+        "meaning": "school management committees, formerly funded by parents' contributions",
+        "source": "https://fr.allafrica.com/stories/202209060629.html"
+      },
+      {
+        "term": "kits scolaires",
+        "category": "education",
+        "meaning": "school supply kits (notebooks, pens, bags)",
+        "source": "https://www.primature.ci/docs/1726514130DiscoursPMRBMLANCEMENTDISTRIBUTIONKITSSCOLAIRES16092024.pdf"
+      },
+      {
+        "term": "pharmacie de garde",
+        "category": "healthcare",
+        "meaning": "on-duty night/weekend pharmacy",
+        "source": "https://annuaireci.com/blog/pharmacies-de-garde-a-abidjan-comment-trouver-la-plus-proche-cette-semaine/"
+      },
+      {
+        "term": "CHU",
+        "category": "healthcare",
+        "meaning": "university teaching hospital (e.g. CHU de Treichville)",
+        "source": "https://annuaireci.com/entreprises/pharmacie-du-rond-point-du-chu-de-treichville-abidjan-cote-divoire/"
+      },
+      {
+        "term": "CMU",
+        "category": "insurance",
+        "meaning": "universal health cover, 1000 FCFA per person per month",
+        "source": "https://www.financialafrik.com/2017/02/24/la-cote-divoire-lance-une-couverture-maladie-a-1000-fcfa"
+      },
+      {
+        "term": "MUGEF-CI",
+        "category": "insurance",
+        "meaning": "civil servants' mutual with a monthly funeral-cover product",
+        "source": "https://www.servicepublic.gouv.ci/accueil/detaildemarcheparticulier/1./439/10"
+      },
+      {
+        "term": "dot",
+        "category": "giftsDonations",
+        "meaning": "bride price paid to the bride's family, in cash or goods",
+        "source": "https://burkina24.com/?p=255424"
+      },
+      {
+        "term": "funérailles",
+        "category": "giftsDonations",
+        "meaning": "funerals funded by family levies (veillée, transfert de corps, inhumation)",
+        "source": "https://news.abidjan.net/articles/444752/veillee-transfert-de-corps-inhumation-tout-sur-les-nouveaux-riches-de-la-mort"
+      }
+    ],
+    "ML": [
+      {
+        "term": "tô",
+        "category": "foodDining",
+        "meaning": "millet or maize paste eaten with sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "mafé",
+        "category": "foodDining",
+        "meaning": "rice with peanut sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "fakoye",
+        "category": "foodDining",
+        "meaning": "northern sauce of dried corchorus leaves",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "soupe kandia",
+        "category": "foodDining",
+        "meaning": "okra stew with palm oil, served with rice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "lafiri",
+        "category": "foodDining",
+        "meaning": "soumbala sauce with white rice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "fonio",
+        "category": "foodDining",
+        "meaning": "fonio couscous",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "bassi",
+        "category": "foodDining",
+        "meaning": "millet couscous",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "paté",
+        "category": "foodDining",
+        "meaning": "fried stuffed pastry with minced meat",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "moni",
+        "category": "foodDining",
+        "meaning": "millet or maize porridge balls, breakfast",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "furu furu",
+        "category": "foodDining",
+        "meaning": "breakfast millet snack (furu furu)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "dégué",
+        "category": "foodDining",
+        "meaning": "millet semolina with sour milk",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "dableni",
+        "category": "foodDining",
+        "meaning": "hibiscus drink",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "gnamankoudji",
+        "category": "foodDining",
+        "meaning": "ginger juice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "tomi dji",
+        "category": "foodDining",
+        "meaning": "tamarind juice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "zira dji",
+        "category": "foodDining",
+        "meaning": "baobab juice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_malienne"
+      },
+      {
+        "term": "grin",
+        "category": "foodDining",
+        "meaning": "street-corner tea circle; buying tea and sugar for the group",
+        "source": "https://afrique.le360.ma/societe/mali-le-grin-cette-cour-de-recreation-des-grandes-personnes-ou-le-the-coule-a-flots_N4TXK5KB4BFQDGGB6BRVZZZLZ4/"
+      },
+      {
+        "term": "sotrama",
+        "category": "transport",
+        "meaning": "green minibus public transport in Bamako",
+        "source": "https://fr.wikipedia.org/wiki/Sotrama"
+      },
+      {
+        "term": "moto-taxi",
+        "category": "transport",
+        "meaning": "motorbike taxi in Bamako",
+        "source": "https://afrique.le360.ma/societe/mali-motos-taxis-de-la-success-story-au-calvaire_UHA6A3DTPVGJDGKLAJDIX2PUYU/"
+      },
+      {
+        "term": "Teliman",
+        "category": "transport",
+        "meaning": "app-based moto-taxi service in Bamako with mobile payment",
+        "source": "https://vc4a.com/ventures/teliman"
+      },
+      {
+        "term": "Diarra Transport",
+        "category": "travel",
+        "meaning": "intercity coach company from Bamako",
+        "source": "https://way4i.com/?p=83139"
+      },
+      {
+        "term": "Bani Transport",
+        "category": "travel",
+        "meaning": "long-distance coach company",
+        "source": "https://www.bus-planet.com/bus/bus-africa/Mali/index.html"
+      },
+      {
+        "term": "gare routière de Sogoniko",
+        "category": "travel",
+        "meaning": "Bamako coach station for intercity buses",
+        "source": "https://www.rome2rio.com/s/Mopti/Sikasso"
+      },
+      {
+        "term": "EDM",
+        "category": "utilities",
+        "meaning": "Energie du Mali, public electricity company",
+        "source": "https://fr.allafrica.com/stories/202601090055.html"
+      },
+      {
+        "term": "Somagep",
+        "category": "utilities",
+        "meaning": "drinking-water supplier in Bamako",
+        "source": "https://afrique.le360.ma/mali/economie/2017/04/17/11146-mali-coupures-deau-intempestives-bamako-11146"
+      },
+      {
+        "term": "Orange",
+        "category": "utilities",
+        "meaning": "mobile operator: credit, packs, data passes",
+        "source": "https://maxit.orange.com/en/page-contry-mali.html"
+      },
+      {
+        "term": "Moov Africa Malitel",
+        "category": "utilities",
+        "meaning": "mobile operator",
+        "source": "https://beninwebtv.bj/mali-moov-africa-et-orange-condamnes-a-verser-176-milliards-f-cfa-a-une-association-de-consommateurs/"
+      },
+      {
+        "term": "Telecel",
+        "category": "utilities",
+        "meaning": "mobile operator",
+        "source": "https://maxit.orange.com/en/page-contry-mali.html"
+      },
+      {
+        "term": "pass internet",
+        "category": "utilities",
+        "meaning": "data pass (e.g. 100 MB/day, weekly or monthly packs)",
+        "source": "https://maxit.orange.com/en/page-contry-mali.html"
+      },
+      {
+        "term": "CSCOM",
+        "category": "healthcare",
+        "meaning": "community health centre run by a local health association",
+        "source": "https://ipsnews.net/francais/?p=84"
+      },
+      {
+        "term": "fournitures scolaires",
+        "category": "education",
+        "meaning": "school supplies; a box of notebooks rose to 32,500 FCFA in 2022",
+        "source": "https://afrique.le360.ma/mali/societe/2022/10/05/39517-mali-une-rentree-des-classes-sur-fond-de-flambee-des-prix-des-fournitures-scolaires-39517/"
+      },
+      {
+        "term": "mouton de Tabaski",
+        "category": "giftsDonations",
+        "meaning": "sheep bought for the Tabaski sacrifice (110,000-250,000 FCFA)",
+        "source": "https://afrique.le360.ma/societe/tabaski-au-mali-de-110000-a-250000-fcfa-le-mouton-les-guineens-en-raffolent_III7RRSQVNCCXKD6USM2JYWKJU/"
+      },
+      {
+        "term": "billets neufs",
+        "category": "giftsDonations",
+        "meaning": "crisp new banknotes handed out to griots at ceremonies",
+        "source": "https://www.afrik.com/mali-le-billet-de-500-fcfa-neuf-signe-exterieur-de-richesse"
+      },
+      {
+        "term": "griot",
+        "category": "giftsDonations",
+        "meaning": "praise-singer paid at weddings and baptisms",
+        "source": "https://burkina24.com/?p=19606"
+      },
+      {
+        "term": "mariage",
+        "category": "giftsDonations",
+        "meaning": "wedding with family exchanges and dowry",
+        "source": "https://fr.vikidia.org/wiki/Mariage_au_Mali"
+      }
+    ],
+    "SN": [
+      {
+        "term": "thiéboudienne",
+        "category": "foodDining",
+        "meaning": "rice with fish, the national dish (ceebu jën)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "yassa",
+        "category": "foodDining",
+        "meaning": "chicken marinated in onion and lime, grilled then simmered",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "mafé",
+        "category": "foodDining",
+        "meaning": "rice with peanut-paste sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "domoda",
+        "category": "foodDining",
+        "meaning": "rice with a tomato and flour sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "thiéré",
+        "category": "foodDining",
+        "meaning": "millet couscous served with various sauces",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "dibi",
+        "category": "foodDining",
+        "meaning": "grilled mutton pieces with onions",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "dibiterie",
+        "category": "foodDining",
+        "meaning": "eatery selling grilled mutton (dibi)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "chawarma",
+        "category": "foodDining",
+        "meaning": "wrap sandwich sold in Lebanese restaurants",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "pastels",
+        "category": "foodDining",
+        "meaning": "small fried pastries stuffed with fish, a snack",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "thiakry",
+        "category": "foodDining",
+        "meaning": "millet granules with curdled milk or yoghurt, dessert",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "ngalakh",
+        "category": "foodDining",
+        "meaning": "millet with peanut and baobab cream, dessert",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "bissap",
+        "category": "foodDining",
+        "meaning": "hibiscus-flower drink",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "bouye",
+        "category": "foodDining",
+        "meaning": "baobab fruit juice",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "gingembre",
+        "category": "foodDining",
+        "meaning": "ginger juice drink",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "café Touba",
+        "category": "foodDining",
+        "meaning": "coffee spiced with Guinea pepper",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "attaya",
+        "category": "foodDining",
+        "meaning": "three-glass green tea ritual (atthaya)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "kinkeliba",
+        "category": "foodDining",
+        "meaning": "herbal infusion",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "Gazelle",
+        "category": "foodDining",
+        "meaning": "cheap local beer brand",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "Flag",
+        "category": "foodDining",
+        "meaning": "stronger local beer brand",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_sénégalaise"
+      },
+      {
+        "term": "car rapide",
+        "category": "transport",
+        "meaning": "painted minibus on urban routes in Dakar",
+        "source": "https://fr.wikipedia.org/wiki/Car_rapide"
+      },
+      {
+        "term": "Ndiaga Ndiaye",
+        "category": "transport",
+        "meaning": "white Mercedes minibus, urban and suburban",
+        "source": "https://fr.wikipedia.org/wiki/Car_rapide"
+      },
+      {
+        "term": "Dakar Dem Dikk",
+        "category": "transport",
+        "meaning": "Dakar public bus company",
+        "source": "https://fr.wikipedia.org/wiki/Car_rapide"
+      },
+      {
+        "term": "clando",
+        "category": "transport",
+        "meaning": "unlicensed shared car on fixed routes",
+        "source": "https://senego.com/services/prix-billets-transport"
+      },
+      {
+        "term": "Tata",
+        "category": "transport",
+        "meaning": "AFTU white-and-blue minibus linking suburbs and city",
+        "source": "https://fr.wikipedia.org/wiki/Car_rapide"
+      },
+      {
+        "term": "Jakarta",
+        "category": "transport",
+        "meaning": "motorcycle taxi",
+        "source": "https://senego.com/services/prix-billets-transport"
+      },
+      {
+        "term": "TER",
+        "category": "transport",
+        "meaning": "Dakar regional express train",
+        "source": "https://senego.com/services/prix-billets-transport"
+      },
+      {
+        "term": "BRT",
+        "category": "transport",
+        "meaning": "Dakar bus rapid transit",
+        "source": "https://senego.com/services/prix-billets-transport"
+      },
+      {
+        "term": "taxi jaune-noir",
+        "category": "transport",
+        "meaning": "licensed yellow-and-black city taxi",
+        "source": "https://www.osiris.sn/justice-bras-de-fer-entre-taxis-jaune-noir-et-plateformes-numeriques-yango.html"
+      },
+      {
+        "term": "Yango",
+        "category": "transport",
+        "meaning": "ride-hailing app in Dakar",
+        "source": "https://www.osiris.sn/justice-bras-de-fer-entre-taxis-jaune-noir-et-plateformes-numeriques-yango.html"
+      },
+      {
+        "term": "Heetch",
+        "category": "transport",
+        "meaning": "ride-hailing app in Dakar",
+        "source": "https://www.seneplus.com/node/172560"
+      },
+      {
+        "term": "sept-places",
+        "category": "travel",
+        "meaning": "shared intercity estate car (e.g. Dakar–Thiès)",
+        "source": "https://senego.com/services/prix-billets-transport"
+      },
+      {
+        "term": "bateau Dakar–Ziguinchor",
+        "category": "travel",
+        "meaning": "ferry to Casamanca (Aline Sitoe Diatta)",
+        "source": "https://senego.com/services/prix-billets-transport"
+      },
+      {
+        "term": "Senelec",
+        "category": "utilities",
+        "meaning": "national electricity company",
+        "source": "https://fr.allafrica.com/stories/202308310365.html"
+      },
+      {
+        "term": "Woyofal",
+        "category": "utilities",
+        "meaning": "Senelec prepaid electricity meter and credit",
+        "source": "https://fr.allafrica.com/stories/202308310365.html"
+      },
+      {
+        "term": "SEN'EAU",
+        "category": "utilities",
+        "meaning": "water utility, water bill",
+        "source": "https://www.dakaractu.com/Paiement-de-factures-d-eau-Une-augmentation-de-droit-de-timbre-de-1-effective-depuis-le-4-octobre_a266066.html"
+      },
+      {
+        "term": "pass internet",
+        "category": "utilities",
+        "meaning": "mobile data bundle (Orange etc.)",
+        "source": "https://senego.com/services/comparateur-forfaits"
+      },
+      {
+        "term": "Orange",
+        "category": "utilities",
+        "meaning": "mobile operator (airtime, data)",
+        "source": "https://osiris.sn/orange-expresso-free-les-nouveaux-tarifs-internet-enflamment-la-toile.html"
+      },
+      {
+        "term": "Expresso",
+        "category": "utilities",
+        "meaning": "mobile operator (airtime, data)",
+        "source": "https://osiris.sn/orange-expresso-free-les-nouveaux-tarifs-internet-enflamment-la-toile.html"
+      },
+      {
+        "term": "Yas (ex-Free)",
+        "category": "utilities",
+        "meaning": "mobile operator formerly Free Sénégal",
+        "source": "https://www.osiris.sn/l-operateur-free-devient-yas.html"
+      },
+      {
+        "term": "Canal+",
+        "category": "subscriptions",
+        "meaning": "pay-TV subscription",
+        "source": "https://lesoleil.sn/actualites/economie/canal-au-senegal-des-tarifs-qui-grimpent-des-abonnes-en-colere/"
+      },
+      {
+        "term": "lutte / Arène nationale",
+        "category": "entertainment",
+        "meaning": "wrestling bouts at the national arena (tickets, PPV)",
+        "source": "https://fr.allafrica.com/stories/202603080034.html"
+      },
+      {
+        "term": "Tabaski (mouton)",
+        "category": "giftsDonations",
+        "meaning": "Eid al-Adha; buying the sacrificial sheep",
+        "source": "https://seneweb.com/fr/news/8/mouton-sagnse-et-condiments-limpossible-equation-dune-tabaski-complete-a-500-000-f-cfa_n_493740.html"
+      },
+      {
+        "term": "ngénte",
+        "category": "giftsDonations",
+        "meaning": "naming ceremony (baptism) on the 7th day",
+        "source": "https://senego.com/macky-au-ngente-du-bebe-de-son-frere-aliou-sall_262438.html"
+      },
+      {
+        "term": "griots",
+        "category": "giftsDonations",
+        "meaning": "praise-singers given cash at ceremonies",
+        "source": "https://afrique.le360.ma/senegal/societe/2022/07/09/38649-senegal-la-regle-cest-le-gaspillage-lors-de-laid-et-des-ceremonies-familiales-38649/"
+      },
+      {
+        "term": "dot",
+        "category": "giftsDonations",
+        "meaning": "bride price paid at marriage",
+        "source": "https://afrique.le360.ma/senegal/societe/2022/04/11/37650-senegal-les-jeunes-lepreuve-de-la-dot-et-des-depenses-faramineuses-du-mariage-37650/"
+      },
+      {
+        "term": "linceul",
+        "category": "giftsDonations",
+        "meaning": "burial shroud, a funeral expense",
+        "source": "https://seneweb.com/news/societe/dossier-combien-coutent-les-funerailles-_n_177122.html"
+      },
+      {
+        "term": "Magal de Touba",
+        "category": "travel",
+        "meaning": "annual pilgrimage to Touba (transport, spending)",
+        "source": "https://fr.allafrica.com/stories/202608030259.html"
+      },
+      {
+        "term": "natt",
+        "category": "none",
+        "meaning": "tontine (rotating savings group) contribution",
+        "source": "https://osiris.sn/la-startup-matontine-representera-le-senegal-au-sommet-mondial-seedstars-en.html"
+      },
+      {
+        "term": "fournitures scolaires",
+        "category": "education",
+        "meaning": "school supplies at the start of term",
+        "source": "https://lesoleil.sn/actualites/education/rentree-scolaire-les-parents-sous-pression-entre-fournitures-habits-et-inscriptions/"
+      },
+      {
+        "term": "inscription",
+        "category": "education",
+        "meaning": "school enrolment fee",
+        "source": "https://lesoleil.sn/actualites/education/rentree-scolaire-les-parents-sous-pression-entre-fournitures-habits-et-inscriptions/"
+      },
+      {
+        "term": "friperie",
+        "category": "shopping",
+        "meaning": "second-hand clothing",
+        "source": "https://lesoleil.sn/actualites/education/rentree-scolaire-les-parents-sous-pression-entre-fournitures-habits-et-inscriptions/"
+      },
+      {
+        "term": "Colobane / Sandaga",
+        "category": "shopping",
+        "meaning": "major Dakar markets",
+        "source": "https://lesoleil.sn/actualites/education/rentree-scolaire-les-parents-sous-pression-entre-fournitures-habits-et-inscriptions/"
+      },
+      {
+        "term": "poste de santé",
+        "category": "healthcare",
+        "meaning": "primary health post (consultation ticket)",
+        "source": "https://www.afro.who.int/node/3262"
+      },
+      {
+        "term": "IPM",
+        "category": "insurance",
+        "meaning": "private-sector mandatory health insurance institution",
+        "source": "https://informationsanitaire.sec.gouv.sn/dataset/d460bb7e-d8c6-4aca-91fc-72a3d0d5ed91/resource/9935d1e1-1b2e-4afc-acd6-1ef8835c0945/download/la-couverture-maladie-universelle-au-senegal-etat-de-mise-en-oeuvre-lecons-et-perspectives-dans-.pdf"
+      },
+      {
+        "term": "mutuelle de santé",
+        "category": "insurance",
+        "meaning": "community health insurance under CMU",
+        "source": "https://www.afro.who.int/node/3274"
+      }
+    ],
+    "BJ": [
+      {
+        "term": "pâte (wô / amè)",
+        "category": "foodDining",
+        "meaning": "maize-flour paste, the staple",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "amiwo",
+        "category": "foodDining",
+        "meaning": "maize paste cooked in tomato or red-oil sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "akassa",
+        "category": "foodDining",
+        "meaning": "fermented maize-starch paste",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "piron",
+        "category": "foodDining",
+        "meaning": "cassava-flour (gari) paste",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "agoun (igname pilée)",
+        "category": "foodDining",
+        "meaning": "pounded yam",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "télibô",
+        "category": "foodDining",
+        "meaning": "paste of dried-yam flour",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "atassi",
+        "category": "foodDining",
+        "meaning": "rice and beans dish",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "gari",
+        "category": "foodDining",
+        "meaning": "cassava semolina",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "ata",
+        "category": "foodDining",
+        "meaning": "white-bean fritters",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "aloko",
+        "category": "foodDining",
+        "meaning": "fried plantain",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "yovo doko",
+        "category": "foodDining",
+        "meaning": "sweet wheat-flour fritter",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "wagassi",
+        "category": "foodDining",
+        "meaning": "Peul soft cheese",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "sodabi",
+        "category": "foodDining",
+        "meaning": "palm-wine spirit",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "tchoukoutou",
+        "category": "foodDining",
+        "meaning": "sorghum or millet beer",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "bissap",
+        "category": "foodDining",
+        "meaning": "iced sweet hibiscus drink",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "pure water",
+        "category": "foodDining",
+        "meaning": "water sold in plastic sachets",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "La Béninoise",
+        "category": "foodDining",
+        "meaning": "national beer brand (SOBEBRA)",
+        "source": "https://allbusiness.africa/business/sobebra-benin"
+      },
+      {
+        "term": "maquis",
+        "category": "foodDining",
+        "meaning": "small street restaurant",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_béninoise"
+      },
+      {
+        "term": "zémidjan / zem",
+        "category": "transport",
+        "meaning": "motorcycle taxi",
+        "source": "https://fr.wikipedia.org/wiki/Zémidjan"
+      },
+      {
+        "term": "kékéno",
+        "category": "transport",
+        "meaning": "call to hail a zem (Fon)",
+        "source": "https://lepetitjournal.com/cotonou/zem-les-taxis-moto-du-benin-299763"
+      },
+      {
+        "term": "kpayo",
+        "category": "transport",
+        "meaning": "informal petrol smuggled from Nigeria",
+        "source": "https://lanouvelletribune.info/2021/11/benin-le-prix-de-lessence-kpayo-en-hausse/"
+      },
+      {
+        "term": "Gozem",
+        "category": "transport",
+        "meaning": "ride-hailing app for zem and taxis",
+        "source": "https://www.financialafrik.com/2019/07/16/gozem-lance-son-service-de-reservation-de-tricycles-passagers-a-lome-et-a-cotonou/"
+      },
+      {
+        "term": "taxi jaune",
+        "category": "transport",
+        "meaning": "yellow taxi in Cotonou",
+        "source": "https://lepetitjournal.com/cotonou/se-deplacer-avec-les-taxis-jaunes-de-cotonou-301135"
+      },
+      {
+        "term": "Baobab Express / ATT",
+        "category": "travel",
+        "meaning": "intercity bus companies (Cotonou–Parakou)",
+        "source": "https://www.routard.com/fr/guide/a/transports/afrique/benin"
+      },
+      {
+        "term": "SBEE",
+        "category": "utilities",
+        "meaning": "electricity company; prepaid meter recharge",
+        "source": "https://www.gouv.bj/article/389/dematerialisation-du-paiement-a-la-sbee-le-service-de-paiement-electronique-des-recharges-de-credits-denergie-electrique-desormais-une-realite/"
+      },
+      {
+        "term": "SONEB",
+        "category": "utilities",
+        "meaning": "water company, water bill",
+        "source": "https://www.gouv.bj/article/1711/lancement-service-paiement-ligne-factures-gouvernement-facilite-abonnes-soneb/"
+      },
+      {
+        "term": "MTN",
+        "category": "utilities",
+        "meaning": "mobile operator (airtime, data)",
+        "source": "https://lanouvelletribune.info/2026/08/benin-les-forfaits-internet-illimites-a-5-000-et-10-000-fcfa-disparaissent/"
+      },
+      {
+        "term": "Moov Africa",
+        "category": "utilities",
+        "meaning": "mobile operator (airtime, data)",
+        "source": "https://lanouvelletribune.info/2026/08/benin-les-forfaits-internet-illimites-a-5-000-et-10-000-fcfa-disparaissent/"
+      },
+      {
+        "term": "Celtiis",
+        "category": "utilities",
+        "meaning": "state-backed mobile operator launched 2022",
+        "source": "https://ecofinagency.com/telecom/1411-45041-benin-celtiis-hits-1-5mln-subscribers-in-one-year"
+      },
+      {
+        "term": "forfait internet",
+        "category": "utilities",
+        "meaning": "mobile data bundle",
+        "source": "https://beninwebtv.bj/internet-mobile-au-benin-colere-apres-la-fin-des-forfaits-illimites-a-5-000-et-10-000-fcfa/"
+      },
+      {
+        "term": "Canal+ (Tout Canal+)",
+        "category": "subscriptions",
+        "meaning": "pay-TV subscription",
+        "source": "https://beninwebtv.bj/benin-netflix-desormais-inclus-dans-la-formule-tout-canal-a-seulement-25-000-fcfa/"
+      },
+      {
+        "term": "loyer / avance / caution",
+        "category": "housing",
+        "meaning": "rent, advance months and deposit",
+        "source": "https://lepetitjournal.com/cotonou/installation/se-loger-cotonou-le-guide-complet-387561"
+      },
+      {
+        "term": "démarcheur",
+        "category": "housing",
+        "meaning": "informal housing agent paid by commission",
+        "source": "https://lepetitjournal.com/cotonou/installation/se-loger-cotonou-le-guide-complet-387561"
+      },
+      {
+        "term": "Dantokpa",
+        "category": "shopping",
+        "meaning": "Cotonou's big market (pagnes, everything)",
+        "source": "https://lepetitjournal.com/cotonou/actualites/le-marche-dantokpa-un-gros-centre-daffaire-et-dopportunite-75095"
+      },
+      {
+        "term": "pagne wax",
+        "category": "shopping",
+        "meaning": "printed cloth sold by the metre",
+        "source": "https://mediaclip.ina.fr/en/i25043538-the-wax-trade-at-the-dantokpa-market-in-cotonou.html"
+      },
+      {
+        "term": "droits d'écolage",
+        "category": "education",
+        "meaning": "school fees",
+        "source": "https://lanouvelletribune.info/2012/09/le-benin-de-nos-malheurs/"
+      },
+      {
+        "term": "kits scolaires",
+        "category": "education",
+        "meaning": "school supply kits",
+        "source": "https://www.gouv.bj/article/1904/operation-distribution-kits-scolaires-plus-665.000-apprenants-impactes-rentree-scolaire-2022-2023/"
+      },
+      {
+        "term": "ARCH (assurance maladie)",
+        "category": "insurance",
+        "meaning": "state health insurance programme",
+        "source": "https://www.gouv.bj/article/1748/projet-assurance-renforcement-capital-humain-arch-volet-assurance-maladie-active-kandi-banikoara-tchaourou-ouesse/"
+      },
+      {
+        "term": "centre de santé",
+        "category": "healthcare",
+        "meaning": "public health centre with its own pharmacy",
+        "source": "https://www.allodocteurs.fr/le-benin-accelere-son-projet-de-generalisation-de-lassurance-maladie-43224.html"
+      },
+      {
+        "term": "funérailles",
+        "category": "giftsDonations",
+        "meaning": "funeral spending (morgue, ceremonies)",
+        "source": "https://creamo-faseg.univ-lome.tg/wp-content/uploads/2024/01/Depenses-funeraires-et-bien-etre-des-menages-au-Benin.pdf"
+      },
+      {
+        "term": "tontine",
+        "category": "none",
+        "meaning": "rotating savings contribution",
+        "source": "https://beninwebtv.bj/benin-plus-de-600-plaintes-contre-des-tontiniers-des-mandats-darret-delivres"
+      }
+    ],
+    "TG": [
+      {
+        "term": "akoumé",
+        "category": "foodDining",
+        "meaning": "maize-flour paste eaten with sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "foufou",
+        "category": "foodDining",
+        "meaning": "pounded yam/cassava/plantain served with sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "ayimolou",
+        "category": "foodDining",
+        "meaning": "rice and beans cooked together (south)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "watché",
+        "category": "foodDining",
+        "meaning": "rice and beans cooked together (north name, also ouatché)",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "koliko",
+        "category": "foodDining",
+        "meaning": "fried yam chips with chili sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "gboma déssi",
+        "category": "foodDining",
+        "meaning": "local spinach sauce",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "gaou",
+        "category": "foodDining",
+        "meaning": "spicy bean fritters",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "kélé wélé",
+        "category": "foodDining",
+        "meaning": "spicy fried plantain cubes",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "pinon",
+        "category": "foodDining",
+        "meaning": "gari paste with tomato sauce and chicken or beef",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "tchitchinga",
+        "category": "foodDining",
+        "meaning": "meat skewers / brochettes",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "tchoukoutou",
+        "category": "foodDining",
+        "meaning": "sorghum beer",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "sodabi",
+        "category": "foodDining",
+        "meaning": "spirit distilled from palm wine",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "déha",
+        "category": "foodDining",
+        "meaning": "palm wine",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "Youki",
+        "category": "foodDining",
+        "meaning": "local soft-drink brand",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "Pils",
+        "category": "foodDining",
+        "meaning": "local lager beer brand",
+        "source": "https://fr.wikipedia.org/wiki/Cuisine_togolaise"
+      },
+      {
+        "term": "maquis",
+        "category": "foodDining",
+        "meaning": "informal bar-restaurant; local beer about 600 FCFA",
+        "source": "https://www.routard.com/guide/togo/1576/cuisine_et_boissons.htm"
+      },
+      {
+        "term": "zémidjan",
+        "category": "transport",
+        "meaning": "motorbike taxi",
+        "source": "https://wctrs-society.com/wp-content/uploads/abstracts/rio/general/1441.pdf"
+      },
+      {
+        "term": "oléyia",
+        "category": "transport",
+        "meaning": "motorbike taxi (Lomé name)",
+        "source": "https://wctrs-society.com/wp-content/uploads/abstracts/rio/general/1441.pdf"
+      },
+      {
+        "term": "SOTRAL",
+        "category": "transport",
+        "meaning": "Lomé public bus company; tickets 100-300 FCFA",
+        "source": "https://yop.l-frii.com/togo-sotral-le-prix-des-tickets-revu-a-la-baisse-voici-les-nouveaux-tarifs/"
+      },
+      {
+        "term": "Gozem",
+        "category": "transport",
+        "meaning": "ride-hailing app for moto-taxis and cars",
+        "source": "https://www.financialafrik.com/2019/06/24/gozem-franchi-le-cap-des-100000-courses-effectuees-a-lome/"
+      },
+      {
+        "term": "tricycle",
+        "category": "transport",
+        "meaning": "three-wheeler taxi for passengers or luggage",
+        "source": "https://www.financialafrik.com/2019/07/16/gozem-lance-son-service-de-reservation-de-tricycles-passagers-a-lome-et-a-cotonou/"
+      },
+      {
+        "term": "super sans plomb",
+        "category": "transport",
+        "meaning": "petrol at the pump (817 FCFA/l in Sept 2026)",
+        "source": "https://www.koaci.com/article/2026/09/11/togo/societe/togo-hausse-des-prix-du-carburant-le-super-sans-plomb-passe-a-817-f-cfa_200435.html"
+      },
+      {
+        "term": "STM Voyageurs",
+        "category": "travel",
+        "meaning": "intercity coach company (Lomé-Kara)",
+        "source": "https://www.rome2rio.com/s/Accra/Kara"
+      },
+      {
+        "term": "CEET",
+        "category": "utilities",
+        "meaning": "national electricity company",
+        "source": "https://www.afrique-sur7.fr/togo-bonne-nouvelle-pour-les-consommateurs-de-credits-cash-power"
+      },
+      {
+        "term": "Cash Power",
+        "category": "utilities",
+        "meaning": "prepaid electricity credit (CEET)",
+        "source": "https://www.afrique-sur7.fr/togo-bonne-nouvelle-pour-les-consommateurs-de-credits-cash-power"
+      },
+      {
+        "term": "TdE",
+        "category": "utilities",
+        "meaning": "Togolaise des Eaux, water utility bill",
+        "source": "https://www.koaci.com/article/2024/03/12/togo/societe/togo-electricite-des-causes-de-coupure-et-des-reclamations-de-dettes_176451.html"
+      },
+      {
+        "term": "Yas",
+        "category": "utilities",
+        "meaning": "mobile operator, formerly Togocom/Togocel",
+        "source": "https://cio-mag.com/togocom-rejoint-la-team-africa-daxian-et-devient-yas"
+      },
+      {
+        "term": "Moov Africa",
+        "category": "utilities",
+        "meaning": "mobile operator (Moov Africa Togo)",
+        "source": "https://cio-mag.com/togo-une-baisse-des-tarifs-internet-mobile-saluee-par-larcep/"
+      },
+      {
+        "term": "forfait internet",
+        "category": "utilities",
+        "meaning": "mobile data bundle",
+        "source": "https://cio-mag.com/togo-une-baisse-des-tarifs-internet-mobile-saluee-par-larcep/"
+      },
+      {
+        "term": "Assigamé",
+        "category": "shopping",
+        "meaning": "Lomé's main market (grand marché)",
+        "source": "https://www.howwemadeitinafrica.com/togo-an-inside-look-into-asigame-lomes-largest-market/119959/"
+      },
+      {
+        "term": "pagne wax",
+        "category": "shopping",
+        "meaning": "wax-print cloth bought by the piece",
+        "source": "https://www.howwemadeitinafrica.com/togo-an-inside-look-into-asigame-lomes-largest-market/119959/"
+      },
+      {
+        "term": "cahiers",
+        "category": "education",
+        "meaning": "school exercise books, 1000-1500 FCFA a pack",
+        "source": "https://fr.allafrica.com/stories/202509010450.html"
+      },
+      {
+        "term": "fournitures scolaires",
+        "category": "education",
+        "meaning": "school supplies at the rentrée",
+        "source": "https://fr.allafrica.com/stories/202509010450.html"
+      },
+      {
+        "term": "frais de scolarité",
+        "category": "education",
+        "meaning": "school fees (free in public schools since 2021-22)",
+        "source": "https://cameroon-tribune.cm/article.html/41908/fr.html/details_2"
+      },
+      {
+        "term": "CHU Sylvanus Olympio",
+        "category": "healthcare",
+        "meaning": "Lomé's main teaching hospital",
+        "source": "https://afro.who.int/node/6157"
+      },
+      {
+        "term": "pharmacie",
+        "category": "healthcare",
+        "meaning": "pharmacy (vs street medicine)",
+        "source": "https://www.lequotidiendupharmacien.fr/archives/une-lutte-de-tous-les-jours-pour-les-pharmaciens-africains"
+      },
+      {
+        "term": "INAM",
+        "category": "insurance",
+        "meaning": "national health insurance institute",
+        "source": "https://extranet.who.int/cpcd/sites/default/files/public_file_repository/TGO_Togo_Decret-No2023-097-PR-confiant-la-gestions-delAssurance-Maladie-Univeselle-a-linstitut-national-dassurance-maladie-et-a-la-caisse-Nationale-de-Securite-Sociale_2023.pdf"
+      },
+      {
+        "term": "funérailles",
+        "category": "giftsDonations",
+        "meaning": "funerals; in-laws bring drinks, rice, a ram",
+        "source": "https://www.afrik.com/togo-la-fievre-du-samedi-soo"
+      },
+      {
+        "term": "tontine",
+        "category": "none",
+        "meaning": "rotating savings group contribution",
+        "source": "https://globalhopenetwork.org/2026/05/07/we-are-the-tontine/"
+      },
+      {
+        "term": "SMIG",
+        "category": "salary",
+        "meaning": "minimum wage, 35 000 FCFA/month",
+        "source": "https://africarrieres.com/togo/fr/guide/decouvrir/cout-de-la-vie"
+      }
+    ],
+    "NE": [
+      {
+        "term": "dambou",
+        "category": "foodDining",
+        "meaning": "cereal couscous with moringa leaves",
+        "source": "https://en.wikipedia.org/wiki/Nigerien_cuisine"
+      },
+      {
+        "term": "kilishi",
+        "category": "foodDining",
+        "meaning": "dried spiced meat sheets",
+        "source": "https://globalvoices.org/2017/01/14/do-you-know-kilishi-feast-your-eyes-on-this-sahelian-culinary-delight-from-niger/"
+      },
+      {
+        "term": "foura",
+        "category": "foodDining",
+        "meaning": "fermented millet balls crushed with milk",
+        "source": "https://www.worldtravelguide.net/guides/africa/niger/food-and-drink/"
+      },
+      {
+        "term": "shinkafa",
+        "category": "foodDining",
+        "meaning": "pounded rice balls with stew",
+        "source": "https://www.worldtravelguide.net/guides/africa/niger/food-and-drink/"
+      },
+      {
+        "term": "tattabara",
+        "category": "foodDining",
+        "meaning": "grilled whole pigeon",
+        "source": "https://www.worldtravelguide.net/guides/africa/niger/food-and-drink/"
+      },
+      {
+        "term": "deguidegui",
+        "category": "foodDining",
+        "meaning": "tomato stew often with maka pasta",
+        "source": "https://www.worldtravelguide.net/guides/africa/niger/food-and-drink/"
+      },
+      {
+        "term": "maka",
+        "category": "foodDining",
+        "meaning": "spaghetti and macaroni mix",
+        "source": "https://www.worldtravelguide.net/guides/africa/niger/food-and-drink/"
+      },
+      {
+        "term": "brochettes",
+        "category": "foodDining",
+        "meaning": "beef or mutton skewers",
+        "source": "https://www.worldtravelguide.net/guides/africa/niger/food-and-drink/"
+      },
+      {
+        "term": "laban",
+        "category": "foodDining",
+        "meaning": "branded frozen yogurt drink",
+        "source": "https://www.worldtravelguide.net/guides/africa/niger/food-and-drink/"
+      },
+      {
+        "term": "dégué",
+        "category": "foodDining",
+        "meaning": "millet semolina with yogurt",
+        "source": "https://afrique.le360.ma/culture/niger-il-ny-a-pas-dheure-pour-consommer-du-degue-un-dessert-de-mil-et-de-lait_552AXWQIBZDIJPBVT3GYH4DFJQ/"
+      },
+      {
+        "term": "thé",
+        "category": "foodDining",
+        "meaning": "green tea brewed on charcoal (packet, charcoal, mint)",
+        "source": "https://afrique.le360.ma/societe/niger-la-consommation-du-the-cette-tradition-qui-fleure-bon-les-affaires-des-importateurs_4ANQUHSW2NH27DYBICYUIEWMOI/"
+      },
+      {
+        "term": "fada",
+        "category": "foodDining",
+        "meaning": "young men's tea circle; shared tea costs",
+        "source": "https://afrique.le360.ma/societe/niger-la-consommation-du-the-cette-tradition-qui-fleure-bon-les-affaires-des-importateurs_4ANQUHSW2NH27DYBICYUIEWMOI/"
+      },
+      {
+        "term": "bouillie",
+        "category": "foodDining",
+        "meaning": "millet porridge, big seller in Ramadan",
+        "source": "https://afrique.le360.ma/autres-pays/economie/2022/04/10/37612-ramadan-au-niger-proliferation-de-petites-activites-economiques-generatrices-de-revenus/"
+      },
+      {
+        "term": "dattes",
+        "category": "foodDining",
+        "meaning": "dates bought for Ramadan",
+        "source": "https://afrique.le360.ma/autres-pays/economie/2022/04/10/37612-ramadan-au-niger-proliferation-de-petites-activites-economiques-generatrices-de-revenus/"
+      },
+      {
+        "term": "volaille",
+        "category": "foodDining",
+        "meaning": "poultry for Eid, 2500-8000 FCFA",
+        "source": "https://afrique.le360.ma/autres-pays/societe/2022/05/01/37877-niger-la-volaille-la-reine-des-tables-de-laid-el-fitr-37877/"
+      },
+      {
+        "term": "Bière Niger",
+        "category": "foodDining",
+        "meaning": "local beer brand (Braniger)",
+        "source": "https://allbusiness.africa/business/braniger-niger"
+      },
+      {
+        "term": "kabou-kabou",
+        "category": "transport",
+        "meaning": "motorbike taxi",
+        "source": "https://afrique.le360.ma/societe/transport-a-niamey-les-kabou-kabou-ces-deux-roues-a-toute-epreuveen-toute-illegalite_W57GHPFKVZB7HNV55OS5QMMJ3A/"
+      },
+      {
+        "term": "adaidaita",
+        "category": "transport",
+        "meaning": "three-wheeler taxi",
+        "source": "https://afrique.le360.ma/societe/transport-urbain-au-niger-adaidaita-ces-trois-roues-qui-tournent-a-merveille_QZFK36JKIRH5VFOYU64ZTSRF3E/"
+      },
+      {
+        "term": "taxi",
+        "category": "transport",
+        "meaning": "red-and-white shared city taxi",
+        "source": "https://afrique.le360.ma/autres-pays/societe/2021/11/09/35984-video-niger-le-calvaire-des-niameens-avec-le-transport-urbain-35984/"
+      },
+      {
+        "term": "super",
+        "category": "transport",
+        "meaning": "petrol, 499 FCFA/l",
+        "source": "https://burkina24.com/2026/10/10/niger-jai-instruit-le-gouvernement-de-ne-proceder-a-aucune-augmentation-du-prix-du-carburant-a-la-pompe-abdourahamane-tiani/"
+      },
+      {
+        "term": "SNTV",
+        "category": "travel",
+        "meaning": "state intercity bus company",
+        "source": "https://en.wikipedia.org/wiki/Soci%C3%A9t%C3%A9_Nig%C3%A9rienne_de_Transports_de_Voyageurs"
+      },
+      {
+        "term": "Rimbo",
+        "category": "travel",
+        "meaning": "private intercity bus company (RTV)",
+        "source": "https://www.bus-planet.com/bus/bus-africa/Niger-site/operators/index.html"
+      },
+      {
+        "term": "NIGELEC",
+        "category": "utilities",
+        "meaning": "national electricity company",
+        "source": "https://www.africa-energy.com/news-centre/article/niger-nigelec-tenders-prepayment-meters"
+      },
+      {
+        "term": "Nigérienne des Eaux",
+        "category": "utilities",
+        "meaning": "state water utility (replaced SEEN in 2024)",
+        "source": "https://medias24.com/2024/01/06/le-niger-met-fin-a-son-contrat-avec-veolia-et-decide-de-nationaliser-le-secteur-de-leau-officiel/"
+      },
+      {
+        "term": "Airtel",
+        "category": "utilities",
+        "meaning": "mobile operator (largest)",
+        "source": "https://btw.media/en/airtel-niger-pushes-digital-and-financial-inclusion"
+      },
+      {
+        "term": "Zamani",
+        "category": "utilities",
+        "meaning": "mobile operator, ex-Orange Niger",
+        "source": "https://www.digitalbusiness.africa/niger-le-gouvernement-valide-le-rachat-dorange-par-zamani-com"
+      },
+      {
+        "term": "Moov",
+        "category": "utilities",
+        "meaning": "mobile operator (Moov Niger)",
+        "source": "https://www.financialafrik.com/en/2019/07/23/niger-atlantic-bank-and-moov-unite-through-flooz-wallet-bane/"
+      },
+      {
+        "term": "Niger Telecoms",
+        "category": "utilities",
+        "meaning": "state telecom operator",
+        "source": "https://www.osiris.sn/niger-le-gouvernement-de-transition-veut-fusionner-les-operateurs-niger.html"
+      },
+      {
+        "term": "frais de scolarité",
+        "category": "education",
+        "meaning": "school fees (cut 20% in 2025-26)",
+        "source": "https://afrique.le360.ma/afrique-de-louest/niger/niger-baisse-de-20-des-frais-de-scolarite-un-geste-patriotique-qui-rejouit-les-parents-deleves_DFOO3AGIYBBVJFVQU5DWAGVMJY/"
+      },
+      {
+        "term": "fournitures scolaires",
+        "category": "education",
+        "meaning": "notebooks, books, uniform cloth at the rentrée",
+        "source": "https://afrique.le360.ma/societe/niger-apres-la-pluie-les-bonnes-affaires-de-la-rentree-scolaire_5XLB2QEE2ZARTM376DDU6USHTI/"
+      },
+      {
+        "term": "CSI",
+        "category": "healthcare",
+        "meaning": "centre de santé intégré, public health centre",
+        "source": "https://www.unicef.org/niger/fr/recits/les-fonds-cerf-un-soutien-vital-face-aux-catastrophes-naturelles"
+      },
+      {
+        "term": "mouton de Tabaski",
+        "category": "giftsDonations",
+        "meaning": "ram for Eid al-Adha, 75 000-140 000 FCFA",
+        "source": "https://afrique.le360.ma/societe/tabaski-a-niamey-cest-bizarre-malgre-labondance-du-betail-les-clients-sont-rares_D7537VNYGRBDNDM5LW2NKARNKU/"
+      },
+      {
+        "term": "dot",
+        "category": "giftsDonations",
+        "meaning": "bride price paid at marriage",
+        "source": "https://www.afrik.com/mariage-a-tout-prix"
+      },
+      {
+        "term": "baptême",
+        "category": "giftsDonations",
+        "meaning": "naming ceremony a week after birth (bon-cabey / zanan-suuna)",
+        "source": "https://fr.vikidia.org/wiki/C%C3%A9r%C3%A9monies_religieuses_au_Niger"
+      },
+      {
+        "term": "Grand Marché",
+        "category": "shopping",
+        "meaning": "Niamey main market, cloth and goods",
+        "source": "https://www.memoireonline.com/11/19/11273/m_Accessibilite-urbaine-dans-les-villes-du-sahel-Cas-de-la-mobilite-urbaine-de-la-ville-de-Niamey30.html"
+      },
+      {
+        "term": "Katako",
+        "category": "shopping",
+        "meaning": "Niamey market for parts and hardware",
+        "source": "https://www.memoireonline.com/11/19/11273/m_Accessibilite-urbaine-dans-les-villes-du-sahel-Cas-de-la-mobilite-urbaine-de-la-ville-de-Niamey30.html"
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "scenario": "rentrée scolaire (October)",
+      "categories": [
+        "education",
+        "shopping",
+        "transport"
+      ],
+      "note": "supplies, uniforms, tuition and enrolment; moto repair shops also busy",
+      "source": "https://afrique.le360.ma/societe/burkina-faso-ce-nest-pas-encore-la-ruee-vers-les-fournitures-scolaires_B5D53WSEUFE4LABESM5A6JU3VA/"
+    },
+    {
+      "scenario": "rentrée: moto révision",
+      "categories": [
+        "transport"
+      ],
+      "note": "motorbikes serviced before school restarts",
+      "source": "https://afrique.le360.ma/societe/rentree-scolaire-a-ouagadougou-une-aubaine-pour-les-reparateurs-des-deux-roues_PXEJZENCLZEUZIDJKEYYDPNNYM/"
+    },
+    {
+      "scenario": "Tabaski",
+      "categories": [
+        "giftsDonations",
+        "foodDining"
+      ],
+      "note": "ram purchase 85,000-350,000 FCFA in Ouagadougou (2024); poultry/fish if unaffordable",
+      "source": "https://burkina24.com/?p=370620"
+    },
+    {
+      "scenario": "Ramadan / rupture du jeûne",
+      "categories": [
+        "foodDining",
+        "freelance"
+      ],
+      "note": "dates, bouillie, galettes, bissap, ginger, zoom-koom; vendors earn more",
+      "source": "https://afrique.le360.ma/societe/ramadan-au-burkina-faso-les-indispensables-de-la-rupture-du-jeune_I7V3Q6RMUNGEZOAKCALANGWU6M/"
+    },
+    {
+      "scenario": "fin du mois",
+      "categories": [
+        "salary"
+      ],
+      "note": "salaries paid into bank accounts at month end; queues at bank counters",
+      "source": "https://www.memoireonline.com/01/20/11530/m_Enjeux-et-perspectives-de-la-bancarisation-des-agents-de-la-fonction-publique-du-Burkina-Faso20.html"
+    },
+    {
+      "scenario": "saison des pluies",
+      "categories": [
+        "healthcare",
+        "foodDining"
+      ],
+      "note": "malaria peak, mosquito-net purchases; cereal prices can rise",
+      "source": "https://www.afrik.com/paludisme-pluie-de-moustiquaires-sur-le-burkina-faso"
+    },
+    {
+      "scenario": "saison des pluies: yaars inondés",
+      "categories": [
+        "shopping"
+      ],
+      "note": "mud makes neighbourhood markets hard to reach after rain",
+      "source": "https://www.sidwaya.info/?p=146810"
+    },
+    {
+      "scenario": "fêtes de fin d'année",
+      "categories": [
+        "shopping",
+        "giftsDonations"
+      ],
+      "note": "Christmas shopping at Rood-Woko market",
+      "source": "https://fr.allafrica.com/stories/202512240278.html"
+    },
+    {
+      "scenario": "FESPACO",
+      "categories": [
+        "entertainment",
+        "transport"
+      ],
+      "note": "festival tickets; moto parking up to 200 FCFA near venues",
+      "source": "https://burkina24.com/?p=317972"
+    },
+    {
+      "scenario": "8 mars (Journée de la femme)",
+      "categories": [
+        "shopping",
+        "entertainment"
+      ],
+      "note": "commemorative pagne and outings",
+      "source": "https://afrique.le360.ma/culture/commemoration-de-le-journee-du-8-mars-le-pagne-traditionnel-et-le-koko-donda-attendent-les-clients_ITYVSLC2T5D55CHZAEYMABSAGU/"
+    },
+    {
+      "scenario": "funérailles",
+      "categories": [
+        "giftsDonations",
+        "travel"
+      ],
+      "note": "funeral ceremonies gather family across generations, often in the home village",
+      "source": "https://burkina24.com/?p=19998"
+    },
+    {
+      "scenario": "examens (BEPC/BAC)",
+      "categories": [
+        "education"
+      ],
+      "note": "exam registration fees",
+      "source": "https://burkina24.com/?p=166466"
+    },
+    {
+      "scenario": "panne d'unités Cash Power",
+      "categories": [
+        "utilities"
+      ],
+      "note": "prepaid electricity runs out; SOS Cash Power credit announced 2026",
+      "source": "https://www.sidwaya.info/sonabel-desormais-des-credits-cash-power-pour-depanner-les-clients/"
+    },
+    {
+      "scenario": "pénurie de gaz",
+      "categories": [
+        "housing"
+      ],
+      "note": "butane shortage; parallel-market refills cost more",
+      "source": "https://fr.apanews.net/burkina-faso/ouaga-chasse-au-gaz-butane-malgre-une-production-en-hausse/"
+    },
+    {
+      "scenario": "rentrée universitaire / aide FONER",
+      "categories": [
+        "otherIncome",
+        "none"
+      ],
+      "note": "students wait for FONER grant or loan",
+      "source": "https://www.wakatsera.com/burkina-des-etudiants-contre-le-rejet-de-leurs-dossiers-au-foner/"
+    },
+    {
+      "scenario": "Pâquinou (Côte d'Ivoire)",
+      "categories": [
+        "travel",
+        "giftsDonations"
+      ],
+      "note": "Easter return to home villages; coaches packed",
+      "source": "https://www.fratmat.info/article/2633239/culture/paquinou-en-pays-baoule-temps-daffluence-record-dans-les-gares-routieres"
+    },
+    {
+      "scenario": "Magal de Touba (Sénégal)",
+      "categories": [
+        "travel",
+        "giftsDonations"
+      ],
+      "note": "pilgrimage travel and spending",
+      "source": "https://fr.allafrica.com/stories/202608030259.html"
+    },
+    {
+      "scenario": "mariage / dot",
+      "categories": [
+        "giftsDonations"
+      ],
+      "note": "bride price and costly ceremonies weigh on young men",
+      "source": "https://afrique.le360.ma/senegal/societe/2022/04/11/37650-senegal-les-jeunes-lepreuve-de-la-dot-et-des-depenses-faramineuses-du-mariage-37650/"
+    }
+  ],
+  "people": [
+    {
+      "term": "tantie",
+      "meaning": "respectful address for an older or more experienced woman (often a vendor)",
+      "source": "https://panodyssey.com/fr/article/education-et-formation/petit-lexique-franco-africain-en-usage-en-afrique-la-censure-attendra-pmcgcngsgg24"
+    },
+    {
+      "term": "tantie (qui élève une petite nièce)",
+      "meaning": "woman who houses and raises a young relative/maid in Abidjan",
+      "source": "https://shs.cairn.info/revue-travail-genre-et-societes-2009-2-page-53?lang=fr"
+    },
+    {
+      "term": "tantie-bagages",
+      "meaning": "young porters carrying shoppers' purchases at Abidjan markets",
+      "source": "https://fr.allafrica.com/stories/202601120352.html"
+    },
+    {
+      "term": "tonton",
+      "meaning": "uncle; also a non-relative older man regarded with filial affection",
+      "source": "https://fr.wiktionary.org/wiki/tonton"
+    },
+    {
+      "term": "le vieux",
+      "meaning": "father, said with respect (Côte d'Ivoire)",
+      "source": "https://fr.wiktionary.org/wiki/vieux"
+    },
+    {
+      "term": "la vieille",
+      "meaning": "mother, said with respect (Côte d'Ivoire)",
+      "source": "https://fr.wiktionary.org/wiki/vieille"
+    },
+    {
+      "term": "vieux père / vieille mère",
+      "meaning": "elder man/woman; local senses shaped by nouchi",
+      "source": "https://www.diacronia.ro/indexing/details/A27024/pdf"
+    },
+    {
+      "term": "grand frère",
+      "meaning": "older brother; also an older person who guides or has authority over a younger one",
+      "source": "https://fr.wiktionary.org/wiki/grand_fr%C3%A8re"
+    },
+    {
+      "term": "petit frère",
+      "meaning": "younger brother",
+      "source": "https://fr.wiktionary.org/wiki/petit_fr%C3%A8re"
+    },
+    {
+      "term": "go",
+      "meaning": "girl; girlfriend (Côte d'Ivoire)",
+      "source": "https://fr.wiktionary.org/wiki/go"
+    },
+    {
+      "term": "chef / patron",
+      "meaning": "polite address for a superior or customer",
+      "source": "https://panodyssey.com/fr/article/education-et-formation/petit-lexique-franco-africain-en-usage-en-afrique-la-censure-attendra-pmcgcngsgg24"
+    },
+    {
+      "term": "mogo puissant",
+      "meaning": "wealthy, powerful man (Bambara)",
+      "source": "https://panodyssey.com/fr/article/education-et-formation/petit-lexique-franco-africain-en-usage-en-afrique-la-censure-attendra-pmcgcngsgg24"
+    },
+    {
+      "term": "grotto",
+      "meaning": "important, wealthy person (Côte d'Ivoire)",
+      "source": "https://panodyssey.com/fr/article/education-et-formation/petit-lexique-franco-africain-en-usage-en-afrique-la-censure-attendra-pmcgcngsgg24"
+    },
+    {
+      "term": "garibou",
+      "meaning": "Koranic pupil begging in the street (receives alms)",
+      "source": "https://panodyssey.com/fr/article/education-et-formation/petit-lexique-franco-africain-en-usage-en-afrique-la-censure-attendra-pmcgcngsgg24"
+    },
+    {
+      "term": "gaou",
+      "meaning": "naive person who is easily cheated (Côte d'Ivoire)",
+      "source": "https://panodyssey.com/fr/article/education-et-formation/petit-lexique-franco-africain-en-usage-en-afrique-la-censure-attendra-pmcgcngsgg24"
+    },
+    {
+      "term": "dolotière",
+      "meaning": "woman who brews and sells dolo",
+      "source": "https://burkina24.com/?p=177396"
+    },
+    {
+      "term": "bakoroman",
+      "meaning": "young men living on Ouagadougou's streets",
+      "source": "https://www.mshmondes.cnrs.fr/?p=3251"
+    },
+    {
+      "term": "griot",
+      "meaning": "praise-singer given money at ceremonies",
+      "source": "https://burkina24.com/?p=19606"
+    },
+    {
+      "term": "démarcheur",
+      "meaning": "informal housing agent paid a commission (Benin)",
+      "source": "https://lepetitjournal.com/cotonou/installation/se-loger-cotonou-le-guide-complet-387561"
+    }
+  ],
+  "paymentChannels": [
+    {
+      "term": "Orange Money",
+      "country": "BF",
+      "source": "https://www.wakatsera.com/sonabel-payez-desormais-vos-unites-prepayees-delectricite-par-orange-money/"
+    },
+    {
+      "term": "Moov Money",
+      "country": "BF",
+      "source": "https://burkina24.com/2023/07/11/burkina-faso-moov-africa-et-safine-sa-federent-leurs-energies-pour-leurs-clients/"
+    },
+    {
+      "term": "Wave",
+      "country": "BF",
+      "source": "https://burkina24.com/?p=453882"
+    },
+    {
+      "term": "Coris Money",
+      "country": "BF",
+      "source": "https://burkina24.com/?p=194789"
+    },
+    {
+      "term": "Sank Money",
+      "country": "BF",
+      "source": "https://burkina24.com/?p=339525"
+    },
+    {
+      "term": "Telecel Money",
+      "country": "BF",
+      "source": "https://www.osiris.sn/burkina-faso-telecel-se-lance-enfin-sur-le-segment-du-mobile-money.html"
+    },
+    {
+      "term": "Mobicash",
+      "country": "BF",
+      "source": "https://www.wakatsera.com/paiement-dunites-et-factures-sonabel-desormais-possible-avec-mobicash/"
+    },
+    {
+      "term": "Orange Money",
+      "country": "CI",
+      "source": "https://blog.iambeezy.app/fr/payer-facture-cie-tous-moyens-cote-divoire-2026/"
+    },
+    {
+      "term": "MTN MoMo",
+      "country": "CI",
+      "source": "https://fr.apanews.net/cote-divoire/mobile-money-mtn-ci-fixe-a-0-les-frais-de-retrait/"
+    },
+    {
+      "term": "Moov Money (Flooz)",
+      "country": "CI",
+      "source": "https://annuaireci.com/entreprises/moov-agence-flooz-abidjan-cote-divoire/"
+    },
+    {
+      "term": "Wave",
+      "country": "CI",
+      "source": "https://digitalmag.ci/wave-cote-divoire-integre-la-possibilite-de-payer-vos-factures-cie-et-sodeci/"
+    },
+    {
+      "term": "Orange Money",
+      "country": "ML",
+      "source": "https://kolonell.com/en/blog/mobile-money-payment-mali-orange-money-moov-website-2026"
+    },
+    {
+      "term": "Moov Money",
+      "country": "ML",
+      "source": "https://kolonell.com/en/blog/mobile-money-payment-mali-orange-money-moov-website-2026"
+    },
+    {
+      "term": "Sama Money",
+      "country": "ML",
+      "source": "https://www.wearetech.africa/fr/fils/solutions/mali-sama-money-une-solution-fintech-de-transfert-d-argent-a-petits-prix"
+    },
+    {
+      "term": "Wave",
+      "country": "ML",
+      "source": "https://www.findevgateway.org/fr/actualites/transferts-dargent-instantanes-terrapay-et-wave-revolutionnent-les-envois-vers-le-mali"
+    },
+    {
+      "term": "Wave",
+      "country": "SN",
+      "source": "https://osiris.sn/Guerre-Wave-et-Orange-au-Senegal.html"
+    },
+    {
+      "term": "Orange Money",
+      "country": "SN",
+      "source": "https://osiris.sn/transactions-electroniques-wave-contraint-orange-money-a-baisser-drastiquement.html"
+    },
+    {
+      "term": "Free Money",
+      "country": "SN",
+      "source": "https://osiris.sn/lancement-du-kalpe-free-money-entre-retrait-et-depot-gratuits-free-revolutionne.html"
+    },
+    {
+      "term": "MTN MoMo (Mobile Money)",
+      "country": "BJ",
+      "source": "https://www.gouv.bj/article/389/dematerialisation-du-paiement-a-la-sbee-le-service-de-paiement-electronique-des-recharges-de-credits-denergie-electrique-desormais-une-realite/"
+    },
+    {
+      "term": "Moov Money",
+      "country": "BJ",
+      "source": "https://lanouvelletribune.info/2019/10/benin-rechargez-desormais-vos-compteurs-prepayes-sbee-via-moov/"
+    },
+    {
+      "term": "Celtiis Cash",
+      "country": "BJ",
+      "source": "https://benin.bj/en/news/currency-in-benin-a-comprehensive-guide-to-managing-your-money-with-complete-peace-of-mind"
+    },
+    {
+      "term": "Flooz",
+      "country": "TG",
+      "source": "https://www.osiris.sn/mobile-money-flooz-trois-fois-plus-utilise-que-t-money.html"
+    },
+    {
+      "term": "T-Money",
+      "country": "TG",
+      "source": "https://www.osiris.sn/mobile-money-flooz-trois-fois-plus-utilise-que-t-money.html"
+    },
+    {
+      "term": "Mixx by Yas",
+      "country": "TG",
+      "source": "https://www.republicoftogo.com/toutes-les-rubriques/eco-finance/nouvelle-marque-nouvelles-ambitions"
+    },
+    {
+      "term": "Airtel Money",
+      "country": "NE",
+      "source": "https://btw.media/en/airtel-niger-pushes-digital-and-financial-inclusion"
+    },
+    {
+      "term": "Flooz",
+      "country": "NE",
+      "source": "https://www.financialafrik.com/en/2019/07/23/niger-atlantic-bank-and-moov-unite-through-flooz-wallet-bane/"
+    },
+    {
+      "term": "MyNita",
+      "country": "NE",
+      "source": "https://www.wearetech.africa/fr/fils/solutions/niger-mynita-stimule-l-acces-aux-services-financiers-numeriques"
+    },
+    {
+      "term": "Amanata",
+      "country": "NE",
+      "source": "https://afrique.le360.ma/economie/niger-les-paiements-mobiles-gagnent-du-terrain_PL7OIXNLGBGRXEP3WXVIZKGMDI/"
+    },
+    {
+      "term": "Al-Izza",
+      "country": "NE",
+      "source": "https://www.bceao.int/sites/default/files/inline-files/6%20-%20Liste%20Niger_2026.pdf"
+    },
+    {
+      "term": "Amana Transfert",
+      "country": "NE",
+      "source": "https://www.bceao.int/sites/default/files/inline-files/6%20-%20Liste%20Niger_2026.pdf"
+    }
+  ]
+}
