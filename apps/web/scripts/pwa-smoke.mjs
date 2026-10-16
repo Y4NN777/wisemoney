@@ -653,6 +653,13 @@ try {
   await appPage.getByRole("option", { name: "Transport", exact: true }).click();
   await appPage.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
+  // The same note again: its category comes back from history, marked as suggested.
+  await appPage.getByRole("button", { name: "Capture", exact: true }).click();
+  await appPage.getByRole("dialog").getByLabel("Quick entry", { exact: true }).fill("Bread 300");
+  await appPage.getByRole("dialog").getByText("Suggested", { exact: true }).waitFor({ timeout: 30_000 });
+  assert.equal(await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).innerText(), "Food & Dining", "the category chosen for this note was not suggested");
+  await appPage.keyboard.press("Escape");
+  await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();

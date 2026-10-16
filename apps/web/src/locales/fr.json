@@ -400,7 +400,9 @@
         "validAmount": "Entrez un montant valide",
         "selectCategory": "Sélectionnez une catégorie",
         "failed": "Échec de l'enregistrement de la transaction"
-      }
+      },
+      "suggested": "Suggéré",
+      "suggestedWhy": "D’après les catégories que vous avez choisies pour cette note"
     },
     "transfer": {
       "from": "Compte source",

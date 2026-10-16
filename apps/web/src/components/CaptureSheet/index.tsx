@@ -24,6 +24,8 @@ import { amountPlaceholder, currencyLabel, formatMoney, parseMajorUnits } from "
 import { orderCategoriesForDirection, recentAccountIds, recentCategoryIds } from "../../domain/captureOrdering.ts";
 import { recordCoachFormFault } from "../../coach/index.ts";
 import { readQuickEntry, type QuickItem } from "../../capture/quickEntry.ts";
+import { suggestCategory } from "../../domain/categorySuggestion.ts";
+import type { TransactionDisplay } from "../../domain/financialState.ts";
 import { appendDictated } from "../../voice/dictation.ts";
 import DictationButton from "../../voice/DictationButton.tsx";
 import { useDictation } from "../../voice/useDictation.ts";
@@ -142,28 +144,27 @@ function useActiveAccounts() {
   return { snapshot, accounts, categories };
 }
 
-/** Categories ordered for the picker; recency is derived from the last 90 days. */
-function useOrderedCategories(direction: Direction) {
+const RECENT_WINDOW_MS = 90 * 24 * 60 * 60 * 1000;
+const NO_TRANSACTIONS: TransactionDisplay[] = [];
+
+/** The last 90 days of movements, read once for category order, the recent account and suggestions. */
+function useRecentCaptureTransactions(): TransactionDisplay[] {
+  const recentWindow = useMemo(() => ({ start: Date.now() - RECENT_WINDOW_MS, end: Date.now() }), []);
+  return useTransactionsInRange(recentWindow.start, recentWindow.end).data ?? NO_TRANSACTIONS;
+}
+
+/** Categories ordered for the picker by recent use. */
+function useOrderedCategories(direction: Direction, recentTransactions: readonly TransactionDisplay[]) {
   const { categories } = useActiveAccounts();
-  const recentWindow = useMemo(
-    () => ({ start: Date.now() - 90 * 24 * 60 * 60 * 1000, end: Date.now() }),
-    [],
-  );
-  const recentTransactions = useTransactionsInRange(recentWindow.start, recentWindow.end);
   return useMemo(() => orderCategoriesForDirection(
     categories,
     direction,
-    recentCategoryIds(recentTransactions.data ?? []),
-  ), [categories, direction, recentTransactions.data]);
+    recentCategoryIds(recentTransactions),
+  ), [categories, direction, recentTransactions]);
 }
 
-function useRecentAccountId(): string | null {
-  const recentWindow = useMemo(
-    () => ({ start: Date.now() - 90 * 24 * 60 * 60 * 1000, end: Date.now() }),
-    [],
-  );
-  const recentTransactions = useTransactionsInRange(recentWindow.start, recentWindow.end);
-  return useMemo(() => recentAccountIds(recentTransactions.data ?? [], 1)[0] ?? null, [recentTransactions.data]);
+function useRecentAccountId(recentTransactions: readonly TransactionDisplay[]): string | null {
+  return useMemo(() => recentAccountIds(recentTransactions, 1)[0] ?? null, [recentTransactions]);
 }
 
 type QuickUnderstoodProps = {
@@ -270,8 +271,20 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
     onFailure: (failure) => setError(t(failure === "denied" ? "voice.denied" : failure === "silent" ? "voice.silent" : "voice.failed")),
   });
 
-  const orderedCategories = useOrderedCategories(selectedDirection);
-  const recentAccountId = useRecentAccountId();
+  const recentTransactions = useRecentCaptureTransactions();
+  const orderedCategories = useOrderedCategories(selectedDirection, recentTransactions);
+  const recentAccountId = useRecentAccountId(recentTransactions);
+  // A category picked by hand is never replaced by a suggestion.
+  const [categoryChosen, setCategoryChosen] = useState(false);
+  const suggestion = useMemo(
+    () => suggestCategory(note, selectedDirection, recentTransactions, new Set(orderedCategories.map((category) => category.id))),
+    [note, selectedDirection, recentTransactions, orderedCategories],
+  );
+  const suggestedId = suggestion?.categoryId ?? "";
+  useEffect(() => {
+    if (!categoryChosen) setCategoryId(suggestedId);
+  }, [suggestedId, categoryChosen]);
+  const showSuggested = !categoryChosen && suggestedId !== "" && categoryId === suggestedId;
 
   useEffect(() => {
     setSelectedDirection(direction);
@@ -341,12 +354,14 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
       if (next != null) {
         // The next purchase of the same line is ready; the sheet stays open (W1 D2a).
         setSavedFromLine((count) => count + 1);
+        setCategoryChosen(false);
         setCategoryId("");
         applyQuick(quick.slice(next.from));
         return;
       }
       setQuick("");
       setSavedFromLine(0);
+      setCategoryChosen(false);
       onDone();
     } catch {
       setCreatingAccount(false);
@@ -446,8 +461,15 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="capture-sheet-category">{t("capture.transaction.category")}</Label>
-        <Select value={categoryId} onValueChange={setCategoryId}>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="capture-sheet-category">{t("capture.transaction.category")}</Label>
+          {showSuggested && (
+            <span className="rounded-full bg-information-wash px-2 py-0.5 text-xs font-medium text-information" title={t("capture.transaction.suggestedWhy")}>
+              {t("capture.transaction.suggested")}
+            </span>
+          )}
+        </div>
+        <Select value={categoryId} onValueChange={(value) => { setCategoryId(value); setCategoryChosen(true); }}>
           <SelectTrigger id="capture-sheet-category"><SelectValue placeholder={t("capture.transaction.selectCategory")} /></SelectTrigger>
           <SelectContent>
             {orderedCategories.length === 0 ? (
