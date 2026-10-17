@@ -98,8 +98,9 @@ export default defineConfig({
       },
       injectManifest: {
         globPatterns: ["**/*.{js,css,html,wasm}"],
-        // The voice lab's runtime and library are downloaded only by whoever opens /lab/voice.
-        globIgnores: ["ort/**", "**/voice-lab-*.js"],
+        // The voice lab's runtime and library are downloaded only by whoever opens /lab/voice; the push
+        // lab page only by whoever opens /lab/push (ADR-0016 step 1).
+        globIgnores: ["ort/**", "**/voice-lab-*.js", "**/PushLabPage-*.js"],
       },
     }),
   ],

@@ -55,6 +55,12 @@ Research, 2026-10-17:
 1. **Measure delivery first.** A test endpoint sends one empty push to a subscription Y4NN creates on
    the Android phone and the iPhone (installed app); app closed, phone locked, on mobile data, at three
    moments. Record arrival and delay. If delivery fails on either phone, stop and amend this ADR.
+   Built 2026-10-17: `/lab/push`, `api/push/key.ts`, `api/push/test.ts` (`docs/api/push.openapi.yaml`).
+   Vercel environment variables (keys from `node tools/push/generate-vapid-keys.mjs`, never in a file):
+   - `VAPID_PUBLIC_KEY`: uncompressed P-256 point, base64url.
+   - `VAPID_PRIVATE_KEY`: PKCS#8 private key, base64url (sensitive).
+   - `VAPID_SUBJECT`: `https://wisemoney.y7labs.studio`.
+   - `PUSH_TEST_ENABLED`: `1` during the test; remove it afterwards and `/api/push/test` answers 403.
 2. OpenAPI contract `docs/api/push.openapi.yaml` (subscribe, unsubscribe; closed schemas), storage
    choice for subscriptions (to decide: a Vercel Marketplace store or the planned Postgres), THREAT_MODEL
    entry.

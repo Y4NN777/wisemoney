@@ -1,0 +1,121 @@
+openapi: 3.1.0
+info:
+  title: WiseMoney push delivery test
+  version: 0.1.0
+  summary: Step 1 of ADR-0016. Sends one empty Web Push to a subscription the owner creates, to measure delivery.
+  description: |
+    Reference · 2026-10-17 · ADR-0016 step 1.
+    Test only: the daily summary contract (subscribe, unsubscribe) is step 2 and is not described here.
+    Request schemas are closed: any property not listed is rejected with 400.
+    Only the subscription endpoint leaves the phone. Its encryption keys (p256dh, auth) are never sent:
+    the push is empty, so it needs no payload encryption.
+    The push is a POST to the endpoint with `TTL: 600`, `Urgency: high` and
+    `Authorization: vapid t=<ES256 JWT>, k=<public key>` (RFC 8292). The VAPID private key
+    (`VAPID_PRIVATE_KEY`, base64url PKCS#8) never leaves the server.
+servers:
+  - url: /
+paths:
+  /api/push/key:
+    get:
+      operationId: getPushPublicKey
+      summary: The VAPID public key to pass to pushManager.subscribe as applicationServerKey.
+      responses:
+        "200":
+          description: The key, as configured in `VAPID_PUBLIC_KEY`.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PushPublicKey" }
+        "405": { $ref: "#/components/responses/Problem" }
+        "503": { $ref: "#/components/responses/Problem" }
+  /api/push/test:
+    post:
+      operationId: sendTestPush
+      summary: Wait the given delay, then send one empty push to the endpoint.
+      description: |
+        Answers 403 unless `PUSH_TEST_ENABLED` is "1" on the server, so the endpoint can be switched
+        off after the test. Same-origin only. Rate limited per server instance (test endpoint).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PushTestRequest" }
+      responses:
+        "202":
+          description: The push service accepted the push (it usually answers 201).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PushTestAccepted" }
+        "400": { $ref: "#/components/responses/Problem" }
+        "403": { $ref: "#/components/responses/Problem" }
+        "405": { $ref: "#/components/responses/Problem" }
+        "413": { $ref: "#/components/responses/Problem" }
+        "429": { $ref: "#/components/responses/Problem" }
+        "502":
+          description: The push service refused the push or could not be reached.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PushTestFailed" }
+        "503": { $ref: "#/components/responses/Problem" }
+components:
+  schemas:
+    PushPublicKey:
+      type: object
+      additionalProperties: false
+      required: [publicKey]
+      properties:
+        publicKey:
+          type: string
+          pattern: "^[A-Za-z0-9_-]{87}$"
+          description: Uncompressed P-256 point (65 bytes), base64url without padding.
+    PushTestRequest:
+      type: object
+      additionalProperties: false
+      required: [endpoint, delaySeconds]
+      properties:
+        endpoint:
+          type: string
+          format: uri
+          maxLength: 2048
+          description: |
+            PushSubscription.endpoint. https only, default port, no credentials, on a known push
+            service host: fcm.googleapis.com, *.push.apple.com, updates.push.services.mozilla.com,
+            *.notify.windows.com.
+        delaySeconds:
+          type: integer
+          minimum: 0
+          maximum: 45
+          description: Seconds the server waits before sending, so the owner can lock the phone.
+    PushTestAccepted:
+      type: object
+      additionalProperties: false
+      required: [sentAt, pushStatus]
+      properties:
+        sentAt:
+          type: string
+          format: date-time
+          description: When the server sent the push to the push service.
+        pushStatus:
+          type: integer
+          description: The push service's HTTP status, for diagnosis (201 expected).
+    PushTestFailed:
+      type: object
+      additionalProperties: false
+      required: [message]
+      properties:
+        message: { type: string }
+        sentAt: { type: string, format: date-time }
+        pushStatus:
+          type: integer
+          description: The push service's HTTP status when it answered (absent on a network failure).
+    Problem:
+      type: object
+      additionalProperties: false
+      required: [message]
+      properties:
+        message: { type: string }
+  responses:
+    Problem:
+      description: Error with a public message. 503 means the VAPID keys or subject are not configured.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Problem" }

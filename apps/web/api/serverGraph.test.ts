@@ -49,8 +49,8 @@ describe("server function import graph", () => {
 
   it("finds the functions and the shared modules they reach", () => {
     const files = [...graph.keys()].map((file) => relative(webDir, file));
-    expect(entries.map((file) => relative(webDir, file)).sort()).toEqual(["api/help/messages.ts", "api/learn/messages.ts"]);
-    expect(files).toEqual(expect.arrayContaining(["api/help/_helpGateway.ts", "api/learn/_learnGateway.ts", "src/help/context.ts", "src/help/corpus.ts", "src/literacy/corpus.ts", "src/literacy/corpus.en.ts", "src/literacy/corpus.fr.ts"]));
+    expect(entries.map((file) => relative(webDir, file)).sort()).toEqual(["api/help/messages.ts", "api/learn/messages.ts", "api/push/key.ts", "api/push/test.ts"]);
+    expect(files).toEqual(expect.arrayContaining(["api/help/_helpGateway.ts", "api/learn/_learnGateway.ts", "src/help/context.ts", "src/help/corpus.ts", "src/literacy/corpus.ts", "src/literacy/corpus.en.ts", "src/literacy/corpus.fr.ts", "api/push/_pushTest.ts", "api/push/_vapid.ts"]));
   });
 
   it("uses only .js relative specifiers that resolve to a source file, and no alias or package", () => {

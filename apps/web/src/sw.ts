@@ -81,6 +81,19 @@ self.addEventListener("periodicsync", (event) => {
   }
 });
 
+// ADR-0016 STEP 1 HANDLER, TEST ONLY: replaced by the daily summary read from the local reminder queue
+// (step 4). Every push shows a notification inside waitUntil: Safari revokes a subscription after a few
+// pushes that show nothing, and Chrome shows its own generic notice instead.
+const PUSH_TEST_TIME = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
+self.addEventListener("push", (event) => {
+  event.waitUntil(self.registration.showNotification("WiseMoney", {
+    body: `Test de notification reçu à ${PUSH_TEST_TIME.format(new Date())}`,
+    icon: "/icons/wisemoney-icon-192.png",
+    data: { href: "/lab/push", kind: "push-test" },
+  }));
+});
+
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   event.waitUntil((async () => {
