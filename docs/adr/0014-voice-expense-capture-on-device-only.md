@@ -2,11 +2,11 @@
 
 | Field    | Value |
 | -------- | ----- |
-| Status   | Accepted (2026-10-16, Y4NN) |
+| Status   | Accepted (2026-10-16, Y4NN); amended 2026-10-17 (hybrid voice set-up, optional voice pack) |
 | Date     | 2026-10-16 |
 | Diátaxis | Explanation |
 | Source   | Y4NN 2026-10-16 ("mettre voice capture pour éviter d'écrire à chaque fois"; "search to design better this feature"); research below; CONTRACT INV-EGR-01/02; ADR-0003 |
-| Binds    | `apps/web/src/components/CaptureSheet`; `apps/web/src/voice/`; help topic for capture |
+| Binds    | `apps/web/src/components/CaptureSheet`; `apps/web/src/voice/` (set-up in `voice/setup/`); help topic for capture |
 
 ## Context
 
@@ -76,6 +76,40 @@ today, while every phone keyboard already has its own dictation microphone.
   Rejected for now.
 - **In-app on-device microphone only** (this ADR's first draft). Reaches almost
   no phone today. Kept only as point 3.
+
+## Amendment 2026-10-17: a voice set-up that tests what the phone already does
+
+Y4NN 2026-10-17: the voice capture "lacks determinism"; the set-up "should be hybrid: if the phone's
+dictation works well during the test, tell the user there is no need for the pack; otherwise help them
+set it up". The measurement page `/lab/voice` (2026-10-16) showed Whisper tiny q8 running in the browser
+from our origin, about 70 MB downloaded once (desktop measurement).
+
+Decision, replacing the "Rejected for now" of the shipped speech model:
+
+1. **Three engines, in this order:** A, the browser's on-device recognition (point 3 above, unchanged);
+   B, the keyboard's dictation (point 2, unchanged); C, an optional **WiseMoney voice pack** (Whisper
+   tiny, multilingual, q8, through transformers.js and the ONNX runtime served by our origin), which
+   transcribes on the phone. The browser's cloud recognition stays excluded.
+2. **A set-up test decides, per phone.** The user says five fixed phrases
+   (`apps/web/src/voice/setup/voiceSetup.ts`, `TEST_PHRASES`), each read by the quick-line reader. A
+   phrase passes on the exact amount, the expected direction and one note word. An engine qualifies
+   with 4 of 5, and, for A and C, a median of at most 3 s from end of speech to text. The next step is
+   a pure function, `chooseVoiceEngine`.
+3. **The pack is offered only when A and B do not qualify**, and only when the phone can hold and run
+   it (200 MB free, WebAssembly, a microphone); on mobile data or data saver the download asks first;
+   under 2 GB of memory it warns. If the pack does no better, the app says so and offers to delete it.
+4. **The pack is pinned** to one model revision; files are fetched one by one so an interrupted
+   download resumes. It lives in the Cache API and can be deleted from Settings.
+5. **Stored on the phone only:** the engine, each phrase's pass and time, the date, app version,
+   browser and model revision (`localStorage`, `wisemoney.voice.profile.v1`). No audio, no transcript,
+   no amount. The test is offered again when the browser or the pinned revision changes.
+
+Consequences: voice works on more phones without sending speech anywhere; a phone that already
+dictates well downloads nothing. The pack costs about 70 MB once, which the user chooses knowingly.
+Thresholds are initial values, to be calibrated on the first real phones. The phrases are read
+correctly by the reader when written correctly (checked 2026-10-17); the English refund phrase is
+"Refund from Awa …" because the reader reads "Awa paid me back …" as an expense (a reader gap, tracked
+separately).
 
 ## Sources
 

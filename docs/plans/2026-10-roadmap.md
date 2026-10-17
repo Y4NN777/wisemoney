@@ -67,9 +67,11 @@ Done when: the test bank passes its floor, the audit's capture findings are clos
 
 Done when: the model file is a few MB, the floor holds in CI, the sheet suggests a category offline.
 
-### W3 · Voice pack decision
+### W3 · Hybrid voice set-up
 
-After Y2: keep keyboard dictation only, or offer an optional whisper download (about 70 MB measured on desktop) with our vocabulary steering recognition. Amend ADR-0014 either way.
+Decided 2026-10-17 (Y4NN): hybrid; plan in `2026-10-w3-voice.md`. Steps 1–2 (ADR-0014 amendment;
+phrases, scoring, decision, preflight, profile in `apps/web/src/voice/setup/`) done 2026-10-17.
+Next: the set-up sheet with engines A and B, then the pack.
 
 ### W4 · Works on bad networks (audit block B)
 
@@ -87,6 +89,7 @@ Activity opens on the list (export moves to Settings); backup before wipe; goals
 
 - `docs/SRS.md` FR-DE-01 event list is missing the newer event types (W6).
 - `CLAUDE.md` project state predates WiseLearn history, voice and categories (each ship).
+- Reader: English "Awa paid me (back) 12 500" reads as an expense; should be income (W1 follow-up).
 - Lexicon: spot-check the non-Burkina entries; Burkina has few income terms (W2).
 - `.claude/worktrees/` should be git-ignored (next commit).
 - Error refusals are matched on message constants (`REFUSAL`), not codes: keep unless a screen needs codes.
