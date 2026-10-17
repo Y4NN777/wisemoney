@@ -1,6 +1,18 @@
 // Minimal Gemini API client for the teacher (Gemma). Retries 429 and 5xx with the delay Google asks for.
 const MAX_ATTEMPTS = 6;
 const DEFAULT_RETRY_MS = 65_000;
+// A per-minute limit asks for under a minute; a daily quota asks for hours (seen 2026-10-17: 60 768 s).
+// Past this, waiting is pointless: the run stops and resumes when the user runs it again.
+const MAX_RETRY_WAIT_MS = 10 * 60_000;
+
+/** The model's quota is spent for now; carries how long Google asks to wait. */
+export class QuotaExhausted extends Error {
+  constructor(model, delayMs) {
+    super(`${model}: quota reached, Google asks to wait about ${Math.ceil(delayMs / 3_600_000)} h`);
+    this.model = model;
+    this.delayMs = delayMs;
+  }
+}
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
@@ -41,6 +53,7 @@ export function geminiClient({ apiKey, pauseMs }) {
       const detail = await response.text();
       if ((response.status === 429 || response.status >= 500) && attempt < MAX_ATTEMPTS) {
         const delay = retryDelayMs(detail) ?? DEFAULT_RETRY_MS;
+        if (delay > MAX_RETRY_WAIT_MS) throw new QuotaExhausted(model, delay);
         console.warn(`HTTP ${response.status}, waiting ${Math.round(delay / 1000)} s (attempt ${attempt} of ${MAX_ATTEMPTS})`);
         await sleep(delay);
         continue;

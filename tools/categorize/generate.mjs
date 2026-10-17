@@ -25,7 +25,14 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } fr
 import { parseArgs } from "node:util";
 import { CATEGORIES, CONFUSABLE_PAIRS, COUNTRIES, GUIDE_VERSION, KEYS, NONE, PERSONAS, guideText } from "./labelingGuide.mjs";
 import { augment, contextFor, dropNearDuplicates, firstJsonArray, normalizeText, pick, pickWeighted, seededRandom, sha256, shuffled, splitOf, stats } from "./lib.mjs";
-import { geminiClient } from "./gemini.mjs";
+import { QuotaExhausted, geminiClient } from "./gemini.mjs";
+
+/** A spent daily quota ends the run: every later request would fail the same way. Work done is kept. */
+function stopIfQuota(error) {
+  if (!(error instanceof QuotaExhausted)) return;
+  console.error(`Stopped: ${error.message}. Everything done so far is saved; run the same command again then, it resumes.`);
+  process.exit(2);
+}
 
 const DEFAULT_GENERATOR = "gemini-3.8-flash";
 const DEFAULT_LABELER_A = "gemma-4-26b-a4b-it";
@@ -156,6 +163,7 @@ if (runs("generate")) {
         try {
           phrases = firstJsonArray(await gemini.ask(GENERATOR, prompt, 1)).map(cleanText).filter(usable);
         } catch (error) {
+          stopIfQuota(error);
           console.warn(`skipped ${request}: ${error.message}`);
           continue;
         }
@@ -187,6 +195,7 @@ if (runs("contrast")) {
           .map((item) => ({ text: cleanText(item?.text), key: item?.key }))
           .filter((item) => usable(item.text) && (item.key === left || item.key === right));
       } catch (error) {
+        stopIfQuota(error);
         console.warn(`skipped ${request}: ${error.message}`);
         continue;
       }
@@ -212,6 +221,7 @@ if (runs("label")) {
       try {
         labels = firstJsonArray(await gemini.ask(LABELERS[pass], labelPrompt(batch.map(([, text]) => text)), 0));
       } catch (error) {
+        stopIfQuota(error);
         console.warn(`label ${pass} at ${index}: ${error.message}, rerun to retry`);
         continue;
       }
