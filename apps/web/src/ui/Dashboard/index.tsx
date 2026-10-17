@@ -28,6 +28,7 @@ import FirstSessionFlow from "../../firstSession/FirstSessionFlow.tsx";
 import { useFirstSessionState } from "../../firstSession/hooks.ts";
 import { firstSessionEntryStep, selectFirstSessionStep, type FirstSessionStep } from "../../firstSession/firstSession.ts";
 import { comparePeriodAmounts } from "./periodComparison.ts";
+import { homeNudge } from "./homeNudge.ts";
 import {
   selectAccountDistribution,
   selectAccountOperations,
@@ -512,6 +513,7 @@ export default function Dashboard() {
   const firstSessionStart = useRef<FirstSessionStep | null>(null);
   const defaultAccountNames = [...new Set([...i18n.languages.map((language) => t("captureSheet.cashName", { lng: language })), "Cash", "Espèces"])];
   const operationsQuery = useFinancialOperations({ enabled: hasMovementQuery.data === true });
+  const openCaptureSheet = useOpenCaptureSheet();
   const historicalQuery = useHistoricalState(selectedYear, selectedMonth);
 
   const { data: snapshot, isLoading, error } = isCurrent ? currentQuery : historicalQuery;
@@ -637,6 +639,8 @@ export default function Dashboard() {
         accounts={currentQuery.data.accounts.filter((account) => account.isActive)}
         selectedAccountId={effectiveSelectedAccountId}
         onAccountChange={setSelectedAccountId}
+        nudge={isCurrent && currentQuery.data != null ? homeNudge(currentQuery.data, operationsQuery.data ?? [], Date.now()) : null}
+        onAddMovement={() => openCaptureSheet("transaction", "expense")}
       />
 
       <DashboardContent

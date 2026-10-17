@@ -307,7 +307,22 @@
       "October",
       "November",
       "December"
-    ]
+    ],
+    "nudge": {
+      "due": "{{label}}: due today",
+      "overdue": "{{label}}: overdue",
+      "more_one": "and {{count}} more",
+      "more_other": "and {{count}} more",
+      "receivableToday": "{{party}} owes you {{amount}} today",
+      "receivableIn_one": "{{party}} owes you {{amount}} tomorrow",
+      "receivableIn_other": "{{party}} owes you {{amount}} in {{count}} days",
+      "receivableLate": "{{party}} was due to pay you {{amount}}",
+      "nothingToday": "Nothing recorded today",
+      "today_one": "Today: {{count}} expense, {{amount}}",
+      "today_other": "Today: {{count}} expenses, {{amount}}",
+      "view": "View",
+      "add": "Add"
+    }
   },
   "operations": {
     "title": "Activity",

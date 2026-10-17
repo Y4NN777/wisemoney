@@ -307,7 +307,22 @@
       "Octobre",
       "Novembre",
       "Décembre"
-    ]
+    ],
+    "nudge": {
+      "due": "{{label}} : à payer aujourd’hui",
+      "overdue": "{{label}} : en retard",
+      "more_one": "et {{count}} autre",
+      "more_other": "et {{count}} autres",
+      "receivableToday": "{{party}} doit vous rendre {{amount}} aujourd’hui",
+      "receivableIn_one": "{{party}} doit vous rendre {{amount}} demain",
+      "receivableIn_other": "{{party}} doit vous rendre {{amount}} dans {{count}} jours",
+      "receivableLate": "{{party}} devait vous rendre {{amount}}",
+      "nothingToday": "Rien noté aujourd’hui",
+      "today_one": "Aujourd’hui : {{count}} dépense, {{amount}}",
+      "today_other": "Aujourd’hui : {{count}} dépenses, {{amount}}",
+      "view": "Voir",
+      "add": "Ajouter"
+    }
   },
   "operations": {
     "title": "Activité",

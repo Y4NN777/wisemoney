@@ -318,7 +318,7 @@ function advanceRecurringDate(
   return date.getTime();
 }
 
-function nextRecurringDue(
+export function nextRecurringDue(
   frequency: "weekly" | "monthly" | "yearly",
   startDate: number,
   lastRealised: number | null,

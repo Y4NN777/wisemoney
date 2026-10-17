@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 
+import { Link } from "@tanstack/react-router";
 import { Button } from "../../components/ui/button.tsx";
+import type { HomeNudge } from "./homeNudge.ts";
+import { formatMoney } from "./format.ts";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
 import {
@@ -26,6 +29,8 @@ export function DashboardPeriodHeader({
   accounts,
   selectedAccountId,
   onAccountChange,
+  nudge = null,
+  onAddMovement,
 }: {
   selectedYear: number;
   selectedMonth: number;
@@ -36,6 +41,9 @@ export function DashboardPeriodHeader({
   accounts: FinancialStateSnapshot["accounts"];
   selectedAccountId: string;
   onAccountChange: (accountId: string) => void;
+  /** The line under the greeting (G1); shown on the current month only. */
+  nudge?: HomeNudge | null;
+  onAddMovement: () => void;
 }) {
   const { t } = useTranslation();
   const [today, setToday] = useState(() => new Date());
@@ -83,6 +91,7 @@ export function DashboardPeriodHeader({
         <h1 className="text-base font-semibold tracking-tight sm:text-xl">
           {t(`dashboard.greeting.${greetingTime}`)}
         </h1>
+        {nudge != null && <NudgeLine nudge={nudge} onAddMovement={onAddMovement} />}
       </div>
 
       <nav aria-label={t("dashboard.dashboardControls")} className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2 self-end sm:w-auto sm:self-auto">
@@ -113,5 +122,38 @@ export function DashboardPeriodHeader({
         </div>
       </nav>
     </header>
+  );
+}
+
+/** One line from the user's data and one action (G1); the rule lives in homeNudge.ts. */
+function NudgeLine({ nudge, onAddMovement }: { nudge: HomeNudge; onAddMovement: () => void }) {
+  const { t } = useTranslation();
+  const action = "inline-flex min-h-11 items-center font-medium text-primary underline underline-offset-4";
+  let text: string;
+  let cta: React.ReactNode;
+  if (nudge.kind === "due") {
+    text = t(nudge.overdue ? "dashboard.nudge.overdue" : "dashboard.nudge.due", { label: nudge.label });
+    if (nudge.more > 0) text = `${text} ${t("dashboard.nudge.more", { count: nudge.more })}`;
+    cta = <Link to={nudge.href} className={action}>{t("dashboard.nudge.view")}</Link>;
+  } else if (nudge.kind === "receivable") {
+    const amount = formatMoney(nudge.amount.minorUnits, nudge.amount.currency);
+    text = nudge.days < 0
+      ? t("dashboard.nudge.receivableLate", { party: nudge.party, amount })
+      : nudge.days === 0
+        ? t("dashboard.nudge.receivableToday", { party: nudge.party, amount })
+        : t("dashboard.nudge.receivableIn", { party: nudge.party, amount, count: nudge.days });
+    cta = <Link to="/debts" className={action}>{t("dashboard.nudge.view")}</Link>;
+  } else if (nudge.kind === "nothingToday") {
+    text = t("dashboard.nudge.nothingToday");
+    cta = <button type="button" className={action} onClick={onAddMovement}>{t("dashboard.nudge.add")}</button>;
+  } else {
+    text = t("dashboard.nudge.today", { count: nudge.count, amount: formatMoney(nudge.spent.minorUnits, nudge.spent.currency) });
+    cta = <Link to="/operations" className={action}>{t("dashboard.nudge.view")}</Link>;
+  }
+  return (
+    <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+      <span>{text}</span>
+      {cta}
+    </p>
   );
 }
