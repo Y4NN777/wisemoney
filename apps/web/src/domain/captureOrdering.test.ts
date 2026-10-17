@@ -29,6 +29,11 @@ describe("orderCategoriesForDirection", () => {
     expect(ordered.map((c) => c.name)).toEqual(["Freelance", "Salary", "Food & Dining", "Housing", "Side gigs", "Transport"]);
   });
 
+  it("keeps income categories first in income mode even after recent expense categories", () => {
+    const ordered = orderCategoriesForDirection(defaults, "income", ["c-transport", "c-salary"]);
+    expect(ordered.slice(0, 3).map((c) => c.name)).toEqual(["Salary", "Freelance", "Transport"]);
+  });
+
   it("puts recently used categories first", () => {
     const ordered = orderCategoriesForDirection(defaults, "expense", ["c-transport", "c-food"]);
     expect(ordered.map((c) => c.name)).toEqual(["Transport", "Food & Dining", "Housing", "Side gigs"]);

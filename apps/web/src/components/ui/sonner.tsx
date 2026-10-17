@@ -14,6 +14,9 @@ function Toaster({ ...props }: ToasterProps) {
   return (
     <Sonner
       theme={resolvedTheme}
+      // At the top: at the bottom they covered the + button, the bottom bar and the sheet's Ajouter
+      // for about four seconds after each save (audit 2026-10-16).
+      position="top-center"
       className="toaster group"
       style={{ "--normal-bg": "var(--card)", "--normal-text": "var(--foreground)", "--normal-border": "var(--border)" } as CSSProperties}
       {...props}

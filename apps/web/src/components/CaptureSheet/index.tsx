@@ -25,6 +25,7 @@ import { orderCategoriesForDirection, recentAccountIds, recentCategoryIds } from
 import { recordCoachFormFault } from "../../coach/index.ts";
 import { readQuickEntry, type QuickItem } from "../../capture/quickEntry.ts";
 import { suggestCategory } from "../../domain/categorySuggestion.ts";
+import { useKeyboardInset } from "../../lib/keyboardInset.ts";
 import { frequentPurchases, quickLineExample } from "../../domain/frequentPurchases.ts";
 import type { TransactionDisplay } from "../../domain/financialState.ts";
 import { appendDictated } from "../../voice/dictation.ts";
@@ -73,6 +74,12 @@ function isoDateToTimestamp(value: string): number {
   return new Date(`${value}T12:00:00`).getTime();
 }
 
+/** Mounted with the open sheet: keeps --keyboard-inset current so the sheet sits above the keyboard. */
+function KeyboardInsetWatcher() {
+  useKeyboardInset();
+  return null;
+}
+
 export default function CaptureSheet() {
   const { t } = useTranslation();
   const location = useLocation();
@@ -107,9 +114,10 @@ export default function CaptureSheet() {
     <Dialog open={open} onOpenChange={(nextOpen) => { if (!nextOpen) closeSheet(); }}>
       {open && (
         <DialogContent
-          className="inset-x-0 bottom-0 top-auto max-h-[92dvh] w-full translate-x-0 translate-y-0 rounded-t-2xl rounded-b-none border-b-0 p-4 pt-2 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:bottom-auto sm:left-[50%] sm:top-[50%] sm:w-[calc(100%-2rem)] sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:rounded-b-none sm:border-b sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-95"
+          className="inset-x-0 bottom-[var(--keyboard-inset,0px)] top-auto max-h-[calc(92dvh-var(--keyboard-inset,0px))] w-full translate-x-0 translate-y-0 rounded-t-2xl rounded-b-none border-b-0 p-4 pt-2 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:bottom-auto sm:left-[50%] sm:top-[50%] sm:w-[calc(100%-2rem)] sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:rounded-b-none sm:border-b sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-95"
           aria-describedby={undefined}
         >
+          <KeyboardInsetWatcher />
           {/* Visible title row: the close button lives here, clear of the tab list. */}
           <DialogHeader className="flex flex-row items-center pr-10 pb-2 pt-1">
             <DialogTitle className="text-sm font-semibold">{t("capture.heading")}</DialogTitle>
@@ -176,6 +184,8 @@ type QuickUnderstoodProps = {
   items: readonly QuickItem[];
   /** The direction that will be recorded: said in the line, or chosen with the buttons. */
   direction: Direction;
+  /** The account the movement goes to, named when there is a choice (audit: it was chosen silently). */
+  accountName: string | null;
   savedFromLine: number;
   formatAmount: (major: string) => string;
   onUseUnitPrice: (unitPrice: string) => void;
@@ -186,7 +196,7 @@ type QuickUnderstoodProps = {
  * A doubtful reading says so; a unit price can be counted instead of the total; further purchases
  * of the same line are listed and come next (W1 plan, step 2).
  */
-function QuickUnderstood({ id, listening, items, direction, savedFromLine, formatAmount, onUseUnitPrice }: QuickUnderstoodProps) {
+function QuickUnderstood({ id, listening, items, direction, accountName, savedFromLine, formatAmount, onUseUnitPrice }: QuickUnderstoodProps) {
   const { t } = useTranslation();
   const [first, ...rest] = items;
   let body: React.ReactNode;
@@ -203,6 +213,7 @@ function QuickUnderstood({ id, listening, items, direction, savedFromLine, forma
     const parts = [amount];
     parts.push(t(`capture.transaction.${direction}`));
     if (first.note.length > 0) parts.push(t("capture.quick.noteQuoted", { note: first.note }));
+    if (accountName != null) parts.push(accountName);
     const unitPrice = first.reading?.how === "quantity" ? first.alternatives[0] : undefined;
     body = (
       <>
@@ -449,6 +460,7 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
           listening={dictation.listening}
           items={quickItems}
           direction={selectedDirection}
+          accountName={accounts.length > 1 ? selectedAccount?.name ?? null : null}
           savedFromLine={savedFromLine}
           formatAmount={majorToMoney}
           onUseUnitPrice={(unitPrice) => { setAmountStr(unitPrice); quickAmount.current = unitPrice; }}
@@ -567,9 +579,12 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
 
       {error != null && <p role="alert" className="text-sm text-destructive">{error}</p>}
 
-      <Button type="submit" disabled={recordTx.isPending || creatingAccount} className="min-h-12 w-full">
-        {recordTx.isPending || creatingAccount ? t("capture.transaction.submitting") : t("captureSheet.add")}
-      </Button>
+      {/* Pinned to the bottom of the visible sheet, so Ajouter stays above the keyboard. */}
+      <div className="sticky bottom-0 -mx-4 bg-card px-4 pb-1 pt-2">
+        <Button type="submit" disabled={recordTx.isPending || creatingAccount} className="min-h-12 w-full">
+          {recordTx.isPending || creatingAccount ? t("capture.transaction.submitting") : t("captureSheet.add")}
+        </Button>
+      </div>
     </form>
   );
 }

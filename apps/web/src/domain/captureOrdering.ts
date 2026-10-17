@@ -74,14 +74,16 @@ export function orderCategoriesForDirection(
   return categories
     .filter((category) => !(category.isArchived || (direction === "expense" && isIncomeHintCategory(category))))
     .sort((left, right) => {
-      const leftRecent = recentIndex.get(left.id) ?? Number.MAX_SAFE_INTEGER;
-      const rightRecent = recentIndex.get(right.id) ?? Number.MAX_SAFE_INTEGER;
-      if (leftRecent !== rightRecent) return leftRecent - rightRecent;
+      // In Revenu, income categories come first even when expense categories were used more
+      // recently (audit 2026-10-16: Salaire was 9th of 18); recency orders within each group.
       if (direction === "income") {
         const leftIncome = isIncomeHintCategory(left) ? 0 : 1;
         const rightIncome = isIncomeHintCategory(right) ? 0 : 1;
         if (leftIncome !== rightIncome) return leftIncome - rightIncome;
       }
+      const leftRecent = recentIndex.get(left.id) ?? Number.MAX_SAFE_INTEGER;
+      const rightRecent = recentIndex.get(right.id) ?? Number.MAX_SAFE_INTEGER;
+      if (leftRecent !== rightRecent) return leftRecent - rightRecent;
       return left.name.localeCompare(right.name);
     });
 }
