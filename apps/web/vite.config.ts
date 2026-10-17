@@ -2,37 +2,43 @@ import { defaultClientConditions, defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
-import { createReadStream, readFileSync, realpathSync } from "node:fs";
+import { createReadStream, readFileSync, realpathSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Plugin } from "vite";
 
-// The ONNX runtime files transformers.js loads for the voice lab (ADR-0014 follow-up), served from
-// our own origin under /ort/ instead of the library's default CDN. Never precached: about 27 MB.
+// The ONNX runtime files transformers.js loads for the voice pack (ADR-0014 amendment 2026-10-17),
+// served from our own origin under /ort/<version>/ instead of the library's default CDN. The version
+// in the path keeps a pack downloaded on one runtime from being run by another. Never precached.
 const ORT_FILES = [
   "ort-wasm-simd-threaded.asyncify.mjs",
   "ort-wasm-simd-threaded.asyncify.wasm",
   "ort-wasm-simd-threaded.mjs",
   "ort-wasm-simd-threaded.wasm",
 ];
+// pnpm keeps onnxruntime-web next to transformers.js, not in this package's node_modules.
+const ORT_DIST = path.resolve(
+  realpathSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "node_modules/@huggingface/transformers")),
+  "../../onnxruntime-web/dist",
+);
+const ORT_VERSION = (JSON.parse(readFileSync(path.join(ORT_DIST, "../package.json"), "utf8")) as { version: string }).version;
+const ORT_SIZES = Object.fromEntries(ORT_FILES.map((file) => [file, statSync(path.join(ORT_DIST, file)).size]));
 
 function onnxRuntimeAssets(): Plugin {
-  // pnpm keeps onnxruntime-web next to transformers.js, not in this package's node_modules.
-  const transformersDir = realpathSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "node_modules/@huggingface/transformers"));
-  const ortDist = path.resolve(transformersDir, "../../onnxruntime-web/dist");
+  const prefix = `/ort/${ORT_VERSION}/`;
   return {
     name: "wisemoney-onnx-runtime-assets",
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        const file = req.url?.startsWith("/ort/") ? req.url.slice("/ort/".length).split("?")[0] : undefined;
+        const file = req.url?.startsWith(prefix) ? req.url.slice(prefix.length).split("?")[0] : undefined;
         if (file == null || !ORT_FILES.includes(file)) return next();
         res.setHeader("Content-Type", file.endsWith(".wasm") ? "application/wasm" : "text/javascript");
-        createReadStream(path.join(ortDist, file)).pipe(res);
+        createReadStream(path.join(ORT_DIST, file)).pipe(res);
       });
     },
     generateBundle() {
       for (const file of ORT_FILES) {
-        this.emitFile({ type: "asset", fileName: `ort/${file}`, source: readFileSync(path.join(ortDist, file)) });
+        this.emitFile({ type: "asset", fileName: `ort/${ORT_VERSION}/${file}`, source: readFileSync(path.join(ORT_DIST, file)) });
       }
     },
   };
@@ -40,6 +46,10 @@ function onnxRuntimeAssets(): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    __ORT_VERSION__: JSON.stringify(ORT_VERSION),
+    __ORT_SIZES__: JSON.stringify(ORT_SIZES),
+  },
   plugins: [
     tailwindcss(),
     react(),
@@ -98,9 +108,10 @@ export default defineConfig({
       },
       injectManifest: {
         globPatterns: ["**/*.{js,css,html,wasm}"],
-        // The voice lab's runtime and library are downloaded only by whoever opens /lab/voice; the push
-        // lab page only by whoever opens /lab/push (ADR-0016 step 1).
-        globIgnores: ["ort/**", "**/voice-lab-*.js", "**/VoiceLabPage-*.js", "**/PushLabPage-*.js"],
+        // The voice pack's runtime and library are downloaded only by whoever installs the pack (the
+        // service worker keeps its code for offline use then); the push lab page only by whoever opens
+        // /lab/push (ADR-0016 step 1).
+        globIgnores: ["ort/**", "**/voice-pack-*.js", "**/PushLabPage-*.js"],
       },
     }),
   ],
@@ -114,7 +125,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes("node_modules")) return undefined;
-          if (id.includes("/@huggingface/") || id.includes("/onnxruntime-")) return "voice-lab";
+          if (id.includes("/@huggingface/") || id.includes("/onnxruntime-")) return "voice-pack";
           if (id.includes("/write-excel-file/") || id.includes("/fflate/")) return "excel-export";
           if (id.includes("/@tanstack/")) return "data-router-vendor";
           if (id.includes("/hash-wasm/") || id.includes("/@simplewebauthn/") || id.includes("/dexie/")) {

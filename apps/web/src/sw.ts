@@ -30,13 +30,24 @@ registerRoute(new NavigationRoute(createHandlerBoundToURL("/index.html"), {
   denylist: [/^\/api\//],
 }));
 
-// Argon2id comes from hash-wasm and must remain usable for offline unlock.
+// Argon2id comes from hash-wasm and must remain usable for offline unlock. The voice pack's runtime
+// under /ort/ is kept by the pack itself (src/voice/pack/packStore.ts), not a second time here.
 registerRoute(
-  ({ url }) => url.pathname.endsWith(".wasm"),
+  ({ url }) => url.pathname.endsWith(".wasm") && !url.pathname.startsWith("/ort/"),
   new CacheFirst({
     cacheName: "wasm-cache",
     // Workbox's optional callback declarations predate exactOptionalPropertyTypes.
     plugins: [new ExpirationPlugin({ maxAgeSeconds: 60 * 60 * 24 * 30 }) as unknown as CacheStrategyPlugin],
+  }),
+);
+
+// The voice pack's code is not precached (most phones never install the pack); once loaded it is
+// kept so the pack works offline. Two entries: the current build's file and the one before it.
+registerRoute(
+  ({ url }) => url.origin === self.location.origin && /^\/assets\/voice-pack-[^/]+\.js$/.test(url.pathname),
+  new CacheFirst({
+    cacheName: "voice-pack-code",
+    plugins: [new ExpirationPlugin({ maxEntries: 2 }) as unknown as CacheStrategyPlugin],
   }),
 );
 

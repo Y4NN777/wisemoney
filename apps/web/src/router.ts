@@ -15,14 +15,12 @@ import { Route as plannedExpensesRoute } from "./routes/plannedExpenses.tsx";
 import { Route as operationsRoute } from "./routes/operations.tsx";
 import { Route as helpRoute } from "./routes/help.tsx";
 import { Route as updatesRoute } from "./routes/updates.tsx";
-import { Route as labVoiceRoute } from "./routes/labVoice.tsx";
 import { Route as labPushRoute } from "./routes/labPush.tsx";
 import AppRouteError from "./errors/AppRouteError.tsx";
 
 const routeTree = rootRoute.addChildren([
   helpRoute,
   updatesRoute,
-  labVoiceRoute,
   labPushRoute,
   vaultLayoutRoute.addChildren([
     indexRoute,

@@ -683,6 +683,13 @@ try {
   }
   await appPage.getByText("Your keyboard’s microphone understands you well", { exact: true }).waitFor();
   await appPage.getByText("4 of 5 phrases understood.", { exact: true }).waitFor();
+  // With no keyboard microphone either, the set-up ends on typing. The voice pack is not offered yet
+  // (PACK_OFFERED, src/voice/pack/packFiles.ts), so nothing is downloaded.
+  await appPage.getByRole("button", { name: "Test again", exact: true }).click();
+  await appPage.getByRole("button", { name: "My keyboard has no microphone", exact: true }).click();
+  await appPage.getByText("Dictation is not reliable enough here", { exact: true }).waitFor();
+  assert.equal(await appPage.getByText("Try the WiseMoney voice pack?", { exact: true }).count(), 0, "the voice pack is offered before it is ready");
+  assert.equal(await appPage.evaluate(async () => (await caches.keys()).includes("transformers-cache")), false, "the voice set-up created a pack store without a download");
   await appPage.getByRole("link", { name: "Settings", exact: true }).first().click();
   await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();

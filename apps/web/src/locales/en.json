@@ -8,7 +8,10 @@
     "offline": "Dictation needs a connection.",
     "silent": "Dictation doesn’t work here. Use your keyboard’s microphone.",
     "denied": "Microphone access denied.",
-    "failed": "Dictation didn’t work. Try again."
+    "failed": "Dictation didn’t work. Try again.",
+    "packFailed": "The voice pack did not understand. Try again or type the line.",
+    "packMissing": "The voice pack is no longer on this phone. Settings › Voice to get it back.",
+    "transcribing": "Transcribing…"
   },
   "voiceSetup": {
     "checking": "Checking this phone…",
@@ -21,7 +24,8 @@
     "retest": "Test again",
     "engine": {
       "device": "WiseMoney microphone",
-      "keyboard": "Keyboard microphone"
+      "keyboard": "Keyboard microphone",
+      "pack": "WiseMoney voice pack"
     },
     "progress": "Phrase {{current}} of {{total}}",
     "say": "Say:",
@@ -53,6 +57,10 @@
       "typing": {
         "title": "Dictation is not reliable enough here",
         "body": "Type the quick line: “fuel 2500” is enough."
+      },
+      "pack": {
+        "title": "The voice pack understands you well",
+        "body": "Tap the microphone in the quick line. Everything happens on this phone, even offline."
       }
     },
     "permission": {
@@ -64,7 +72,35 @@
       "keyboard": {
         "android": "No microphone on the keyboard? Gboard settings › Voice typing: turn it on, then allow the microphone.",
         "ios": "No microphone on the keyboard? Settings › General › Keyboard › Enable Dictation."
-      }
+      },
+      "deniedOther": "Allow the microphone for WiseMoney in your browser settings, then try again."
+    },
+    "retestNeeded": "The phone or the pack has changed: test again.",
+    "pack": {
+      "offerTitle": "Try the WiseMoney voice pack?",
+      "offerBody": "Your phone and your keyboard do not understand well enough. The pack recognises speech on the phone.",
+      "size": "{{size}} MB to download, once.",
+      "private": "Your voice never leaves the phone.",
+      "wifi": "You are on mobile data: Wi-Fi is better.",
+      "slow": "This phone has little memory: the pack may be slow.",
+      "download": "Download ({{size}} MB)",
+      "decline": "No thanks",
+      "downloading": "Downloading the voice pack",
+      "progress": "{{loaded}} MB of {{total}} MB",
+      "pause": "Pause",
+      "resume": "Resume",
+      "failure": {
+        "paused": "Paused. Resume any time: the download continues where it stopped.",
+        "network": "Connection lost. Resume: the download continues where it stopped.",
+        "corrupt": "A file arrived damaged. Resume to download it again.",
+        "storage": "Not enough space left on this phone."
+      },
+      "preparing": "Preparing the voice pack…",
+      "recording": "Recording… tap the square to finish.",
+      "transcribing": "Transcribing on the phone…",
+      "noBetter": "The pack does no better here. Delete it to free space.",
+      "delete": "Delete the voice pack ({{size}} MB)",
+      "didNotStart": "The pack does not start on this phone. Delete it to free space."
     }
   },
   "app": {

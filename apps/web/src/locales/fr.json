@@ -8,7 +8,10 @@
     "offline": "La dictée a besoin d’une connexion.",
     "silent": "La dictée ne marche pas ici. Utilisez le micro de votre clavier.",
     "denied": "Accès au micro refusé.",
-    "failed": "La dictée n’a pas marché. Réessayez."
+    "failed": "La dictée n’a pas marché. Réessayez.",
+    "packFailed": "Le pack voix n’a pas compris. Réessayez ou tapez la ligne.",
+    "packMissing": "Le pack voix n’est plus sur ce téléphone. Paramètres › Voix pour le retrouver.",
+    "transcribing": "Je transcris…"
   },
   "voiceSetup": {
     "checking": "Vérification de ce téléphone…",
@@ -21,7 +24,8 @@
     "retest": "Refaire le test",
     "engine": {
       "device": "Micro de WiseMoney",
-      "keyboard": "Micro du clavier"
+      "keyboard": "Micro du clavier",
+      "pack": "Pack voix WiseMoney"
     },
     "progress": "Phrase {{current}} sur {{total}}",
     "say": "Dites :",
@@ -53,6 +57,10 @@
       "typing": {
         "title": "La dictée n’est pas assez fiable ici",
         "body": "Tapez la ligne rapide : « essence 2500 » suffit."
+      },
+      "pack": {
+        "title": "Le pack voix vous comprend bien",
+        "body": "Touchez le micro dans la ligne rapide. Tout se passe sur ce téléphone, même hors ligne."
       }
     },
     "permission": {
@@ -64,7 +72,35 @@
       "keyboard": {
         "android": "Pas de micro sur le clavier ? Paramètres de Gboard › Saisie vocale : activez-la, puis autorisez le micro.",
         "ios": "Pas de micro sur le clavier ? Réglages › Général › Clavier › Activer Dictée."
-      }
+      },
+      "deniedOther": "Autorisez le micro pour WiseMoney dans les réglages du navigateur, puis réessayez."
+    },
+    "retestNeeded": "Le téléphone ou le pack a changé : refaites le test.",
+    "pack": {
+      "offerTitle": "Essayer le pack voix WiseMoney ?",
+      "offerBody": "Votre téléphone et votre clavier ne comprennent pas assez bien. Le pack reconnaît la voix sur le téléphone.",
+      "size": "{{size}} Mo à télécharger, une seule fois.",
+      "private": "Votre voix ne quitte pas le téléphone.",
+      "wifi": "Vous êtes sur données mobiles : préférez le Wi-Fi.",
+      "slow": "Ce téléphone a peu de mémoire : le pack peut être lent.",
+      "download": "Télécharger ({{size}} Mo)",
+      "decline": "Non merci",
+      "downloading": "Téléchargement du pack voix",
+      "progress": "{{loaded}} Mo sur {{total}} Mo",
+      "pause": "Mettre en pause",
+      "resume": "Reprendre",
+      "failure": {
+        "paused": "En pause. Reprenez quand vous voulez : le téléchargement repart où il s’est arrêté.",
+        "network": "Connexion perdue. Reprenez : le téléchargement repart où il s’est arrêté.",
+        "corrupt": "Un fichier est arrivé abîmé. Reprenez pour le télécharger à nouveau.",
+        "storage": "Plus assez de place sur ce téléphone."
+      },
+      "preparing": "Préparation du pack voix…",
+      "recording": "J’enregistre… touchez carré pour finir.",
+      "transcribing": "Je transcris sur le téléphone…",
+      "noBetter": "Le pack ne fait pas mieux ici. Supprimez-le pour libérer de la place.",
+      "delete": "Supprimer le pack voix ({{size}} Mo)",
+      "didNotStart": "Le pack ne démarre pas sur ce téléphone. Supprimez-le pour libérer de la place."
     }
   },
   "app": {

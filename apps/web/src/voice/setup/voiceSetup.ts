@@ -95,7 +95,8 @@ export function packPreflight(env: {
 export type VoiceProbe = {
   /** The browser confirmed on-device recognition for the user's language. */
   device: boolean;
-  pack: PackPreflight["blocked"];
+  /** Why the pack is not offered here, if it is not: the phone cannot hold or run it, or it is not ready. */
+  pack: PackPreflight["blocked"] | "notReady";
 };
 
 /** "skipped": the user said their keyboard has no microphone, or declined the pack. */

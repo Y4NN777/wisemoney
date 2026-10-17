@@ -32,6 +32,8 @@ import { appendDictated } from "../../voice/dictation.ts";
 import DictationButton from "../../voice/DictationButton.tsx";
 import { useDictation } from "../../voice/useDictation.ts";
 import { readVoiceProfile } from "../../voice/setup/voiceProfile.ts";
+import { setupLanguage } from "../../voice/setup/voiceSetup.ts";
+import PackMicButton from "../../voice/pack/PackMicButton.tsx";
 
 export type CaptureMode = "transaction" | "transfer" | "goal";
 const CAPTURE_MODES: readonly CaptureMode[] = ["transaction", "transfer", "goal"];
@@ -434,7 +436,13 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
             className="h-12 pr-14"
           />
           <div className="absolute right-1 top-1/2 -translate-y-1/2">
-            {dictation.supported ? (
+            {voiceProfile?.engine === "pack" ? (
+              <PackMicButton
+                language={setupLanguage(i18n.resolvedLanguage ?? i18n.language)}
+                onText={(spoken) => { setSavedFromLine(0); applyQuick(appendDictated(quick, spoken)); }}
+                onFailure={(messageKey) => setError(t(messageKey))}
+              />
+            ) : dictation.supported ? (
               <DictationButton dictation={dictation} />
             ) : (
               <Button

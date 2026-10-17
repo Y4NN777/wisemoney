@@ -6,7 +6,7 @@
 | Date     | 2026-10-16 |
 | Diátaxis | Explanation |
 | Source   | Y4NN 2026-10-16 ("mettre voice capture pour éviter d'écrire à chaque fois"; "search to design better this feature"); research below; CONTRACT INV-EGR-01/02; ADR-0003 |
-| Binds    | `apps/web/src/components/CaptureSheet`; `apps/web/src/voice/` (set-up in `voice/setup/`); help topic for capture |
+| Binds    | `apps/web/src/components/CaptureSheet`; `apps/web/src/voice/` (set-up in `voice/setup/`, pack in `voice/pack/`); `apps/web/src/sw.ts`; `apps/web/vite.config.ts`; help topic for capture |
 
 ## Context
 
@@ -103,6 +103,10 @@ Decision, replacing the "Rejected for now" of the shipped speech model:
 5. **Stored on the phone only:** the engine, each phrase's pass and time, the date, app version,
    browser and model revision (`localStorage`, `wisemoney.voice.profile.v1`). No audio, no transcript,
    no amount. The test is offered again when the browser or the pinned revision changes.
+
+Status of point 3, 2026-10-17: built and tested, **not offered yet**. On five clear synthetic French
+recordings whisper-tiny and whisper-base each passed 1 of 5 (4 needed); the pack is switched on only
+when a test with real voices qualifies (`PACK_OFFERED`, `apps/web/src/voice/pack/packFiles.ts`).
 
 Consequences: voice works on more phones without sending speech anywhere; a phone that already
 dictates well downloads nothing. The pack costs about 70 MB once, which the user chooses knowingly.

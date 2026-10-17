@@ -5,7 +5,6 @@
 ## 1. Live (pushed)
 
 - Quick line "taxi 2000" in the capture sheet (ADR-0014, accepted).
-- `/lab/voice`: whisper-tiny measuring page (unlinked).
 - Accounts: archive a setup-only account; correct the opening balance; explained refusals.
 - Dark mode: attention and positive colours readable.
 - Every "Échec" message says what happened, why, what to do (8 screens).
@@ -20,7 +19,7 @@
 | # | What | Why it blocks |
 |---|------|---------------|
 | Y1 | `git push origin main` | ships section 2 |
-| Y2 | `/lab/voice` on the Android and the iPhone: paste "Copy results" | decides the voice pack (W3) |
+| Y2 | Settings › Voix on the Android and the iPhone: run the test, report the result | calibrates the W3 thresholds |
 | Y3 | Trial run of the dataset generator, then the full run | feeds the category model (W2) |
 | Y4 | Confirm the labelling rules in `tools/categorize/labelingGuide.mjs` (airtime and mobile money fees → Factures; family support → Cadeaux; own sales → Travail indépendant; tontine payout → Autres revenus; transfers and savings → no category) | the dataset follows them |
 
@@ -71,7 +70,10 @@ Done when: the model file is a few MB, the floor holds in CI, the sheet suggests
 
 Decided 2026-10-17 (Y4NN): hybrid; plan in `2026-10-w3-voice.md`. Steps 1–2 (ADR-0014 amendment;
 phrases, scoring, decision, preflight, profile in `apps/web/src/voice/setup/`) done 2026-10-17.
-Step 3 (Settings › Voix with engines A and B, permission guidance) done 2026-10-17. Next: the pack.
+Step 3 (Settings › Voix with engines A and B, permission guidance) and step 4 (the pinned voice pack:
+preflight, resumable checked download, test, delete, offline; `/lab/voice` removed) done 2026-10-17.
+The pack scored 1 of 5 on synthetic speech (tiny and base), so it is built but not offered (Y4NN,
+option A). Next: real-voice test on Y4NN's phones, then a vocabulary prompt experiment.
 
 ### W4 · Works on bad networks (audit block B)
 

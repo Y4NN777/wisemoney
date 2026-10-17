@@ -76,6 +76,11 @@ describe("voice engine decision", () => {
     expect(chooseVoiceEngine(probe(false, "unsupported"), { keyboard: "skipped" })).toEqual({ kind: "typing", reason: "packUnavailable" });
   });
 
+  it("does not offer a pack that is not ready", () => {
+    expect(chooseVoiceEngine(probe(false, "notReady"), { keyboard: score(2, null) })).toEqual({ kind: "typing", reason: "packUnavailable" });
+    expect(chooseVoiceEngine(probe(false, "notReady"), { keyboard: score(3, null) })).toEqual({ kind: "use", engine: "keyboard", reason: "packUnavailable" });
+  });
+
   it("respects a declined pack", () => {
     expect(chooseVoiceEngine(probe(false), { keyboard: score(3, null), pack: "skipped" })).toEqual({ kind: "use", engine: "keyboard", reason: "packDeclined" });
     expect(chooseVoiceEngine(probe(false), { keyboard: "skipped", pack: "skipped" })).toEqual({ kind: "typing", reason: "packDeclined" });

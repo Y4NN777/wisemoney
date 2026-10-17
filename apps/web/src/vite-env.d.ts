@@ -12,3 +12,7 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/** onnxruntime-web's version and the byte size of each runtime file served under /ort/<version>/. */
+declare const __ORT_VERSION__: string;
+declare const __ORT_SIZES__: Record<string, number>;
