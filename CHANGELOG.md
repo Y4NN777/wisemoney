@@ -5,6 +5,52 @@ All notable changes to WiseMoney are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-10-17
+
+### Added
+
+- **Quick line** — one line at the top of the capture sheet, typed or dictated
+  ("essence 2500", "Awa m'a remboursé 12 500"), fills the amount, Expense or
+  Income and the note, read on the phone. The sheet shows what it understood,
+  flags a doubtful amount, and saves several purchases from one line one after
+  the other. The reader is measured on a bank of 362 phrases.
+- **Suggested category** — the category already used for the same note is
+  chosen and marked "Suggested"; frequent purchases are one tap away and the
+  line's example comes from them.
+- **Voice set-up** — Settings › Voice tests five phrases through the phone's
+  own recognition or the keyboard's microphone and keeps the one that
+  understands best; nothing is downloaded and no voice or text is kept. It
+  says what to do when the microphone is refused or the keyboard has none.
+- **Opening balance** — an account's opening balance can be corrected; past
+  months follow the correction.
+- **Home line** — one line from the user's own day (what is due, what someone
+  owes, today's spending) with one action.
+- **WiseLearn history** — conversations are kept, encrypted on the device;
+  questions can be dictated in WiseHelp and WiseLearn.
+
+### Changed
+
+- **Landing page** — shows the quick line at work; headers show the logo mark
+  only; a returning user opens straight on unlock, the overview one tap away.
+- **Reminders** — on by default; an empty bell says why and offers to turn
+  them on.
+- **Messages** — confirmations appear at the top of the screen, and Add stays
+  above the keyboard; failures name their cause (planning, categories, backup,
+  accounts).
+
+### Removed
+
+- The voice measuring page (`/lab/voice`).
+
+### Fixed
+
+- An account holding only its opening balance can be archived.
+- Colours for warnings and positive amounts were harsh in dark mode
+  (Settings, Debts and receivables).
+- No dictation button where the browser cannot transcribe (iPhone home-screen
+  app).
+- Updates waiting on some devices now install at the next opening.
+
 ## [1.2.0] - 2026-10-08
 
 ### Added
