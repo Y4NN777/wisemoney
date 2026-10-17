@@ -360,8 +360,6 @@
   "capture": {
     "quick": {
       "label": "Quick entry",
-      "placeholder": "E.g. taxi 2000",
-      "hint": "Type, or dictate with your keyboard’s microphone.",
       "noAmount": "No amount found: add a number.",
       "check": "Check:",
       "quantity": "{{quantity}} × {{unitPrice}} = {{total}}",
@@ -369,7 +367,15 @@
       "useUnitPrice": "Count {{amount}}",
       "next": "Then: {{list}}. Ready after Add.",
       "savedFromLine_one": "{{count}} purchase from this line already saved.",
-      "savedFromLine_other": "{{count}} purchases from this line already saved."
+      "savedFromLine_other": "{{count}} purchases from this line already saved.",
+      "placeholderExample": "E.g. {{example}}",
+      "keyboardMic": "Tap the microphone on your keyboard",
+      "frequentLabel": "Your frequent purchases",
+      "starters": {
+        "morning": "bread 250",
+        "midday": "lunch 750",
+        "evening": "fuel 1000"
+      }
     },
     "heading": "Record money movement",
     "ariaLabel": "Capture transaction",

@@ -655,6 +655,9 @@ try {
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
   // The same note again: its category comes back from history, marked as suggested.
   await appPage.getByRole("button", { name: "Capture", exact: true }).click();
+  // The user's frequent purchases are one tap away, and the line's example is one of theirs.
+  await appPage.getByRole("dialog").getByRole("group", { name: "Your frequent purchases" }).getByRole("button").first().waitFor({ timeout: 30_000 });
+  assert.match(await appPage.getByRole("dialog").getByLabel("Quick entry", { exact: true }).getAttribute("placeholder"), /^E\.g\. /, "the quick line has no example");
   await appPage.getByRole("dialog").getByLabel("Quick entry", { exact: true }).fill("Bread 300");
   await appPage.getByRole("dialog").getByText("Suggested", { exact: true }).waitFor({ timeout: 30_000 });
   assert.equal(await appPage.getByRole("dialog").getByLabel("Category", { exact: true }).innerText(), "Food & Dining", "the category chosen for this note was not suggested");

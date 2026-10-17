@@ -360,8 +360,6 @@
   "capture": {
     "quick": {
       "label": "Saisie rapide",
-      "placeholder": "Ex. : taxi 2000",
-      "hint": "Tapez ou dictez avec le micro du clavier.",
       "noAmount": "Aucun montant trouvé : ajoutez un nombre.",
       "check": "À vérifier :",
       "quantity": "{{quantity}} × {{unitPrice}} = {{total}}",
@@ -369,7 +367,15 @@
       "useUnitPrice": "Compter {{amount}}",
       "next": "Ensuite : {{list}}. Prêt après Ajouter.",
       "savedFromLine_one": "{{count}} achat de cette ligne déjà enregistré.",
-      "savedFromLine_other": "{{count}} achats de cette ligne déjà enregistrés."
+      "savedFromLine_other": "{{count}} achats de cette ligne déjà enregistrés.",
+      "placeholderExample": "Ex. : {{example}}",
+      "keyboardMic": "Touchez le micro de votre clavier",
+      "frequentLabel": "Vos achats fréquents",
+      "starters": {
+        "morning": "pain 250",
+        "midday": "riz gras 750",
+        "evening": "essence 1000"
+      }
     },
     "heading": "Enregistrer un mouvement d’argent",
     "ariaLabel": "Saisie d’une transaction",

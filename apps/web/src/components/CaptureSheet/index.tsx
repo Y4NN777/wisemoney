@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowRightLeft, ArrowUp, ShoppingBag } from "lucide-react";
+import { ArrowDown, ArrowRightLeft, ArrowUp, Mic, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -20,11 +20,12 @@ import {
 } from "../../hooks/useFinancialState.ts";
 import { convertUsingContext, DEFAULT_BASE_CURRENCY } from "../../domain/currencyStore.ts";
 import { categoryDisplayName } from "../../lib/categoryName.ts";
-import { amountPlaceholder, currencyLabel, formatMoney, parseMajorUnits } from "../../types/money.ts";
+import { amountPlaceholder, currencyLabel, formatMoney, majorUnitsInput, parseMajorUnits } from "../../types/money.ts";
 import { orderCategoriesForDirection, recentAccountIds, recentCategoryIds } from "../../domain/captureOrdering.ts";
 import { recordCoachFormFault } from "../../coach/index.ts";
 import { readQuickEntry, type QuickItem } from "../../capture/quickEntry.ts";
 import { suggestCategory } from "../../domain/categorySuggestion.ts";
+import { frequentPurchases, quickLineExample } from "../../domain/frequentPurchases.ts";
 import type { TransactionDisplay } from "../../domain/financialState.ts";
 import { appendDictated } from "../../voice/dictation.ts";
 import DictationButton from "../../voice/DictationButton.tsx";
@@ -145,6 +146,8 @@ function useActiveAccounts() {
 }
 
 const RECENT_WINDOW_MS = 90 * 24 * 60 * 60 * 1000;
+/** How long the pointer to the keyboard's microphone stays after the mic button is tapped. */
+const KEYBOARD_MIC_TIP_MS = 6_000;
 const NO_TRANSACTIONS: TransactionDisplay[] = [];
 
 /** The last 90 days of movements, read once for category order, the recent account and suggestions. */
@@ -190,7 +193,7 @@ function QuickUnderstood({ id, listening, items, direction, savedFromLine, forma
   if (listening) {
     body = `${t("voice.listening")} ${t("voice.onDevice")}`;
   } else if (first == null) {
-    body = t("capture.quick.hint");
+    body = null;
   } else if (first.amount == null) {
     body = t("capture.quick.noAmount");
   } else {
@@ -285,6 +288,26 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
     if (!categoryChosen) setCategoryId(suggestedId);
   }, [suggestedId, categoryChosen]);
   const showSuggested = !categoryChosen && suggestedId !== "" && categoryId === suggestedId;
+  // The user's own frequent purchases: one tap fills the line, and the example is theirs (E1).
+  const frequent = useMemo(() => frequentPurchases(recentTransactions.map((transaction) => ({
+    note: transaction.note,
+    direction: transaction.direction,
+    amount: majorUnitsInput(transaction.amount),
+    timestamp: transaction.timestamp,
+  })), selectedDirection), [recentTransactions, selectedDirection]);
+  const example = quickLineExample(frequent, new Date().getHours(), {
+    morning: t("capture.quick.starters.morning"),
+    midday: t("capture.quick.starters.midday"),
+    evening: t("capture.quick.starters.evening"),
+  });
+  const quickRef = useRef<HTMLInputElement | null>(null);
+  // Without dictation on the phone, the mic button opens the keyboard and points to its own mic.
+  const [keyboardMicTip, setKeyboardMicTip] = useState(false);
+  useEffect(() => {
+    if (!keyboardMicTip) return;
+    const timerId = window.setTimeout(() => setKeyboardMicTip(false), KEYBOARD_MIC_TIP_MS);
+    return () => window.clearTimeout(timerId);
+  }, [keyboardMicTip]);
 
   useEffect(() => {
     setSelectedDirection(direction);
@@ -378,9 +401,10 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
         <div className="relative">
           <Input
             id="capture-sheet-quick"
+            ref={quickRef}
             type="text"
             value={quick}
-            onChange={(event) => { setSavedFromLine(0); applyQuick(event.target.value); }}
+            onChange={(event) => { setSavedFromLine(0); setKeyboardMicTip(false); applyQuick(event.target.value); }}
             onKeyDown={(event) => {
               // Enter shows the amount understood instead of saving a half-filled movement.
               if (event.key === "Enter") {
@@ -388,19 +412,38 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
                 amountRef.current?.focus();
               }
             }}
-            placeholder={t("capture.quick.placeholder")}
+            placeholder={t("capture.quick.placeholderExample", { example })}
             aria-label={t("capture.quick.label")}
             aria-describedby="capture-sheet-quick-hint"
             autoComplete="off"
             enterKeyHint="next"
-            className={dictation.supported ? "h-12 pr-14" : "h-12"}
+            className="h-12 pr-14"
           />
-          {dictation.supported && (
-            <div className="absolute right-1 top-1/2 -translate-y-1/2">
+          <div className="absolute right-1 top-1/2 -translate-y-1/2">
+            {dictation.supported ? (
               <DictationButton dictation={dictation} />
-            </div>
-          )}
+            ) : (
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                className="h-11 w-11 shrink-0 rounded-full text-foreground"
+                aria-label={t("voice.start")}
+                title={t("voice.start")}
+                onClick={() => { quickRef.current?.focus(); setKeyboardMicTip(true); }}
+              >
+                <Mic className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
         </div>
+        {keyboardMicTip && (
+          <p className="flex items-center gap-1.5 rounded-md bg-information-wash px-2 py-1.5 text-xs font-medium text-information" role="status">
+            <Mic className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            {t("capture.quick.keyboardMic")}
+            <ArrowDown className="ml-auto h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          </p>
+        )}
         <QuickUnderstood
           id="capture-sheet-quick-hint"
           listening={dictation.listening}
@@ -410,6 +453,22 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
           formatAmount={majorToMoney}
           onUseUnitPrice={(unitPrice) => { setAmountStr(unitPrice); quickAmount.current = unitPrice; }}
         />
+        {quick.trim().length === 0 && frequent.length > 0 && (
+          <div className="flex flex-wrap gap-2" aria-label={t("capture.quick.frequentLabel")} role="group">
+            {frequent.map((purchase) => (
+              <Button
+                key={`${purchase.note}-${purchase.amount}`}
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-11 rounded-full px-3 text-sm"
+                onClick={() => { setSavedFromLine(0); applyQuick(`${purchase.note} ${purchase.amount}`); }}
+              >
+                {purchase.note} · {majorToMoney(purchase.amount)}
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-2">
