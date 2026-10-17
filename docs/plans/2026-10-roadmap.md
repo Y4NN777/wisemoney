@@ -30,6 +30,11 @@ Each one is planned, approved, built, gated (typecheck, lint, tests, build, smok
 
 ### Added 2026-10-17 (Y4NN)
 
+Status 2026-10-17: done and pushed or committed: W1 steps 1–3 (reader v2 and bank d13747d, understood
+line and chained purchases 8697027, category from history a4e5090), R1 (d013523), E1 (13999d2), landing
+(a6451f6 returning users on unlock, 39c6c69 demo and logo mark), G1 (f7a6ad7). Next when Y4NN resumes:
+ADR-0016 step 1 (notification delivery test) or W1 steps 4–5.
+
 - **R1** reminders on by default, an empty bell that says why: done (d013523).
 - **E1** examples and suggestions from the user's own notes: placeholder from frequent notes (a
   time-of-day local example for new users), three one-tap frequent purchases, a microphone icon button
