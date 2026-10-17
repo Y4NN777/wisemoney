@@ -64,9 +64,14 @@ type StoredReminderQueue = {
 
 export const REMINDERS_CHANGED_EVENT = "wisemoney:reminders-changed";
 
+/**
+ * In-app reminders are on by default: they are computed on the device from the vault and send nothing
+ * (R1, 2026-10-16; they were opt-in since 2026-08-15 with no recorded reason, so a bell that stayed
+ * empty looked broken). System notifications still need the browser permission the user grants.
+ */
 export const DEFAULT_REMINDER_SETTINGS: ReminderSettings = {
   version: 1,
-  enabled: false,
+  enabled: true,
   foregroundSound: false,
   types: {
     weekly_review: { enabled: true, leadDays: [0] },
@@ -395,6 +400,9 @@ function currentLocale(): ReminderLocale {
     : "en";
 }
 
+/** The weekly review has no user-written label; its text follows the reminder's locale. */
+const WEEKLY_REVIEW_LABEL: Record<ReminderLocale, string> = { fr: "Faire le point sur la semaine", en: "Review your week" };
+
 function toLocalReminder(
   reminder: ReminderQueueEntry,
   locale: ReminderLocale,
@@ -403,7 +411,7 @@ function toLocalReminder(
   return {
     kind: "financial",
     id: reminder.id,
-    label: reminder.label.trim().slice(0, 120),
+    label: (reminder.type === "weekly_review" ? WEEKLY_REVIEW_LABEL[locale] : reminder.label).trim().slice(0, 120),
     triggerAt: reminder.triggerAt,
     expiresAt: Math.max(reminder.triggerAt + DAY_MS, reminder.dueAt + DAY_MS, now + DAY_MS),
     locale,

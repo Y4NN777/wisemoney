@@ -1074,7 +1074,11 @@
       "noDate": "Periodic review",
       "dismiss": "Dismiss reminder {{label}}",
       "view": "View {{label}}",
-      "localOnly": "Calculated locally"
+      "localOnly": "Calculated locally",
+      "offTitle": "Reminders are off",
+      "offBody": "Turn them on to see your due dates, budgets and debts to follow here. They are computed on this phone.",
+      "turnOn": "Turn on reminders",
+      "weeklyReviewLabel": "Review your week"
     },
     "calendar": {
       "add": "Add to calendar"

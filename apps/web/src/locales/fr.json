@@ -1074,7 +1074,11 @@
       "noDate": "Revue périodique",
       "dismiss": "Ignorer le rappel {{label}}",
       "view": "Consulter {{label}}",
-      "localOnly": "Calculé localement"
+      "localOnly": "Calculé localement",
+      "offTitle": "Les rappels sont désactivés",
+      "offBody": "Activez-les pour voir ici vos échéances, budgets et dettes à suivre. Ils sont calculés sur ce téléphone.",
+      "turnOn": "Activer les rappels",
+      "weeklyReviewLabel": "Faire le point sur la semaine"
     },
     "calendar": {
       "add": "Ajouter au calendrier"

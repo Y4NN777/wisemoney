@@ -102,10 +102,10 @@ beforeEach(() => {
 });
 
 describe("reminder settings", () => {
-  it("requires explicit global opt-in while enabling each type by default", () => {
+  it("turns in-app reminders and each type on by default, without sound", () => {
     const settings = loadReminderSettings(new MemoryStorage());
 
-    expect(settings.enabled).toBe(false);
+    expect(settings.enabled).toBe(true);
     expect(settings.foregroundSound).toBe(false);
     expect(Object.values(settings.types).every((entry) => entry.enabled)).toBe(true);
     expect(settings.types.planned_expense.leadDays).toEqual([7, 3, 0]);
@@ -131,7 +131,7 @@ describe("reminder settings", () => {
 });
 
 describe("computeReminderQueue", () => {
-  it("returns no reminder before global consent", () => {
+  it("returns no reminder when the user turned reminders off", () => {
     const state = snapshot({
       plannedExpenses: [{
         id: "planned-1",
@@ -152,7 +152,8 @@ describe("computeReminderQueue", () => {
       }],
     });
 
-    expect(computeReminderQueue(state, DEFAULT_REMINDER_SETTINGS, now)).toEqual([]);
+    expect(computeReminderQueue(state, { ...DEFAULT_REMINDER_SETTINGS, enabled: false }, now)).toEqual([]);
+    expect(computeReminderQueue(state, DEFAULT_REMINDER_SETTINGS, now)).not.toEqual([]);
   });
 
   it("keeps only the most urgent missed stage and retains future stages", () => {

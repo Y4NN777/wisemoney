@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Bell, CalendarClock, Check, ChevronRight, CircleAlert, X } from "lucide-react";
+import { Bell, BellOff, CalendarClock, Check, ChevronRight, CircleAlert, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "./ui/badge.tsx";
 import { Button } from "./ui/button.tsx";
@@ -27,6 +27,9 @@ type ReminderCenterProps = {
   onMarkRead: (id: string) => void;
   onDismiss: (id: string) => void;
   onOpenReminder: (reminder: ReminderViewModel) => void;
+  /** False when the user turned reminders off: the empty bell says so instead of "nothing to do". */
+  enabled: boolean;
+  onEnable: () => void;
 };
 
 function urgencyClass(urgency: ReminderViewModel["urgency"]): string {
@@ -36,7 +39,7 @@ function urgencyClass(urgency: ReminderViewModel["urgency"]): string {
   return "border-border bg-accent/45 text-foreground";
 }
 
-export default function ReminderCenter({ reminders, onMarkRead, onDismiss, onOpenReminder }: ReminderCenterProps) {
+export default function ReminderCenter({ reminders, onMarkRead, onDismiss, onOpenReminder, enabled, onEnable }: ReminderCenterProps) {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const unreadCount = reminders.filter((reminder) => !reminder.read).length;
@@ -76,7 +79,18 @@ export default function ReminderCenter({ reminders, onMarkRead, onDismiss, onOpe
         </SheetHeader>
 
         <div className="min-h-0 flex-1 overflow-y-auto">
-          {ordered.length === 0 ? (
+          {!enabled ? (
+            <div className="flex min-h-72 flex-col items-center justify-center gap-3 px-6 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground">
+                <BellOff className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold">{t("reminders.center.offTitle")}</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("reminders.center.offBody")}</p>
+              </div>
+              <Button type="button" onClick={onEnable}>{t("reminders.center.turnOn")}</Button>
+            </div>
+          ) : ordered.length === 0 ? (
             <div className="flex min-h-72 flex-col items-center justify-center gap-3 px-6 text-center">
               <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-ocean-wash text-ocean-primary">
                 <Check className="h-5 w-5" />
@@ -103,7 +117,7 @@ export default function ReminderCenter({ reminders, onMarkRead, onDismiss, onOpe
                         <span className="text-xs font-semibold text-muted-foreground">{t(`reminders.types.${reminder.type}`)}</span>
                         {!reminder.read && <span className="h-1.5 w-1.5 rounded-full bg-ocean-primary" aria-label={t("reminders.center.unread")} />}
                       </span>
-                      <span className="mt-1 block truncate text-sm font-semibold text-foreground">{reminder.label}</span>
+                      <span className="mt-1 block truncate text-sm font-semibold text-foreground">{reminder.type === "weekly_review" ? t("reminders.center.weeklyReviewLabel") : reminder.label}</span>
                       <span className="mt-1 block text-xs text-muted-foreground">
                         {reminder.dueAt == null
                           ? t("reminders.center.noDate")

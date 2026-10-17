@@ -60,7 +60,7 @@ function RootLayout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const { reminders, markRead, dismiss } = useReminders();
+  const { reminders, markRead, dismiss, settings: reminderSettings, updateSettings: updateReminderSettings } = useReminders();
   const wiseBot = useWiseBot();
   // Inside the app WiseBot opens from the header's help button; the floating launcher, which
   // sat over page content, is kept for the screens without a header (landing, unlock, help).
@@ -105,7 +105,14 @@ function RootLayout() {
             <CaptureNavItem />
           </nav>
           <div className="ml-auto flex items-center justify-end gap-1">
-            <ReminderCenter reminders={reminderViews} onMarkRead={markRead} onDismiss={dismiss} onOpenReminder={openReminder} />
+            <ReminderCenter
+              reminders={reminderViews}
+              onMarkRead={markRead}
+              onDismiss={dismiss}
+              onOpenReminder={openReminder}
+              enabled={reminderSettings.enabled}
+              onEnable={() => updateReminderSettings({ ...reminderSettings, enabled: true })}
+            />
             <button
               type="button"
               onClick={() => wiseBot.openWiseBot({ entryPoint: "manual", surfaceId: surfaceFromPathname(pathname) })}
