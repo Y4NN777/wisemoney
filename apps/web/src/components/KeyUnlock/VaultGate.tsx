@@ -111,7 +111,8 @@ export default function VaultGate({ onVaultUnlockedChange, pending, requested, o
         void openVault(cachedKey);
         return;
       }
-      setFlow("landing");
+      // A returning user goes straight to unlock; the overview stays one tap away (header link).
+      setFlow(meta.webAuthnHandle != null ? "unlock-webauthn" : "unlock-passphrase");
     }).catch(() => {
       if (active) {
         setError(translationRef.current("keyUnlock.errors.localStorage"));
@@ -357,12 +358,13 @@ function AuthTopBar({ onBack }: { onBack: () => void }) {
           type="button"
           variant="ghost"
           onClick={onBack}
-          className="h-11 w-11 gap-2 px-0 sm:w-auto sm:px-4"
+          className="h-11 gap-2 px-3 sm:px-4"
           aria-label={t("keyUnlock.backToOverview")}
           title={t("keyUnlock.backToOverview")}
         >
           <ArrowLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">{t("keyUnlock.back")}</span>
+          {/* A returning user opens on unlock: the way to the overview stays named on a phone. */}
+          <span>{t("keyUnlock.overview")}</span>
         </Button>
       </div>
     </header>

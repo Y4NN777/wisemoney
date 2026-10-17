@@ -135,7 +135,8 @@
     "passphrase": {
       "show": "Afficher la phrase privée",
       "hide": "Masquer la phrase privée"
-    }
+    },
+    "overview": "Présentation"
   },
   "nav": {
     "mainAria": "Navigation principale",

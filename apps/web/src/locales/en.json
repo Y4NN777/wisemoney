@@ -135,7 +135,8 @@
     "passphrase": {
       "show": "Show passphrase",
       "hide": "Hide passphrase"
-    }
+    },
+    "overview": "Overview"
   },
   "nav": {
     "mainAria": "Main navigation",

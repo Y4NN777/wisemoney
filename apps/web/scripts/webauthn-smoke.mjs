@@ -82,7 +82,7 @@ try {
   // Start from the root: the vault was enabled from /settings, and a plain reload would reopen there.
   await page.goto(baseURL, { waitUntil: "networkidle" });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole("button", { name: "Open my space", exact: true }).click();
+  // A device that holds a space opens straight on unlock, without the overview.
   await page.getByRole("heading", { name: "Open WiseMoney", exact: true }).waitFor();
   await page.getByRole("combobox", { name: /^Choose language/ }).click();
   await page.getByRole("option", { name: "Français", exact: true }).click();

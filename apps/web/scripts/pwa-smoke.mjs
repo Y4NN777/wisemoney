@@ -365,8 +365,8 @@ try {
   syncPage.on("console", (message) => {
     if (message.type() === "error") appErrors.push(`sync console: ${message.text()}`);
   });
+  // A device that holds a space opens straight on unlock, without the overview.
   await syncPage.goto(baseURL, { waitUntil: "networkidle" });
-  await syncPage.getByRole("button", { name: "Open app", exact: true }).click();
   await syncPage.getByLabel("Private passphrase", { exact: true }).waitFor();
   await syncPage.getByRole("combobox", { name: /^Choose language/ }).click();
   await syncPage.getByRole("option", { name: "Français", exact: true }).click();
@@ -670,11 +670,9 @@ try {
   await appPage.setViewportSize({ width: 390, height: 844 });
   const unlockBackButton = appPage.getByRole("button", { name: "Back to overview", exact: true });
   const unlockBackBox = await unlockBackButton.boundingBox();
-  // 44 px: the arrow alone, at the minimum touch size.
-  assert.ok(unlockBackBox != null && unlockBackBox.width <= 44,
-    "mobile unlock back action did not collapse to its arrow");
-  assert.equal(await unlockBackButton.locator("span").isVisible(), false,
-    "mobile unlock back label remained visible");
+  // Returning users open on unlock, so the way to the overview is named on a phone too.
+  assert.ok(unlockBackBox != null && unlockBackBox.height >= 44, "mobile unlock overview link is under 44 px");
+  assert.equal(await unlockBackButton.locator("span").innerText(), "Overview", "mobile unlock overview link has no visible name");
   const unlockLanguageBox = await appPage.getByRole("combobox", { name: /^Choose language/ }).boundingBox();
   assert.ok(unlockLanguageBox != null && unlockLanguageBox.width <= 80,
     "mobile unlock language switcher is not compact");

@@ -36,9 +36,10 @@ export default function KeyUnlock({ onVaultUnlockedChange, children }: KeyUnlock
   // What was tapped on the landing page before the vault flows had loaded, if anything.
   const [requested, setRequested] = useState<LandingRequest | null>(null);
   const [hasVaultHint] = useState(readVaultHint);
-  // An installed app with no space opens on the restore screen, and a space still unlocked in
-  // memory (back from a public page) reopens directly: neither passes through the landing page.
-  const pending = (isStandaloneDisplayMode() && !hasVaultHint) || getCachedMasterKey() != null
+  // An installed app with no space opens on the restore screen, a space still unlocked in memory
+  // (back from a public page) reopens directly, and a device that holds a space opens on unlock:
+  // none of them passes through the landing page.
+  const pending = isStandaloneDisplayMode() || hasVaultHint || getCachedMasterKey() != null
     ? <GateLoading />
     : <LandingOnboarding hasVault={hasVaultHint} busy={requested != null} onStart={() => setRequested("start")} onRestore={() => setRequested("restore")} />;
   return (
