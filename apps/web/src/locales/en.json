@@ -10,6 +10,63 @@
     "denied": "Microphone access denied.",
     "failed": "Dictation didn’t work. Try again."
   },
+  "voiceSetup": {
+    "checking": "Checking this phone…",
+    "intro": "Say 5 short phrases. WiseMoney keeps the way of dictating that understands you best.",
+    "introNoDownload": "What your phone already does comes first: nothing to download.",
+    "introPrivate": "Nothing is kept: not your voice, not the text.",
+    "start": "Start the test",
+    "understood": "{{passed}} of {{total}} phrases understood.",
+    "addMovement": "Add a movement",
+    "retest": "Test again",
+    "engine": {
+      "device": "WiseMoney microphone",
+      "keyboard": "Keyboard microphone"
+    },
+    "progress": "Phrase {{current}} of {{total}}",
+    "say": "Say:",
+    "speak": "Tap the microphone and say the phrase",
+    "keyboardHint": "Tap your keyboard’s microphone and say the phrase",
+    "heardLabel": "Dictated text",
+    "check": "Check",
+    "passed": "Understood: “{{heard}}”",
+    "missed": "Misheard: “{{heard}}”",
+    "skipped": "Phrase skipped.",
+    "next": "Next phrase",
+    "seeResult": "See the result",
+    "nothingHeard": "Nothing heard. Try again, a little closer to the phone.",
+    "skipPhrase": "Skip this phrase",
+    "noKeyboardMic": "My keyboard has no microphone",
+    "outcome": {
+      "device": {
+        "title": "Your phone understands you well",
+        "body": "Tap the microphone in the quick line. Your voice stays on this phone."
+      },
+      "keyboard": {
+        "title": "Your keyboard’s microphone understands you well",
+        "body": "Nothing to download. In the quick line, tap your keyboard’s microphone."
+      },
+      "keyboardPartly": {
+        "title": "Your keyboard’s microphone mostly understands",
+        "body": "You can dictate, but check the amount before Add."
+      },
+      "typing": {
+        "title": "Dictation is not reliable enough here",
+        "body": "Type the quick line: “fuel 2500” is enough."
+      }
+    },
+    "permission": {
+      "ask": "Your browser will ask for the microphone: choose Allow.",
+      "deniedChrome": "In Chrome: ⋮ › Settings › Site settings › Microphone, then allow wisemoney.y7labs.studio.",
+      "deniedSystem": "Still blocked? In the phone’s settings: Apps › Chrome › Permissions › Microphone (names vary by brand).",
+      "retry": "Try again",
+      "useKeyboard": "Use the keyboard’s microphone",
+      "keyboard": {
+        "android": "No microphone on the keyboard? Gboard settings › Voice typing: turn it on, then allow the microphone.",
+        "ios": "No microphone on the keyboard? Settings › General › Keyboard › Enable Dictation."
+      }
+    }
+  },
   "app": {
     "updated": "WiseMoney is up to date",
     "viewUpdates": "See what’s new"
@@ -394,7 +451,8 @@
         "morning": "bread 250",
         "midday": "lunch 750",
         "evening": "fuel 1000"
-      }
+      },
+      "setupVoice": "Test voice"
     },
     "heading": "Record money movement",
     "ariaLabel": "Capture transaction",
@@ -1242,6 +1300,9 @@
       },
       "organization": {
         "title": "Accounts & categories"
+      },
+      "voice": {
+        "title": "Voice"
       }
     },
     "devices": {

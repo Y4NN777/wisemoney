@@ -1,12 +1,13 @@
 import ExportImportSection from "../ExportImport/index.tsx";
 import BYOKeySettings from "../BYOKeySettings/index.tsx";
 import DevicesSection from "./DevicesSection.tsx";
+import VoiceSetup from "../../voice/setup/VoiceSetup.tsx";
 import CurrencySection from "./CurrencySection.tsx";
 import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, BellRing, Bot, ChevronRight, Coins, DatabaseBackup, Download, Info, Languages, ShieldCheck, Sparkles, SunMoon, WalletCards, type LucideIcon } from "lucide-react";
+import { ArrowLeft, BellRing, Bot, ChevronRight, Coins, DatabaseBackup, Download, Info, Languages, Mic, ShieldCheck, Sparkles, SunMoon, WalletCards, type LucideIcon } from "lucide-react";
 import ReminderSettingsSection from "../../components/ReminderSettingsSection.tsx";
 import { useReminders } from "../../reminders/ReminderProvider.tsx";
 import { Button } from "../../components/ui/button.tsx";
@@ -52,6 +53,7 @@ const SECTIONS: readonly { id: SectionId; icon: LucideIcon; titleKey: string }[]
   { id: "accounts", icon: WalletCards, titleKey: "settings.sections.organization.title" },
   { id: "money", icon: Coins, titleKey: "settings.sections.money.title" },
   { id: "reminders", icon: BellRing, titleKey: "settings.sections.reminders.title" },
+  { id: "voice", icon: Mic, titleKey: "settings.sections.voice.title" },
   { id: "security", icon: ShieldCheck, titleKey: "settings.sections.security.title" },
   { id: "data", icon: DatabaseBackup, titleKey: "settings.sections.data.title" },
   { id: "tips", icon: Bot, titleKey: "settings.sections.coach.title" },
@@ -118,6 +120,8 @@ function SectionBody({ panel }: { panel: SettingsPanelId }) {
       return <CurrencySection />;
     case "reminders":
       return <RemindersSection />;
+    case "voice":
+      return <VoiceSetup />;
     case "security":
       return <DevicesSection />;
     case "data":

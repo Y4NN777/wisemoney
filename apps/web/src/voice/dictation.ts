@@ -19,6 +19,7 @@ export type RecognitionLike = {
   onerror: ((event: { error: string }) => void) | null;
   onend: (() => void) | null;
   onaudiostart?: (() => void) | null;
+  onspeechend?: (() => void) | null;
   start: () => void;
   stop: () => void;
   abort: () => void;

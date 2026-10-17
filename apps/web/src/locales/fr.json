@@ -10,6 +10,63 @@
     "denied": "Accès au micro refusé.",
     "failed": "La dictée n’a pas marché. Réessayez."
   },
+  "voiceSetup": {
+    "checking": "Vérification de ce téléphone…",
+    "intro": "Dites 5 phrases courtes. WiseMoney garde la façon de dicter qui vous comprend le mieux.",
+    "introNoDownload": "D’abord ce que votre téléphone sait déjà faire : rien à télécharger.",
+    "introPrivate": "Rien n’est gardé : ni votre voix, ni le texte.",
+    "start": "Commencer le test",
+    "understood": "{{passed}} phrases sur {{total}} bien comprises.",
+    "addMovement": "Ajouter un mouvement",
+    "retest": "Refaire le test",
+    "engine": {
+      "device": "Micro de WiseMoney",
+      "keyboard": "Micro du clavier"
+    },
+    "progress": "Phrase {{current}} sur {{total}}",
+    "say": "Dites :",
+    "speak": "Touchez le micro et dites la phrase",
+    "keyboardHint": "Touchez le micro de votre clavier et dites la phrase",
+    "heardLabel": "Texte dicté",
+    "check": "Vérifier",
+    "passed": "Compris : « {{heard}} »",
+    "missed": "Mal compris : « {{heard}} »",
+    "skipped": "Phrase passée.",
+    "next": "Phrase suivante",
+    "seeResult": "Voir le résultat",
+    "nothingHeard": "Rien entendu. Réessayez, un peu plus près du téléphone.",
+    "skipPhrase": "Passer cette phrase",
+    "noKeyboardMic": "Mon clavier n’a pas de micro",
+    "outcome": {
+      "device": {
+        "title": "Votre téléphone vous comprend bien",
+        "body": "Touchez le micro dans la ligne rapide. Votre voix reste sur ce téléphone."
+      },
+      "keyboard": {
+        "title": "Le micro de votre clavier vous comprend bien",
+        "body": "Rien à télécharger. Dans la ligne rapide, touchez le micro de votre clavier."
+      },
+      "keyboardPartly": {
+        "title": "Le micro de votre clavier comprend à peu près",
+        "body": "Vous pouvez dicter, mais vérifiez le montant avant Ajouter."
+      },
+      "typing": {
+        "title": "La dictée n’est pas assez fiable ici",
+        "body": "Tapez la ligne rapide : « essence 2500 » suffit."
+      }
+    },
+    "permission": {
+      "ask": "Votre navigateur va demander l’accès au micro : choisissez Autoriser.",
+      "deniedChrome": "Dans Chrome : ⋮ › Paramètres › Paramètres des sites › Micro, puis autorisez wisemoney.y7labs.studio.",
+      "deniedSystem": "Toujours bloqué ? Dans les réglages du téléphone : Applications › Chrome › Autorisations › Micro (les noms varient selon la marque).",
+      "retry": "Réessayer",
+      "useKeyboard": "Passer au micro du clavier",
+      "keyboard": {
+        "android": "Pas de micro sur le clavier ? Paramètres de Gboard › Saisie vocale : activez-la, puis autorisez le micro.",
+        "ios": "Pas de micro sur le clavier ? Réglages › Général › Clavier › Activer Dictée."
+      }
+    }
+  },
   "app": {
     "updated": "WiseMoney est à jour",
     "viewUpdates": "Voir les nouveautés"
@@ -394,7 +451,8 @@
         "morning": "pain 250",
         "midday": "riz gras 750",
         "evening": "essence 1000"
-      }
+      },
+      "setupVoice": "Tester la voix"
     },
     "heading": "Enregistrer un mouvement d’argent",
     "ariaLabel": "Saisie d’une transaction",
@@ -1242,6 +1300,9 @@
       },
       "organization": {
         "title": "Comptes et catégories"
+      },
+      "voice": {
+        "title": "Voix"
       }
     },
     "devices": {

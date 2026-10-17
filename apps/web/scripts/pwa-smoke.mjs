@@ -665,6 +665,25 @@ try {
   await appPage.keyboard.press("Escape");
   await appPage.getByRole("dialog").waitFor({ state: "detached" });
   await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
+  // Voice set-up (W3): with no on-device recognition the keyboard's microphone is tested; the
+  // dictated text is simulated by filling the field. Removing the API makes the path deterministic.
+  await appPage.evaluate(() => {
+    delete window.SpeechRecognition;
+    delete window.webkitSpeechRecognition;
+  });
+  await appPage.getByText("Voice", { exact: true }).click();
+  await appPage.getByRole("button", { name: "Start the test", exact: true }).click();
+  const voicePhrases = ["Fuel for the moto 2500", "Orange airtime one thousand francs", "Rent 90000", "Salary one hundred seventy-five thousand", "Refund from Awa 12 500"];
+  for (const [index, heard] of voicePhrases.entries()) {
+    await appPage.getByText(`Phrase ${index + 1} of 5`, { exact: false }).first().waitFor();
+    await appPage.getByLabel("Dictated text", { exact: true }).fill(index === 2 ? "Rent nine thousand" : heard);
+    await appPage.getByRole("button", { name: "Check", exact: true }).click();
+    await appPage.getByText(index === 2 ? /^Misheard:/ : /^Understood:/).waitFor();
+    await appPage.getByRole("button", { name: index === 4 ? "See the result" : "Next phrase", exact: true }).click();
+  }
+  await appPage.getByText("Your keyboard’s microphone understands you well", { exact: true }).waitFor();
+  await appPage.getByText("4 of 5 phrases understood.", { exact: true }).waitFor();
+  await appPage.getByRole("link", { name: "Settings", exact: true }).first().click();
   await appPage.getByText("Security and session", { exact: true }).click();
   await appPage.getByRole("button", { name: "Lock private space", exact: true }).click();
   await appPage.getByLabel("Private passphrase", { exact: true }).waitFor();

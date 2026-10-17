@@ -2,7 +2,7 @@ import { createRoute } from "@tanstack/react-router";
 import { vaultPage } from "./vaultPage.ts";
 import { Route as vaultLayoutRoute } from "./_vault.tsx";
 
-export const SETTINGS_PANELS = ["accounts", "categories", "money", "reminders", "security", "data", "tips", "assistant", "about"] as const;
+export const SETTINGS_PANELS = ["accounts", "categories", "money", "reminders", "voice", "security", "data", "tips", "assistant", "about"] as const;
 export type SettingsPanelId = typeof SETTINGS_PANELS[number];
 export type SettingsSearch = { panel?: SettingsPanelId };
 

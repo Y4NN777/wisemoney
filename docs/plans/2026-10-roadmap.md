@@ -71,7 +71,7 @@ Done when: the model file is a few MB, the floor holds in CI, the sheet suggests
 
 Decided 2026-10-17 (Y4NN): hybrid; plan in `2026-10-w3-voice.md`. Steps 1–2 (ADR-0014 amendment;
 phrases, scoring, decision, preflight, profile in `apps/web/src/voice/setup/`) done 2026-10-17.
-Next: the set-up sheet with engines A and B, then the pack.
+Step 3 (Settings › Voix with engines A and B, permission guidance) done 2026-10-17. Next: the pack.
 
 ### W4 · Works on bad networks (audit block B)
 

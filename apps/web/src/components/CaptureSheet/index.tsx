@@ -31,6 +31,7 @@ import type { TransactionDisplay } from "../../domain/financialState.ts";
 import { appendDictated } from "../../voice/dictation.ts";
 import DictationButton from "../../voice/DictationButton.tsx";
 import { useDictation } from "../../voice/useDictation.ts";
+import { readVoiceProfile } from "../../voice/setup/voiceProfile.ts";
 
 export type CaptureMode = "transaction" | "transfer" | "goal";
 const CAPTURE_MODES: readonly CaptureMode[] = ["transaction", "transfer", "goal"];
@@ -314,6 +315,8 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
   const quickRef = useRef<HTMLInputElement | null>(null);
   // Without dictation on the phone, the mic button opens the keyboard and points to its own mic.
   const [keyboardMicTip, setKeyboardMicTip] = useState(false);
+  // Until the voice set-up has run on this phone, the tip offers it (W3).
+  const [voiceProfile] = useState(readVoiceProfile);
   useEffect(() => {
     if (!keyboardMicTip) return;
     const timerId = window.setTimeout(() => setKeyboardMicTip(false), KEYBOARD_MIC_TIP_MS);
@@ -452,7 +455,12 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
           <p className="flex items-center gap-1.5 rounded-md bg-information-wash px-2 py-1.5 text-xs font-medium text-information" role="status">
             <Mic className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             {t("capture.quick.keyboardMic")}
-            <ArrowDown className="ml-auto h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <ArrowDown className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            {voiceProfile == null && (
+              <Link to="/settings" search={{ panel: "voice" }} className="ml-auto inline-flex min-h-8 items-center underline underline-offset-2">
+                {t("capture.quick.setupVoice")}
+              </Link>
+            )}
           </p>
         )}
         <QuickUnderstood
