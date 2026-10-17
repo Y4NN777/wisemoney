@@ -53,6 +53,7 @@ the decisions and specs actually state.
 | [ADR-0013](./0013-literacy-tutor-gateway-on-gemma.md) | Literacy tutor on a dedicated Gemma gateway with zero vault egress | Accepted | Y4NN 2026-09-26; research 2026-09-26; SRS §5.5; CONTRACT INV-EGR-04 |
 | [ADR-0014](./0014-voice-expense-capture-on-device-only.md) | Say or type a movement in one line, understood on the device | Accepted | Y4NN 2026-10-16; CONTRACT INV-EGR-01/02 |
 | [ADR-0015](./0015-category-suggestion-by-a-distilled-on-device-model.md) | Suggest a movement's category with a small model taught by a large one, run on the device | Accepted | Y4NN 2026-10-16; ADR-0014; CONTRACT INV-EGR-01/02 |
+| [ADR-0016](./0016-daily-reminder-push-without-financial-data.md) | A daily reminder push that carries no financial data | Proposed | Y4NN 2026-10-17; CONTRACT INV-EGR-01/02 |
 
 ---
 

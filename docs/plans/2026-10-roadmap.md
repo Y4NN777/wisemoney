@@ -28,6 +28,19 @@
 
 Each one is planned, approved, built, gated (typecheck, lint, tests, build, smoke) and shipped before the next starts. W2 data generation runs in the background meanwhile.
 
+### Added 2026-10-17 (Y4NN)
+
+- **R1** reminders on by default, an empty bell that says why: done (d013523).
+- **E1** examples and suggestions from the user's own notes: placeholder from frequent notes (a
+  time-of-day local example for new users), three one-tap frequent purchases, a microphone icon button
+  that dictates on the device where possible and otherwise opens the keyboard and points to its
+  microphone (no emoji).
+- **G1** a greeting line computed from the user's data with one call to action (deadline today, budget
+  at 90%, receivable due, nothing recorded today, the day's total), replacing the 14 generic messages
+  removed on 2026-09-25.
+- **N2** an honest notification status in Settings; **ADR-0016** daily reminder push without financial
+  data, step 1 a delivery test on Y4NN's Android and iPhone.
+
 ### W1 · Fast, reliable capture (next)
 
 Problem: the quick line misreads common phrases (measured 2026-10-16: "Taxi deux mille." → 2 F; "j'ai paye le taxi" → income; "2 pains à 250" → 2 F; a second purchase is lost) and never shows what it understood; the sheet hides the + button behind its toast and doubles Dépense/Revenu.
