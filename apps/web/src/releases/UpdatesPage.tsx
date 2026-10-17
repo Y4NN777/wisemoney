@@ -44,7 +44,7 @@ export default function UpdatesPage() {
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">{t("updatesPage.back")}</span>
           </Button>
-          <Logo className="h-8 w-auto justify-self-center" />
+          <Logo variant="icon" className="h-9 w-9 justify-self-center" />
           <LanguageSwitcher compact />
         </div>
       </header>

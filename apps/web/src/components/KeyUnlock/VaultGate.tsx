@@ -351,7 +351,7 @@ function AuthTopBar({ onBack }: { onBack: () => void }) {
   const { t } = useTranslation();
   return (
     <header className="mx-auto flex w-full max-w-5xl items-center justify-between border-b border-border py-3">
-      <Logo className="h-8 w-auto" />
+      <Logo variant="icon" className="h-9 w-9" />
       <div className="flex items-center gap-2">
         <LanguageSwitcher compact />
         <Button

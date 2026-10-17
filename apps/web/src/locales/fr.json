@@ -86,7 +86,7 @@
     },
     "landing": {
       "aria": "Présentation de WiseMoney",
-      "kicker": "Votre argent, sur votre appareil",
+      "kicker": "WiseMoney",
       "title": "Gérez votre argent. Gardez le contrôle.",
       "body": "Comptes, budgets et échéances restent réunis sur cet appareil.",
       "existingVault": "Votre espace privé est prêt sur cet appareil.",
@@ -95,16 +95,19 @@
       "start": "Commencer",
       "assurancesAria": "Ce que WiseMoney promet",
       "assurances": {
-        "encrypted": "Chiffré sur cet appareil",
-        "offline": "Fonctionne hors ligne",
-        "yours": "Votre phrase, vos données"
+        "oneLine": "Une ligne suffit",
+        "offline": "Hors ligne et chiffré",
+        "education": "Éducation financière"
       },
       "glimpse": {
-        "caption": "Vos chiffres apparaissent ici, et restent sur cet appareil.",
         "footer": "Protégé par votre phrase privée"
       },
       "howItWorks": "Comment ça marche",
-      "restore": "J’ai une sauvegarde : la restaurer"
+      "restore": "J’ai une sauvegarde : la restaurer",
+      "demo": {
+        "understood": "Compris",
+        "income": "Awa m'a remboursé 5000"
+      }
     },
     "restore": {
       "aria": "Restaurer un espace WiseMoney existant",

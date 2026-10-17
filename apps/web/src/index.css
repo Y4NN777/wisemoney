@@ -382,16 +382,16 @@
     pointer-events: none;
   }
 
-  /* Landing product glimpse: rests slightly turned, follows the mouse on hover-capable devices. */
-  .landing-glimpse {
-    transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, -2deg));
-    transition: transform 180ms var(--ease-standard);
-    will-change: transform;
+  /* Landing quick-line demo: a blinking caret while the phrase types itself. */
+  .landing-caret {
+    animation: landing-caret-blink 1s steps(1) infinite;
   }
-  @media (hover: none), (prefers-reduced-motion: reduce) {
-    .landing-glimpse {
-      transform: none;
-      transition: none;
+  @keyframes landing-caret-blink {
+    50% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-caret {
+      animation: none;
     }
   }
 

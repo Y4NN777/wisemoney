@@ -143,7 +143,8 @@ try {
     await page.getByRole("heading", { name: /Manage your money\. Stay in control\./i }).waitFor();
     await page.getByRole("button", { name: "Open help", exact: true }).click();
     await page.getByRole("heading", { name: "WiseMoney guide", exact: true }).waitFor();
-    await page.getByRole("button", { name: device.name === "mobile" ? "Ask WiseHelp" : "Open WiseHelp", exact: true }).click();
+    // Below the sm breakpoint the help page offers its own button; the floating one is for larger screens.
+    await page.getByRole("button", { name: device.viewport.width < 640 ? "Ask WiseHelp" : "Open WiseHelp", exact: true }).click();
     const wiseBotDialog = page.getByRole("dialog", { name: "WiseHelp", exact: true });
     await wiseBotDialog.waitFor();
     const wiseBotOverlay = page.locator(".wisebot-overlay");
@@ -202,7 +203,7 @@ try {
     await page.getByRole("combobox", { name: /^Choose language/ }).click();
     await page.getByRole("option", { name: "Français", exact: true }).click();
     await page.getByRole("heading", { name: "Gérez votre argent. Gardez le contrôle.", exact: true }).waitFor();
-    await page.getByText("Chiffré sur cet appareil", { exact: true }).waitFor();
+    await page.getByText("Hors ligne et chiffré", { exact: true }).waitFor();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true,
       `${device.name}: French landing has horizontal overflow`);
     await page.screenshot({ path: `${outputDir}/${device.name}-landing-fr.png`, fullPage: true });
@@ -676,7 +677,7 @@ try {
   const unlockLanguageBox = await appPage.getByRole("combobox", { name: /^Choose language/ }).boundingBox();
   assert.ok(unlockLanguageBox != null && unlockLanguageBox.width <= 80,
     "mobile unlock language switcher is not compact");
-  assert.equal(await appPage.locator('main svg[aria-label="WiseMoney logo"]').count(), 1,
+  assert.equal(await appPage.locator('main svg[aria-label^="WiseMoney"]').count(), 1,
     "unlock screen repeats the WiseMoney logo");
   assert.equal(await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true,
     "mobile unlock header has horizontal overflow");

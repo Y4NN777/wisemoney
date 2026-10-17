@@ -15,7 +15,7 @@ export default function Logo({ variant = "full", className }: LogoProps) {
       viewBox="0 0 100 100"
       fill="none"
       className={className}
-      aria-label="WiseMoney icon"
+      aria-label="WiseMoney"
     >
       <circle cx="50" cy="50" r="48" fill="#0077b6" />
       <path

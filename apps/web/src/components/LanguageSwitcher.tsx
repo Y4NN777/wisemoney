@@ -23,11 +23,12 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
   if (compact) {
     return (
       <Select value={currentLanguage} onValueChange={changeLanguage}>
-        <SelectTrigger className="h-9 w-[76px] gap-1 px-2 shadow-none" aria-label={`${t("language.choose")} (${currentLanguage})`}>
-          <span className="flex items-center gap-1.5">
+        <SelectTrigger className="h-11 w-auto gap-1 whitespace-nowrap px-2 shadow-none" aria-label={`${t("language.choose")} (${currentLanguage})`}>
+          {/* A div, not a span: the trigger clamps its direct span children to one line, which stacks the icon. */}
+          <div className="flex items-center gap-1.5">
             <Languages className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <span className="text-xs font-semibold">{currentLanguage}</span>
-          </span>
+          </div>
         </SelectTrigger>
         <SelectContent align="end">
           {languages.map((language) => (

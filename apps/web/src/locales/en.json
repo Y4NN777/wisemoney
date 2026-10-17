@@ -86,7 +86,7 @@
     },
     "landing": {
       "aria": "WiseMoney introduction",
-      "kicker": "Your money, on your device",
+      "kicker": "WiseMoney",
       "title": "Manage your money. Stay in control.",
       "body": "Accounts, budgets, and due dates stay together on this device.",
       "existingVault": "Your private space is ready on this device.",
@@ -95,16 +95,19 @@
       "start": "Start",
       "assurancesAria": "What WiseMoney promises",
       "assurances": {
-        "encrypted": "Encrypted on this device",
-        "offline": "Works offline",
-        "yours": "Your passphrase, your data"
+        "oneLine": "One line is enough",
+        "offline": "Offline and encrypted",
+        "education": "Financial education"
       },
       "glimpse": {
-        "caption": "Your numbers appear here, and stay on this device.",
         "footer": "Protected by your passphrase"
       },
       "howItWorks": "How it works",
-      "restore": "I have a backup: restore it"
+      "restore": "I have a backup: restore it",
+      "demo": {
+        "understood": "Understood",
+        "income": "received 5000 from Awa"
+      }
     },
     "restore": {
       "aria": "Restore an existing WiseMoney space",

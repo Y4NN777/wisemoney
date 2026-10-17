@@ -1,9 +1,11 @@
-import { lazy, Suspense, useRef } from "react";
-import { ArrowRight, KeyRound, LockKeyhole, ShieldCheck, WifiOff } from "lucide-react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { ArrowRight, GraduationCap, LockKeyhole, PenLine, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button.tsx";
 import Logo from "../Logo.tsx";
 import HelpActions from "../HelpActions.tsx";
+import { useHideWiseBotLauncher } from "../../help/WiseBotProvider.tsx";
+import { readQuickEntry } from "../../capture/quickEntry.ts";
 
 // The dropdown library behind the language switcher is as large as the rest of this page, so it
 // arrives after the first paint; the placeholder keeps the header from shifting.
@@ -25,21 +27,24 @@ type LandingOnboardingProps = {
  */
 export default function LandingOnboarding({ onStart, onRestore, hasVault, busy = false }: LandingOnboardingProps) {
   const { t } = useTranslation();
+  // The header's help button already leads to help and WiseHelp; the floating one covered the demo.
+  useHideWiseBotLauncher();
   const primaryLabel = hasVault ? t("keyUnlock.landing.openVault") : t("keyUnlock.landing.start");
   const assurances = [
-    { icon: <ShieldCheck className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.encrypted") },
-    { icon: <WifiOff className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.offline") },
-    { icon: <KeyRound className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.yours") },
+    { icon: <PenLine className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.oneLine") },
+    { icon: <ShieldCheck className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.offline") },
+    { icon: <GraduationCap className="h-4 w-4" />, label: t("keyUnlock.landing.assurances.education") },
   ];
 
   return (
     <main aria-label={t("keyUnlock.landing.aria")} className="landing-grid min-h-dvh overflow-x-clip bg-background text-foreground">
-      <section className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-6 lg:px-8">
+      {/* Bottom room so the floating WiseHelp button never sits on the demo card. */}
+      <section className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pb-24 sm:px-6 lg:px-8">
         <header className="flex items-center justify-between gap-3 py-3">
-          <Logo className="h-8 w-auto" />
+          <Logo variant="icon" className="h-9 w-9" />
           <div className="flex shrink-0 items-center gap-2">
             <HelpActions compact />
-            <Suspense fallback={<span aria-hidden="true" className="block h-9 w-[76px]" />}><LanguageSwitcher compact /></Suspense>
+            <Suspense fallback={<span aria-hidden="true" className="block h-11 w-[72px]" />}><LanguageSwitcher compact /></Suspense>
             <Button type="button" onClick={onStart} disabled={busy} className="ml-2 hidden h-11 px-4 sm:inline-flex">
               {hasVault ? t("keyUnlock.landing.openApp") : t("keyUnlock.landing.start")}
             </Button>
@@ -81,55 +86,69 @@ export default function LandingOnboarding({ onStart, onRestore, hasVault, busy =
             </ul>
           </div>
 
-          <LandingGlimpse />
+          <LandingDemo />
         </div>
       </section>
     </main>
   );
 }
 
-/**
- * A static preview of the Home summary card. Amounts are masked on purpose: the page shows
- * the shape of the product, never invented figures. Decorative, so hidden from assistive tech.
- */
-const GLIMPSE_MAX_TILT_DEG = 7;
+/** Typing pace and how long each understood phrase stays before the next one. */
+const DEMO_TYPE_MS = 70;
+const DEMO_HOLD_MS = 2_600;
+const DEMO_CURRENCY = "XOF";
 
-function LandingGlimpse() {
-  const { t } = useTranslation();
-  const cardRef = useRef<HTMLDivElement | null>(null);
-  const masked = "\u2022\u2022\u2022\u2022\u2022\u2022";
-  // The tilt follows the pointer through two CSS custom properties; the transform, its
-  // transition and the reduced-motion / touch opt-outs live in index.css (.landing-glimpse).
-  // Setting the variables from JS is the only way to feed pointer coordinates to that rule.
-  const tilt = (event: React.PointerEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card == null || event.pointerType !== "mouse") return;
-    const rect = card.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    card.style.setProperty("--tilt-x", `${(-y * GLIMPSE_MAX_TILT_DEG).toFixed(2)}deg`);
-    card.style.setProperty("--tilt-y", `${(x * GLIMPSE_MAX_TILT_DEG).toFixed(2)}deg`);
-  };
-  const rest = () => {
-    cardRef.current?.style.removeProperty("--tilt-x");
-    cardRef.current?.style.removeProperty("--tilt-y");
-  };
+/**
+ * A live demo of the quick line: a local phrase types itself and the card shows what the real reader
+ * understood. The first phrase fits the hour (the same examples as the capture sheet). No amount is a
+ * user figure: these are example notes. Still under reduced motion. Decorative for assistive tech:
+ * the benefits list says the same in words.
+ */
+function LandingDemo() {
+  const { t, i18n } = useTranslation();
+  const phrases = useMemo(() => {
+    const byHour = [t("capture.quick.starters.morning"), t("capture.quick.starters.midday"), t("capture.quick.starters.evening")];
+    const hour = new Date().getHours();
+    const first = hour < 11 ? 0 : hour < 16 ? 1 : 2;
+    return [byHour[first]!, ...byHour.filter((_, index) => index !== first), t("keyUnlock.landing.demo.income")];
+  }, [t]);
+  const still = useMemo(() => typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
+  const [index, setIndex] = useState(0);
+  const [typed, setTyped] = useState(still ? phrases[0]! : "");
+  const phrase = phrases[index] ?? "";
+
+  useEffect(() => {
+    if (still) return;
+    const timerId = typed.length < phrase.length
+      ? window.setTimeout(() => setTyped(phrase.slice(0, typed.length + 1)), DEMO_TYPE_MS)
+      : window.setTimeout(() => { setIndex((current) => (current + 1) % phrases.length); setTyped(""); }, DEMO_HOLD_MS);
+    return () => window.clearTimeout(timerId);
+  }, [phrase, phrases.length, still, typed]);
+
+  const item = typed === phrase ? readQuickEntry(typed, { currency: DEMO_CURRENCY })[0] : undefined;
+  const amount = item?.amount == null
+    ? null
+    : new Intl.NumberFormat(i18n.language, { style: "currency", currency: DEMO_CURRENCY, maximumFractionDigits: 0 }).format(Number(item.amount));
+  const direction = item?.direction ?? "expense";
+
   return (
-    <div aria-hidden="true" className="relative mx-auto w-full max-w-sm lg:max-w-md" onPointerMove={tilt} onPointerLeave={rest}>
+    <div aria-hidden="true" className="relative mx-auto w-full max-w-sm lg:max-w-md">
       <div className="absolute -inset-6 rounded-[2rem] bg-ocean-wash/70 blur-2xl" />
-      <div ref={cardRef} className="landing-glimpse relative rounded-2xl border border-border bg-card p-5 shadow-[0_24px_60px_rgba(16,24,32,0.14)] sm:p-6">
-        <p className="text-xs font-medium text-ocean-primary">{t("dashboard.availableToday")}</p>
-        <p className="mt-2 text-3xl font-semibold tracking-[0.22em] text-foreground/55">{masked}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{t("keyUnlock.landing.glimpse.caption")}</p>
-        <div className="mt-5 grid grid-cols-2 gap-2">
-          <div className="rounded-lg border border-border bg-background p-3">
-            <p className="text-xs text-muted-foreground">{t("dashboard.moneyReceived")}</p>
-            <p className="mt-1 text-base font-semibold tracking-[0.2em] text-positive/70">{masked}</p>
-          </div>
-          <div className="rounded-lg border border-border bg-background p-3">
-            <p className="text-xs text-muted-foreground">{t("dashboard.moneySpent")}</p>
-            <p className="mt-1 text-base font-semibold tracking-[0.2em] text-negative/70">{masked}</p>
-          </div>
+      <div className="relative rounded-2xl border border-border bg-card p-5 shadow-[0_24px_60px_rgba(16,24,32,0.14)] sm:p-6">
+        <p className="text-xs font-medium text-ocean-primary">{t("capture.quick.label")}</p>
+        <p className="mt-2 flex h-12 items-center rounded-lg border border-input bg-background px-3 text-base text-foreground">
+          {typed}
+          {!still && <span className="landing-caret ml-0.5 inline-block h-5 w-0.5 bg-ocean-primary" />}
+        </p>
+        <div className="mt-4 min-h-[5.5rem]">
+          <p className="text-xs text-muted-foreground">{t("keyUnlock.landing.demo.understood")}</p>
+          <p className={`mt-1 text-3xl font-semibold tracking-tight transition-opacity ${amount == null ? "opacity-0" : "opacity-100"} ${direction === "income" ? "text-positive" : "text-foreground"}`}>
+            {amount ?? "0"}
+          </p>
+          <p className={`mt-2 flex flex-wrap gap-2 text-xs transition-opacity ${amount == null ? "opacity-0" : "opacity-100"}`}>
+            <span className="rounded-full bg-muted px-2 py-0.5 font-medium text-foreground">{t(`capture.transaction.${direction}`)}</span>
+            {item != null && item.note.length > 0 && <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">{item.note}</span>}
+          </p>
         </div>
         <div className="mt-4 flex items-center justify-between rounded-lg bg-ocean-wash/60 px-3 py-2 text-xs font-medium text-ocean-dark">
           <span>{t("keyUnlock.landing.glimpse.footer")}</span>
