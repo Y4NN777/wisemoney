@@ -1,10 +1,11 @@
+import { useId, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
 
 import { Button } from "../../components/ui/button.tsx";
 
 import {
-  ArrowUp, ArrowDown, Wallet, ArrowRightLeft, } from "lucide-react";
+  ArrowUp, ArrowDown, Wallet, ArrowRightLeft, ChevronDown, } from "lucide-react";
 import type { FinancialStateSnapshot } from "../../domain/financialState.ts";
 import type { } from "../../domain/financialOperations.ts";
 
@@ -17,6 +18,24 @@ import {
   selectAvailableAfterCommitments,
   } from "../../analytics/dashboard.ts";
 import { formatMoney, formatSignedMoney } from "./format.ts";
+
+const ACTIVITY_OPEN_KEY = "wisemoney.home.activityOpen";
+
+function readActivityOpen(): boolean {
+  try {
+    return localStorage.getItem(ACTIVITY_OPEN_KEY) !== "0";
+  } catch {
+    return true;
+  }
+}
+
+function writeActivityOpen(open: boolean): void {
+  try {
+    localStorage.setItem(ACTIVITY_OPEN_KEY, open ? "1" : "0");
+  } catch {
+    // Storage can be blocked; the card then simply resets on the next visit.
+  }
+}
 
 export type PeriodComparisonSummary = {
   incomeChange: PeriodAmountComparison;
@@ -37,6 +56,8 @@ export function FinancialOverview({
   activityContext: { start: number; end: number; accountId: string | null };
 }) {
   const { t } = useTranslation();
+  const [activityOpen, setActivityOpen] = useState(readActivityOpen);
+  const activityBodyId = useId();
   const currency = snapshot.totalBalance.currency;
   const net = snapshot.netCashFlow.minorUnits;
   const netTone = net === 0 ? "text-foreground" : net > 0 ? "text-positive" : "text-negative";
@@ -82,12 +103,27 @@ export function FinancialOverview({
       </Card>
 
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader className={activityOpen ? "pb-3" : "py-3"}>
           <CardTitle className="text-base">
-            {t("dashboard.periodActivity", { month: contextualMonth })}
+            <button
+              type="button"
+              aria-expanded={activityOpen}
+              aria-controls={activityBodyId}
+              aria-label={t(activityOpen ? "dashboard.activityCollapse" : "dashboard.activityExpand", { month: contextualMonth })}
+              onClick={() => {
+                const next = !activityOpen;
+                setActivityOpen(next);
+                writeActivityOpen(next);
+              }}
+              className="flex min-h-11 w-full items-center justify-between gap-4 rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {t("dashboard.periodActivity", { month: contextualMonth })}
+              <ChevronDown className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform ${activityOpen ? "rotate-180" : ""}`} aria-hidden="true" />
+            </button>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        {activityOpen && (
+        <CardContent id={activityBodyId} className="space-y-3">
           <div className="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             <div className="py-3 sm:px-3">
               <div className="flex items-center justify-between gap-2">
@@ -131,6 +167,7 @@ export function FinancialOverview({
             </Link>
           </Button>
         </CardContent>
+        )}
       </Card>
     </section>
   );
