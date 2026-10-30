@@ -1,5 +1,54 @@
 [
   {
+    "version": "1.3.1",
+    "releasedAt": "2026-10-30",
+    "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.3.1",
+    "content": {
+      "fr": {
+        "title": "Un Accueil plus calme",
+        "highlights": [
+          {
+            "id": "collapsibleActivity",
+            "title": "La carte d’activité se replie d’un geste"
+          },
+          {
+            "id": "calmerLook",
+            "title": "Des bordures et des sélections plus discrètes"
+          },
+          {
+            "id": "compactMonth",
+            "title": "Sélecteur de mois plus court, près du bonjour"
+          },
+          {
+            "id": "deviceUnlockSooner",
+            "title": "Déverrouillage par empreinte proposé dès la première réouverture"
+          }
+        ]
+      },
+      "en": {
+        "title": "A calmer Home",
+        "highlights": [
+          {
+            "id": "collapsibleActivity",
+            "title": "Fold the month’s activity card with one tap"
+          },
+          {
+            "id": "calmerLook",
+            "title": "Quieter borders and selections"
+          },
+          {
+            "id": "compactMonth",
+            "title": "A shorter month picker, beside the greeting"
+          },
+          {
+            "id": "deviceUnlockSooner",
+            "title": "Fingerprint unlock offered from your first return"
+          }
+        ]
+      }
+    }
+  },
+  {
     "version": "1.3.0",
     "releasedAt": "2026-10-17",
     "githubUrl": "https://github.com/Y4NN777/wisemoney/releases/tag/v1.3.0",
