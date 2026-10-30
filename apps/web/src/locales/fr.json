@@ -303,6 +303,8 @@
     "balanceAtPeriodEnd": "Solde à la fin de la période",
     "afterCommitments": "Estimation après engagements",
     "periodActivity": "Activité {{month}}",
+    "activityCollapse": "Réduire l’activité {{month}}",
+    "activityExpand": "Afficher l’activité {{month}}",
     "moneyReceived": "Argent reçu",
     "moneySpent": "Argent dépensé",
     "periodDifference": "Différence",

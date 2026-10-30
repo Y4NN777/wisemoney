@@ -303,6 +303,8 @@
     "balanceAtPeriodEnd": "Balance at the end of the period",
     "afterCommitments": "Estimate after commitments",
     "periodActivity": "{{month}}'s Activity",
+    "activityCollapse": "Collapse {{month}}'s activity",
+    "activityExpand": "Expand {{month}}'s activity",
     "moneyReceived": "Money received",
     "moneySpent": "Money spent",
     "periodDifference": "Difference",
