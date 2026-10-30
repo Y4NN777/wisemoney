@@ -5,6 +5,7 @@ import { Bell, CalendarDays, CalendarPlus, CheckCircle2, Clock3, HandCoins, Plus
 import { useCreateDebtCredit, useFinancialState, useUpdateDebtCreditDueDate, useUpdateDebtCreditStatus } from "../../hooks/useFinancialState.ts";
 import type { DebtCreditKind, DebtCreditState, DebtCreditStatus } from "../../domain/financialState.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
+import { CollapsibleCard } from "../../components/ui/collapsible-card.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { Badge } from "../../components/ui/badge.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog.tsx";
@@ -516,7 +517,8 @@ export default function Debts() {
         </Dialog>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <CollapsibleCard defaultOpen title={t("debts.metrics.overview")} contentClassName="pt-0">
+        <div className="grid gap-3 sm:grid-cols-3">
         <Card className="metric-surface">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm">
@@ -557,6 +559,7 @@ export default function Debts() {
           </CardContent>
         </Card>
       </div>
+      </CollapsibleCard>
 
       {unsettledReceivables.length > 0 && (
         <section className="rounded-lg border border-attention/40 bg-attention-wash p-3">

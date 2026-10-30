@@ -66,7 +66,7 @@
     "permission": {
       "ask": "Your browser will ask for the microphone: choose Allow.",
       "deniedChrome": "In Chrome: ⋮ › Settings › Site settings › Microphone, then allow wisemoney.y7labs.studio.",
-      "deniedSystem": "Still blocked? In the phone’s settings: Apps › Chrome › Permissions › Microphone (names vary by brand).",
+      "deniedSystem": "Still blocked? Phone settings › Apps › Chrome › Permissions › Microphone.",
       "retry": "Try again",
       "useKeyboard": "Use the keyboard’s microphone",
       "keyboard": {
@@ -140,7 +140,7 @@
     },
     "login": {
       "passphraseTitle": "Private passphrase",
-      "passphraseDescription": "Three random words make a good passphrase; spaces are fine. Nobody can reset it for you: write it down and keep it somewhere safe. A backup from Settings protects your data.",
+      "passphraseDescription": "Three random words make a good passphrase. Nobody can reset it: write it down somewhere safe.",
       "errors": {
         "passwordsMismatch": "The two passphrases do not match"
       }
@@ -172,7 +172,7 @@
       "confirmPassphrase": "Confirm private passphrase",
       "submitting": "Setting up…",
       "createVault": "Create private space",
-      "deviceUnlockUnavailable": "Device unlock is unavailable on this browser or authenticator. The space was created with passphrase unlock only.",
+      "deviceUnlockUnavailable": "Device unlock is unavailable here. The space uses the passphrase only.",
       "errors": {
         "failed": "Setup failed"
       }
@@ -206,8 +206,8 @@
       "aria": "Restore an existing WiseMoney space",
       "kicker": "Move an existing space",
       "title": "Bring your saved space to this device",
-      "body": "If you already use WiseMoney in another browser or on another phone, export that space there and restore it here. This keeps one private space instead of creating a second one.",
-      "helper": "Choose the export file from your current browser or phone, then create a passphrase for this device. If the export was protected, enter that export passphrase too.",
+      "body": "Already use WiseMoney on another phone or browser? Export the space there, then restore it here.",
+      "helper": "Choose the export file, then create a passphrase for this device. If the export is protected, enter its passphrase too.",
       "fileLabel": "Export file",
       "passphrase": "New passphrase for this device",
       "confirmPassphrase": "Confirm new passphrase",
@@ -282,7 +282,7 @@
     "makeTransfer": "Transfer",
     "planExpense": "Planned expense",
     "missingFxTitle": "Some totals are incomplete",
-    "missingFxBody": "Add an exchange rate from {{currencies}} to {{baseCurrency}} in Settings to include those amounts.",
+    "missingFxBody": "Add a {{currencies}} → {{baseCurrency}} rate in Settings to include those amounts.",
     "negativeCashFlow": "Spending above income",
     "negativeCashFlowBody": "Expenses exceed income by {{amount}}.",
     "spendingFromBalance": "Spending from the existing balance",
@@ -291,7 +291,7 @@
     "analyticsOverview": "Analytics overview",
     "cashFlowTrend": "Money in and money out",
     "balanceTrend": "Balance evolution",
-    "balanceTrendHelp": "Balance reconstructed from the period’s operations. Transfers between your accounts remain neutral.",
+    "balanceTrendHelp": "Balance rebuilt from the period’s operations. Transfers between your accounts are neutral.",
     "balancePoint": "{{date}}: balance {{balance}}",
     "chartPoint": "{{date}}: {{income}} received, {{expenses}} spent, difference {{net}}",
     "chartTable": "Show chart data",
@@ -360,7 +360,7 @@
       "editTitle": "Edit transaction",
       "editDescription": "The account and original date remain unchanged.",
       "deleteTitle": "Delete transaction?",
-      "deleteDescription": "This removes the transaction from balances and reports. The encrypted event history remains auditable.",
+      "deleteDescription": "Removes the transaction from balances and reports. The encrypted history stays auditable.",
       "category": "Category",
       "type": "Type",
       "expense": "Expense",
@@ -378,7 +378,7 @@
     },
     "deviceUnlockOffer": {
       "title": "Unlock faster next time",
-      "body": "Use this device’s screen lock instead of typing your passphrase. Turn it on in Settings.",
+      "body": "Use your screen lock instead of typing your passphrase. Turn it on in Settings.",
       "action": "Open Settings",
       "dismiss": "Not now"
     },
@@ -761,7 +761,7 @@
     "checkingSetup": "Checking AI setup.",
     "setupRequiredByo": "Add a personal provider key in Settings to use the assistant.",
     "setupRequiredEdge": "Add a personal provider key or connect your online account to use the assistant.",
-    "smartFeaturesPreparing": "This smart feature is being prepared. Your records and all standard WiseMoney features remain available.",
+    "smartFeaturesPreparing": "This smart feature is coming soon. The rest of WiseMoney stays available.",
     "aiNoticeTitle": "The assistant is optional",
     "aiNoticeAction": "Configure AI keys",
     "tabs": {
@@ -797,7 +797,7 @@
         "name": "Pattern Detection",
         "purpose": "Detect recurring spending habits and category dependencies",
         "provider": "The provider you chose",
-        "description": "Identifies behavioural patterns like frequent dining, subscription creep, or category concentration",
+        "description": "Spots habits: frequent dining, creeping subscriptions, dominant categories",
         "redactedData": "Category-level aggregates, budget status, period comparisons — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
       },
@@ -805,7 +805,7 @@
         "name": "Learning Chat",
         "purpose": "Explain personal finance concepts in plain language",
         "provider": "The provider you chose",
-        "description": "Answers questions about budgeting, saving, cash flow, and more — tied to your data",
+        "description": "Answers money questions using your data",
         "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
       }
@@ -977,12 +977,12 @@
       "protectionTitle": "Protect the backup",
       "passphrase": "Backup passphrase",
       "passphraseConfirmation": "Confirm backup passphrase",
-      "passphraseHelp": "WiseMoney does not store this passphrase. Keep it with your backup: you will need it to restore the file.",
+      "passphraseHelp": "WiseMoney does not keep it. Store it with your backup: you need it to restore.",
       "prepare": "Prepare archive",
       "preparing": "Generating archive…",
       "prepared": "Cycle archive generated",
       "archiveReady": "Both documents are ready",
-      "archiveReadyHelp": "Download the restorable backup and the statement separately. Both were generated from the same financial state.",
+      "archiveReadyHelp": "Download the backup and the statement separately; both come from the same state.",
       "backupFile": "Restorable backup",
       "reportFile": "Cycle statement",
       "downloadBackup": "Download backup",
@@ -990,7 +990,7 @@
       "checksum": "Backup SHA-256 fingerprint",
       "savedFilesConfirmation": "I confirm that I saved both files in a safe location.",
       "resetConfirmation": "Type RESET to confirm",
-      "resetWarning": "This permanently removes the current cycle’s financial data from this device. Only the downloaded backup can restore it.",
+      "resetWarning": "Permanently removes the cycle’s data from this device. Only the downloaded backup can restore it.",
       "keepCurrentCycle": "Keep current cycle",
       "reset": "Close and start again",
       "resetting": "Closing cycle…",
@@ -1043,7 +1043,7 @@
     "passphrase": {
       "exportTitle": "Encrypt Export",
       "importTitle": "Decrypt Import",
-      "exportDescription": "Enter a passphrase to protect your export. You will need this passphrase to import the file later.",
+      "exportDescription": "Choose a passphrase to protect the export. You need it to import the file.",
       "importDescription": "This file is passphrase-encrypted. Enter the passphrase to decrypt and import.",
       "label": "Passphrase",
       "cancel": "Cancel",
@@ -1144,7 +1144,8 @@
     "metrics": {
       "unsettledReceivables": "Unsettled receivables",
       "unsettledDebts": "Unsettled debts",
-      "reminders": "Reminders"
+      "reminders": "Reminders",
+      "overview": "Overview"
     },
     "reminders": {
       "title": "Reminders for unsettled receivables"
@@ -1206,7 +1207,7 @@
     },
     "settings": {
       "enable": "Enable WiseMoney reminders",
-      "privacy": "Labels may appear on the lock screen. Amounts, balances, and notes never leave the encrypted vault.",
+      "privacy": "Labels may show on the lock screen. Amounts, balances and notes stay in the encrypted vault.",
       "typesTitle": "Reminder types",
       "leadDays": "Days in advance",
       "leadDaysHelp": "Separate days with commas; 0 means the due date.",
@@ -1356,7 +1357,7 @@
       "deviceUnlock": {
         "title": "Device unlock",
         "description": "Use this device’s screen lock. Your passphrase stays the recovery key.",
-        "enabled": "Device unlock is on for this device. The passphrase stays the recovery key.",
+        "enabled": "Device unlock is on. The passphrase stays the recovery key.",
         "enable": "Turn on device unlock",
         "disable": "Turn off device unlock",
         "passphrase": "Private passphrase",
@@ -1371,7 +1372,7 @@
       "title": "Currency settings",
       "description": "Set your default currency and manage exchange rates",
       "default": "Default currency",
-      "defaultHelp": "African currencies are listed first. New accounts use this currency; existing accounts are unchanged.",
+      "defaultHelp": "African currencies come first. New accounts use it; existing accounts do not change.",
       "search": "Search code or currency",
       "currenciesAria": "Currencies",
       "noMatch": "No matching currency.",

@@ -3,6 +3,7 @@ import { ArrowDownLeft, ArrowRightLeft, ArrowUpRight, CalendarDays, Download, Li
 import { useTranslation } from "react-i18next";
 import { filterFinancialOperations, groupOperationsByLocalDay, operationAmountForAccount, operationEffect, summarizeMonthlyActivity } from "../../analytics/operations.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card.tsx";
+import { CollapsibleCard } from "../../components/ui/collapsible-card.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select.tsx";
@@ -213,7 +214,8 @@ export default function Operations() {
         ))}
       </div>
 
-      <section aria-label={t("operations.summary")} className="grid divide-y divide-border overflow-hidden rounded-lg border border-border bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+      <CollapsibleCard defaultOpen title={t("operations.summary")} contentClassName="p-3 pt-0">
+        <div className="grid divide-y divide-border overflow-hidden rounded-lg border border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {([
           // Signed as on Home: money in carries "+", money out a minus sign.
           { key: "received", amount: totals.received, tone: totals.received.minorUnits > 0 ? "text-positive" : "text-foreground" },
@@ -227,7 +229,8 @@ export default function Operations() {
             </p>
           </div>
         ))}
-      </section>
+        </div>
+      </CollapsibleCard>
       {totals.isPartial && <p className="border-l-2 border-information bg-information-wash px-3 py-2 text-xs text-muted-foreground">{t("operations.partialSummary", { currencies: totals.missingCurrencies.join(", ") })}</p>}
 
       <Card>

@@ -66,7 +66,7 @@
     "permission": {
       "ask": "Votre navigateur va demander l’accès au micro : choisissez Autoriser.",
       "deniedChrome": "Dans Chrome : ⋮ › Paramètres › Paramètres des sites › Micro, puis autorisez wisemoney.y7labs.studio.",
-      "deniedSystem": "Toujours bloqué ? Dans les réglages du téléphone : Applications › Chrome › Autorisations › Micro (les noms varient selon la marque).",
+      "deniedSystem": "Toujours bloqué ? Réglages du téléphone › Applications › Chrome › Autorisations › Micro.",
       "retry": "Réessayer",
       "useKeyboard": "Passer au micro du clavier",
       "keyboard": {
@@ -140,7 +140,7 @@
     },
     "login": {
       "passphraseTitle": "Phrase privée",
-      "passphraseDescription": "Trois mots au hasard font une bonne phrase privée ; les espaces sont permis. Personne ne peut la réinitialiser pour vous : notez-la et gardez-la en lieu sûr. Une sauvegarde depuis Paramètres protège vos données.",
+      "passphraseDescription": "Trois mots au hasard font une bonne phrase. Personne ne peut la réinitialiser : notez-la en lieu sûr.",
       "errors": {
         "passwordsMismatch": "Les deux phrases privées ne correspondent pas"
       }
@@ -172,7 +172,7 @@
       "confirmPassphrase": "Confirmer la phrase privée",
       "submitting": "Configuration…",
       "createVault": "Créer l'espace privé",
-      "deviceUnlockUnavailable": "Le déverrouillage de l’appareil n’est pas disponible avec ce navigateur ou cet authentificateur. L’espace a été créé avec la phrase privée uniquement.",
+      "deviceUnlockUnavailable": "Déverrouillage de l’appareil indisponible ici. L’espace utilise la phrase privée seule.",
       "errors": {
         "failed": "Échec de la configuration"
       }
@@ -206,8 +206,8 @@
       "aria": "Restaurer un espace WiseMoney existant",
       "kicker": "Déplacer un espace existant",
       "title": "Amenez votre espace enregistré sur cet appareil",
-      "body": "Si vous utilisez déjà WiseMoney dans un autre navigateur ou sur un autre téléphone, exportez cet espace là-bas puis restaurez-le ici. Cela garde un seul espace privé au lieu d'en créer un deuxième.",
-      "helper": "Choisissez le fichier d'export depuis votre navigateur ou téléphone actuel, puis créez une phrase secrète pour cet appareil. Si l'export est protégé, saisissez aussi la phrase secrète d'export.",
+      "body": "Déjà WiseMoney sur un autre téléphone ou navigateur ? Exportez-y l’espace puis restaurez-le ici.",
+      "helper": "Choisissez le fichier d’export, puis créez une phrase secrète pour cet appareil. Si l’export est protégé, saisissez aussi sa phrase.",
       "fileLabel": "Fichier d'export",
       "passphrase": "Nouvelle phrase secrète pour cet appareil",
       "confirmPassphrase": "Confirmer la nouvelle phrase secrète",
@@ -282,7 +282,7 @@
     "makeTransfer": "Transfert",
     "planExpense": "Dépense prévue",
     "missingFxTitle": "Certains totaux sont incomplets",
-    "missingFxBody": "Ajoutez un taux de change de {{currencies}} vers {{baseCurrency}} dans les paramètres pour inclure ces montants.",
+    "missingFxBody": "Ajoutez un taux {{currencies}} → {{baseCurrency}} dans les paramètres pour inclure ces montants.",
     "negativeCashFlow": "Dépenses supérieures aux revenus",
     "negativeCashFlowBody": "Les dépenses dépassent les revenus de {{amount}}.",
     "spendingFromBalance": "Dépenses prises sur le solde existant",
@@ -291,7 +291,7 @@
     "analyticsOverview": "Aperçu analytique",
     "cashFlowTrend": "Entrées et sorties d’argent",
     "balanceTrend": "Évolution du solde",
-    "balanceTrendHelp": "Solde reconstruit à partir des opérations de la période. Les transferts entre vos comptes restent neutres.",
+    "balanceTrendHelp": "Solde reconstruit depuis les opérations. Les transferts entre vos comptes sont neutres.",
     "balancePoint": "{{date}} : solde {{balance}}",
     "chartPoint": "{{date}} : {{income}} reçus, {{expenses}} dépensés, différence {{net}}",
     "chartTable": "Afficher les données du graphique",
@@ -360,7 +360,7 @@
       "editTitle": "Modifier la transaction",
       "editDescription": "Le compte et la date d’origine restent inchangés.",
       "deleteTitle": "Supprimer la transaction ?",
-      "deleteDescription": "Cette action retire la transaction des soldes et rapports. L’historique chiffré des événements reste auditable.",
+      "deleteDescription": "Retire la transaction des soldes et rapports. L’historique chiffré reste auditable.",
       "category": "Catégorie",
       "type": "Type",
       "expense": "Dépense",
@@ -378,7 +378,7 @@
     },
     "deviceUnlockOffer": {
       "title": "Déverrouillez plus vite la prochaine fois",
-      "body": "Utilisez le verrouillage d’écran de cet appareil au lieu de saisir votre phrase privée. Activez-le dans Paramètres.",
+      "body": "Utilisez le verrouillage d’écran au lieu de saisir votre phrase privée. Activez-le dans Paramètres.",
       "action": "Ouvrir Paramètres",
       "dismiss": "Pas maintenant"
     },
@@ -761,7 +761,7 @@
     "checkingSetup": "Vérification de la configuration de l'IA.",
     "setupRequiredByo": "Ajoutez une clé personnelle de fournisseur dans les paramètres pour utiliser l’assistant.",
     "setupRequiredEdge": "Ajoutez une clé personnelle de fournisseur ou connectez votre compte en ligne pour utiliser l’assistant.",
-    "smartFeaturesPreparing": "Cette fonctionnalité intelligente est en préparation. Vos données et toutes les fonctions normales de WiseMoney restent disponibles.",
+    "smartFeaturesPreparing": "Cette fonction intelligente arrive bientôt. Le reste de WiseMoney reste disponible.",
     "aiNoticeTitle": "L’assistant est facultatif",
     "aiNoticeAction": "Configurer les clés IA",
     "tabs": {
@@ -797,7 +797,7 @@
         "name": "Détection de schémas",
         "purpose": "Détecter les habitudes de dépenses récurrentes et les dépendances entre catégories",
         "provider": "Le fournisseur que vous avez choisi",
-        "description": "Identifie les schémas comportementaux comme les restaurants fréquents, l'inflation d'abonnements ou la concentration par catégorie",
+        "description": "Repère vos habitudes : restaurants fréquents, abonnements qui gonflent, catégories dominantes",
         "redactedData": "Agrégats par catégorie, état des budgets, comparaisons de période — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
       },
@@ -805,7 +805,7 @@
         "name": "Chat pédagogique",
         "purpose": "Expliquer les concepts de finances personnelles en langage simple",
         "provider": "Le fournisseur que vous avez choisi",
-        "description": "Répond à vos questions sur la budgétisation, l'épargne, les flux de trésorerie, etc. — en lien avec vos données",
+        "description": "Répond à vos questions d’argent à partir de vos données",
         "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
       }
@@ -977,12 +977,12 @@
       "protectionTitle": "Protéger le backup",
       "passphrase": "Phrase secrète du backup",
       "passphraseConfirmation": "Confirmer la phrase secrète",
-      "passphraseHelp": "WiseMoney ne conserve pas cette phrase. Gardez-la avec votre backup : elle sera nécessaire pour le restaurer.",
+      "passphraseHelp": "WiseMoney ne la conserve pas. Gardez-la avec votre sauvegarde : elle sert à restaurer.",
       "prepare": "Préparer l’archive",
       "preparing": "Génération de l’archive…",
       "prepared": "Archive du cycle générée",
       "archiveReady": "Les deux documents sont prêts",
-      "archiveReadyHelp": "Téléchargez séparément le backup restaurable et le relevé. Leur contenu a été généré depuis le même état financier.",
+      "archiveReadyHelp": "Téléchargez la sauvegarde et le relevé séparément ; ils viennent du même état.",
       "backupFile": "Backup restaurable",
       "reportFile": "Relevé du cycle",
       "downloadBackup": "Télécharger le backup",
@@ -990,7 +990,7 @@
       "checksum": "Empreinte SHA-256 du backup",
       "savedFilesConfirmation": "Je confirme avoir enregistré les deux fichiers dans un emplacement sûr.",
       "resetConfirmation": "Saisissez RESET pour confirmer",
-      "resetWarning": "Cette action efface définitivement les données financières du cycle actuel sur cet appareil. Seul le backup téléchargé permet de les restaurer.",
+      "resetWarning": "Efface définitivement les données du cycle sur cet appareil. Seule la sauvegarde téléchargée peut les restaurer.",
       "keepCurrentCycle": "Conserver le cycle actuel",
       "reset": "Clôturer et recommencer",
       "resetting": "Clôture du cycle…",
@@ -1043,7 +1043,7 @@
     "passphrase": {
       "exportTitle": "Chiffrer l'exportation",
       "importTitle": "Déchiffrer l'importation",
-      "exportDescription": "Entrez une phrase de passe pour protéger votre exportation. Vous aurez besoin de cette phrase pour importer le fichier plus tard.",
+      "exportDescription": "Choisissez une phrase de passe pour protéger l’export. Elle sera nécessaire pour l’importer.",
       "importDescription": "Ce fichier est chiffré par phrase de passe. Entrez la phrase pour déchiffrer et importer.",
       "label": "Phrase de passe",
       "cancel": "Annuler",
@@ -1144,7 +1144,8 @@
     "metrics": {
       "unsettledReceivables": "Créances non soldées",
       "unsettledDebts": "Dettes non soldées",
-      "reminders": "Rappels"
+      "reminders": "Rappels",
+      "overview": "Aperçu"
     },
     "reminders": {
       "title": "Rappels sur créances non soldées"
@@ -1206,7 +1207,7 @@
     },
     "settings": {
       "enable": "Activer les rappels WiseMoney",
-      "privacy": "Les libellés peuvent apparaître sur l’écran verrouillé. Les montants, soldes et notes ne quittent jamais le coffre chiffré.",
+      "privacy": "Les libellés peuvent s’afficher sur l’écran verrouillé. Montants, soldes et notes restent dans le coffre chiffré.",
       "typesTitle": "Types de rappels",
       "leadDays": "Jours d’anticipation",
       "leadDaysHelp": "Séparez les jours par des virgules ; 0 correspond au jour de l’échéance.",
@@ -1356,7 +1357,7 @@
       "deviceUnlock": {
         "title": "Déverrouillage de l’appareil",
         "description": "Utilisez le verrouillage d’écran de cet appareil. La phrase privée reste la clé de récupération.",
-        "enabled": "Le déverrouillage de l’appareil est activé sur cet appareil. La phrase privée reste la clé de récupération.",
+        "enabled": "Déverrouillage activé sur cet appareil. La phrase privée reste la clé de récupération.",
         "enable": "Activer le déverrouillage de l’appareil",
         "disable": "Désactiver le déverrouillage de l’appareil",
         "passphrase": "Phrase privée",
@@ -1371,7 +1372,7 @@
       "title": "Paramètres de devise",
       "description": "Définissez votre devise par défaut et gérez les taux de change",
       "default": "Devise par défaut",
-      "defaultHelp": "Les devises africaines sont affichées en premier. Les nouveaux comptes utilisent cette devise ; les comptes existants restent inchangés.",
+      "defaultHelp": "Les devises africaines viennent en premier. Les nouveaux comptes l’utilisent ; les comptes existants ne changent pas.",
       "search": "Rechercher un code ou une devise",
       "currenciesAria": "Devises",
       "noMatch": "Aucune devise correspondante.",

@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { DollarSign, Plus, Trash2, RefreshCw, Check, ChevronsUpDown, Search } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { currencyName } from "@/types/currencyNames.ts";
 
 type CurrencyOption = {
   code: string;
@@ -233,13 +234,10 @@ function buildCurrencyOptions(): CurrencyOption[] {
 
 function CurrencyOptionLabel({ code, compact = false }: { code: string; compact?: boolean }) {
   const { i18n } = useTranslation();
-  const name = useMemo(() => {
-    try {
-      return new Intl.DisplayNames([i18n.resolvedLanguage ?? i18n.language], { type: "currency" }).of(code) ?? getCurrencyName(code);
-    } catch {
-      return getCurrencyName(code);
-    }
-  }, [code, i18n.language, i18n.resolvedLanguage]);
+  const name = useMemo(
+    () => currencyName(code, i18n.resolvedLanguage ?? i18n.language, getCurrencyName(code)),
+    [code, i18n.language, i18n.resolvedLanguage],
+  );
   return (
     <span className="flex min-w-0 items-center gap-2">
       <span className="shrink-0 rounded-md bg-ocean-wash px-2 py-0.5 text-xs font-semibold text-ocean-dark">
@@ -258,15 +256,10 @@ function CurrencySelect({ id, value, onValueChange, compact = false }: { id: str
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (normalized.length === 0) return CURRENCY_OPTIONS;
-    let displayNames: Intl.DisplayNames | null = null;
-    try {
-      displayNames = new Intl.DisplayNames([i18n.resolvedLanguage ?? i18n.language], { type: "currency" });
-    } catch {
-      // Static names remain available in older browsers.
-    }
+    const locale = i18n.resolvedLanguage ?? i18n.language;
     return CURRENCY_OPTIONS.filter((currency) =>
       currency.code.toLowerCase().includes(normalized) ||
-      (displayNames?.of(currency.code) ?? currency.name).toLowerCase().includes(normalized) ||
+      currencyName(currency.code, locale, currency.name).toLowerCase().includes(normalized) ||
       t(`settings.currency.regions.${currency.region}`).toLowerCase().includes(normalized)
     );
   }, [i18n.language, i18n.resolvedLanguage, query, t]);

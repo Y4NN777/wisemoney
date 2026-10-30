@@ -17,6 +17,7 @@ import {
 import { categoryDisplayName } from "@/lib/categoryName.ts";
 import type { ManageSection } from "@/routes/capture.tsx";
 import { formatMoney, majorUnitsInput, parseMajorUnits } from "@/types/money.ts";
+import { currencyDisplay, currencyName } from "@/types/currencyNames.ts";
 import { actionFailureMessage, hasValidationMessage } from "@/lib/actionFailure.ts";
 import { AccountNotEmptyError, REFUSAL } from "@/pillars/state/index.ts";
 
@@ -79,19 +80,13 @@ const AFRICAN_CURRENCIES: AccountCurrencyOption[] = [
 
 const ACCOUNT_TYPES = ["checking", "savings", "credit", "cash", "mobile_money", "investment"] as const;
 
-/** A phone without currency names reports the code as the name; show it once. */
-function currencyLabel({ code, name }: { code: string; name: string }): string {
-  return name === code ? code : `${code} — ${name}`;
-}
-
 function currencyOptions(locale: string): AccountCurrencyOption[] {
-  const names = typeof Intl.DisplayNames === "function" ? new Intl.DisplayNames([locale], { type: "currency" }) : null;
   const intlCodes = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("currency") : [];
   const details = new Map(AFRICAN_CURRENCIES.map((currency) => [currency.code, currency]));
   return [...new Set([...intlCodes, ...AFRICAN_CURRENCIES.map(({ code }) => code), "USD", "EUR", "GBP"])]
     .map((code) => {
       const detail = details.get(code);
-      return { code, name: names?.of(code) ?? detail?.name ?? code, region: detail?.region ?? "Global" as const, countries: detail?.countries ?? "" };
+      return { code, name: currencyName(code, locale, detail?.name ?? code), region: detail?.region ?? "Global" as const, countries: detail?.countries ?? "" };
     })
     .sort((left, right) => left.region === right.region ? left.name.localeCompare(right.name) : left.region === "Africa" ? -1 : 1);
 }
@@ -119,7 +114,7 @@ export function AccountCurrencyPicker({ value, onChange }: { value: string; onCh
     <div ref={rootRef} className="relative min-w-0">
       <button id="accCurrency" type="button" aria-expanded={open} aria-haspopup="listbox" onClick={() => setOpen((current) => !current)}
         className="flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-input bg-background px-3 py-2 text-left text-sm">
-        <span className="min-w-0 truncate font-semibold">{selected == null ? value : currencyLabel(selected)}</span>
+        <span className="min-w-0 truncate font-semibold">{selected == null ? value : currencyDisplay(selected.code, i18n.resolvedLanguage ?? i18n.language, selected.name)}</span>
         <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
       </button>
       {open && (

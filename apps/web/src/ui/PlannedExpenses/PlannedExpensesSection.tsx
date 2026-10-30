@@ -1,5 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { currencyDisplay } from "@/types/currencyNames.ts";
 import { CalendarDays, CalendarPlus, CheckCircle2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -105,7 +106,7 @@ function ExpenseFields({
   currencies: string[];
   onChange: (patch: Partial<ExpenseDraft>) => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fieldError = (field: keyof ExpenseDraft) => errors[field] == null ? undefined : `${field}-error`;
 
   return (
@@ -127,7 +128,7 @@ function ExpenseFields({
         <Label htmlFor="planned-currency">{t("capture.plannedExpenses.fields.currency")}</Label>
         <Select value={draft.currency} onValueChange={(currency) => onChange({ currency })}>
           <SelectTrigger id="planned-currency"><SelectValue /></SelectTrigger>
-          <SelectContent>{currencies.map((currency) => <SelectItem key={currency} value={currency}>{currency}</SelectItem>)}</SelectContent>
+          <SelectContent>{currencies.map((currency) => <SelectItem key={currency} value={currency}>{currencyDisplay(currency, i18n.resolvedLanguage ?? i18n.language)}</SelectItem>)}</SelectContent>
         </Select>
       </div>
       <div className="space-y-2">
