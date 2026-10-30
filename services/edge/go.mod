@@ -1,11 +1,11 @@
 module github.com/y4nn/wisemoney/services/edge
 
-go 1.25.0
+go 1.26.0
 
-toolchain go1.25.13 // pin patched build toolchain: clears GO-2026-5026/-5972/-6088/-6089/-6090/-6218
+toolchain go1.26.10 // pin patched build toolchain: clears GO-2026-5026/-5972/-6088/-6089/-6090/-6218 and GO-2026-6603/-6605/-6607/-6608/-6610/-6611/-6612/-6613/-6617/-6809
 
 require (
-	github.com/go-chi/chi/v5 v5.2.4 // GO-2025-3770 (open redirect) + GO-2026-4316
+	github.com/go-chi/chi/v5 v5.4.0 // GO-2025-3770 (open redirect) + GO-2026-4316 + GHSA-j6qf-3m9c-vwj3
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/jackc/pgx/v5 v5.9.2 // CVE-2026-33816 (GO-2026-4772, CVSS 9.8): memory-safety in pgx driver
 	golang.org/x/crypto v0.52.0 // GO-2025-4134/-4135: backs argon2 password hashing (FR-AUTH)
@@ -15,7 +15,7 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
-	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect
-	golang.org/x/text v0.39.0 // indirect
+	golang.org/x/text v0.41.0 // indirect // GO-2026-6629
 )
