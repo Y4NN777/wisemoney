@@ -55,9 +55,9 @@
   --attention-wash: #fff3d8;
   --information: #0077b6;
   --information-wash: #e6f5fa;
-  --border: rgba(16, 24, 32, 0.12);
-  /* Field borders must reach 3:1 against the surface (WCAG 1.4.11): 3.4:1 on cards, 3.2:1 on the page. */
-  --input: rgba(16, 24, 32, 0.50);
+  --border: rgba(16, 24, 32, 0.08);
+  /* Field borders must reach 3:1 against the surface (WCAG 1.4.11): a slate tint, 3.3:1 on cards, 3.1:1 on the page. */
+  --input: #858f9b;
   --ring: var(--ocean-primary);
   --landing-glow: rgba(230, 245, 250, 0.92);
   --landing-wash: rgba(230, 245, 250, 0.68);
@@ -195,8 +195,8 @@
   --attention-wash: #332a1d;
   --information: #4db6db;
   --information-wash: #16303a;
-  --border: #333842;
-  --input: #6b7280; /* 3.5:1 on cards, 3.8:1 on the page */
+  --border: #2a2e36;
+  --input: #626977; /* 3.1:1 on cards, 3.4:1 on the page */
   --ring: var(--ocean-light);
   --landing-glow: rgba(22, 48, 58, 0.78);
   --landing-wash: rgba(22, 48, 58, 0.44);

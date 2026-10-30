@@ -3,3 +3,17 @@
 id = "GHSA-gcqx-w48m-w2h4"
 ignoreUntil = 2026-12-01T00:00:00Z
 reason = "deepmerge 4.3.1 (CVSS 5.3), no fixed version exists. Build-time only, pulled in only by @rollup/plugin-node-resolve (a build plugin); never shipped to or run on the device."
+
+# Newly disclosed 2026-10-28. Fixes exist only in minimatch 11.0.1+ and glob 14.0.2+, published two days
+# before this entry and a major jump for eslint (minimatch 3), jake (minimatch 5), typescript-estree
+# (minimatch 10) and workbox-build (glob 11). Build and lint tooling only; patterns are our own, never
+# user input; nothing here ships to the device. Re-evaluate once the fixed releases are two weeks old.
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+ignoreUntil = 2026-11-20T00:00:00Z
+reason = "minimatch 3.1.5, 5.1.9 and 10.2.5 (CVSS 6.9): build/lint tooling only, trusted patterns, fix is a fresh major."
+
+[[IgnoredVulns]]
+id = "GHSA-3g3m-2fjr-6pw4"
+ignoreUntil = 2026-11-20T00:00:00Z
+reason = "glob 11.1.0 (CVSS 6.3), pulled in by workbox-build at build time only, trusted patterns, fix is a fresh major."

@@ -1,13 +1,13 @@
 /**
  * Decides when Home offers device unlock to a passphrase-only vault.
  *
- * The offer appears from the second passphrase unlock onward and stays away once
- * dismissed. The counter and the dismissal are conveniences, not security state,
+ * The offer appears from the first passphrase unlock onward (the first return visit) and
+ * stays away once dismissed. The counter and the dismissal are conveniences, not security state,
  * so they live in localStorage like the consent flags (ADR-0008); losing them
  * only means the offer may show again.
  */
 const STORAGE_KEY = "wisemoney.deviceUnlockOffer.v1";
-const OFFER_FROM_PASSPHRASE_UNLOCK = 2;
+const OFFER_FROM_PASSPHRASE_UNLOCK = 1;
 
 type OfferState = { passphraseUnlocks: number; dismissed: boolean };
 

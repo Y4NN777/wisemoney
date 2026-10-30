@@ -53,7 +53,7 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
           onClick={() => changeLanguage(language.code)}
           className={`min-h-11 min-w-11 rounded px-3 text-sm font-semibold transition-colors ${
             currentLanguage === language.code
-              ? "bg-primary text-primary-foreground"
+              ? "bg-ocean-wash text-ocean-dark"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"
           }`}
           aria-pressed={currentLanguage === language.code}
