@@ -957,11 +957,11 @@
   "exportImport": {
     "cycle": {
       "title": "Cycles and archives",
-      "description": "Close a period, keep a restorable backup and a readable statement, then start again with a clean financial space.",
+      "description": "Close a period, keep a backup and a statement, then start fresh.",
       "currentEvents": "Cycle actions",
       "startedAt": "Cycle started",
       "archivedCycles": "Closed cycles",
-      "keptSettings": "Resetting removes the current cycle’s accounts, transactions, budgets, and goals. Your passphrase, currency, exchange rates, and preferences stay in place.",
+      "keptSettings": "Removes the cycle’s accounts, transactions, budgets and goals. Passphrase, currency, rates and preferences stay.",
       "action": "Archive and start again",
       "historyTitle": "Closure receipts on this device",
       "eventCount_one": "{{count}} event",
@@ -1011,7 +1011,7 @@
     },
     "export": {
       "title": "Export",
-      "description": "Download your financial data. JSON exports are lossless and can be re-imported.",
+      "description": "Download your data. JSON can be re-imported.",
       "json": "Export JSON",
       "csv": "Export CSV",
       "xlsx": "Export XLSX",
@@ -1023,11 +1023,11 @@
         "encryptedFailed": "The encrypted export didn’t complete and nothing was downloaded. Try again; if it keeps happening, reload the app.",
         "unreadable": "Some data on this device couldn’t be read, so nothing was downloaded. Reload the app, then try again."
       },
-      "warning": "Plaintext exports contain your decrypted data. Store them securely."
+      "warning": "Plaintext exports are not encrypted: store them safely."
     },
     "import": {
       "title": "Import",
-      "description": "Restore data from a JSON export file. This replaces all existing data.",
+      "description": "Restore a JSON export. Replaces all current data.",
       "importing": "Importing data…",
       "success": "Import successful! All data has been restored.",
       "errors": {
@@ -1515,7 +1515,7 @@
     "accounts": {
       "label": "Currency & accounts",
       "title": "Currency and accounts",
-      "body": "Check the currency you count in. Rename the account we made for you or add another if you wish: cash, mobile money, bank.",
+      "body": "Check the currency. Rename or add an account: cash, mobile money, bank.",
       "nameLabel": "Rename {{name}}",
       "save": "Save",
       "addAnother": "Add another account",
@@ -1523,19 +1523,19 @@
       "invalid": "Give the account a name and a valid opening balance.",
       "done": "Accounts ready.",
       "currencyLabel": "Main currency",
-      "currencyHint": "Guessed from your phone. Change it now; accounts keep their currency once they hold movements."
+      "currencyHint": "Guessed from your phone. Fixed once an account has movements."
     },
     "movement": {
       "label": "First movement",
       "title": "Your first movement",
-      "body": "Record something you spent or received today. This is the gesture you will repeat most.",
+      "body": "Record something you spent or received today.",
       "record": "Record a movement",
       "done": "Recorded. Find it in Activity."
     },
     "plan": {
       "label": "One plan",
       "title": "One plan",
-      "body": "A monthly budget for a category, or a goal to save towards. You can add more later.",
+      "body": "A monthly budget or a savings goal. Add more later.",
       "budget": "A budget",
       "goal": "A goal",
       "save": "Save",

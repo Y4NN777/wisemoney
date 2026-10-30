@@ -4,7 +4,7 @@ import { exportJSON, exportCSV, exportXLSX, importJSON } from "../../exportImpor
 import { cyclePrepareFailureKey, cycleResetFailureKey, exportFailureKey, importFailureKey } from "../../exportImport/failure.ts";
 import { closeFinancialCycle, getCycleOverview, prepareCycleArchive, readCycleHistory, type CycleArchiveReceipt, type CycleOverview, type PreparedCycleArchive } from "../../exportImport/cycle.ts";
 import { Button } from "../../components/ui/button.tsx";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.tsx";
+import { CollapsibleCard } from "../../components/ui/collapsible-card.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog.tsx";
@@ -298,15 +298,16 @@ export default function ExportImportSection() {
 
   return (
     <>
-      <Card className="border-ocean-primary/25">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Archive className="h-5 w-5 text-primary" />
-            {t("exportImport.cycle.title")}
-          </CardTitle>
-          <CardDescription>{t("exportImport.cycle.description")}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <CollapsibleCard
+        className="border-ocean-primary/25"
+        forceOpen={cycleError != null && !cycleDialogOpen}
+        title={<>
+          <Archive className="h-5 w-5 text-primary" />
+          {t("exportImport.cycle.title")}
+        </>}
+        description={t("exportImport.cycle.description")}
+        contentClassName="space-y-4"
+      >
           {cycleError != null && !cycleDialogOpen && (
             <p role="alert" className="text-sm text-destructive">{cycleError}</p>
           )}
@@ -362,20 +363,18 @@ export default function ExportImportSection() {
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+      </CollapsibleCard>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5" />
-            {t("exportImport.export.title")}
-          </CardTitle>
-          <CardDescription>
-            {t("exportImport.export.description")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <CollapsibleCard
+        defaultOpen
+        forceOpen={exportError != null}
+        title={<>
+          <Download className="h-5 w-5" />
+          {t("exportImport.export.title")}
+        </>}
+        description={t("exportImport.export.description")}
+        contentClassName="space-y-3"
+      >
           {exportError != null && (
             <p role="alert" className="text-destructive text-sm">{exportError}</p>
           )}
@@ -423,20 +422,17 @@ export default function ExportImportSection() {
             <AlertTriangle className="h-4 w-4 text-attention shrink-0 mt-0.5" />
             <p className="text-xs text-attention">{t("exportImport.export.warning")}</p>
           </div>
-        </CardContent>
-      </Card>
+      </CollapsibleCard>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="h-5 w-5" />
-            {t("exportImport.import.title")}
-          </CardTitle>
-          <CardDescription>
-            {t("exportImport.import.description")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <CollapsibleCard
+        forceOpen={importError != null}
+        title={<>
+          <Upload className="h-5 w-5" />
+          {t("exportImport.import.title")}
+        </>}
+        description={t("exportImport.import.description")}
+        contentClassName="space-y-3"
+      >
           {importError != null && (
             <p role="alert" className="text-destructive text-sm">{importError}</p>
           )}
@@ -467,8 +463,7 @@ export default function ExportImportSection() {
               {t("exportImport.import.importing")}
             </div>
           )}
-        </CardContent>
-      </Card>
+      </CollapsibleCard>
 
       <Dialog
         open={cycleDialogOpen}

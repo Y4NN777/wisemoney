@@ -79,6 +79,11 @@ const AFRICAN_CURRENCIES: AccountCurrencyOption[] = [
 
 const ACCOUNT_TYPES = ["checking", "savings", "credit", "cash", "mobile_money", "investment"] as const;
 
+/** A phone without currency names reports the code as the name; show it once. */
+function currencyLabel({ code, name }: { code: string; name: string }): string {
+  return name === code ? code : `${code} — ${name}`;
+}
+
 function currencyOptions(locale: string): AccountCurrencyOption[] {
   const names = typeof Intl.DisplayNames === "function" ? new Intl.DisplayNames([locale], { type: "currency" }) : null;
   const intlCodes = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("currency") : [];
@@ -114,7 +119,7 @@ export function AccountCurrencyPicker({ value, onChange }: { value: string; onCh
     <div ref={rootRef} className="relative min-w-0">
       <button id="accCurrency" type="button" aria-expanded={open} aria-haspopup="listbox" onClick={() => setOpen((current) => !current)}
         className="flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-input bg-background px-3 py-2 text-left text-sm">
-        <span className="min-w-0 truncate font-semibold">{selected == null ? value : `${selected.code} — ${selected.name}`}</span>
+        <span className="min-w-0 truncate font-semibold">{selected == null ? value : currencyLabel(selected)}</span>
         <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
       </button>
       {open && (
@@ -127,7 +132,7 @@ export function AccountCurrencyPicker({ value, onChange }: { value: string; onCh
               <button key={currency.code} type="button" role="option" aria-selected={currency.code === value}
                 className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground"
                 onClick={() => { onChange(currency.code); setOpen(false); setQuery(""); }}>
-                <span className="min-w-0 truncate"><strong>{currency.code}</strong> — {currency.name}</span>
+                <span className="min-w-0 truncate"><strong>{currency.code}</strong>{currency.name === currency.code ? "" : ` — ${currency.name}`}</span>
                 {currency.code === value && <Check className="h-4 w-4 shrink-0 text-ocean-primary" />}
               </button>
             ))}

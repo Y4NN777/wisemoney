@@ -957,11 +957,11 @@
   "exportImport": {
     "cycle": {
       "title": "Cycles et archives",
-      "description": "Clôturez une période, conservez un backup restaurable et un relevé lisible, puis recommencez avec un espace financier neuf.",
+      "description": "Clôturez une période, gardez une sauvegarde et un relevé, puis repartez de zéro.",
       "currentEvents": "Actions du cycle",
       "startedAt": "Cycle commencé le",
       "archivedCycles": "Cycles clôturés",
-      "keptSettings": "La remise à zéro efface les comptes, transactions, budgets et objectifs du cycle actuel. Votre phrase secrète, votre devise, vos taux et vos réglages restent en place.",
+      "keptSettings": "Efface comptes, transactions, budgets et objectifs du cycle. Phrase secrète, devise, taux et réglages restent.",
       "action": "Archiver et recommencer",
       "historyTitle": "Reçus de clôture sur cet appareil",
       "eventCount_one": "{{count}} événement",
@@ -1011,7 +1011,7 @@
     },
     "export": {
       "title": "Exporter",
-      "description": "Téléchargez vos données financières. Les exportations JSON sont sans perte et peuvent être réimportées.",
+      "description": "Téléchargez vos données. Le JSON peut être réimporté.",
       "json": "Exporter JSON",
       "csv": "Exporter CSV",
       "xlsx": "Exporter XLSX",
@@ -1023,11 +1023,11 @@
         "encryptedFailed": "L’exportation chiffrée n’a pas abouti et rien n’a été téléchargé. Réessayez ; si cela continue, rechargez l’application.",
         "unreadable": "Des données de cet appareil n’ont pas pu être lues, donc rien n’a été téléchargé. Rechargez l’application, puis réessayez."
       },
-      "warning": "Les exports en clair contiennent vos données déchiffrées. Conservez-les en lieu sûr."
+      "warning": "Les exports en clair ne sont pas chiffrés : gardez-les en lieu sûr."
     },
     "import": {
       "title": "Importer",
-      "description": "Restaurer les données à partir d'un fichier d'exportation JSON. Cela remplace toutes les données existantes.",
+      "description": "Restaurez un export JSON. Remplace toutes les données actuelles.",
       "importing": "Importation des données…",
       "success": "Importation réussie ! Toutes les données ont été restaurées.",
       "errors": {
@@ -1515,7 +1515,7 @@
     "accounts": {
       "label": "Devise et comptes",
       "title": "Devise et comptes",
-      "body": "Vérifiez la devise dans laquelle vous comptez. Renommez le compte créé pour vous ou ajoutez-en un si vous le souhaitez : espèces, mobile money, banque.",
+      "body": "Vérifiez la devise. Renommez ou ajoutez un compte : espèces, mobile money, banque.",
       "nameLabel": "Renommer {{name}}",
       "save": "Enregistrer",
       "addAnother": "Ajouter un compte",
@@ -1523,19 +1523,19 @@
       "invalid": "Donnez un nom au compte et un solde de départ valide.",
       "done": "Comptes prêts.",
       "currencyLabel": "Devise principale",
-      "currencyHint": "Devinée depuis votre téléphone. Changez-la maintenant ; un compte garde sa devise dès qu’il contient des mouvements."
+      "currencyHint": "Devinée depuis votre téléphone. Fixe dès qu’un compte a des mouvements."
     },
     "movement": {
       "label": "Premier mouvement",
       "title": "Votre premier mouvement",
-      "body": "Enregistrez une dépense ou une entrée d’aujourd’hui. C’est le geste que vous répéterez le plus.",
+      "body": "Notez une dépense ou une entrée d’aujourd’hui.",
       "record": "Enregistrer un mouvement",
       "done": "Enregistré. Retrouvez-le dans Activité."
     },
     "plan": {
       "label": "Un plan",
       "title": "Un plan",
-      "body": "Un budget mensuel pour une catégorie, ou un objectif d’épargne. Vous pourrez en ajouter d’autres plus tard.",
+      "body": "Un budget mensuel ou un objectif d’épargne. D’autres viendront plus tard.",
       "budget": "Un budget",
       "goal": "Un objectif",
       "save": "Enregistrer",
