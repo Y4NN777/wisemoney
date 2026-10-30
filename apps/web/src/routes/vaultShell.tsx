@@ -96,7 +96,7 @@ function RootLayout() {
                 to={item.to}
                 activeOptions={{ exact: item.exact }}
                 className="interactive-surface flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground"
-                activeProps={{ className: "bg-ocean-wash text-ocean-dark shadow-sm" }}
+                activeProps={{ className: "bg-ocean-wash/70 text-ocean-dark" }}
               >
                 <item.icon className="h-4 w-4" />
                 {t(item.labelKey)}
@@ -127,7 +127,7 @@ function RootLayout() {
               aria-label={t("nav.settings")}
               title={t("nav.settings")}
               className="interactive-surface flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground"
-              activeProps={{ className: "bg-ocean-wash text-ocean-dark" }}
+              activeProps={{ className: "bg-ocean-wash/70 text-ocean-dark" }}
             >
               <SettingsIcon className="h-5 w-5" />
             </Link>
@@ -157,7 +157,7 @@ function RootLayout() {
                 to={item.to}
                 activeOptions={{ exact: item.exact }}
                 className="flex h-full min-w-16 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-muted-foreground transition-[background-color,color,transform] duration-200 active:scale-95"
-                activeProps={{ className: "text-ocean-dark bg-ocean-wash/80" }}
+                activeProps={{ className: "text-ocean-dark bg-ocean-wash/60" }}
               >
                 <item.icon className="h-5 w-5" />
                 <span className="text-xs leading-tight font-medium">

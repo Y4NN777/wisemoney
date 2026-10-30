@@ -45,7 +45,7 @@ export function DashboardPeriodHeader({
   nudge?: HomeNudge | null;
   onAddMovement: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -84,20 +84,23 @@ export function DashboardPeriodHeader({
 
   const greetingTime = getGreetingTime(today);
   const isCurrentYear = selectedYear === today.getFullYear();
+  const shortMonth = new Intl.DateTimeFormat(i18n.resolvedLanguage ?? i18n.language, { month: "short" })
+    .format(new Date(selectedYear, selectedMonth - 1, 1))
+    .replace(/^./, (letter) => letter.toLocaleUpperCase());
 
   return (
-    <header className="flex flex-col gap-4 py-1 sm:flex-row sm:items-end sm:justify-between sm:py-2">
-      <div className="min-w-0">
+    <header className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2 py-1 sm:items-end sm:py-2">
+      <div className="min-w-0 flex-1">
         <h1 className="text-base font-semibold tracking-tight sm:text-xl">
           {t(`dashboard.greeting.${greetingTime}`)}
         </h1>
         {nudge != null && <NudgeLine nudge={nudge} onAddMovement={onAddMovement} />}
       </div>
 
-      <nav aria-label={t("dashboard.dashboardControls")} className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2 self-end sm:w-auto sm:self-auto">
+      <nav aria-label={t("dashboard.dashboardControls")} className="flex shrink-0 flex-wrap items-center justify-end gap-2">
         {accounts.length > 1 && (
           <Select value={selectedAccountId} onValueChange={onAccountChange}>
-            <SelectTrigger className="h-9 w-full min-w-40 sm:w-auto" aria-label={t("dashboard.accountFilter")}><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-9 w-auto min-w-32" aria-label={t("dashboard.accountFilter")}><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("dashboard.allAccounts")}</SelectItem>
               {accounts.map((account) => <SelectItem key={account.id} value={account.id}>{account.name}</SelectItem>)}
@@ -109,14 +112,15 @@ export function DashboardPeriodHeader({
             {t("dashboard.today")}
           </Button>
         )}
-        <div className="flex h-9 items-center rounded-full border border-border bg-card p-0.5">
-          <Button variant="ghost" size="icon" className="h-11 w-11 rounded-full" onClick={onPrevious} aria-label={t("dashboard.previousMonth")}>
+        <div className="flex h-9 items-center rounded-full border border-border bg-card">
+          <Button variant="ghost" size="icon" className="h-11 w-9 rounded-full" onClick={onPrevious} aria-label={t("dashboard.previousMonth")}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="min-w-24 px-2 text-center text-sm font-medium" aria-live="polite">
-            {t(`dashboard.months.${selectedMonth - 1}`)}{isCurrentYear ? "" : ` ${selectedYear}`}
+          <span className="min-w-9 text-center text-sm font-medium" aria-live="polite">
+            <span aria-hidden="true">{shortMonth}{isCurrentYear ? "" : ` ${String(selectedYear).slice(-2)}`}</span>
+            <span className="sr-only">{t(`dashboard.months.${selectedMonth - 1}`)} {selectedYear}</span>
           </span>
-          <Button variant="ghost" size="icon" className="h-11 w-11 rounded-full" onClick={onNext} aria-label={t("dashboard.nextMonth")} disabled={isCurrent}>
+          <Button variant="ghost" size="icon" className="h-11 w-9 rounded-full" onClick={onNext} aria-label={t("dashboard.nextMonth")} disabled={isCurrent}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
