@@ -132,7 +132,7 @@ jobs:
       #
       # Reads the real embedded Go stdlib version from the compiled binary via
       # debug/buildinfo. This is immune to the go.mod directive-vs-toolchain
-      # reporting gap: a go.mod can declare `go 1.25.0` while the builder
+      # reporting gap: a go.mod can declare `go 1.26.0` while the builder
       # toolchain is older — the binary tells the truth. The manifest scan above
       # cannot catch this. See ADR-0010 for the full rationale.
       #
