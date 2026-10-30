@@ -5,40 +5,6 @@ All notable changes to WiseMoney are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Added
-
-- **Collapsible activity card** — the monthly activity card on Home folds and
-  unfolds from a chevron at its right corner; the choice is kept on the device.
-
-### Changed
-
-- **Calmer look** — field borders use a slate tint at the same contrast floor
-  (WCAG 1.4.11), card dividers are lighter, outline buttons and segmented
-  controls lose their shadows, and the selected Activity range, Settings
-  section, language and navigation item use a light wash instead of solid blue.
-- **Month stepper** — shows an abbreviated month, is about half as wide and
-  sits on the right of the greeting on Home.
-
-### Security
-
-- Edge: `chi` 5.2.4 → 5.4.0, `golang.org/x/text` 0.39.0 → 0.41.0 and the Go
-  toolchain 1.25.13 → 1.26.10 (go.mod, edge Dockerfile, CI) clear 12 advisories.
-- Web: `vite` 7.3.7, `vitest` and `@vitest/coverage-v8` 4.1.12, and pinned
-  `seroval` 1.6.11, `serialize-javascript` 7.1.3, `source-map-js` 1.2.2 and
-  `fast-uri` 3.1.9 clear 19 advisories, including a CVSS 9.8 one in `seroval`.
-- `deepmerge` 4.3.1 (GHSA-gcqx-w48m-w2h4, no fixed release, build-time only) is
-  ignored in `osv-scanner.toml` until 2026-12-01.
-
-### Fixed
-
-- The `security-scan` workflow, red on every push since 2026-10-16, passes again.
-
-### Maintenance
-
-- The release-please manifest now records 1.3.0.
-
 ## [1.3.0] - 2026-10-17
 
 ### Added
