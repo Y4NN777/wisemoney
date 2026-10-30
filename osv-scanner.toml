@@ -1,0 +1,5 @@
+# Accepted advisory with no upstream fix (2026-10-30). Review by the date below.
+[[IgnoredVulns]]
+id = "GHSA-gcqx-w48m-w2h4"
+ignoreUntil = 2026-12-01T00:00:00Z
+reason = "deepmerge 4.3.1 (CVSS 5.3), no fixed version exists. Build-time only, pulled in only by @rollup/plugin-node-resolve (a build plugin); never shipped to or run on the device."
