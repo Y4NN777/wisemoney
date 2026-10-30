@@ -17,9 +17,7 @@ describe("device unlock offer", () => {
     vi.unstubAllGlobals();
   });
 
-  it("waits for the second passphrase unlock", () => {
-    expect(shouldOfferDeviceUnlock(available)).toBe(false);
-    recordPassphraseUnlock();
+  it("appears from the first passphrase unlock", () => {
     expect(shouldOfferDeviceUnlock(available)).toBe(false);
     recordPassphraseUnlock();
     expect(shouldOfferDeviceUnlock(available)).toBe(true);
