@@ -16,6 +16,7 @@ import { DollarSign, Plus, Trash2, RefreshCw, Check, ChevronsUpDown, Search } fr
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { currencyName } from "@/types/currencyNames.ts";
+import { Disclosure } from "../../components/ui/disclosure.tsx";
 
 type CurrencyOption = {
   code: string;
@@ -460,10 +461,10 @@ export default function CurrencySection() {
         </div>
 
         {/* FX Rate table */}
+        <Disclosure title={t("settings.currency.exchangeRates")}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium">{t("settings.currency.exchangeRates")}</h3>
-            <Button variant="ghost" size="sm" onClick={() => void refreshRates()} disabled={loading}>
+          <div className="flex justify-end">
+            <Button variant="ghost" size="sm" onClick={() => void refreshRates()} disabled={loading} aria-label={t("settings.currency.refreshRates")}>
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
           </div>
@@ -539,6 +540,7 @@ export default function CurrencySection() {
             </div>
           </div>
         </div>
+        </Disclosure>
 
         <p className="text-xs text-muted-foreground">
           {t("settings.currency.securityNote")}

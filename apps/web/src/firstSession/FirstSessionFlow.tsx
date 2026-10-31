@@ -57,7 +57,7 @@ export default function FirstSessionFlow({
           const current = i === index;
           return (
             <li key={step} className="flex flex-1 items-center gap-2" aria-current={current ? "step" : undefined}>
-              <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${done ? "bg-positive text-white" : current ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground"}`}>
+              <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${done ? "bg-positive text-white" : current ? "border border-ocean-primary/50 bg-ocean-wash text-ocean-dark" : "border border-border text-muted-foreground"}`}>
                 {done ? <Check className="h-3.5 w-3.5" /> : i + 1}
               </span>
               <span className={`hidden truncate text-xs sm:block ${current ? "font-semibold" : "text-muted-foreground"}`}>{t(`firstSession.${step}.label`)}</span>

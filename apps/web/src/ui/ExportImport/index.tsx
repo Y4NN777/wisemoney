@@ -484,12 +484,12 @@ export default function ExportImportSection() {
 
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3" aria-label={t("exportImport.cycle.progressLabel")}>
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">1</span>
+              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-ocean-primary/50 bg-ocean-wash text-ocean-dark">1</span>
               <span>{t("exportImport.cycle.prepareStage")}</span>
             </div>
             <span className="h-px w-8 bg-border" aria-hidden="true" />
             <div className={`flex items-center justify-end gap-2 text-xs font-semibold ${preparedCycle == null ? "text-muted-foreground" : "text-foreground"}`}>
-              <span className={`flex h-6 w-6 items-center justify-center rounded-full ${preparedCycle == null ? "border border-border bg-muted" : "bg-primary text-primary-foreground"}`}>2</span>
+              <span className={`flex h-6 w-6 items-center justify-center rounded-full ${preparedCycle == null ? "border border-border bg-muted" : "border border-ocean-primary/50 bg-ocean-wash text-ocean-dark"}`}>2</span>
               <span>{t("exportImport.cycle.confirmStage")}</span>
             </div>
           </div>

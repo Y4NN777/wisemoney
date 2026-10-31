@@ -366,7 +366,7 @@ export function PlannedExpensesSection({
   );
 
   return (
-    <Card className="overflow-hidden border-primary/25 bg-card shadow-none">
+    <Card className="overflow-hidden border-border bg-card shadow-none">
       <CardHeader className="border-b border-border bg-muted">
         <div className="flex justify-end">
           <Button type="button" onClick={() => { setDraft(newDraft(snapshot)); setDraftErrors({}); setCreateOpen(true); }} disabled={isWriting}>
@@ -494,7 +494,7 @@ export function PlannedExpensesSection({
               <div className="grid grid-cols-[1fr_auto] gap-2"><Input id="planned-actual" inputMode="decimal" value={actualAmount} onChange={(event) => setActualAmount(event.target.value)} required /><span className="flex items-center border-l border-border pl-3 text-sm font-semibold">{completing.estimatedAmount.currency}</span></div>
             </div>
             {compatibleAccounts.length === 0 ? (
-              <div className="rounded-lg border border-primary/30 bg-muted p-4">
+              <div className="rounded-lg border border-border bg-muted p-4">
                 <p className="text-sm">{t("capture.plannedExpenses.noCompatibleAccount", { currency: completing.estimatedAmount.currency })}</p>
                 <Button type="button" variant="outline" className="mt-3" onClick={() => { setCompleting(null); onOpenAccounts(); }}>{t("capture.plannedExpenses.openAccounts")}</Button>
               </div>

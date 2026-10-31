@@ -35,7 +35,7 @@ function AccountsCategoriesSection({ initialSection = "accounts" }: { initialSec
             role="tab"
             aria-selected={section === candidate}
             onClick={() => setSection(candidate)}
-            className={`min-h-12 border-primary px-4 text-left text-sm font-semibold transition-colors first:border-r ${section === candidate ? "bg-ocean-wash text-ocean-dark" : "bg-card text-card-foreground hover:bg-muted"}`}
+            className={`min-h-12 border-border px-4 text-left text-sm font-semibold transition-colors first:border-r ${section === candidate ? "bg-ocean-wash text-ocean-dark" : "bg-card text-card-foreground hover:bg-muted"}`}
           >
             {t(`capture.manage.${candidate}`)}
           </button>

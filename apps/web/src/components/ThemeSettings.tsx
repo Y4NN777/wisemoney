@@ -24,7 +24,7 @@ export default function ThemeSettings() {
             role="radio"
             aria-checked={selected}
             onClick={() => setPreference(option.value)}
-            className={`interactive-surface flex min-h-20 flex-col items-start justify-between border p-3 text-left ${selected ? "border-primary bg-ocean-wash text-ocean-dark" : "border-border bg-card text-foreground"}`}
+            className={`interactive-surface flex min-h-20 flex-col items-start justify-between border p-3 text-left ${selected ? "border-ocean-primary/50 bg-ocean-wash text-ocean-dark" : "border-border bg-card text-foreground"}`}
           >
             <Icon className="h-4 w-4" />
             <span className="text-sm font-semibold">{t(`settings.appearance.options.${option.value}`)}</span>

@@ -1402,7 +1402,8 @@
         "positiveRate": "Rate must be a positive number",
         "saveRateFailed": "Failed to save rate",
         "removeRateFailed": "Failed to remove rate"
-      }
+      },
+      "refreshRates": "Refresh rates"
     },
     "sectionsAria": "Settings sections"
   },

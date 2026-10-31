@@ -22,6 +22,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sits on the right of the greeting on Home.
 - **Device unlock** — the fingerprint, face or PIN offer appears from the first
   passphrase unlock instead of the second.
+- **Currency names** — one resolver names every currency, written
+  `XOF - Francs CFA` (French) or `XOF - CFA francs` (English), with `XAF`
+  carrying its zone so the two differ; a phone without currency names no longer
+  shows `XOF — XOF`.
+- **Shorter text** — about fifty descriptions, hints and empty states (onboarding,
+  Data and backup, unlock and restore, reminders, assistant, settings) are one
+  short line in French and English; error messages are unchanged.
+- **Foldable sections** — the Data and backup cards, the Activity summary, the
+  Debts overview and the exchange rates in Settings fold from a chevron.
+- **Quieter controls** — shadows removed from buttons, badges and fields, current
+  steps and the chosen theme use the light wash and a soft border.
 
 ### Security
 

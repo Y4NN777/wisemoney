@@ -270,11 +270,11 @@ try {
   // First session, step 1: the currency is guessed from the browser locale (en-US -> USD); switch it
   // to XOF, which swaps the empty default account, then add a second account and continue.
   const currencyPicker = appPage.getByRole("button", { name: "Main currency", exact: true });
-  await currencyPicker.filter({ hasText: "USD — US Dollar" }).waitFor();
+  await currencyPicker.filter({ hasText: "USD - US Dollar" }).waitFor();
   await currencyPicker.click();
   await appPage.getByPlaceholder(/Search currency/).fill("XOF");
   await appPage.getByRole("option", { name: /^XOF/ }).click();
-  await currencyPicker.filter({ hasText: "XOF — " }).waitFor();
+  await currencyPicker.filter({ hasText: "XOF - CFA francs" }).waitFor();
   await appPage.getByRole("button", { name: "Add another account", exact: true }).click();
   await appPage.getByLabel("Account name", { exact: true }).fill("Smoke Cash");
   await appPage.getByLabel("Opening balance", { exact: true }).fill("50000");

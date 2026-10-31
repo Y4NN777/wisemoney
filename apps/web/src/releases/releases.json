@@ -22,6 +22,14 @@
           {
             "id": "deviceUnlockSooner",
             "title": "Déverrouillage par empreinte proposé dès la première réouverture"
+          },
+          {
+            "id": "currencyNames",
+            "title": "Noms de devises identiques partout"
+          },
+          {
+            "id": "shorterFoldable",
+            "title": "Textes plus courts, sections repliables"
           }
         ]
       },
@@ -43,6 +51,14 @@
           {
             "id": "deviceUnlockSooner",
             "title": "Fingerprint unlock offered from your first return"
+          },
+          {
+            "id": "currencyNames",
+            "title": "Currency names written the same everywhere"
+          },
+          {
+            "id": "shorterFoldable",
+            "title": "Shorter text, sections that fold"
           }
         ]
       }

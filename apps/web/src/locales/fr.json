@@ -1402,7 +1402,8 @@
         "positiveRate": "Le taux doit être un nombre positif",
         "saveRateFailed": "Échec de l’enregistrement du taux",
         "removeRateFailed": "Échec de la suppression du taux"
-      }
+      },
+      "refreshRates": "Actualiser les taux"
     },
     "sectionsAria": "Sections des paramètres"
   },
