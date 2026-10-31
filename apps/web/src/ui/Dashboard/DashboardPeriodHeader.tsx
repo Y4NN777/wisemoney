@@ -97,7 +97,7 @@ export function DashboardPeriodHeader({
         {nudge != null && <NudgeLine nudge={nudge} onAddMovement={onAddMovement} />}
       </div>
 
-      <nav aria-label={t("dashboard.dashboardControls")} className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+      <nav aria-label={t("dashboard.dashboardControls")} className="flex max-w-full flex-wrap items-center justify-end gap-2">
         {accounts.length > 1 && (
           <Select value={selectedAccountId} onValueChange={onAccountChange}>
             <SelectTrigger className="h-9 w-auto min-w-32" aria-label={t("dashboard.accountFilter")}><SelectValue /></SelectTrigger>
