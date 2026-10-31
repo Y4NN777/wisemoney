@@ -598,7 +598,11 @@ try {
   }
   await appPage.setViewportSize({ width: 390, height: 844 });
   await appPage.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
-  assert.equal(await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "dashboard overflows with 200% root text size");
+  const overflowingAt200 = await appPage.evaluate(() => [...document.querySelectorAll("body *")]
+    .filter((element) => element.getBoundingClientRect().right > window.innerWidth + 1)
+    .slice(0, 5)
+    .map((element) => `${element.tagName.toLowerCase()}.${String(element.className).slice(0, 80)} "${(element.textContent ?? "").trim().slice(0, 30)}"`));
+  assert.equal(await appPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, `dashboard overflows with 200% root text size: ${overflowingAt200.join(" | ")}`);
   await appPage.evaluate(() => { document.documentElement.style.fontSize = ""; });
   await appPage.screenshot({ path: `${outputDir}/transfer-history-mobile.png`, fullPage: true });
   await appPage.setViewportSize({ width: 1280, height: 900 });
