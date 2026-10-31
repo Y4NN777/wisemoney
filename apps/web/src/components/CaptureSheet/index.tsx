@@ -24,6 +24,7 @@ import { amountPlaceholder, currencyLabel, formatMoney, majorUnitsInput, parseMa
 import { orderCategoriesForDirection, recentAccountIds, recentCategoryIds } from "../../domain/captureOrdering.ts";
 import { recordCoachFormFault } from "../../coach/index.ts";
 import { readQuickEntry, type QuickItem } from "../../capture/quickEntry.ts";
+import { QUICK_LINE_COUNT_SHOWN_FROM, quickLineCountThisMonth, recordQuickLineSave } from "../../capture/quickLineStats.ts";
 import { suggestCategory } from "../../domain/categorySuggestion.ts";
 import { useKeyboardInset } from "../../lib/keyboardInset.ts";
 import { frequentPurchases, quickLineExample } from "../../domain/frequentPurchases.ts";
@@ -269,6 +270,8 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
   const quickAmount = useRef<string | null>(null);
   // Purchases of the same line already saved ("taxi 500 et pain 250": one after the other, W1 D2a).
   const [savedFromLine, setSavedFromLine] = useState(0);
+  // Movements saved from the quick line this month, on this device only (shown from the third).
+  const [quickMonthCount, setQuickMonthCount] = useState(() => quickLineCountThisMonth());
 
   // One line typed or dictated ("taxi 2000") fills the fields below; nothing is saved before Add (ADR-0014).
   const applyQuick = (text: string) => {
@@ -386,6 +389,7 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
           onClick: () => deleteTx.mutate({ originalEventId: recordedEventId }),
         },
       });
+      if (quick.trim().length > 0) setQuickMonthCount(recordQuickLineSave());
       setAmountStr("");
       setNote("");
       quickAmount.current = null;
@@ -481,6 +485,9 @@ function TransactionForm({ direction, onDone }: TransactionFormProps) {
           formatAmount={majorToMoney}
           onUseUnitPrice={(unitPrice) => { setAmountStr(unitPrice); quickAmount.current = unitPrice; }}
         />
+        {quick.trim().length === 0 && quickMonthCount >= QUICK_LINE_COUNT_SHOWN_FROM && (
+          <p className="text-xs text-muted-foreground">{t("capture.quick.monthCount", { count: quickMonthCount })}</p>
+        )}
         {quick.trim().length === 0 && frequent.length > 0 && (
           <div className="flex flex-wrap gap-2" aria-label={t("capture.quick.frequentLabel")} role="group">
             {frequent.map((purchase) => (

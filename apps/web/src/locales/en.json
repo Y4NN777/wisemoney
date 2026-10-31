@@ -490,7 +490,9 @@
         "midday": "lunch 750",
         "evening": "fuel 1000"
       },
-      "setupVoice": "Test voice"
+      "setupVoice": "Test voice",
+      "monthCount_one": "{{count}} movement saved from one line this month.",
+      "monthCount_other": "{{count}} movements saved from one line this month."
     },
     "heading": "Record money movement",
     "ariaLabel": "Capture transaction",
@@ -1544,6 +1546,21 @@
       "later": "Later",
       "invalid": "Name, category and amount are needed.",
       "done": "Plan set."
+    },
+    "optional": "Optional",
+    "later": "Later",
+    "voice": {
+      "label": "Voice",
+      "title": "Say it instead of typing",
+      "body": "Say “taxi 2000” in the quick line. Dictation works or not depending on your phone: the test takes a minute.",
+      "test": "Test voice"
+    },
+    "ai": {
+      "label": "Assistant",
+      "title": "Smart assistant",
+      "body": "Not available without your own key yet; the built-in version comes later. WiseHelp and WiseLearn already answer.",
+      "key": "Add a key",
+      "done": "Finish"
     }
   },
   "learn": {

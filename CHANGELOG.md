@@ -34,6 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Quieter controls** — shadows removed from buttons, badges and fields, current
   steps and the chosen theme use the light wash and a soft border.
 
+- **Optional first-session steps** — after the three required steps, a voice step
+  (test dictation in a minute) and an assistant step (not available without your
+  own key yet) appear; each can be skipped and neither blocks.
+- **Quick line count** — from the third use, the capture sheet says how many
+  movements this month were saved from one line, counted on the device only.
+
 ### Security
 
 - Edge: `chi` 5.2.4 → 5.4.0, `golang.org/x/text` 0.39.0 → 0.41.0 and the Go

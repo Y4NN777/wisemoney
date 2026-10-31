@@ -490,7 +490,9 @@
         "midday": "riz gras 750",
         "evening": "essence 1000"
       },
-      "setupVoice": "Tester la voix"
+      "setupVoice": "Tester la voix",
+      "monthCount_one": "{{count}} mouvement saisi en une ligne ce mois-ci.",
+      "monthCount_other": "{{count}} mouvements saisis en une ligne ce mois-ci."
     },
     "heading": "Enregistrer un mouvement d’argent",
     "ariaLabel": "Saisie d’une transaction",
@@ -1544,6 +1546,21 @@
       "later": "Plus tard",
       "invalid": "Nom, catégorie et montant sont nécessaires.",
       "done": "Plan posé."
+    },
+    "optional": "Facultatif",
+    "later": "Plus tard",
+    "voice": {
+      "label": "Voix",
+      "title": "Dire au lieu d’écrire",
+      "body": "Dites « taxi 2000 » dans la ligne rapide. Selon votre téléphone, la dictée marche ou non : le test dure une minute.",
+      "test": "Tester la voix"
+    },
+    "ai": {
+      "label": "Assistant",
+      "title": "Assistant intelligent",
+      "body": "Pas encore disponible sans clé personnelle ; la version intégrée arrive plus tard. WiseHelp et WiseLearn répondent déjà.",
+      "key": "Ajouter une clé",
+      "done": "Terminer"
     }
   },
   "learn": {

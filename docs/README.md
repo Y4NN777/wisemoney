@@ -31,6 +31,11 @@ index, the package READMEs, and `CHANGELOG.md` for live status.
 
 ---
 
+## How intelligence works
+
+- [INTELLIGENCE.md](./INTELLIGENCE.md): the four layers (capture, guidance, learning, reminders), where
+  each runs, what it can see, who has it today.
+
 ## Specification set (the SWE-BASICS-BEFORE-CODE sequence)
 
 The specs were produced in order; each constrains the next. Read them in sequence.

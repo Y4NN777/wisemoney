@@ -25,6 +25,8 @@ import DeviceUnlockOffer from "../../components/DeviceUnlockOffer/index.tsx";
 import AssistantCard from "../../components/AssistantCard/index.tsx";
 import LearnCard from "../../components/LearnCard/index.tsx";
 import FirstSessionFlow from "../../firstSession/FirstSessionFlow.tsx";
+import FirstSessionExtras from "../../firstSession/FirstSessionExtras.tsx";
+import { FIRST_SESSION_EXTRAS, type FirstSessionExtra } from "../../firstSession/extras.ts";
 import { useFirstSessionState } from "../../firstSession/hooks.ts";
 import { firstSessionEntryStep, selectFirstSessionStep, type FirstSessionStep } from "../../firstSession/firstSession.ts";
 import { comparePeriodAmounts } from "./periodComparison.ts";
@@ -511,6 +513,8 @@ export default function Dashboard() {
   // (operations query turning on shows a skeleton); see FirstSessionFlow.
   const [firstSessionCursor, setFirstSessionCursor] = useState<FirstSessionStep | null>(null);
   const firstSessionStart = useRef<FirstSessionStep | null>(null);
+  // The optional steps after the first session; held here so they survive the flow unmounting.
+  const [firstSessionExtra, setFirstSessionExtra] = useState<FirstSessionExtra | null>(null);
   const defaultAccountNames = [...new Set([...i18n.languages.map((language) => t("captureSheet.cashName", { lng: language })), "Cash", "Espèces"])];
   const operationsQuery = useFinancialOperations({ enabled: hasMovementQuery.data === true });
   const openCaptureSheet = useOpenCaptureSheet();
@@ -584,9 +588,11 @@ export default function Dashboard() {
         defaultAccountNames={defaultAccountNames}
         cursor={cursor !== "done" ? cursor : firstSessionStep}
         onCursorChange={setFirstSessionCursor}
+        onFinished={() => setFirstSessionExtra(FIRST_SESSION_EXTRAS[0])}
       />
     );
   }
+  if (firstSessionExtra != null) return <FirstSessionExtras step={firstSessionExtra} onStep={setFirstSessionExtra} />;
   const dashboardMode = getDashboardMode(hasMovementQuery.data === true);
   if (dashboardMode === "first-transaction") {
     return <FirstTransactionDashboard snapshot={currentQuery.data} accountCount={activeAccountCount} />;

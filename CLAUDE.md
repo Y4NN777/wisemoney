@@ -62,7 +62,8 @@
   after setup from Settings › Security, sealed refresh-token session store, BYO-key
   settings, import/export, and consent/redaction modules. First run: landing →
   passphrase (show toggle, plain guidance) → three-step first session (currency and account
-  accepted as they are, first movement, one plan or "Later"). The landing page loads
+  accepted as they are, first movement, one plan or "Later"), then two optional, skippable steps
+  (voice test; the assistant that is not available yet) that never block. The landing page loads
   without the vault, storage or app code; one locale per visit.
 - **Literacy:** `/learn` ("WiseLearn"; the in-app help is "WiseHelp") is a conversation with a tutor on Gemma through
   `api/learn` (closed schema, zero vault egress, own consent, optional web search). The 77 bilingual
@@ -72,7 +73,14 @@
   search is the fallback. No lessons on the phone: the tutor needs a connection.
 - **AI orchestration:** Managed path attaches Bearer auth, `X-Egress-Level`,
   `X-Feature`, and full-consent assertions when available; assertion failures
-  downgrade to redacted payloads. BYO direct-provider path remains a future slice.
+  downgrade to redacted payloads. The BYO direct-provider path is implemented
+  (`src/ai/orchestration.ts`); it is the only AI-guidance route available today, so most users never
+  see insights. Map of every intelligence layer: `docs/INTELLIGENCE.md`.
+- **Capture:** one quick line (typed or dictated) is read on the device by a rule-based reader
+  (362-phrase bank in CI); category comes from the user's own history. Voice engines A (browser
+  on-device) and B (keyboard microphone) are tested in Settings › Voice; the Whisper voice pack (C)
+  is built but switched off (`PACK_OFFERED = false`) until the real-phone test
+  (`docs/plans/2026-10-w3-voice-real-phone-test.md`). The category model (ADR-0015) is designed, not built.
 - **Edge:** Go 1.26.10 service with auth register/login/refresh, Argon2id PHC
   password hashing, HS256 JWTs, refresh-token rotation/reuse detection, consent
   assertion endpoint, managed proxy gate, payload caps, middleware, provider router,
@@ -121,7 +129,8 @@
 - Implement transaction-backed refresh rotation to close the concurrent
   double-issuance race.
 - Add Postgres-backed integration tests for edge handlers.
-- Implement BYO direct-provider orchestration.
+- Decide the voice pack on real phones (`docs/plans/2026-10-w3-voice-real-phone-test.md`); build the
+  category model once its dataset exists; give guidance a first layer that needs no key.
 - Server functions run on Node 20 (root `engines`), which is past end of life; move to a
   current LTS as its own change. Add a post-deploy probe of `/api/help` and `/api/learn`.
 - Literacy course v1: local expert review (Y4NN, 2026-10-08: no "not yet reviewed" line in the app); get the

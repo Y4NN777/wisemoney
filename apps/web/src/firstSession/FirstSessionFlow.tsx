@@ -28,6 +28,7 @@ export default function FirstSessionFlow({
   defaultAccountNames,
   cursor,
   onCursorChange,
+  onFinished,
 }: {
   snapshot: FinancialStateSnapshot;
   hasMovement: boolean;
@@ -36,6 +37,8 @@ export default function FirstSessionFlow({
   /** Owned by the parent (which never unmounts) so a data refetch cannot reset the step in view. */
   cursor: Exclude<FirstSessionStep, "done">;
   onCursorChange: (step: Exclude<FirstSessionStep, "done">) => void;
+  /** Called when the last required step is finished or postponed; the optional steps follow. */
+  onFinished: () => void;
 }) {
   const { t } = useTranslation();
   const save = useSaveFirstSession();
@@ -72,11 +75,11 @@ export default function FirstSessionFlow({
         <div className="mt-5">
           {cursor === "accounts" && <AccountsStep snapshot={snapshot} hasMovement={hasMovement} customised={isAccountsCustomised(snapshot, defaultAccountNames)} />}
           {cursor === "movement" && <MovementStep done={hasMovement} />}
-          {cursor === "plan" && <PlanStep snapshot={snapshot} done={planDone} onLater={() => persist({ planLater: true, completed: true })} laterPending={save.isPending} />}
+          {cursor === "plan" && <PlanStep snapshot={snapshot} done={planDone} onLater={() => { persist({ planLater: true, completed: true }); onFinished(); }} laterPending={save.isPending} />}
         </div>
         <div className="mt-6 flex justify-end">
           {cursor === "plan" ? (
-            <Button type="button" onClick={() => persist({ completed: true })} disabled={!planDone || save.isPending}>
+            <Button type="button" onClick={() => { persist({ completed: true }); onFinished(); }} disabled={!planDone || save.isPending}>
               {t("firstSession.finish")}
               <ChevronRight className="h-4 w-4" />
             </Button>

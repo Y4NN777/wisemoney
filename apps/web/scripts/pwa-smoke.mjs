@@ -301,6 +301,13 @@ try {
   await appPage.getByRole("heading", { name: "One plan", exact: true }).waitFor();
   assert.equal(await appPage.getByRole("button", { name: "Finish", exact: true }).isDisabled(), true, "Finish is offered before a plan exists");
   await appPage.getByRole("button", { name: "Later", exact: true }).click();
+  // Two optional steps follow, each skippable: voice, then the assistant that is not available yet.
+  await appPage.getByRole("heading", { name: "Say it instead of typing", exact: true }).waitFor();
+  await appPage.screenshot({ path: `${outputDir}/first-session-voice.png` });
+  await appPage.getByRole("button", { name: "Later", exact: true }).click();
+  await appPage.getByRole("heading", { name: "Smart assistant", exact: true }).waitFor();
+  await appPage.screenshot({ path: `${outputDir}/first-session-assistant.png` });
+  await appPage.getByRole("button", { name: "Finish", exact: true }).click();
   await appPage.getByRole("region", { name: "Your money at a glance", exact: true }).getByText("Money available today", { exact: true }).waitFor({ timeout: 90_000 });
   // The coach shows its single per-session tip about 20 s in. It is a card beside the page (no
   // backdrop), announced as a status, and it stays on the page it was chosen for.
