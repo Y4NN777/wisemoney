@@ -90,7 +90,7 @@
       "pause": "Pause",
       "resume": "Resume",
       "failure": {
-        "paused": "Paused. Resume any time: the download continues where it stopped.",
+        "paused": "Paused. Resume: the download continues where it stopped.",
         "network": "Connection lost. Resume: the download continues where it stopped.",
         "corrupt": "A file arrived damaged. Resume to download it again.",
         "storage": "Not enough space left on this phone."
@@ -217,7 +217,7 @@
       "restore": "Restore space",
       "createNew": "Create a new space instead",
       "steps": {
-        "export": "Export your existing space from the browser or phone you already use.",
+        "export": "Export your space from the browser or phone you already use.",
         "file": "Pick the export file on this device.",
         "passphrase": "Choose a new passphrase for this device.",
         "open": "Import the file and open your restored space."
@@ -669,7 +669,7 @@
     },
     "plannedExpenses": {
       "title": "Planned expenses",
-      "description": "Prepare one-off expenses without changing balances until you confirm payment.",
+      "description": "Prepare a one-off expense; balances only change when you pay.",
       "add": "Add a planned expense",
       "createTitle": "Add a planned expense",
       "createDescription": "No account or transaction is created at this stage.",
@@ -682,7 +682,7 @@
       "unknownCategory": "Unknown category",
       "unknownAccount": "Unknown account",
       "confirmCancel": "Cancel the planned expense “{{label}}”? No transaction will be created.",
-      "noCompatibleAccount": "No active account uses {{currency}}. Payment cannot be confirmed yet.",
+      "noCompatibleAccount": "No active account in {{currency}}. Payment is not possible yet.",
       "openAccounts": "Open account management",
       "priorities": {
         "low": "Low",
@@ -759,8 +759,8 @@
     "title": "Assistant",
     "heading": "Insights and learning",
     "checkingSetup": "Checking AI setup.",
-    "setupRequiredByo": "Add a personal provider key in Settings to use the assistant.",
-    "setupRequiredEdge": "Add a personal provider key or connect your online account to use the assistant.",
+    "setupRequiredByo": "Add a provider key in Settings to use the assistant.",
+    "setupRequiredEdge": "Add a provider key or connect your account to use the assistant.",
     "smartFeaturesPreparing": "This smart feature is coming soon. The rest of WiseMoney stays available.",
     "aiNoticeTitle": "The assistant is optional",
     "aiNoticeAction": "Configure AI keys",
@@ -774,31 +774,31 @@
         "purpose": "Analyse your spending patterns and surface observations",
         "provider": "The provider you chose",
         "description": "Finds anomalies, trends, and notable changes in your finances",
-        "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
+        "redactedData": "Totals, categories and budgets; no transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
       },
       "recommendation": {
         "name": "Recommendation",
         "purpose": "Suggest concrete actions to improve your financial situation",
         "provider": "The provider you chose",
-        "description": "Generates budget adjustments, savings suggestions, and spending trade-offs",
-        "redactedData": "Period totals, budget progress, goal progress — no individual transactions",
+        "description": "Suggests budget and savings adjustments",
+        "redactedData": "Totals, budgets and goals; no transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
       },
       "prediction": {
         "name": "Prediction",
         "purpose": "Project end-of-month balance and budget exhaustion dates",
         "provider": "The provider you chose",
-        "description": "Forecasts your financial trajectory based on current data and recurring items",
-        "redactedData": "Period income/expenses, projected recurring items, budget limits — no individual transactions",
+        "description": "Forecasts your trajectory from your data and recurring items",
+        "redactedData": "Income, expenses, recurring items and limits; no transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
       },
       "patternDetection": {
         "name": "Pattern Detection",
-        "purpose": "Detect recurring spending habits and category dependencies",
+        "purpose": "Spot your spending habits",
         "provider": "The provider you chose",
         "description": "Spots habits: frequent dining, creeping subscriptions, dominant categories",
-        "redactedData": "Category-level aggregates, budget status, period comparisons — no individual transactions",
+        "redactedData": "Category totals, budgets and comparisons; no transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
       },
       "literacy": {
@@ -806,14 +806,14 @@
         "purpose": "Explain personal finance concepts in plain language",
         "provider": "The provider you chose",
         "description": "Answers money questions using your data",
-        "redactedData": "Period totals, category breakdown, budget status — no individual transactions",
+        "redactedData": "Totals, categories and budgets; no transactions",
         "fullData": "Individual transaction amounts, dates, categories, and notes"
       }
     },
     "thinking": "Thinking…",
     "unavailable": "Unavailable",
     "dismiss": "Dismiss",
-    "emptyInsights": "Tap a button above to generate insights from your financial data.",
+    "emptyInsights": "Tap a button above to generate an insight.",
     "chat": {
       "title": "Financial Literacy Chat",
       "description": "Ask anything about personal finance",
@@ -861,7 +861,7 @@
     "period": "Period (YYYY-MM)",
     "active": "Active",
     "archived": "Archived",
-    "empty": "No budgets yet. Create your first budget to track category spending.",
+    "empty": "No budgets yet. Create one to track spending by category.",
     "unknown": "Unknown",
     "spent": "spent",
     "limit": "limit",
@@ -891,7 +891,7 @@
     "targetDate": "Target Date (optional)",
     "active": "Active",
     "archived": "Archived",
-    "empty": "No goals yet. Create a savings goal to track your progress.",
+    "empty": "No goals yet. Create a savings goal.",
     "saved": "saved",
     "target": "target",
     "complete": "complete",
@@ -926,7 +926,7 @@
     "monthly": "Monthly",
     "yearly": "Yearly",
     "startDate": "Start Date",
-    "empty": "No recurring items. Add rent, subscriptions, or salary to track predictable transactions.",
+    "empty": "No recurring items. Add rent, subscriptions or salary.",
     "unknown": "Unknown",
     "started": "Started",
     "last": "Last",
@@ -1058,7 +1058,7 @@
   },
   "byoKey": {
     "title": "Assistant connection keys",
-    "description": "Connect your own assistant service if you want smart suggestions.",
+    "description": "Connect your own assistant service for smart suggestions.",
     "configured": "configured",
     "apiKey": "Access key",
     "save": "Save",
@@ -1070,7 +1070,7 @@
       "configured": "Key saved",
       "enter": "Enter {{provider}} access key"
     },
-    "footnote": "Keys stay on this device and are used only when you ask the assistant.",
+    "footnote": "Keys stay on this device and are used only on request.",
     "errors": {
       "saveFailed": "Failed to save key",
       "loadFailed": "Failed to load configured keys"
@@ -1084,7 +1084,7 @@
   },
   "planning": {
     "title": "Planning",
-    "cardDescription": "Plan your spending, save toward goals, and track recurring transactions",
+    "cardDescription": "Planned expenses, goals and recurring items",
     "links": {
       "budgets": "Budgets",
       "goals": "Goals",
@@ -1198,7 +1198,7 @@
       "view": "View {{label}}",
       "localOnly": "Calculated locally",
       "offTitle": "Reminders are off",
-      "offBody": "Turn them on to see your due dates, budgets and debts to follow here. They are computed on this phone.",
+      "offBody": "Turn them on to see due dates, budgets and debts here. Computed on this phone.",
       "turnOn": "Turn on reminders",
       "weeklyReviewLabel": "Review your week"
     },
@@ -1219,7 +1219,7 @@
       "foregroundSound": "Sound while WiseMoney is open",
       "soundHelp": "A quiet in-app sound. Outside the app, your phone decides.",
       "exportCalendar": "Add review to calendar",
-      "bestEffort": "Notifications may arrive late while the app is closed. Your calendar is the reliable option.",
+      "bestEffort": "Notifications can arrive late when the app is closed. Your calendar is more reliable.",
       "permission": {
         "default": "Permission not requested",
         "granted": "System notifications allowed",
@@ -1227,7 +1227,7 @@
         "unsupported": "System notifications unavailable"
       },
       "typeHelp": {
-        "weekly_review": "A regular appointment to review activity, commitments, and priorities.",
+        "weekly_review": "A regular check-in to review your week.",
         "planned_expense": "Flags pending planned expenses before their due date.",
         "recurring_item": "Prepares the next occurrence of active recurring items.",
         "budget_threshold": "Alerts once at the highest threshold crossed during the period.",
@@ -1283,7 +1283,7 @@
       "inApp": "In-app tips",
       "inAppHelp": "One suggestion per session, at the right moment.",
       "notifications": "Tip notifications",
-      "notificationsHelp": "Optional, silent, and limited to one per week. Your browser decides the exact delivery time.",
+      "notificationsHelp": "Optional, silent, at most one a week.",
       "pause": "Pause for 14 days",
       "reset": "Reset seen tips",
       "privacy": "Nothing leaves this device until you tap “Ask WiseHelp”.",
@@ -1299,7 +1299,7 @@
     "title": "Settings",
     "appearance": {
       "title": "Appearance",
-      "description": "Choose a light, dark, or automatic appearance that follows your device.",
+      "description": "Light, dark or automatic.",
       "choice": "Appearance choice",
       "options": {
         "system": "System",
@@ -1309,7 +1309,7 @@
     },
     "language": {
       "title": "App language",
-      "description": "Changes labels, guidance, dates, and currency names throughout WiseMoney."
+      "description": "Changes labels, dates and currency names."
     },
     "about": {
       "title": "About WiseMoney",
@@ -1350,13 +1350,13 @@
       "active": "Active",
       "localOnly": "Local only",
       "onlineReady": "Online backup ready",
-      "localOnlyMessage": "Your space, accounts, budgets, and transactions stay on this device.",
+      "localOnlyMessage": "Your data stays on this device.",
       "lock": "Lock private space",
       "signOut": "Sign out of all sessions",
       "signOutFailed": "Could not sign out",
       "deviceUnlock": {
         "title": "Device unlock",
-        "description": "Use this device’s screen lock. Your passphrase stays the recovery key.",
+        "description": "Use your screen lock. The passphrase stays the recovery key.",
         "enabled": "Device unlock is on. The passphrase stays the recovery key.",
         "enable": "Turn on device unlock",
         "disable": "Turn off device unlock",
@@ -1498,14 +1498,14 @@
     "undo": "Undo",
     "add": "Add",
     "transferNeedsAccounts": "Add a second account to transfer between your accounts.",
-    "goalsEmpty": "Create a goal in Planning first, then record contributions here.",
+    "goalsEmpty": "Create a goal in Planning first.",
     "openPlanning": "Open Planning",
     "manageAccounts": "Manage accounts",
     "firstSaved": "Saved to {{account}} — find it in Activity"
   },
   "assistantCard": {
     "title": "Assistant",
-    "body": "Ask about your month, get insights, and learn as you go.",
+    "body": "Ask about your month and learn as you go.",
     "action": "Open assistant"
   },
   "firstSession": {

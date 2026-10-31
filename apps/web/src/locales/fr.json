@@ -90,7 +90,7 @@
       "pause": "Mettre en pause",
       "resume": "Reprendre",
       "failure": {
-        "paused": "En pause. Reprenez quand vous voulez : le téléchargement repart où il s’est arrêté.",
+        "paused": "En pause. Reprenez : le téléchargement repart où il s’est arrêté.",
         "network": "Connexion perdue. Reprenez : le téléchargement repart où il s’est arrêté.",
         "corrupt": "Un fichier est arrivé abîmé. Reprenez pour le télécharger à nouveau.",
         "storage": "Plus assez de place sur ce téléphone."
@@ -217,7 +217,7 @@
       "restore": "Restaurer l'espace",
       "createNew": "Créer plutôt un nouvel espace",
       "steps": {
-        "export": "Exportez votre espace existant depuis le navigateur ou le téléphone que vous utilisez déjà.",
+        "export": "Exportez votre espace depuis le navigateur ou téléphone que vous utilisez déjà.",
         "file": "Choisissez le fichier d'export sur cet appareil.",
         "passphrase": "Choisissez une nouvelle phrase secrète pour cet appareil.",
         "open": "Importez le fichier et ouvrez votre espace restauré."
@@ -669,7 +669,7 @@
     },
     "plannedExpenses": {
       "title": "Dépenses prévues",
-      "description": "Préparez des dépenses ponctuelles sans modifier les soldes avant la confirmation du paiement.",
+      "description": "Préparez une dépense ponctuelle ; les soldes ne bougent qu’au paiement.",
       "add": "Ajouter une dépense prévue",
       "createTitle": "Ajouter une dépense prévue",
       "createDescription": "Aucun compte ni aucune transaction n’est créé à ce stade.",
@@ -682,7 +682,7 @@
       "unknownCategory": "Catégorie inconnue",
       "unknownAccount": "Compte inconnu",
       "confirmCancel": "Annuler la dépense prévue « {{label}} » ? Aucune transaction ne sera créée.",
-      "noCompatibleAccount": "Aucun compte actif n’utilise {{currency}}. Le paiement ne peut pas encore être confirmé.",
+      "noCompatibleAccount": "Aucun compte actif en {{currency}}. Paiement impossible pour l’instant.",
       "openAccounts": "Ouvrir la gestion des comptes",
       "priorities": {
         "low": "Faible",
@@ -759,8 +759,8 @@
     "title": "Assistant",
     "heading": "Analyses et apprentissage",
     "checkingSetup": "Vérification de la configuration de l'IA.",
-    "setupRequiredByo": "Ajoutez une clé personnelle de fournisseur dans les paramètres pour utiliser l’assistant.",
-    "setupRequiredEdge": "Ajoutez une clé personnelle de fournisseur ou connectez votre compte en ligne pour utiliser l’assistant.",
+    "setupRequiredByo": "Ajoutez une clé de fournisseur dans les paramètres pour utiliser l’assistant.",
+    "setupRequiredEdge": "Ajoutez une clé de fournisseur ou connectez votre compte pour utiliser l’assistant.",
     "smartFeaturesPreparing": "Cette fonction intelligente arrive bientôt. Le reste de WiseMoney reste disponible.",
     "aiNoticeTitle": "L’assistant est facultatif",
     "aiNoticeAction": "Configurer les clés IA",
@@ -774,31 +774,31 @@
         "purpose": "Analyser vos habitudes de dépenses et identifier des tendances",
         "provider": "Le fournisseur que vous avez choisi",
         "description": "Détecte les anomalies, tendances et changements notables dans vos finances",
-        "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
+        "redactedData": "Totaux, catégories et budgets ; aucune transaction",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
       },
       "recommendation": {
         "name": "Recommandation",
         "purpose": "Suggérer des actions concrètes pour améliorer votre situation financière",
         "provider": "Le fournisseur que vous avez choisi",
-        "description": "Génère des ajustements budgétaires, des suggestions d'épargne et des compromis de dépenses",
-        "redactedData": "Totaux de période, progression des budgets et objectifs — aucune transaction individuelle",
+        "description": "Propose des ajustements de budget et d’épargne",
+        "redactedData": "Totaux, budgets et objectifs ; aucune transaction",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
       },
       "prediction": {
         "name": "Prévision",
         "purpose": "Projeter le solde de fin de mois et les dates d'épuisement des budgets",
         "provider": "Le fournisseur que vous avez choisi",
-        "description": "Prévoit votre trajectoire financière basée sur les données actuelles et les éléments récurrents",
-        "redactedData": "Revenus/dépenses de période, récurrents projetés, limites budgétaires — aucune transaction individuelle",
+        "description": "Prévoit votre trajectoire à partir de vos données et de vos récurrents",
+        "redactedData": "Revenus, dépenses, récurrents et limites ; aucune transaction",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
       },
       "patternDetection": {
         "name": "Détection de schémas",
-        "purpose": "Détecter les habitudes de dépenses récurrentes et les dépendances entre catégories",
+        "purpose": "Repérer vos habitudes de dépense",
         "provider": "Le fournisseur que vous avez choisi",
         "description": "Repère vos habitudes : restaurants fréquents, abonnements qui gonflent, catégories dominantes",
-        "redactedData": "Agrégats par catégorie, état des budgets, comparaisons de période — aucune transaction individuelle",
+        "redactedData": "Totaux par catégorie, budgets et comparaisons ; aucune transaction",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
       },
       "literacy": {
@@ -806,14 +806,14 @@
         "purpose": "Expliquer les concepts de finances personnelles en langage simple",
         "provider": "Le fournisseur que vous avez choisi",
         "description": "Répond à vos questions d’argent à partir de vos données",
-        "redactedData": "Totaux de période, ventilation par catégorie, état des budgets — aucune transaction individuelle",
+        "redactedData": "Totaux, catégories et budgets ; aucune transaction",
         "fullData": "Montants, dates, catégories et notes des transactions individuelles"
       }
     },
     "thinking": "Réflexion…",
     "unavailable": "Indisponible",
     "dismiss": "Ignorer",
-    "emptyInsights": "Appuyez sur un bouton ci-dessus pour générer des analyses à partir de vos données financières.",
+    "emptyInsights": "Touchez un bouton ci-dessus pour générer une analyse.",
     "chat": {
       "title": "Chat d'éducation financière",
       "description": "Posez des questions sur les finances personnelles",
@@ -861,7 +861,7 @@
     "period": "Période (AAAA-MM)",
     "active": "Actifs",
     "archived": "Archivés",
-    "empty": "Aucun budget pour le moment. Créez votre premier budget pour suivre vos dépenses par catégorie.",
+    "empty": "Aucun budget. Créez-en un pour suivre vos dépenses par catégorie.",
     "unknown": "Inconnu",
     "spent": "dépensé",
     "limit": "limite",
@@ -891,7 +891,7 @@
     "targetDate": "Date cible (optionnelle)",
     "active": "Actifs",
     "archived": "Archivés",
-    "empty": "Aucun objectif pour le moment. Créez un objectif d'épargne pour suivre votre progression.",
+    "empty": "Aucun objectif. Créez un objectif d’épargne.",
     "saved": "économisé",
     "target": "objectif",
     "complete": "complété",
@@ -926,7 +926,7 @@
     "monthly": "Mensuel",
     "yearly": "Annuel",
     "startDate": "Date de début",
-    "empty": "Aucun élément récurrent. Ajoutez loyer, abonnements ou salaire pour suivre les transactions prévisibles.",
+    "empty": "Aucun récurrent. Ajoutez loyer, abonnements ou salaire.",
     "unknown": "Inconnu",
     "started": "Début",
     "last": "Dernier",
@@ -1058,7 +1058,7 @@
   },
   "byoKey": {
     "title": "Clés de connexion de l'assistant",
-    "description": "Connectez votre propre service d'assistant si vous voulez des suggestions intelligentes.",
+    "description": "Connectez votre propre service d’assistant pour des suggestions intelligentes.",
     "configured": "configuré",
     "apiKey": "Clé d'accès",
     "save": "Enregistrer",
@@ -1070,7 +1070,7 @@
       "configured": "Clé sauvegardée",
       "enter": "Entrez la clé d'accès {{provider}}"
     },
-    "footnote": "Les clés restent sur cet appareil et servent seulement quand vous sollicitez l’assistant.",
+    "footnote": "Clés gardées sur cet appareil, utilisées seulement à votre demande.",
     "errors": {
       "saveFailed": "Échec de l'enregistrement de la clé",
       "loadFailed": "Échec du chargement des clés configurées"
@@ -1084,7 +1084,7 @@
   },
   "planning": {
     "title": "Planification",
-    "cardDescription": "Planifiez vos dépenses, épargnez vers des objectifs et suivez les transactions récurrentes",
+    "cardDescription": "Dépenses prévues, objectifs et récurrents",
     "links": {
       "budgets": "Budgets",
       "goals": "Objectifs",
@@ -1198,7 +1198,7 @@
       "view": "Consulter {{label}}",
       "localOnly": "Calculé localement",
       "offTitle": "Les rappels sont désactivés",
-      "offBody": "Activez-les pour voir ici vos échéances, budgets et dettes à suivre. Ils sont calculés sur ce téléphone.",
+      "offBody": "Activez-les pour voir ici échéances, budgets et dettes. Calculés sur ce téléphone.",
       "turnOn": "Activer les rappels",
       "weeklyReviewLabel": "Faire le point sur la semaine"
     },
@@ -1219,7 +1219,7 @@
       "foregroundSound": "Son lorsque WiseMoney est ouvert",
       "soundHelp": "Un son discret dans l’app. En dehors, c’est votre téléphone qui décide.",
       "exportCalendar": "Ajouter la revue au calendrier",
-      "bestEffort": "Les notifications peuvent arriver en retard quand l’app est fermée. Le calendrier reste plus fiable.",
+      "bestEffort": "Les notifications peuvent arriver en retard app fermée. Le calendrier est plus fiable.",
       "permission": {
         "default": "Autorisation non demandée",
         "granted": "Notifications système autorisées",
@@ -1227,7 +1227,7 @@
         "unsupported": "Notifications système indisponibles"
       },
       "typeHelp": {
-        "weekly_review": "Un rendez-vous régulier pour vérifier l’activité, les engagements et les priorités.",
+        "weekly_review": "Un rendez-vous régulier pour faire le point.",
         "planned_expense": "Signale les dépenses prévues encore en attente avant leur échéance.",
         "recurring_item": "Prépare la prochaine occurrence des éléments récurrents actifs.",
         "budget_threshold": "Alerte une seule fois au plus haut seuil franchi pendant la période.",
@@ -1283,7 +1283,7 @@
       "inApp": "Conseils dans l’application",
       "inAppHelp": "Une suggestion par session, au bon moment.",
       "notifications": "Notifications de conseils",
-      "notificationsHelp": "Facultatives, silencieuses et limitées à une par semaine. Votre navigateur décide du moment exact.",
+      "notificationsHelp": "Facultatives, silencieuses, une par semaine au plus.",
       "pause": "Mettre en pause 14 jours",
       "reset": "Réinitialiser les conseils vus",
       "privacy": "Rien ne quitte cet appareil tant que vous ne touchez pas « Demander à WiseHelp ».",
@@ -1299,7 +1299,7 @@
     "title": "Paramètres",
     "appearance": {
       "title": "Apparence",
-      "description": "Choisissez un affichage clair, sombre ou adapté automatiquement à votre appareil.",
+      "description": "Clair, sombre ou automatique.",
       "choice": "Choix de l’apparence",
       "options": {
         "system": "Système",
@@ -1309,7 +1309,7 @@
     },
     "language": {
       "title": "Langue de l’application",
-      "description": "Modifie les libellés, les conseils, les dates et les noms de devises dans WiseMoney."
+      "description": "Change les libellés, dates et noms de devises."
     },
     "about": {
       "title": "À propos de WiseMoney",
@@ -1350,13 +1350,13 @@
       "active": "Actif",
       "localOnly": "Local uniquement",
       "onlineReady": "Sauvegarde en ligne prête",
-      "localOnlyMessage": "Votre espace, vos comptes, vos budgets et vos transactions restent sur cet appareil.",
+      "localOnlyMessage": "Vos données restent sur cet appareil.",
       "lock": "Verrouiller l’espace privé",
       "signOut": "Déconnexion de toutes les sessions",
       "signOutFailed": "Impossible de se déconnecter",
       "deviceUnlock": {
         "title": "Déverrouillage de l’appareil",
-        "description": "Utilisez le verrouillage d’écran de cet appareil. La phrase privée reste la clé de récupération.",
+        "description": "Utilisez le verrouillage d’écran. La phrase privée reste la clé de récupération.",
         "enabled": "Déverrouillage activé sur cet appareil. La phrase privée reste la clé de récupération.",
         "enable": "Activer le déverrouillage de l’appareil",
         "disable": "Désactiver le déverrouillage de l’appareil",
@@ -1498,14 +1498,14 @@
     "undo": "Annuler",
     "add": "Ajouter",
     "transferNeedsAccounts": "Ajoutez un second compte pour effectuer un virement entre vos comptes.",
-    "goalsEmpty": "Créez d’abord un objectif dans Planification, puis consignez vos contributions ici.",
+    "goalsEmpty": "Créez d’abord un objectif dans Planification.",
     "openPlanning": "Ouvrir Planification",
     "manageAccounts": "Gérer les comptes",
     "firstSaved": "Enregistré dans {{account}} — retrouvez-le dans Activité"
   },
   "assistantCard": {
     "title": "Assistant",
-    "body": "Posez vos questions sur votre mois, obtenez des éclairages et apprenez en avançant.",
+    "body": "Posez vos questions sur votre mois et apprenez en avançant.",
     "action": "Ouvrir l’assistant"
   },
   "firstSession": {
