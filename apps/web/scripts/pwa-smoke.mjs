@@ -724,6 +724,8 @@ try {
 
   await appPage.getByRole("banner").getByRole("link", { name: "Settings", exact: true }).click();
   await appPage.getByText("Data and backup", { exact: true }).click();
+  // The cycle card starts folded; open it before using what is inside.
+  await appPage.getByRole("button", { name: "Cycles and archives", exact: true }).click();
   await appPage.getByRole("button", { name: "Archive and start again", exact: true }).click();
   await appPage.getByLabel("Cycle name", { exact: true }).fill("Smoke cycle 2026");
   await appPage.getByLabel("Backup passphrase", { exact: true }).fill("Smoke-Archive-Only-2026");
