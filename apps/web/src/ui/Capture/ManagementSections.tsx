@@ -17,7 +17,7 @@ import {
 import { categoryDisplayName } from "@/lib/categoryName.ts";
 import type { ManageSection } from "@/routes/capture.tsx";
 import { formatMoney, majorUnitsInput, parseMajorUnits } from "@/types/money.ts";
-import { currencyDisplay, currencyName } from "@/types/currencyNames.ts";
+import { CURRENCY_SEPARATOR, currencyDisplay, currencyName } from "@/types/currencyNames.ts";
 import { actionFailureMessage, hasValidationMessage } from "@/lib/actionFailure.ts";
 import { AccountNotEmptyError, REFUSAL } from "@/pillars/state/index.ts";
 
@@ -127,7 +127,7 @@ export function AccountCurrencyPicker({ value, onChange }: { value: string; onCh
               <button key={currency.code} type="button" role="option" aria-selected={currency.code === value}
                 className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground"
                 onClick={() => { onChange(currency.code); setOpen(false); setQuery(""); }}>
-                <span className="min-w-0 truncate"><strong>{currency.code}</strong>{currency.name === currency.code ? "" : ` — ${currency.name}`}</span>
+                <span className="min-w-0 truncate"><strong>{currency.code}</strong>{currency.name === currency.code ? "" : `${CURRENCY_SEPARATOR}${currency.name}`}</span>
                 {currency.code === value && <Check className="h-4 w-4 shrink-0 text-ocean-primary" />}
               </button>
             ))}

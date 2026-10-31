@@ -243,7 +243,7 @@ function CurrencyOptionLabel({ code, compact = false }: { code: string; compact?
       <span className="shrink-0 rounded-md bg-ocean-wash px-2 py-0.5 text-xs font-semibold text-ocean-dark">
         {code}
       </span>
-      {!compact && <span className="truncate text-sm">{name}</span>}
+      {!compact && name !== code && <span className="truncate text-sm"><span aria-hidden="true" className="mr-1 text-muted-foreground">-</span>{name}</span>}
     </span>
   );
 }
