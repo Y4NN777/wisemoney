@@ -55,7 +55,16 @@ times unit price, direction words with context ("la paye", "m'a remboursé"), a 
 original spelling, and a confidence (sure, check, none). A bank of 362 phrases runs in CI with
 floors. This part is the most dependable piece of the system and it is not machine learning.
 
-### 2.3 Category suggestion
+### 2.3 The kind of movement (ADR-0017, proposed)
+
+Today the reader knows only expense, income or nothing, and "nothing" is saved as an expense, so a
+transfer between own accounts, a deposit or a withdrawal said into the quick line is recorded as
+spending (found 2026-11-01). ADR-0017 makes the reader return a kind (expense, income, transfer,
+goal, debt) with a confidence, reads the user's own accounts as evidence, shows the kind in the
+understood line and asks (one tap) whenever it is not certain. It lists 44 edge cases and the CI
+floors that go with them.
+
+### 2.4 Category suggestion
 
 1. **Today:** the category the user already chose for the same note (from history), marked
    "Suggested".
@@ -65,6 +74,19 @@ floors. This part is the most dependable piece of the system and it is not machi
    labelling rules in `tools/categorize/labelingGuide.mjs`.
 
 No user data ever trains a shared model.
+
+### 2.5 Learning how this person speaks (ADR-0018, proposed)
+
+An opt-in 5 to 7 day window records, on the device and encrypted, what the reader proposed against
+what the user saved, then turns repeated corrections into visible rules (aliases, defaults,
+substitutions) reviewed by the user. It learns text habits, not voices: no audio is kept and no speech
+model is retrained.
+
+### 2.6 Testing voice
+
+What can and cannot be automated, and the feedback loop into the reader and the engine choice, are in
+`docs/plans/2026-11-voice-test-automation.md`; the human test is
+`docs/plans/2026-10-w3-voice-real-phone-test.md`.
 
 ## 3. Guidance: why it is not perceived
 

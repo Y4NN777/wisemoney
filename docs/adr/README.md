@@ -54,6 +54,8 @@ the decisions and specs actually state.
 | [ADR-0014](./0014-voice-expense-capture-on-device-only.md) | Say or type a movement in one line, understood on the device | Accepted | Y4NN 2026-10-16; CONTRACT INV-EGR-01/02 |
 | [ADR-0015](./0015-category-suggestion-by-a-distilled-on-device-model.md) | Suggest a movement's category with a small model taught by a large one, run on the device | Accepted | Y4NN 2026-10-16; ADR-0014; CONTRACT INV-EGR-01/02 |
 | [ADR-0016](./0016-daily-reminder-push-without-financial-data.md) | A daily reminder push that carries no financial data | Proposed | Y4NN 2026-10-17; CONTRACT INV-EGR-01/02 |
+| [ADR-0017](./0017-movement-kind-in-the-quick-line.md) | Read the kind of movement in the quick line, and ask when it is not certain | Proposed | Y4NN 2026-11-01; ADR-0014 |
+| [ADR-0018](./0018-personal-learning-from-corrections-on-the-device.md) | Learn the user's way of saying things from their own corrections, on the device | Proposed | Y4NN 2026-11-01; ADR-0017; CONTRACT INV-EGR-01/02 |
 
 ---
 

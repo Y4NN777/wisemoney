@@ -23,7 +23,7 @@ For every phrase and engine:
 
 A phrase **passes** when amount, direction and note are all right. Thresholds, unchanged from the W3
 plan: an engine qualifies with 4 of the 5 set-up phrases, and A and C need a median delay of 3 s or
-less. This test adds a wider bar so one lucky run cannot decide: **at least 24 of 30 phrases (80%)**.
+less. This test adds a wider bar so one lucky run cannot decide: **at least 24 of the first 30 phrases (80%)** and **all of 31 to 40 handled safely** (right kind, or a chooser, never a silent wrong kind).
 
 ## Setup
 
@@ -65,7 +65,7 @@ test bank logic; a miss is the engine's.
 21. Boisson cent francs
 22. Bouffe midi mille
 23. Taxi cinq cents et pain deux cent cinquante
-24. Remboursement Issouf quatre mille
+24. Issouf m'a remboursé quatre mille (income; the bare "Remboursement Issouf" is ambiguous and moves to the kind phrases)
 25. Deux mille cinq cents carburant
 26. Quarante mille loyer atelier
 27. Le prix du marché mille huit cents
@@ -73,8 +73,30 @@ test bank logic; a miss is the engine's.
 29. Salaire du mois deux cent mille
 30. Restaurant sept mille cinq cents
 
-For the English app, say the English equivalents of 1 to 10 and 21 to 25; the reader's English bank
-covers them.
+### Kind phrases (31 to 40, ADR-0017)
+
+Say these only once the test phones have three accounts: **Espèces**, **Orange Money** and **Banque**.
+"Kind" is what the reader must conclude; "Check" means the app must ask (never decide silently).
+
+| # | Said | Kind | Check |
+|---|------|------|-------|
+| 31 | Transfert Orange Money vers banque dix mille | transfer, Orange Money to Banque | no |
+| 32 | Dépôt banque vingt mille | transfer, to Banque | yes (source) |
+| 33 | Retrait dix mille | transfer, to Espèces | yes (source) |
+| 34 | Cash in Orange quinze mille | transfer, to Orange Money | yes (source) |
+| 35 | J'ai envoyé cinq mille à Awa | expense | yes |
+| 36 | Frais de transfert Orange Money cent cinquante | expense | no |
+| 37 | Retrait dix mille taxi cinq cents | transfer and expense | yes |
+| 38 | Remboursement quatre mille | unclear | yes, no default |
+| 39 | Épargne cinq mille | goal | yes if no goal |
+| 40 | Je n'ai pas payé le loyer | not an entry | n/a |
+
+A kind phrase **passes** when the kind is right and, if "Check" is yes, the app shows the chooser
+instead of deciding. A silent wrong kind is a failure, not a miss.
+
+For the English app, say the English equivalents of 1 to 10, 21 to 25 and 31 to 34. The English bank covers 1 to 10 and
+21 to 25 today; the kind phrases only pass once ADR-0017 is built, so until then phrases 31 to 40 record what the
+current reader does (a baseline), and are expected to fail.
 
 ## Procedure
 

@@ -129,6 +129,9 @@
 - Implement transaction-backed refresh rotation to close the concurrent
   double-issuance race.
 - Add Postgres-backed integration tests for edge handlers.
+- Quick line: read the kind of movement (transfer, goal, debt) and ask when unsure — ADR-0017
+  (found 2026-11-01: transfers and deposits are saved as expenses). Then the personal learning window,
+  ADR-0018. Voice test automation plan: `docs/plans/2026-11-voice-test-automation.md`.
 - Decide the voice pack on real phones (`docs/plans/2026-10-w3-voice-real-phone-test.md`); build the
   category model once its dataset exists; give guidance a first layer that needs no key.
 - Server functions run on Node 20 (root `engines`), which is past end of life; move to a
